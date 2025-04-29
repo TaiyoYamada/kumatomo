@@ -26,19 +26,19 @@ struct MainTabView: View {
                     Text("ホーム")
                 }
             
-            Text("メッセージ画面")
-                .tabItem {
-                    Image(systemName: "message")
-                    Text("メッセージ")
-                }
-            
-            Text("カレンダー画面")
+            Text("思い出画面")
                 .tabItem {
                     Image(systemName: "calendar")
-                    Text("カレンダー")
+                    Text("思い出")
                 }
             
-            ProfileView()
+            Text("デート")
+                .tabItem {
+                    Image(systemName: "person.2")
+                    Text("デート")
+                }
+            
+            ProfileView(viewModel: ProfileViewModel())
                 .tabItem {
                     Image(systemName: "person")
                     Text("プロフィール")
