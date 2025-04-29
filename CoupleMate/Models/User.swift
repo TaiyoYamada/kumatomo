@@ -10,6 +10,7 @@ struct User: Codable {
     let createdAt: Date
     var partnerId: String?
     var relationshipStartDate: Date?
+    var pairId: String?
     
     // Initialize with individual properties
     init(id: String, email: String, fullName: String, birthDate: Date?,

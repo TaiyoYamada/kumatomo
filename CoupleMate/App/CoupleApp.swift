@@ -1,13 +1,12 @@
 import SwiftUI
-import Firebase
 
 @main
 struct CoupleApp: App {
-    @StateObject var viewModel = AuthViewModel()
+    // AppDelegateを登録
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
-    init() {
-        FirebaseApp.configure()
-    }
+    // 認証用のViewModelをアプリ全体に持たせる
+    @StateObject var viewModel = AuthViewModel()
     
     var body: some Scene {
         WindowGroup {

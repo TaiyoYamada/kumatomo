@@ -7,7 +7,7 @@ struct ContentView: View {
     var body: some View {
         Group {
             if viewModel.userSession != nil {
-                MainTabView()
+                MainTabView(viewModel: viewModel)
             } else {
                 LoginView()
             }
@@ -16,31 +16,42 @@ struct ContentView: View {
 }
 
 struct MainTabView: View {
-    @StateObject var viewModel = AuthViewModel()
+    @ObservedObject var viewModel: AuthViewModel
     
     var body: some View {
         TabView {
+            // 🏠 ホームタブ
             Text("ホーム画面")
                 .tabItem {
-                    Image(systemName: "house")
+                    Image(systemName: "house.fill")
                     Text("ホーム")
                 }
             
-            Text("思い出画面")
+            // 📖 思い出タブ
+            MemoriesView()
                 .tabItem {
-                    Image(systemName: "calendar")
+                    Image(systemName: "book.fill")
                     Text("思い出")
                 }
             
-            Text("デート")
+            // 🔍 プラン探しタブ
+            Text("プラン探し画面")
                 .tabItem {
-                    Image(systemName: "person.2")
-                    Text("デート")
+                    Image(systemName: "magnifyingglass")
+                    Text("プラン探し")
                 }
             
-            ProfileView(viewModel: ProfileViewModel())
+            // 📅 カレンダータブ
+            Text("カレンダー画面")
                 .tabItem {
-                    Image(systemName: "person")
+                    Image(systemName: "calendar")
+                    Text("カレンダー")
+                }
+            
+            // 👤 プロフィールタブ
+            ProfileView()
+                .tabItem {
+                    Image(systemName: "person.crop.circle")
                     Text("プロフィール")
                 }
         }
