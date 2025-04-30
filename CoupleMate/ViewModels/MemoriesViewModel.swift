@@ -9,8 +9,6 @@ import Combine
  * ObservableObjectに準拠しているため、SwiftUIのビューから状態変化を観測できます。
  */
 class MemoriesViewModel: ObservableObject {
-    // MARK: - パブリッシュドプロパティ
-    
     /// メモリーのリスト
     @Published var memories: [Memory] = []
     
@@ -23,20 +21,16 @@ class MemoriesViewModel: ObservableObject {
     /// 操作成功フラグ
     @Published var isSuccessful: Bool = false
     
-    // MARK: - プライベートプロパティ
-    
     private let firestoreService: FirestoreService
     private let storageService: StorageService
     
-    // MARK: - 初期化
-    
+
     init(firestoreService: FirestoreService = FirestoreService(), storageService: StorageService = StorageService()) {
         self.firestoreService = firestoreService
         self.storageService = storageService
     }
     
-    // MARK: - パブリックメソッド
-    
+
     /**
      * メモリーのリストを読み込む
      */
@@ -226,8 +220,7 @@ class MemoriesViewModel: ObservableObject {
         }
     }
     
-    // MARK: - プライベートメソッド
-    
+
     /**
      * Firestoreにメモリーを更新する内部メソッド
      */
