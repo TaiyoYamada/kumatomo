@@ -2,6 +2,7 @@ import SwiftUI
 import Foundation
 import UIKit
 import Combine
+import FirebaseAuth
 
 class ProfileViewModel: ObservableObject {
     // 表示用の公開プロパティ
@@ -25,10 +26,15 @@ class ProfileViewModel: ObservableObject {
     private let imageManager = ProfileImageManager()
     private var cancellables = Set<AnyCancellable>()
     
-    init(userID: String = UUID().uuidString) {
-        self.profile = UserProfile(id: userID)
-        loadProfile(userID: userID)
+    init() {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            fatalError("❌ ユーザーがログインしていない状態で ProfileViewModel が初期化されました。")
+        }
+
+        self.profile = UserProfile(id: uid)
+        loadProfile(userID: uid)
     }
+
     
     func loadProfile(userID: String) {
         isLoading = true
