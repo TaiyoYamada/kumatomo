@@ -1,11 +1,3 @@
-//
-//  MemoriesView.swift
-//  CoupleMate
-//
-//  Created by 山田大陽 on 2025/04/30.
-//
-
-
 import SwiftUI
 
 /**
@@ -156,14 +148,5 @@ struct MemoriesView: View {
                 continuation.resume()
             }
         }
-    }
-}
-
-/**
- * MemoriesView_Previews - SwiftUIプレビュー
- */
-struct MemoriesView_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoriesView()
     }
 }

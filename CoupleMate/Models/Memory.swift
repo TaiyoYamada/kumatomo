@@ -9,6 +9,7 @@ import Firebase
  * Codableに準拠しているため、JSONとの相互変換が容易になります。
  */
 struct Memory: Identifiable, Codable {
+    var authorId: String
     var id: String
     var title: String
     var date: Date
@@ -19,8 +20,9 @@ struct Memory: Identifiable, Codable {
     var updatedAt: Date
     
     /// 初期化メソッド（新規作成用）
-    init(title: String, date: Date, location: String, notes: String, photos: [String]) {
+    init(authorId: String, title: String, date: Date, location: String, notes: String, photos: [String]) {
         self.id = UUID().uuidString // 新規作成時は仮のIDを生成
+        self.authorId = authorId
         self.title = title
         self.date = date
         self.location = location
@@ -40,11 +42,13 @@ struct Memory: Identifiable, Codable {
               let notes = data["notes"] as? String,
               let photos = data["photos"] as? [String],
               let createdTimestamp = data["createdAt"] as? Timestamp,
-              let updatedTimestamp = data["updatedAt"] as? Timestamp else {
+              let updatedTimestamp = data["updatedAt"] as? Timestamp,
+              let authorId = data["authorId"] as? String else {
             return nil
         }
         
         self.id = document.documentID
+        self.authorId = authorId
         self.title = title
         self.date = timestamp.dateValue()
         self.location = location
@@ -57,6 +61,7 @@ struct Memory: Identifiable, Codable {
     /// Dictionaryに変換するメソッド（Firestore保存用）
     func toDictionary() -> [String: Any] {
         return [
+            "authorId": authorId,
             "title": title,
             "date": Timestamp(date: date),
             "location": location,

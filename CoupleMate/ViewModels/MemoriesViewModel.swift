@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import FirebaseAuth
 
 /**
  * MemoriesViewModel - メモリー一覧画面のビューモデル
@@ -61,6 +62,7 @@ class MemoriesViewModel: ObservableObject {
      *   - title: タイトル
      *   - date: 日付
      *   - location: 場所
+     /Users/yamadataiyou/Developer/CoupleMate/CoupleMate/ViewModels/MemoriesViewModel.swift:76:25 Cannot find 'Auth' in scope
      *   - notes: メモ
      *   - images: 写真の配列
      *   - completion: 処理結果のコールバック
@@ -68,6 +70,13 @@ class MemoriesViewModel: ObservableObject {
     func addMemory(title: String, date: Date, location: String, notes: String, images: [UIImage], completion: @escaping (Error?) -> Void) {
         guard !title.isEmpty else {
             let error = NSError(domain: "MemoriesViewModel", code: 400, userInfo: [NSLocalizedDescriptionKey: "タイトルは必須です"])
+            completion(error)
+            return
+        }
+        
+        //  ここで uid を取得しておく
+        guard let uid = Auth.auth().currentUser?.uid else {
+            let error = NSError(domain: "MemoriesViewModel", code: 401, userInfo: [NSLocalizedDescriptionKey: "ログイン情報がありません"])
             completion(error)
             return
         }
@@ -89,6 +98,7 @@ class MemoriesViewModel: ObservableObject {
                 
                 // メモリーオブジェクトの作成
                 let memory = Memory(
+                    authorId: uid,
                     title: title,
                     date: date,
                     location: location,

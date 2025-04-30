@@ -1,11 +1,3 @@
-//
-//  MemoryGridItem.swift
-//  CoupleMate
-//
-//  Created by 山田大陽 on 2025/04/30.
-//
-
-
 import SwiftUI
 
 /**
@@ -66,6 +58,7 @@ struct MemoryGridItem_Previews: PreviewProvider {
     static var previews: some View {
         // プレビュー用のサンプルデータ
         let sampleMemory = Memory(
+            authorId: "previewUser123",
             title: "サンプルデート",
             date: Date(),
             location: "東京",

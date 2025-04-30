@@ -1,5 +1,6 @@
 import Foundation
 import Firebase
+import FirebaseAuth
 import FirebaseFirestore
 
 /**
@@ -49,7 +50,13 @@ class FirestoreService {
      * - Parameter completion: 取得結果のコールバック（メモリー配列とエラー）
      */
     func getMemories(completion: @escaping ([Memory]?, Error?) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(nil, NSError(domain: "FirestoreService", code: 401, userInfo: [NSLocalizedDescriptionKey: "ログインしていません"]))
+            return
+        }
+
         db.collection(memoriesCollection)
+            .whereField("authorId", isEqualTo: uid) // ← ここでフィルタ！
             .order(by: "date", descending: true)
             .getDocuments { (snapshot, error) in
                 if let error = error {
@@ -57,19 +64,17 @@ class FirestoreService {
                     completion(nil, error)
                     return
                 }
-                
+
                 guard let documents = snapshot?.documents else {
                     completion([], nil)
                     return
                 }
-                
-                let memories = documents.compactMap { document -> Memory? in
-                    return Memory(document: document)
-                }
-                
+
+                let memories = documents.compactMap { Memory(document: $0) }
                 completion(memories, nil)
             }
     }
+
     
     /**
      * 新しいメモリーを追加する
