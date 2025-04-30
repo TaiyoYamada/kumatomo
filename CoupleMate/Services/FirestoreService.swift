@@ -51,7 +51,7 @@ class FirestoreService {
         let ref = db.collection(memoriesCollection).document()
         let documentID = ref.documentID
         
-        var memoryData = memory.toDictionary()
+        let memoryData = memory.toDictionary()
         
         ref.setData(memoryData) { error in
             if let error = error {
