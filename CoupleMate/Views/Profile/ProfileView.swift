@@ -3,7 +3,6 @@ import PhotosUI
 
 struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-//    @StateObject var viewModel: ProfileViewModel
     @StateObject private var viewModel = ProfileViewModel()
     @State private var showEditProfile = false
     

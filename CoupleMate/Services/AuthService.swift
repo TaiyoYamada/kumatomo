@@ -41,7 +41,9 @@ class AuthService: ObservableObject {
                 relationshipStartDate: nil
             )
             
-            try await Firestore.firestore().collection("users").document(user.id).setData(user.toDictionary())
+            print("🔥 Firestoreに保存します: \(user.toDictionary())")
+            try await FirestoreService.shared.saveUser(user)
+
             self.currentUser = user
         } catch {
             throw error
@@ -64,10 +66,10 @@ class AuthService: ObservableObject {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         do {
-            let snapshot = try await Firestore.firestore().collection("users").document(uid).getDocument()
-            guard let data = snapshot.data() else { return }
-            
-            self.currentUser = User(dictionary: data)
+            if let user = try await FirestoreService.shared.fetchUser(uid: uid) {
+                self.currentUser = user
+            }
+
         } catch {
             print("DEBUG: Failed to fetch current user: \(error.localizedDescription)")
         }
@@ -77,9 +79,8 @@ class AuthService: ObservableObject {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         do {
-            try await Firestore.firestore().collection("users").document(uid).updateData([
-                "profileImageURL": url
-            ])
+            try await FirestoreService.shared.updateUserImage(uid: uid, imageUrl: url)
+
             
             self.currentUser?.profileImageURL = url
         } catch {

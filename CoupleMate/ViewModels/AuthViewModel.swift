@@ -6,14 +6,14 @@ import Combine
 
 /// 認証関連のビジネスロジックを担う ViewModel
 final class AuthViewModel: ObservableObject {
-    // MARK: - 認証／ユーザー情報の状態管理
+    // - 認証／ユーザー情報の状態管理
     
-    /// FirebaseAuth のログインセッション（nilなら未ログイン）
+    // FirebaseAuth のログインセッション（nilなら未ログイン）
     @Published var userSession: FirebaseAuth.User?
-    /// Firestore に保存している独自 User モデル
+    // Firestore に保存している独自 User モデル
     @Published var currentUser: User?
     
-    // MARK: - サインイン／サインアップ用フォーム
+    // - サインイン／サインアップ用フォーム
     
     @Published var email     = ""                        // メールアドレス入力
     @Published var password  = ""                        // パスワード入力
@@ -21,24 +21,24 @@ final class AuthViewModel: ObservableObject {
     @Published var birthDate: Date =                    // サインアップ時の生年月日
         Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
     
-    // MARK: - プロフィール画像アップロード用
+    // - プロフィール画像アップロード用
     
     @Published var profileImage: UIImage?                // アップロード対象 UIImage
     @Published var selectedImage: PhotosPickerItem?      // PhotosPicker からのアイテム
     
-    // MARK: - UI フラグ
+    // - UI フラグ
     
     @Published var errorMessage = ""                     // エラー表示用
     @Published var isLoading    = false                  // ローディングインジケーター用
     
-    // MARK: - サービス依存性
+    // - サービス依存性
     
     private let authService    = AuthService.shared      // 認証・ユーザー取得サービス
     private let storageService = StorageService.shared   // 画像アップロードサービス
     
     private var cancellables = Set<AnyCancellable>()     // Combine の購読保持
     
-    // MARK: - イニシャライザ
+    // - イニシャライザ
     
     init() {
         // 初期状態をサービスから取得
@@ -51,7 +51,7 @@ final class AuthViewModel: ObservableObject {
     
     
     
-    // MARK: - Combine 購読設定
+    // - Combine 購読設定
     
     private func addSubscribers() {
         // 認証セッションの変化を反映
@@ -71,9 +71,9 @@ final class AuthViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // MARK: - サインイン処理
+    // - サインイン処理
     
-    /// メール／パスワードでサインイン
+    // メール／パスワードでサインイン
     @MainActor
     func signIn() async {
         isLoading    = true
@@ -89,8 +89,8 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
     }
     
-    // MARK: - サインアップ処理
-    
+    //  - サインアップ処理
+
     /// 新規ユーザーを作成
     @MainActor
     func createUser() async {
@@ -119,7 +119,7 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
     }
     
-    // MARK: - サインアウト処理
+    //  - サインアウト処理
     
     /// ログアウト
     @MainActor
@@ -127,7 +127,7 @@ final class AuthViewModel: ObservableObject {
         authService.signOut()
     }
     
-    // MARK: - プロフィール画像アップロード
+    // - プロフィール画像アップロード
     
     /// UIImage を StorageService 経由でアップロードし、URL を AuthService に登録
     /// プロフィール画像をアップロードし、Firestore上のユーザープロフィールも更新する
@@ -159,7 +159,7 @@ final class AuthViewModel: ObservableObject {
     }
 
     
-    // MARK: - PhotosPicker から UIImage を取得
+    // - PhotosPicker から UIImage を取得
     
     /// PhotosPickerItem → UIImage 変換
     func loadProfileImage() {
@@ -179,7 +179,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
-    // MARK: - フォームリセット
+    // - フォームリセット
     
     /// すべての入力フォームを初期状態に戻す
     private func resetForm() {

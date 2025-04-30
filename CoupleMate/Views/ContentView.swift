@@ -41,13 +41,6 @@ struct MainTabView: View {
                     Text("プラン探し")
                 }
             
-            // 📅 カレンダータブ
-            Text("カレンダー画面")
-                .tabItem {
-                    Image(systemName: "calendar")
-                    Text("カレンダー")
-                }
-            
             // 👤 プロフィールタブ
             ProfileView()
                 .tabItem {

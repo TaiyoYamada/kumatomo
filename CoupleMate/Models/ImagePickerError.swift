@@ -1,11 +1,3 @@
-//
-//  ImagePickerError.swift
-//  CoupleMate
-//
-//  Created by 山田大陽 on 2025/04/28.
-//
-
-
 import Foundation
 import UIKit
 import Combine

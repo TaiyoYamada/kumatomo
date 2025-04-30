@@ -9,8 +9,39 @@ import FirebaseFirestore
  * エラーハンドリングを適切に実装し、非同期処理にはコールバックを使用しています。
  */
 class FirestoreService {
+    static let shared = FirestoreService()
+    
     private let db = Firestore.firestore()
     private let memoriesCollection = "memories"
+    private let usersCollection = "users"
+    
+    // 🔹 ユーザーを保存
+    func saveUser(_ user: User) async throws {
+        do {
+            try await db.collection(usersCollection)
+                .document(user.id)
+                .setData(user.toDictionary())
+            print("✅ Firestore に保存成功")
+        } catch {
+            print("❌ Firestore 保存失敗: \(error.localizedDescription)")
+            throw error
+        }
+    }
+
+
+    // 🔹 ユーザーを取得
+    func fetchUser(uid: String) async throws -> User? {
+        let snapshot = try await db.collection(usersCollection).document(uid).getDocument()
+        guard let data = snapshot.data() else { return nil }
+        return User(dictionary: data)
+    }
+
+    // 🔹 プロフィール画像URLを更新
+    func updateUserImage(uid: String, imageUrl: String) async throws {
+        try await db.collection(usersCollection).document(uid).updateData([
+            "profileImageURL": imageUrl
+        ])
+    }
     
     /**
      * 全てのメモリーを取得する
