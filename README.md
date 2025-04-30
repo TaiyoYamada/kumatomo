@@ -15,12 +15,12 @@ SwiftUIとFirebaseを使用して開発された、カップル向けのデー�
 ## 使用技術
 
 - **SwiftUI**: モダンなUIフレームワーク
-- **Firebase Authentication**: ユーザー認証（メール/Appleログイン対応）
+- **Firebase Authentication**: ユーザー認証
 - **Cloud Firestore**: デートプランの保存とリアルタイム共有
 - **Firebase Storage**: 写真のアップロードと保存（予定）
 - **Firebase Cloud Messaging (FCM)**: プッシュ通知（予定）
 
----
+
 
 ## ライセンス
 
