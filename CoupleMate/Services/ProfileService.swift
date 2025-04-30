@@ -48,7 +48,7 @@ class ProfileService {
                     }
                 } else {
                     // ドキュメントが存在しないときもダミーで返す
-                    print("⚠️ ドキュメントなし、モックを返します")
+                    print("⚠️ ドキュメントなし。モックを返します")
                     promise(.success(Self.mockProfile(id: userID)))
                 }
             }
