@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xcworkspace
+xcuserdata/
+
+# Swift Package Manager
+/.build/
+/Packages/
+
+# CocoaPods（使っていれば）
+Pods/
+
+# Carthage（使っていれば）
+Carthage/
+
+# Firebase / Secrets
+GoogleService-Info.plist
+Secrets.swift
+
+# IDE
+.idea/
+.vscode/
+*.swp
