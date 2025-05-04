@@ -2,9 +2,11 @@
 
 カップルがデートプランを作成・共有し、思い出を記録できるアプリ。
 
+
 ---
 
-## 🛠 開発環境まとめ
+
+## 開発環境まとめ
 
 | 項目      | 内容                                 |
 | ------- | ---------------------------------- |
@@ -37,7 +39,7 @@ CoupleMate/
 
 ---
 
-## ▶︎ Laravel APIの起動手順（ローカル専用）
+## Laravel APIの起動手順（ローカル専用）
 
 ```bash
 docker compose up -d         # コンテナ起動
@@ -56,7 +58,7 @@ docker compose ps            # 実行中コンテナの確認
 ```
 ---
 
-## 🔐 Firebase設定メモ
+## Firebase設定メモ
 
 * 使用サービス：Firebase Authentication
 * 現在有効な認証方法：
@@ -67,14 +69,14 @@ docker compose ps            # 実行中コンテナの確認
 
 ---
 
-## 🧪 開発ツールの使い方
+## 開発ツールの使い方
 
-### 🔹 Postman
+### Postman
 
 * APIの動作確認用。
 
 
-### 🔹 Sequel Ace
+### Sequel Ace
 
 * MySQL接続情報：
 
@@ -88,13 +90,13 @@ docker compose ps            # 実行中コンテナの確認
 
 ---
 
-## 📝 TODO（自分メモ）
+## TODO（自分メモ）
 
 * [ ] Storageサービスの最終決定（Cloudinary or ImgBB）
 * [ ] 本番環境（Render）にデプロイ予定
 
 ---
 
-## 📄 ライセンス
+## ライセンス
 
 MITライセンス（個人用）
