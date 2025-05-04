@@ -20,28 +20,28 @@ struct MainTabView: View {
     
     var body: some View {
         TabView {
-            // 🏠 ホームタブ
-            Text("ホーム画面")
-                .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("ホーム")
-                }
-            
-            // 📖 思い出タブ
+            //  思い出タブ
             MemoriesView()
                 .tabItem {
                     Image(systemName: "book.fill")
                     Text("思い出")
                 }
             
-            // 🔍 プラン探しタブ
+            //  ホームタブ
+            Text("ホーム画面")
+                .tabItem {
+                    Image(systemName: "house.fill")
+                    Text("ホーム")
+                }
+            
+            //  プラン探しタブ
             Text("プラン探し画面")
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                     Text("プラン探し")
                 }
             
-            // 👤 プロフィールタブ
+            //  プロフィールタブ
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
