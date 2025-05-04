@@ -1,86 +1,49 @@
 import Foundation
-import Firebase
 
-struct User: Codable {
-    let id: String
-    let email: String
-    let fullName: String
-    let birthDate: Date?
+/// ユーザーモデル（SwiftUI / Laravel API 両対応）
+struct User: Codable, Identifiable {
+    var id: Int?                    // ユーザーID（Firebase UID も可）
+    var email: String                 // メールアドレス
+    var fullName: String              // 氏名
+    var birthDate: Date?              // 生年月日（任意）
+    var profileImageURL: String?      // プロフィール画像 URL（任意）
+    var createdAt: Date?              // 作成日（Laravel から返される）
+    var partnerId: String?            // パートナーのユーザーID（任意）
+    var pairId: String?               // カップルの共有ID（任意）
+    var relationshipStartDate: Date?  // 記念日（任意）
+    var bio: String                   // 自己紹介
+    var interests: [String]           // 興味・関心
+    var relationshipStatus: String    // 恋愛ステータス（Single, In a relationship 等）
+}
+
+/// Laravel の POST /api/users に送信するユーザー作成リクエスト
+struct CreateUserRequest: Codable {
+    var id: Int?
+    var email: String
+    var fullName: String
+    var birthDate: Date?
     var profileImageURL: String?
-    let createdAt: Date
     var partnerId: String?
-    var relationshipStartDate: Date?
     var pairId: String?
+    var relationshipStartDate: Date?
     
-    // Initialize with individual properties
-    init(id: String, email: String, fullName: String, birthDate: Date?,
-         profileImageURL: String?, createdAt: Date, partnerId: String?,
-         relationshipStartDate: Date?) {
-        self.id = id
-        self.email = email
-        self.fullName = fullName
-        self.birthDate = birthDate
-        self.profileImageURL = profileImageURL
-        self.createdAt = createdAt
-        self.partnerId = partnerId
-        self.relationshipStartDate = relationshipStartDate
-    }
-    
-    // Initialize from a dictionary
-    init?(dictionary: [String: Any]) {
-        guard
-            let id = dictionary["id"] as? String,
-            let email = dictionary["email"] as? String,
-            let fullName = dictionary["fullName"] as? String,
-            let createdAtTimestamp = dictionary["createdAt"] as? Timestamp
-        else { return nil }
-        
-        self.id = id
-        self.email = email
-        self.fullName = fullName
-        
-        if let birthDateTimestamp = dictionary["birthDate"] as? Timestamp {
-            self.birthDate = birthDateTimestamp.dateValue()
-        } else {
-            self.birthDate = nil
-        }
-        
-        self.profileImageURL = dictionary["profileImageURL"] as? String
-        self.createdAt = createdAtTimestamp.dateValue()
-        self.partnerId = dictionary["partnerId"] as? String
-        
-        if let startDateTimestamp = dictionary["relationshipStartDate"] as? Timestamp {
-            self.relationshipStartDate = startDateTimestamp.dateValue()
-        } else {
-            self.relationshipStartDate = nil
-        }
-    }
-    
-    // Convert to dictionary for Firestore
-    func toDictionary() -> [String: Any] {
-        var dict: [String: Any] = [
-            "id": id,
-            "email": email,
-            "fullName": fullName,
-            "createdAt": Timestamp(date: createdAt)
-        ]
-        
-        if let birthDate = birthDate {
-            dict["birthDate"] = Timestamp(date: birthDate)
-        }
-        
-        if let profileImageURL = profileImageURL {
-            dict["profileImageURL"] = profileImageURL
-        }
-        
-        if let partnerId = partnerId {
-            dict["partnerId"] = partnerId
-        }
-        
-        if let relationshipStartDate = relationshipStartDate {
-            dict["relationshipStartDate"] = Timestamp(date: relationshipStartDate)
-        }
-        
-        return dict
+    var bio: String
+    var interests: [String]
+    var relationshipStatus: String
+}
+
+extension CreateUserRequest {
+    init(from user: User) {
+        self.id = user.id
+        self.email = user.email
+        self.fullName = user.fullName
+        self.birthDate = user.birthDate
+        self.profileImageURL = user.profileImageURL
+        self.partnerId = user.partnerId
+        self.pairId = user.pairId
+        self.relationshipStartDate = user.relationshipStartDate
+        self.bio = user.bio
+        self.interests = user.interests
+        self.relationshipStatus = user.relationshipStatus
     }
 }

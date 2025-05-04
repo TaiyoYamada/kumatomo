@@ -49,10 +49,9 @@ struct SignUpView: View {
                             .foregroundColor(Color(.systemGray4))
                     }
                 }
-                .onChange(of: viewModel.selectedImage) { _ in
+                .onChange(of: viewModel.selectedImage) { oldValue, newValue in
                     viewModel.loadProfileImage()
                 }
-                
                 Text("プロフィール写真を選択")
                     .font(.footnote)
                     .fontWeight(.medium)

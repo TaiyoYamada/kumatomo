@@ -41,33 +41,16 @@ struct MemoryGridItem: View {
         .onAppear {
             // ビューが表示されたら画像を読み込む
             if let photoURL = memory.mainPhotoURL {
+                print("📷 ロードする画像URL: \(photoURL)")
                 imageLoader.loadImage(from: photoURL)
+            } else {
+                print("⚠️ 画像URLが存在しない")
             }
+
         }
         .onDisappear {
             // ビューが非表示になったら読み込みをキャンセル
             imageLoader.cancel()
         }
-    }
-}
-
-/**
- * MemoryGridItem_Previews - SwiftUIプレビュー用のプロバイダ
- */
-struct MemoryGridItem_Previews: PreviewProvider {
-    static var previews: some View {
-        // プレビュー用のサンプルデータ
-        let sampleMemory = Memory(
-            authorId: "previewUser123",
-            title: "サンプルデート",
-            date: Date(),
-            location: "東京",
-            notes: "楽しかった！",
-            photos: ["https://example.com/sample.jpg"]
-        )
-        
-        return MemoryGridItem(memory: sampleMemory)
-            .frame(width: 120, height: 120)
-            .previewLayout(.sizeThatFits)
     }
 }
