@@ -19,9 +19,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E50E4CB72DB6534D0022D7DF /* CoupleMate */ = {
+		E50E4CB72DB6534D0022D7DF /* CoupleMate-iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CoupleMate;
+			path = "CoupleMate-iOS";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +45,7 @@
 		E50E4CAC2DB6534D0022D7DF = {
 			isa = PBXGroup;
 			children = (
-				E50E4CB72DB6534D0022D7DF /* CoupleMate */,
+				E50E4CB72DB6534D0022D7DF /* CoupleMate-iOS */,
 				E50E4CB62DB6534D0022D7DF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,7 +74,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				E50E4CB72DB6534D0022D7DF /* CoupleMate */,
+				E50E4CB72DB6534D0022D7DF /* CoupleMate-iOS */,
 			);
 			name = CoupleMate;
 			packageProductDependencies = (
