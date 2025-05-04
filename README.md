@@ -12,15 +12,13 @@ SwiftUIとFirebaseを使用して開発された、カップル向けのデー�
 
 
 
-## 使用技術
+## 技術スタック
 
-- **SwiftUI**: モダンなUIフレームワーク
-- **Firebase Authentication**: ユーザー認証
-- **Cloud Firestore**: デートプランの保存とリアルタイム共有
-- **Firebase Storage**: 写真のアップロードと保存（予定）
-- **Firebase Cloud Messaging (FCM)**: プッシュ通知（予定）
-
-
+- フロントエンド: SwiftUI (iOS)
+- バックエンド: Laravel 11.x
+- データベース: MySQL 8.x
+- API通信: REST API (JSON)
+- コンテナ環境: Docker / Laravel Sail
 
 ## ライセンス
 
