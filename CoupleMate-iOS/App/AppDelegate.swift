@@ -19,3 +19,5 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 }
+
+// Storageが決まるまではこれらのコードは残しておく

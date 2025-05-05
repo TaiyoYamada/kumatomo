@@ -4,16 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'fullName' => 'required|string|max:255',
+            'email' => 'required|email',
+            'name' => 'required|string',
             'birthDate' => 'nullable|date',
             'profileImageURL' => 'nullable|string',
             'partnerId' => 'nullable|string',
@@ -21,13 +19,12 @@ class UserController extends Controller
             'relationshipStartDate' => 'nullable|date',
             'bio' => 'nullable|string',
             'interests' => 'nullable|array',
-            'relationshipStatus' => 'required|string',
+            'relationshipStatus' => 'nullable|string',
         ]);
-        
 
         $user = User::create($validated);
-        return new UserResource($user);
 
+        return response()->json($user, 201);
     }
-    
 }
+

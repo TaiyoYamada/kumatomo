@@ -2,9 +2,9 @@ import Foundation
 
 /// ユーザーモデル（SwiftUI / Laravel API 両対応）
 struct User: Codable, Identifiable {
-    var id: Int?                    // ユーザーID（Firebase UID も可）
+    var id: Int?                    // ユーザーID
     var email: String                 // メールアドレス
-    var fullName: String              // 氏名
+    var name: String              // 氏名
     var birthDate: Date?              // 生年月日（任意）
     var profileImageURL: String?      // プロフィール画像 URL（任意）
     var createdAt: Date?              // 作成日（Laravel から返される）
@@ -20,7 +20,7 @@ struct User: Codable, Identifiable {
 struct CreateUserRequest: Codable {
     var id: Int?
     var email: String
-    var fullName: String
+    var name: String
     var birthDate: Date?
     var profileImageURL: String?
     var partnerId: String?
@@ -36,7 +36,7 @@ extension CreateUserRequest {
     init(from user: User) {
         self.id = user.id
         self.email = user.email
-        self.fullName = user.fullName
+        self.name = user.name
         self.birthDate = user.birthDate
         self.profileImageURL = user.profileImageURL
         self.partnerId = user.partnerId

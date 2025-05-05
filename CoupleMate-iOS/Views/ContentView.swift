@@ -1,12 +1,11 @@
 import SwiftUI
-import Firebase
 
 struct ContentView: View {
     @StateObject var viewModel = AuthViewModel()
     
     var body: some View {
         Group {
-            if viewModel.userSession != nil {
+            if viewModel.isAuthenticated {
                 MainTabView(viewModel: viewModel)
             } else {
                 LoginView()

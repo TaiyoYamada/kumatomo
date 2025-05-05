@@ -79,7 +79,7 @@ docker compose exec laravel.test php artisan migrate
   ```json
   {
     "email": "sample@example.com",
-    "fullName": "たいよう",
+    "name": "たいよう",
     "bio": "よろしくお願いします",
     "relationshipStatus": "Single",
     "interests": ["映画", "読書"]

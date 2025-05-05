@@ -1,6 +1,6 @@
 import SwiftUI
 import PhotosUI
-import FirebaseAuth
+
 
 struct MemoryEditView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -164,14 +164,20 @@ struct MemoryEditView: View {
         isLoading = true
 
         if isNewMemory {
-            let authorId = Auth.auth().currentUser?.uid ?? ""
+            guard let authorId = AuthService.shared.currentUser?.id else {
+                errorMessage = "ユーザー情報が取得できません"
+                showErrorAlert = true
+                return
+            }
+            
+            let authorIdString = String(authorId)
 
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd"
             let dateString = formatter.string(from: date)
 
             let request = MemoryRequest(
-                author_id: authorId,
+                author_id: authorIdString,
                 title: title,
                 date: dateString,
                 location: location,
