@@ -1,5 +1,4 @@
 import Foundation
-import FirebaseAuth
 import PhotosUI
 import SwiftUI
 import Combine
@@ -8,61 +7,59 @@ import Combine
 final class AuthViewModel: ObservableObject {
     // - 認証／ユーザー情報の状態管理
     
-    // FirebaseAuth のログインセッション（nilなら未ログイン）
-    @Published var userSession: FirebaseAuth.User?
-    // Firestore に保存している独自 User モデル
+    // 認証状態（trueならログイン済み）
+    @Published var isAuthenticated: Bool = false
+    // API から取得したユーザーモデル
     @Published var currentUser: User?
     
     // - サインイン／サインアップ用フォーム
     
-    @Published var email     = ""                        // メールアドレス入力
-    @Published var password  = ""                        // パスワード入力
-    @Published var fullName  = ""                        // サインアップ時の氏名
-    @Published var birthDate: Date =                    // サインアップ時の生年月日
+    @Published var email = ""                         // メールアドレス入力
+    @Published var password = ""                      // パスワード入力
+    @Published var name = ""                          // サインアップ時の氏名
+    @Published var birthDate: Date =                  // サインアップ時の生年月日
         Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
     
     // - プロフィール画像アップロード用
     
-    @Published var profileImage: UIImage?                // アップロード対象 UIImage
-    @Published var selectedImage: PhotosPickerItem?      // PhotosPicker からのアイテム
+    @Published var profileImage: UIImage?             // アップロード対象 UIImage
+    @Published var selectedImage: PhotosPickerItem?   // PhotosPicker からのアイテム
     
     // - UI フラグ
     
-    @Published var errorMessage = ""                     // エラー表示用
-    @Published var isLoading    = false                  // ローディングインジケーター用
+    @Published var errorMessage = ""                  // エラー表示用
+    @Published var isLoading = false                  // ローディングインジケーター用
     
     // - サービス依存性
     
-    private let authService    = AuthService.shared      // 認証・ユーザー取得サービス
-    private let storageService = StorageService.shared   // 画像アップロードサービス
+    private let authService = AuthService.shared       // 認証・ユーザー取得サービス
+    private let storageService = StorageService.shared // 画像アップロードサービス
     
-    private var cancellables = Set<AnyCancellable>()     // Combine の購読保持
+    private var cancellables = Set<AnyCancellable>()   // Combine の購読保持
     
     // - イニシャライザ
     
     init() {
         // 初期状態をサービスから取得
-        self.userSession = authService.userSession
+        self.isAuthenticated = authService.isAuthenticated
         self.currentUser = authService.currentUser
         
         // 購読を開始
         addSubscribers()
     }
     
-    
-    
     // - Combine 購読設定
     
     private func addSubscribers() {
-        // 認証セッションの変化を反映
-        authService.$userSession
+        // 認証状態の変化を反映
+        authService.$isAuthenticated
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] session in
-                self?.userSession = session
+            .sink { [weak self] isAuth in
+                self?.isAuthenticated = isAuth
             }
             .store(in: &cancellables)
         
-        // Firestore 上の User モデルの変化を反映
+        // API から取得したユーザーモデルの変化を反映
         authService.$currentUser
             .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
@@ -76,7 +73,7 @@ final class AuthViewModel: ObservableObject {
     // メール／パスワードでサインイン
     @MainActor
     func signIn() async {
-        isLoading    = true
+        isLoading = true
         errorMessage = ""
         
         do {
@@ -94,7 +91,7 @@ final class AuthViewModel: ObservableObject {
     /// 新規ユーザーを作成
     @MainActor
     func createUser() async {
-        isLoading    = true
+        isLoading = true
         errorMessage = ""
         
         do {
@@ -102,7 +99,7 @@ final class AuthViewModel: ObservableObject {
             try await authService.createUser(
                 withEmail: email,
                 password: password,
-                fullName: fullName,
+                name: name,
                 birthDate: birthDate
             )
             
@@ -123,18 +120,27 @@ final class AuthViewModel: ObservableObject {
     
     /// ログアウト
     @MainActor
-    func signOut() {
-        authService.signOut()
+    func signOut() async {
+        isLoading = true
+        errorMessage = ""
+        
+        do {
+            try await authService.signOut()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
     }
     
     // - プロフィール画像アップロード
     
     /// UIImage を StorageService 経由でアップロードし、URL を AuthService に登録
-    /// プロフィール画像をアップロードし、Firestore上のユーザープロフィールも更新する
+    /// プロフィール画像をアップロードし、APIのユーザープロフィールも更新する
     @MainActor
     private func uploadProfileImage(_ image: UIImage) async {
-        // 1. ログイン中のユーザーIDを取得
-        guard let uid = userSession?.uid else { return }
+        // 1. ユーザーが認証済みか確認
+        guard isAuthenticated, let user = currentUser else { return }
         
         // 2. ローディング開始
         isLoading = true
@@ -142,12 +148,20 @@ final class AuthViewModel: ObservableObject {
         
         do {
             // 3. StorageService で画像をアップロード → URL を取得
+
+            guard let userId = user.id else {
+                throw NSError(domain: "AuthViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "ユーザーIDが取得できません"])
+            }
+            
+            // IntのuserIdをStringに変換
+            let userIdString = String(userId)
+            
             let url = try await StorageService.shared.uploadImage(
                 image,
-                path: StoragePath.profile(uid: uid)
+                path: StoragePath.profile(uid: userIdString)
             )
             
-            // 4. URL を文字列に変換して AuthService へ渡し、Firestore上のプロフィールを更新
+            // 4. URL を文字列に変換して AuthService へ渡し、API上のプロフィールを更新
             let urlString = url.absoluteString
             try await authService.updateProfileImage(withImageUrl: urlString)
             
@@ -183,12 +197,10 @@ final class AuthViewModel: ObservableObject {
     
     /// すべての入力フォームを初期状態に戻す
     private func resetForm() {
-        email        = ""
-        password     = ""
-        fullName     = ""
+        email = ""
+        password = ""
+        name = ""
         profileImage = nil
         selectedImage = nil
     }
 }
-
-

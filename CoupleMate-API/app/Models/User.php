@@ -1,18 +1,22 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    // 新規ユーザー作成時に大量割り当て可能な属性
     protected $fillable = [
         'email',
-        'fullName',
+        'password',               // パスワードも含める
+        'name',
         'birthDate',
         'profileImageURL',
         'partnerId',
@@ -23,11 +27,24 @@ class User extends Authenticatable
         'relationshipStatus',
     ];
 
+    // データのキャスト
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'birthDate' => 'date',
         'relationshipStartDate' => 'date',
         'interests' => 'array',
-        'password' => 'hashed',
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',   // パスワードをハッシュ化
     ];
+
+    // パスワードを暗号化して保存
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            if ($user->password) {
+                $user->password = bcrypt($user->password);  // パスワードのハッシュ化
+            }
+        });
+    }
 }

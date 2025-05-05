@@ -28,7 +28,7 @@ struct EditProfileView: View {
             
             // Basic Information Section
             Section {
-                TextField("名前", text: $viewModel.fullName)
+                TextField("名前", text: $viewModel.name)
                 
                 TextField("自己紹介", text: $viewModel.bio, axis: .vertical)
                     .lineLimit(4...6)
@@ -86,7 +86,7 @@ struct EditProfileView: View {
                     viewModel.saveProfile()
                     dismiss()
                 }
-                .disabled(viewModel.fullName.isEmpty)
+                .disabled(viewModel.name.isEmpty)
             }
         }
         .sheet(isPresented: $showImagePicker) {

@@ -1,6 +1,5 @@
 import SwiftUI
 import PhotosUI
-import FirebaseAuth
 
 struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -8,12 +7,13 @@ struct ProfileView: View {
     @State private var showEditProfile = false
 
     init() {
-        if let uid = Auth.auth().currentUser?.uid {
-            _viewModel = StateObject(wrappedValue: ProfileViewModel(userID: uid))
+        if let uid = AuthService.shared.currentUser?.id {
+            _viewModel = StateObject(wrappedValue: ProfileViewModel(userID: "\(uid)"))
         } else {
             _viewModel = StateObject(wrappedValue: ProfileViewModel(userID: ""))
         }
     }
+
 
     var body: some View {
         ScrollView {
@@ -72,7 +72,7 @@ struct ProfileView: View {
                     .shadow(radius: 7)
             }
 
-            Text(viewModel.profile.fullName)
+            Text(viewModel.profile.name)
                 .font(.title)
                 .fontWeight(.bold)
 
@@ -141,7 +141,9 @@ struct ProfileView: View {
 
     private var signOutButton: some View {
         Button {
-            authViewModel.signOut()
+            Task {
+                await authViewModel.signOut()
+            }
         } label: {
             Text("ログアウト")
                 .font(.subheadline)

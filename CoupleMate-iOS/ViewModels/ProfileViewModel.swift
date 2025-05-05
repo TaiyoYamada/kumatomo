@@ -14,7 +14,7 @@ class ProfileViewModel: ObservableObject {
     @Published var showSuccessMessage = false
 
     // 編集用プロパティ
-    @Published var fullName: String = ""
+    @Published var name: String = ""
     @Published var bio: String = ""
     @Published var birthDate: Date?
     @Published var interests: [String] = []
@@ -29,7 +29,7 @@ class ProfileViewModel: ObservableObject {
         self.profile = User(
             id: nil,
             email: "",
-            fullName: "",
+            name: "",
             birthDate: nil,
             profileImageURL: nil,
             createdAt: nil,
@@ -60,7 +60,7 @@ class ProfileViewModel: ObservableObject {
     }
 
     private func updateFormFields(with profile: User) {
-        fullName = profile.fullName
+        name = profile.name
         bio = profile.bio
         birthDate = profile.birthDate
         interests = profile.interests
@@ -71,7 +71,7 @@ class ProfileViewModel: ObservableObject {
     func saveProfile() {
         isLoading = true
         var updatedProfile = profile
-        updatedProfile.fullName = fullName
+        updatedProfile.name = name
         updatedProfile.bio = bio
         updatedProfile.birthDate = birthDate
         updatedProfile.interests = interests
