@@ -52,6 +52,7 @@ docker compose exec app php artisan migrate
 
 ```bash
 docker compose exec app php artisan migrate:fresh --seed
+docker compose exec laravel.test tail -n 50 storage/logs/laravel.log　# LaravelAPIのログ確認
 docker compose exec app php artisan tinker
 docker compose down          # コンテナ停止
 docker compose ps            # 実行中コンテナの確認
