@@ -11,14 +11,15 @@
 | 項目      | 内容                                 |
 | ------- | ---------------------------------- |
 | フロントエンド | SwiftUI（iOS）                       |
-| バックエンド  | Laravel 11.x（Sail使用）               |
+| バックエンド  | Laravel 11.x（Laravel Sail + Docker）  |
 | DB      | MySQL 8.x（Dockerで起動）               |
-| 認証      | Firebase Authentication            |
-| API通信   | REST API（JSON形式）                   |
-| ストレージ   | ImgBB（無料外部API）予定                   |
+| 認証      | Laravel Sanctum（トークンベース認証）           |
+| API通信   | REST API（JSON形式、Bearerトークンによる認証）     ||
+| ストレージ   | ImgBB（画像アップロード用の無料外部APIを使用予定）        |
 | 管理ツール   | Postman（APIテスト） / Sequel Ace（DB確認） |
 
 ---
+
 
 ## ディレクトリ構成（ローカル）
 
@@ -59,17 +60,6 @@ docker compose exec laravel.test php artisan migrate:status　#　マイグレ�
 docker compose down          # コンテナ停止
 docker compose ps            # 実行中コンテナの確認
 ```
----
-
-## Firebase設定メモ
-
-* 使用サービス：Firebase Authentication
-* 現在有効な認証方法：
-
-  * メールアドレス＋パスワード
-  * Appleサインイン（予定）
-* Swift側でログイン後、Laravel APIにIDトークンを送信してユーザーを特定
-
 ---
 
 ## 開発ツールの使い方
