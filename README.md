@@ -62,6 +62,9 @@ docker compose ps            # 実行中コンテナの確認
 ```
 ---
 
+```
+ipconfig getifaddr en0 # IPアドレスの確認
+```
 ## 開発ツールの使い方
 
 ### Postman
