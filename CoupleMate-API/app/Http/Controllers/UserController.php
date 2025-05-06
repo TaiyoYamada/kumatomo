@@ -11,6 +11,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'email' => 'required|email',
+            'password' => 'required|min:6',
             'name' => 'required|string',
             'birthDate' => 'nullable|date',
             'profileImageURL' => 'nullable|string',

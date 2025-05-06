@@ -1,5 +1,3 @@
-
-// Services/MemoryAPIService.swift
 import Foundation
 import UIKit
 
@@ -11,7 +9,8 @@ struct MemoriesResponse: Decodable {
 
 class MemoryAPIService {
     static let shared = MemoryAPIService()
-    private let baseURL = URL(string: "http://10.33.2.3:8000/api")!
+    private let baseURL = URL(string: ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://10.33.2.4:8000/api")!
+
 
     func fetchMemories(completion: @escaping ([Memory]?, Error?) -> Void) {
         let url = baseURL.appendingPathComponent("memories")
@@ -19,11 +18,14 @@ class MemoryAPIService {
             if let error = error {
                 return completion(nil, error)
             }
+
             guard let data = data else {
-                return completion(nil, nil)
+                let noDataError = NSError(domain: "MemoryAPIService", code: -1, userInfo: [
+                    NSLocalizedDescriptionKey: "データが返ってきませんでした"
+                ])
+                return completion(nil, noDataError)
             }
 
-            // デバッグ出力
             if let jsonString = String(data: data, encoding: .utf8) {
                 print("📦 受信データ: \(jsonString)")
             }
@@ -40,6 +42,7 @@ class MemoryAPIService {
 
 
 
+
     func createMemory(_ memory: MemoryRequest, completion: @escaping (Error?) -> Void) {
         guard let url = URL(string: "\(baseURL)/memories") else { return }
 
@@ -51,7 +54,7 @@ class MemoryAPIService {
 
         // ⬇️ デバッグログ追加
         if let body = request.httpBody, let json = String(data: body, encoding: .utf8) {
-            print("🚀 送信データ: \(json)")
+//            print("🚀 送信データ: \(json)")
         }
 
         URLSession.shared.dataTask(with: request) { data, response, error in

@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->string('relationshipStatus')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

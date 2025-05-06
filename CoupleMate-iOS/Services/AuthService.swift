@@ -25,7 +25,9 @@ class AuthTokenManager {
         if let token = token {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
     }
+
 }
 
 class AuthService: ObservableObject {
@@ -35,25 +37,27 @@ class AuthService: ObservableObject {
     static let shared = AuthService()
     
     private var cancellables = Set<AnyCancellable>()
-    private let baseURL = "http://10.33.2.3:8000/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://10.33.2.4:8000/api"
+
 
     init() {
-        // 保存されたトークンがあれば自動的に認証状態にする
+        // アプリ起動時にトークンが存在するか確認
         if AuthTokenManager.shared.token != nil {
             self.isAuthenticated = true
-            Task {
+            Task { [weak self] in
                 do {
-                    try await fetchCurrentUser()
+                    try await self?.fetchCurrentUser()
                 } catch {
                     print("⚠️ 自動ログイン失敗: \(error.localizedDescription)")
                     AuthTokenManager.shared.clearToken()
                     DispatchQueue.main.async {
-                        self.isAuthenticated = false
+                        self?.isAuthenticated = false
                     }
                 }
             }
         }
     }
+
 
     @MainActor
     func signIn(withEmail email: String, password: String) async throws {
@@ -183,6 +187,7 @@ class AuthService: ObservableObject {
     @MainActor
     func fetchCurrentUser() async throws {
         guard AuthTokenManager.shared.token != nil else {
+            print("⚠️ トークンが存在しません")
             throw AuthError.unauthorized
         }
         
@@ -190,29 +195,51 @@ class AuthService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        
-        // 認証トークンをヘッダーに追加
         AuthTokenManager.shared.authorizedRequest(&request)
+
+        print("📡 リクエスト先URL:", request.url?.absoluteString ?? "nil")
+        print("📡 Authorizationヘッダー:", request.allHTTPHeaderFields?["Authorization"] ?? "なし")
         
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                print("📡 ステータスコード:", httpResponse.statusCode)
+            } else {
+                print("⚠️ HTTPレスポンスではありません")
+            }
+
+            // レスポンスデータを一度文字列で出力（デバッグ用）
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("📡 レスポンスJSON:", jsonString)
+            }
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw URLError(.badServerResponse)
+            }
+
+            if httpResponse.statusCode == 401 {
+                AuthTokenManager.shared.clearToken()
+                self.isAuthenticated = false
+                print("⚠️ 認証エラー（401）")
+                throw AuthError.unauthorized
+            }
+
+            if httpResponse.statusCode != 200 {
+                print("⚠️ ユーザー取得失敗（ステータス: \(httpResponse.statusCode)）")
+                throw AuthError.fetchUserFailed
+            }
+
+            self.currentUser = try JSONDecoder().decode(UserResponse.self, from: data).data
+
+            print("✅ ユーザー情報取得成功: \(self.currentUser?.email ?? "不明")")
+
+        } catch {
+            print("🚨 通信エラー: \(error.localizedDescription)")
+            throw error
         }
-        
-        if httpResponse.statusCode == 401 {
-            // 認証エラー
-            AuthTokenManager.shared.clearToken()
-            self.isAuthenticated = false
-            throw AuthError.unauthorized
-        }
-        
-        if httpResponse.statusCode != 200 {
-            throw AuthError.fetchUserFailed
-        }
-        
-        self.currentUser = try JSONDecoder().decode(User.self, from: data)
     }
+
     
     @MainActor
     func updateProfileImage(withImageUrl url: String) async throws {

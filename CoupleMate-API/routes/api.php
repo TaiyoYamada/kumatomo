@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Http\Resources\UserResource;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MemoryController;
 use App\Http\Controllers\UserController;
@@ -20,9 +21,10 @@ Route::post('/users', [UserController::class, 'store']);
 
 // ✅ 認証が必要なAPI（Sanctum）
 Route::middleware('auth:sanctum')->group(function () {
+    
     // 自分のユーザー情報取得
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        return new UserResource($request->user());
     });
 
     // プロフィール更新
