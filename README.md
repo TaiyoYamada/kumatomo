@@ -17,7 +17,7 @@
 | API通信   | REST API（JSON形式、Bearerトークンによる認証）     ||
 | ストレージ   | ImgBB（画像アップロード用の無料外部APIを使用予定）        |
 | 管理ツール   | Postman（APIテスト） / Sequel Ace（DB確認） |
-|　サーバー　|　Render??　｜
+|　サーバー　|　Render?? |
 
 ---
 
