@@ -37,14 +37,14 @@ class User extends Authenticatable
     ];
 
     // パスワードを暗号化して保存
-    public static function boot()
-    {
-        parent::boot();
+    // public static function boot()
+    // {
+    //     parent::boot();
 
-        static::creating(function ($user) {
-            if ($user->password) {
-                $user->password = bcrypt($user->password);  // パスワードのハッシュ化
-            }
-        });
-    }
+    //     static::creating(function ($user) {
+    //         if ($user->password) {
+    //             $user->password = bcrypt($user->password);  // パスワードのハッシュ化
+    //         }
+    //     });
+    // }
 }
