@@ -3,7 +3,14 @@ import Combine
 
 class UserAPIService {
     static let shared = UserAPIService()
-    private let baseURL = URL(string: ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://10.33.2.4:8000/api")!
+    private var baseURL: URL {
+        guard let urlString = ProcessInfo.processInfo.environment["API_BASE_URL"],
+              let url = URL(string: urlString) else {
+            return URL(string: "http://localhost:8000/api")!
+        }
+        return url
+    }
+
 
     private var jsonDecoder: JSONDecoder {
         let decoder = JSONDecoder()

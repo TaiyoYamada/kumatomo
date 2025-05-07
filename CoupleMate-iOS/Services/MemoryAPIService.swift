@@ -9,7 +9,14 @@ struct MemoriesResponse: Decodable {
 
 class MemoryAPIService {
     static let shared = MemoryAPIService()
-    private let baseURL = URL(string: ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://10.33.2.4:8000/api")!
+    private var baseURL: URL {
+        guard let urlString = ProcessInfo.processInfo.environment["API_BASE_URL"],
+              let url = URL(string: urlString) else {
+            return URL(string: "http://localhost:8000/api")!
+        }
+        return url
+    }
+
 
 
     func fetchMemories(completion: @escaping ([Memory]?, Error?) -> Void) {
