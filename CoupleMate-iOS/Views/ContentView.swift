@@ -43,14 +43,16 @@ struct MainTabView: View {
 
             
             //  思い出タブ
-            MemoriesView()
+            Text("特に何もない画面")
+//            MemoriesView()
                 .tabItem {
                     Image(systemName: "book.fill")
                     Text("思い出")
                 }
             
             //  プロフィールタブ
-            ProfileView()
+            MyPageView()
+//            ProfileView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
                     Text("プロフィール")

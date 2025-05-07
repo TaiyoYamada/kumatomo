@@ -43,6 +43,7 @@ struct MemoryGridItem: View {
             if let photoURL = memory.mainPhotoURL {
                 print("📷 ロードする画像URL: \(photoURL)")
                 imageLoader.loadImage(from: photoURL)
+
             } else {
                 print("⚠️ 画像URLが存在しない")
             }

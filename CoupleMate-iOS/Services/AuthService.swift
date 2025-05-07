@@ -37,7 +37,7 @@ class AuthService: ObservableObject {
     static let shared = AuthService()
     
     private var cancellables = Set<AnyCancellable>()
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://10.33.2.4:8000/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
 
 
     init() {

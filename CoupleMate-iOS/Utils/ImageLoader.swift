@@ -26,31 +26,26 @@ class ImageLoader: ObservableObject {
      * 
      * - Parameter urlString: 画像のURL文字列
      */
-    func loadImage(from urlString: String) {
-        guard let url = URL(string: urlString) else {
-            self.error = NSError(domain: "ImageLoader", code: 400, userInfo: [NSLocalizedDescriptionKey: "無効なURL形式です"])
-            return
-        }
-        
-        // 既に同じURLを読み込み中の場合はスキップ
-        if self.urlString == urlString { return }
-        
-        self.urlString = urlString
+    func loadImage(from url: URL) {
+        // すでに同じURLを読み込み中ならスキップ
+        if self.urlString == url.absoluteString { return }
+
+        self.urlString = url.absoluteString
         self.image = nil
         self.error = nil
         self.isLoading = true
-        
+
         let request = URLRequest(url: url)
-        
-        // キャッシュをチェック
+
+        // キャッシュがあれば使う
         if let cachedResponse = cache.cachedResponse(for: request),
            let image = UIImage(data: cachedResponse.data) {
             self.image = image
             self.isLoading = false
             return
         }
-        
-        // キャッシュになければダウンロード
+
+        // なければダウンロード
         cancellable = URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { (data, response) -> UIImage in
                 guard let httpResponse = response as? HTTPURLResponse,
@@ -62,20 +57,16 @@ class ImageLoader: ObservableObject {
             }
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
-                guard let self = self else { return }
-                
-                self.isLoading = false
-                
+                self?.isLoading = false
                 if case .failure(let error) = completion {
-                    self.error = error
+                    self?.error = error
                     print("画像の読み込みに失敗しました: \(error.localizedDescription)")
                 }
             }, receiveValue: { [weak self] image in
-                guard let self = self else { return }
-                
-                self.image = image
+                self?.image = image
             })
     }
+
     
     /**
      * 現在の読み込み処理をキャンセルする

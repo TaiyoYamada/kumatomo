@@ -5,29 +5,27 @@ struct User: Codable, Identifiable {
     var id: Int?
     var email: String
     var name: String
-    var birthDate: Date?
     var profileImageURL: String?
-    var createdAt: Date?
+    var bio: String
+    var website: String?
+    var followingCount: Int
+    var followersCount: Int
     var partnerId: String?
     var pairId: String?
-    var relationshipStartDate: Date?
-    var bio: String
-    var interests: [String]
-    var relationshipStatus: String
+    var createdAt: Date?
 
     enum CodingKeys: String, CodingKey {
         case id
         case email
         case name
-        case birthDate = "birth_date"
         case profileImageURL = "profile_image_url"
-        case createdAt = "created_at"
+        case bio
+        case website
+        case followingCount = "following_count"
+        case followersCount = "followers_count"
         case partnerId = "partner_id"
         case pairId = "pair_id"
-        case relationshipStartDate = "relationship_start_date"
-        case bio
-        case interests
-        case relationshipStatus = "relationship_status"
+        case createdAt = "created_at"
     }
 }
 
@@ -41,11 +39,7 @@ struct CreateUserRequest: Codable {
     var profileImageURL: String?
     var partnerId: String?
     var pairId: String?
-    var relationshipStartDate: Date?
-    
     var bio: String
-    var interests: [String]
-    var relationshipStatus: String
 }
 
 extension CreateUserRequest {
@@ -53,14 +47,10 @@ extension CreateUserRequest {
         self.id = user.id
         self.email = user.email
         self.name = user.name
-        self.birthDate = user.birthDate
         self.profileImageURL = user.profileImageURL
         self.partnerId = user.partnerId
         self.pairId = user.pairId
-        self.relationshipStartDate = user.relationshipStartDate
         self.bio = user.bio
-        self.interests = user.interests
-        self.relationshipStatus = user.relationshipStatus
     }
 }
 

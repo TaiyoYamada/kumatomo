@@ -11,6 +11,12 @@ struct Memory: Codable, Identifiable {
     var createdAt: Date
     var updatedAt: Date
 
+    /// メイン写真（1枚目）のURLを AsyncImage 用に取得
+    var mainPhotoURL: URL? {
+        guard let first = photos.first else { return nil }
+        return URL(string: first)
+    }
+
     /// 新規作成用のイニシャライザ
     init(authorId: String, title: String, date: Date, location: String, notes: String, photos: [String]) {
         self.id = nil
@@ -24,12 +30,6 @@ struct Memory: Codable, Identifiable {
         self.updatedAt = Date()
     }
 
-    /// メイン写真（1枚目）のURL取得
-    var mainPhotoURL: String? {
-        return photos.first
-    }
-
-    // サーバーとJSONのキー名が異なる場合、CodingKeysで調整
     enum CodingKeys: String, CodingKey {
         case id
         case authorId = "author_id"
@@ -42,6 +42,7 @@ struct Memory: Codable, Identifiable {
         case updatedAt = "updated_at"
     }
 }
+
 
 struct MemoryRequest: Codable {
     let author_id: String
