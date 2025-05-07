@@ -8,10 +8,11 @@ struct ProfileEditView: View {
     @State private var showingAlert = false
     @State private var alertMessage = ""
     
-    init(profile: Profile) {
-        _viewModel = StateObject(wrappedValue: ProfileEditViewModel(profile: profile))
+    init(user: User) {
+        _viewModel = StateObject(wrappedValue: ProfileEditViewModel(profile: user))
     }
-    
+
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -52,7 +53,11 @@ struct ProfileEditView: View {
     // プロフィール画像セクション
     private var profileImageSection: some View {
         VStack(spacing: 12) {
-            profileImageView
+            ProfileImageView(
+                image: viewModel.profileImage,
+                urlString: viewModel.profileImageURL
+            )
+
                 .overlay(
                     Circle()
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
@@ -69,39 +74,6 @@ struct ProfileEditView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.bottom, 10)
-    }
-    
-    // プロフィール画像表示
-    private var profileImageView: some View {
-        Group {
-            if let image = viewModel.profileImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 90, height: 90)
-                    .clipShape(Circle())
-            } else if let urlString = viewModel.profile.profileImageURL,
-                      let url = URL(string: urlString) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .empty:
-                        placeholderImage
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 90, height: 90)
-                            .clipShape(Circle())
-                    case .failure:
-                        placeholderImage
-                    @unknown default:
-                        placeholderImage
-                    }
-                }
-            } else {
-                placeholderImage
-            }
-        }
     }
     
     // プレースホルダー画像

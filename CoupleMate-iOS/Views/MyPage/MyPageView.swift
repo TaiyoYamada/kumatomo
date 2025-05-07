@@ -51,6 +51,9 @@ struct MyPageView: View {
                     .foregroundColor(.primary)
             }
         )
+        .sheet(isPresented: $showingProfileEdit) {
+            ProfileEditView(user: profileViewModel.profile)
+        }
 //        .onAppear {
 //            profileViewModel.fetchUserProfile()
 //            memoriesViewModel.fetchMemories()

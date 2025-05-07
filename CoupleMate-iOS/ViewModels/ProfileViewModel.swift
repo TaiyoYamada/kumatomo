@@ -16,11 +16,8 @@ class ProfileViewModel: ObservableObject {
     // 編集用プロパティ
     @Published var name: String = ""
     @Published var bio: String = ""
-    @Published var birthDate: Date?
-    @Published var interests: [String] = []
-    @Published var relationshipStatus: String = ""
-    @Published var relationshipStartDate: Date?
-
+    @Published var website: String = ""
+    
     private let userAPIService = UserAPIService()
     private let imageManager = ProfileImageManager()
     private var cancellables = Set<AnyCancellable>()
@@ -30,18 +27,19 @@ class ProfileViewModel: ObservableObject {
             id: nil,
             email: "",
             name: "",
-            birthDate: nil,
             profileImageURL: nil,
-            createdAt: nil,
+            bio: "",
+            website: nil,
+            followingCount: 0,
+            followersCount: 0,
             partnerId: nil,
             pairId: nil,
-            relationshipStartDate: nil,
-            bio: "",
-            interests: [],
-            relationshipStatus: "Single"
+            createdAt: nil
         )
         loadProfile(userID: userID)
     }
+    
+    
 
     func loadProfile(userID: String) {
         isLoading = true
@@ -62,10 +60,6 @@ class ProfileViewModel: ObservableObject {
     private func updateFormFields(with profile: User) {
         name = profile.name
         bio = profile.bio
-        birthDate = profile.birthDate
-        interests = profile.interests
-        relationshipStatus = profile.relationshipStatus
-        relationshipStartDate = profile.relationshipStartDate
     }
 
     func saveProfile() {
@@ -73,10 +67,6 @@ class ProfileViewModel: ObservableObject {
         var updatedProfile = profile
         updatedProfile.name = name
         updatedProfile.bio = bio
-        updatedProfile.birthDate = birthDate
-        updatedProfile.interests = interests
-        updatedProfile.relationshipStatus = relationshipStatus
-        updatedProfile.relationshipStartDate = relationshipStartDate
 
         if let image = selectedImage {
             uploadProfileImage(image) { [weak self] result in
@@ -107,6 +97,8 @@ class ProfileViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    
+    
 
     func uploadProfileImage(_ image: UIImage, completion: @escaping (Result<URL, Error>) -> Void) {
         isImageUploading = true
@@ -128,17 +120,28 @@ class ProfileViewModel: ObservableObject {
         errorMessage = error.localizedDescription
         showError = true
     }
-
-    func addInterest(_ interest: String) {
-        if !interest.isEmpty && !interests.contains(interest) {
-            interests.append(interest)
-        }
+    
+    // Reset form fields to the current profile values
+    func resetFormFields() {
+        name = profile.name
+        bio = profile.bio
+        website = profile.website ?? ""
     }
 
-    func removeInterest(at index: Int) {
-        if interests.indices.contains(index) {
-            interests.remove(at: index)
+    // Validate input fields
+    func validateInput() -> Bool {
+        if name.isEmpty {
+            errorMessage = "Name cannot be empty."
+            showError = true
+            return false
         }
+        return true
+    }
+
+    // Save changes from EditPageView
+    func saveChanges() {
+        guard validateInput() else { return }
+        saveProfile()
     }
 }
 
