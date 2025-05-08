@@ -92,7 +92,6 @@ struct ProfileEditView: View {
     private var formSection: some View {
         VStack(spacing: 0) {
             formField(title: "名前", text: $viewModel.name)
-            formField(title: "ユーザーネーム", text: $viewModel.username)
             formField(title: "メールアドレス", text: $viewModel.email, keyboardType: .emailAddress)
             formField(title: "ウェブサイト", text: $viewModel.website, keyboardType: .URL)
             

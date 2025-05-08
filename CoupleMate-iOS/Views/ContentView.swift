@@ -23,39 +23,32 @@ struct MainTabView: View {
             Text("ホーム画面")
                 .tabItem {
                     Image(systemName: "house.fill")
-                    Text("ホーム")
                 }
             
             //  プラン探しタブ
             Text("プラン探し画面")
                 .tabItem {
                     Image(systemName: "magnifyingglass")
-                    Text("プラン探し")
                 }
             
             
             // 投稿タブ
             Text("投稿画面")
                 .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("ホーム")
+                    Image(systemName: "plus.app")
                 }
 
             
             //  思い出タブ
-            Text("特に何もない画面")
-//            MemoriesView()
+            Text("お知らせ画面")
                 .tabItem {
-                    Image(systemName: "book.fill")
-                    Text("思い出")
+                    Image(systemName: "speaker.square")
                 }
             
             //  プロフィールタブ
             MyPageView()
-//            ProfileView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
-                    Text("プロフィール")
                 }
         }
         .accentColor(.pink)

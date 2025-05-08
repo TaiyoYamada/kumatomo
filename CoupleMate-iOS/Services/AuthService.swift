@@ -191,7 +191,7 @@ class AuthService: ObservableObject {
             throw AuthError.unauthorized
         }
         
-        let url = URL(string: "\(baseURL)/user")!
+        let url = URL(string: "\(baseURL)/users")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")

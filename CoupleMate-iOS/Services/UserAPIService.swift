@@ -46,14 +46,27 @@ class UserAPIService {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         do {
-            request.httpBody = try jsonEncoder.encode(profile)
+            let encoded = try jsonEncoder.encode(profile)
+            request.httpBody = encoded
+
+            if let json = String(data: encoded, encoding: .utf8) {
+                print("📤 送信データ: \(json)")
+            }
         } catch {
             return Fail(error: error).eraseToAnyPublisher()
         }
 
         return URLSession.shared.dataTaskPublisher(for: request)
-            .tryMap { _, response in
-                try self.validateResponse(response)
+            .tryMap { data, response in
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("📡 ステータスコード: \(httpResponse.statusCode)")
+                }
+
+                if let json = String(data: data, encoding: .utf8) {
+                    print("📡 レスポンスボディ: \(json)")
+                }
+
+                try self.validateResponse(response) // ここで400系で失敗
                 return true
             }
             .receive(on: DispatchQueue.main)

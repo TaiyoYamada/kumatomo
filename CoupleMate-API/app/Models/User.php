@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,39 +12,61 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    // 新規ユーザー作成時に大量割り当て可能な属性
+    /**
+     * 一括代入可能な属性
+     */
     protected $fillable = [
         'email',
-        'password',               // パスワードも含める
+        'password',
         'name',
-        'birthDate',
-        'profileImageURL',
-        'partnerId',
-        'pairId',
-        'relationshipStartDate',
         'bio',
-        'interests',
-        'relationshipStatus',
+        'website',
+        'profile_image_url',
+        'partner_id',
+        'pair_id',
+        'followers_count',
+        'following_count',
     ];
 
-    // データのキャスト
+    /**
+     * キャスト（自動型変換）
+     */
     protected $casts = [
-        'birthDate' => 'date',
-        'relationshipStartDate' => 'date',
-        'interests' => 'array',
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',   // パスワードをハッシュ化
+        'followers_count' => 'integer',
+        'following_count' => 'integer',
+        'password' => 'hashed',
     ];
 
-    // パスワードを暗号化して保存
-    // public static function boot()
-    // {
-    //     parent::boot();
+    /**
+     * 非表示にする属性（APIレスポンスに含めない）
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    //     static::creating(function ($user) {
-    //         if ($user->password) {
-    //             $user->password = bcrypt($user->password);  // パスワードのハッシュ化
-    //         }
-    //     });
-    // }
+    /**
+     * 日付として扱う属性（SoftDeletesなど）
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    /**
+     * リレーション（例: パートナー）
+     */
+    public function partner()
+    {
+        return $this->belongsTo(User::class, 'partner_id');
+    }
+
+    /**
+     * ペア関係（必要であれば）
+     */
+    public function pair()
+    {
+        return $this->belongsTo(Pair::class, 'pair_id');
+    }
 }

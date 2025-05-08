@@ -16,16 +16,14 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'email' => $this->email,
             'name' => $this->name,
-            'birthDate' => $this->birthDate?->toDateString(),
-            'profileImageURL' => $this->profileImageURL,
-            'partnerId' => $this->partnerId,
-            'pairId' => $this->pairId,
-            'relationshipStartDate' => $this->relationshipStartDate?->toDateString(),
+            'profile_image_url' => $this->profileImageURL,
             'bio' => $this->bio,
-            'interests' => $this->interests ?? [],
-            'relationshipStatus' => $this->relationshipStatus,
-            'createdAt' => $this->created_at?->toIso8601String(),
-            'updatedAt' => $this->updated_at?->toIso8601String(),
+            'website' => $this->website,
+            'following_count' => $this->following_count ?? 0,
+            'followers_count' => $this->followers_count ?? 0,
+            'partner_id' => $this->partnerId,
+            'pair_id' => $this->pairId,
+            'created_at' => $this->created_at?->toIso8601String(),
         ];
     }
 }
