@@ -35,9 +35,6 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            // 外部キー（必要に応じてON DELETEなど）
-            // $table->foreign('partner_id')->references('id')->on('users')->nullOnDelete();
-            // $table->foreign('pair_id')->references('id')->on('pairs')->nullOnDelete();
         });
     }
 

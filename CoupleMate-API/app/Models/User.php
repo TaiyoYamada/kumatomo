@@ -45,28 +45,5 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * 日付として扱う属性（SoftDeletesなど）
-     */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
 
-    /**
-     * リレーション（例: パートナー）
-     */
-    public function partner()
-    {
-        return $this->belongsTo(User::class, 'partner_id');
-    }
-
-    /**
-     * ペア関係（必要であれば）
-     */
-    public function pair()
-    {
-        return $this->belongsTo(Pair::class, 'pair_id');
-    }
 }
