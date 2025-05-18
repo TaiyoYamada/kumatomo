@@ -33,7 +33,8 @@ struct MainTabView: View {
             
             
             // 投稿タブ
-            Text("投稿画面")
+//            Text("投稿画面")
+            PostView()
                 .tabItem {
                     Image(systemName: "plus.app")
                 }
