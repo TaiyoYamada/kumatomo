@@ -2,13 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MemoryController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\PairController;
 
 // ✅ 新規ユーザー登録（登録時にパスワード含む）
 Route::post('/register', [AuthController::class, 'register']);
@@ -33,7 +30,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // メモリー（思い出）投稿／取得（ログイン必須にしたいならここ）
     Route::get('/memories', [MemoryController::class, 'index']);
     Route::post('/memories', [MemoryController::class, 'store']);
-
-    // カップル機能など
-    Route::post('/pairing', [PairController::class, 'store']);
+    
 });
