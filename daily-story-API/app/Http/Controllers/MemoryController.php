@@ -31,25 +31,24 @@ class MemoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'author_id' => 'required|string',
             'title' => 'required|string|max:255',
             'date' => 'required|date',
             'location' => 'required|string',
             'notes' => 'nullable|string',
             'photos' => 'nullable|array',
         ]);
-    
-        $memory = Memory::create([
-            'author_id' => $validated['author_id'],
+
+        // 認証済みのユーザーを取得し、そのユーザーのメモリーとして作成する
+        $memory = $request->user()->memories()->create([
             'title' => $validated['title'],
             'date' => $validated['date'],
             'location' => $validated['location'],
-            'notes' => $validated['notes'] ?? '',
+            'notes' => $validated['notes'] ?? null,
             'photos' => $validated['photos'] ?? [],
         ]);
-    
-        return response()->json($memory, 201);
-        }
+
+        return new MemoryResource($memory);
+    }
 
     /**
      * Display the specified resource.

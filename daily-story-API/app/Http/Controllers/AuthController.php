@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -12,15 +13,17 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         // バリデーション（メールとパスワードのチェック）
-        $request->validate([
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email', // メールアドレスがユニークであること
             'password' => 'required|min:6', // パスワードは6文字以上
         ]);
 
         // ユーザーの作成
         $user = User::create([
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // パスワードをハッシュ化して保存
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']), // パスワードをハッシュ化して保存
         ]);
 
         // 作成したユーザーのトークンを生成
@@ -30,6 +33,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user' => new UserResource($user)
         ]);
     }
 
@@ -47,8 +51,8 @@ class AuthController extends Controller
             return response()->json(['message' => '認証に失敗しました'], 401);
         }
 
-        // ログイン成功時、ユーザーを取得
-        $user = User::where('email', $request->email)->firstOrFail();
+        // ログイン成功時、認証済みユーザーを取得
+        $user = $request->user();
 
         // トークンを生成
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -57,6 +61,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user' => new UserResource($user)
         ]);
     }
 }

@@ -10,24 +10,9 @@
 		E52545BA2E094E4200FF0CA8 /* daily-story.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "daily-story.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E52545272E094A1000FF0CA8 /* Exceptions for "daily-story-iOS" folder in "daily-story" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				App/AppDelegate.swift,
-				App/CoupleApp.swift,
-				Services/AuthService.swift,
-			);
-			target = E52545192E09495100FF0CA8 /* daily-story */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E525451B2E09495100FF0CA8 /* daily-story-iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				E52545272E094A1000FF0CA8 /* Exceptions for "daily-story-iOS" folder in "daily-story" target */,
-			);
 			path = "daily-story-iOS";
 			sourceTree = "<group>";
 		};

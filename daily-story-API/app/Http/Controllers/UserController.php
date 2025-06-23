@@ -5,27 +5,37 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function store(Request $request)
+    /**
+     * ユーザーのプロフィール情報を更新する
+     *
+     * @param Request $request
+     * @param User $user ルートモデルバインディングにより自動的にユーザーが取得される
+     * @return UserResource|\Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, User $user)
     {
-        // 入力バリデーション
+        // 認可チェック: ログインしているユーザーが自分自身のプロフィールのみ更新可能にする
+        if ($request->user()->id !== $user->id) {
+            return response()->json(['message' => '権限がありません。'], 403);
+        }
+
+        // バリデーション
         $validated = $request->validate([
-            'email' => 'required|email',
-            'name' => 'required|string',
+            'name' => 'sometimes|required|string|max:255',
+            // emailはユニークだが、自分自身のメールアドレスは許可する
+            'email' => ['sometimes', 'required', 'email', Rule::unique('users')->ignore($user->id)],
             'bio' => 'nullable|string',
-            'website' => 'nullable|string',
-            'profileImageURL' => 'nullable|string',
-            'partnerId' => 'nullable|string',
-            'pairId' => 'nullable|string',
+            'website' => 'nullable|string|url',
+            'profileImageURL' => 'nullable|string|url',
         ]);
 
-        // ユーザーを作成
-        $user = User::create($validated);
+        // ユーザー情報を更新して保存
+        $user->update($validated);
 
-        // JSON形式でユーザー情報を返却（UserResourceで整形も可能）
-        return response()->json(['data' => $user], 201);
-        // または：return new UserResource($user);
+        return new UserResource($user);
     }
 }
