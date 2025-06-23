@@ -1,9 +1,18 @@
-#  CoupleMate – カップル向けデートプラン共有アプリ
+#  dailystory　（仮）
 
-カップルがデートプランを作成・共有し、思い出を記録できるアプリ。
-
-
+**daily-story** は、毎日のお題に対してユーザーが100文字以内の物語を投稿し、みんなで共有・評価し合うSNS型の物語投稿アプリです。
 ---
+## 特徴
+
+## 🌟 特徴
+
+- **毎日更新されるお題** に対して物語を投稿
+- **100文字以内**のショートストーリー制限
+- 投稿は **全体公開**、他のユーザーの投稿が一覧表示
+- **いいね機能** による共感評価
+- 日別・週間・月間の **ランキング機能**
+- **ログイン必須**（ユーザーアカウント管理あり）
+- 管理者画面（お題の管理や不適切投稿の削除）
 
 
 ## 開発環境まとめ
@@ -18,6 +27,7 @@
 | ストレージ   | ImgBB（画像アップロード用の無料外部APIを使用予定）        |
 | 管理ツール   | Postman（APIテスト） / Sequel Ace（DB確認） |
 |　サーバー　|　Render?? |
+| 管理者画面       | Vue.js + TypeScript + Vuetify（SPA構成で構築予定）                         |
 
 ---
 
@@ -44,18 +54,17 @@ CoupleMate/
 ## Laravel APIの起動手順（ローカル専用）
 
 ```bash
-docker compose up -d         # コンテナ起動
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate
-
+docker compose build
+docker compose up -d
 ```
 
 ### よく使うコマンド：
 
 ```bash
-docker compose exec app php artisan migrate:fresh --seed
+docker compose exec laravel.test php artisan migrate:fresh --seed
 docker compose exec laravel.test tail -n 50 storage/logs/laravel.log　# LaravelAPIのログ確認
-docker compose exec app php artisan tinker
+docker compose exec laravel.test php artisan tinker
+docker compose exec laravel.test php artisan key:generate
 docker compose exec laravel.test php artisan migrate # マイグレーション
 docker compose exec laravel.test php artisan migrate:status　#　マイグレーションの状態確認
 docker compose down          # コンテナ停止
