@@ -115,6 +115,8 @@ ipconfig getifaddr en0 # IPアドレスの確認
 * [ ] Storageサービスの最終決定（Cloudinary or ImgBB）
 * [ ] 本番環境（Render）にデプロイ予定
 
+- httpsにしたい
+
 ---
 
 ## ライセンス
