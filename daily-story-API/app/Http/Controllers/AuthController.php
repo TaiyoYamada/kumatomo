@@ -14,14 +14,14 @@ class AuthController extends Controller
     {
         // バリデーション（メールとパスワードのチェック）
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            // 'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email', // メールアドレスがユニークであること
             'password' => 'required|min:6', // パスワードは6文字以上
         ]);
 
         // ユーザーの作成
         $user = User::create([
-            'name' => $validatedData['name'],
+            // 'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']), // パスワードをハッシュ化して保存
         ]);

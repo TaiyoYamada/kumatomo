@@ -38,8 +38,6 @@ struct MainTabView: View {
                 }
                 .tag(Selection.home)
 
-            
-            
             //  プラン探しタブ
             Text("プラン探し画面")
                 .tabItem {
@@ -47,30 +45,17 @@ struct MainTabView: View {
                 }
                 .tag(Selection.search)
 
-            
-            
-
-//            Button(action: {
-//                showingPostView.toggle()
-//            
-//            }) {
-//                
-//
-//            }
-//            .tabItem {
-//                Image(systemName: "plus.app")
-//            }
+            //  投稿タブ
             Text("投稿画面")
                 .tabItem {
-                    Image(systemName: "plus.app")
+                    Image(systemName: "plus.circle.fill")
                 }
                 .tag(Selection.post)
-
             
             //  思い出タブ
             Text("お知らせ画面")
                 .tabItem {
-                    Image(systemName: "speaker.square")
+                    Image(systemName: "bell.fill")
                 }
                 .tag(Selection.notification)
 
@@ -84,17 +69,6 @@ struct MainTabView: View {
             
         }
         .accentColor(.pink)
-        .onChange(of: selection) { newValue in
-            if newValue == .post {
-                showingPostView = true
-                
-                selection = .home
-            }
-        }
-        
-        .fullScreenCover(isPresented: $showingPostView) {
-            PostView()
-        }
     }
 }
 
