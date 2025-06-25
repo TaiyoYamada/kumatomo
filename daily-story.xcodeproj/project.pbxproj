@@ -7,13 +7,58 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		E52546AA2E09A1E300FF0CA8 /* daily-story.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "daily-story.app"; path = "/Users/yamadataiyou/Developer/daily-story/build/Debug-iphoneos/daily-story.app"; sourceTree = "<absolute>"; };
 		E52546AB2E09A1E900FF0CA8 /* daily-story-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "daily-story-Info.plist"; sourceTree = "<group>"; };
+		E5A326AC2E0B9CE80051AAD3 /* daily-story.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "daily-story.app"; path = "/Users/yamadataiyou/Developer/daily-story/build/Debug-iphoneos/daily-story.app"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E5A1B6F82E0C421600C42D5C /* Exceptions for "daily-story-iOS" folder in "daily-story" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.gitignore,
+				App/AppDelegate.swift,
+				App/DailyStory.swift,
+				Models/Enums/AuthError.swift,
+				Models/Enums/ImagePickerError.swift,
+				Models/Enums/StoryAPIError.swift,
+				Models/Memory.swift,
+				Models/Story.swift,
+				Models/User.swift,
+				README.md,
+				Resources/Assets.xcassets,
+				Services/AuthService.swift,
+				Services/MemoryAPIService.swift,
+				Services/StorageService.swift,
+				Services/StoryAPIService.swift,
+				Services/UserAPIService.swift,
+				Utils/ImageLoader.swift,
+				Utils/ProfileImageManager.swift,
+				Utils/TabBarHider.swift,
+				ViewModels/AuthViewModel.swift,
+				ViewModels/MemoriesViewModel.swift,
+				ViewModels/ProfileEditViewModel.swift,
+				ViewModels/ProfileViewModel.swift,
+				ViewModels/StoryViewModel.swift,
+				Views/ContentView.swift,
+				Views/FeedView.swift,
+				Views/LoginView.swift,
+				Views/MyPage/EditProfileView.swift,
+				Views/MyPage/MyPageView.swift,
+				Views/MyPage/MyProfileView.swift,
+				Views/MyPage/ProfileImageView.swift,
+				Views/PostView.swift,
+				Views/SignUpView.swift,
+			);
+			target = E52545192E09495100FF0CA8 /* daily-story */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E525451B2E09495100FF0CA8 /* daily-story-iOS */ = {
+		E5A1B6D62E0C421600C42D5C /* daily-story-iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E5A1B6F82E0C421600C42D5C /* Exceptions for "daily-story-iOS" folder in "daily-story" target */,
+			);
 			path = "daily-story-iOS";
 			sourceTree = "<group>";
 		};
@@ -33,8 +78,8 @@
 		E50E4CAC2DB6534D0022D7DF = {
 			isa = PBXGroup;
 			children = (
+				E5A1B6D62E0C421600C42D5C /* daily-story-iOS */,
 				E52546AB2E09A1E900FF0CA8 /* daily-story-Info.plist */,
-				E525451B2E09495100FF0CA8 /* daily-story-iOS */,
 			);
 			sourceTree = "<group>";
 		};
@@ -53,14 +98,11 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				E525451B2E09495100FF0CA8 /* daily-story-iOS */,
-			);
 			name = "daily-story";
 			packageProductDependencies = (
 			);
 			productName = "daily-story";
-			productReference = E52546AA2E09A1E300FF0CA8 /* daily-story.app */;
+			productReference = E5A326AC2E0B9CE80051AAD3 /* daily-story.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

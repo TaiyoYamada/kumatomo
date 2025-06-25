@@ -4,16 +4,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\MemoryController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserController; // ここを修正
+use App\Http\Controllers\StoryController;
 
-// ✅ 新規ユーザー登録（登録時にパスワード含む）
+// 新規ユーザー登録
 Route::post('/register', [AuthController::class, 'register']);
 
-// ✅ ログイン
+// ログイン
 Route::post('/login', [AuthController::class, 'login']);
 
-// ✅ 認証が必要なAPI（Sanctum）
+// 認証が必要なAPI（Sanctum）
 Route::middleware('auth:sanctum')->group(function () {
 
     // 自分のユーザー情報取得
@@ -24,7 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // プロフィール更新
     Route::put('/users/{id}', [UserController::class, 'update']);
 
-    // メモリー（思い出）投稿／取得（ログイン必須にしたいならここ）
-    Route::get('/memories', [MemoryController::class, 'index']);
-    Route::post('/memories', [MemoryController::class, 'store']);
+    // ストーリー（ショート物語）の投稿・取得
+    Route::get('/stories', [StoryController::class, 'index']);
+    
+    Route::post('/stories', [StoryController::class, 'store']);
+
+    // 特定ユーザーのストーリー一覧
+    Route::get('/users/{user}/stories', [StoryController::class, 'indexByUser']);
 });

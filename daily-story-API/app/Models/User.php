@@ -20,10 +20,7 @@ class User extends Authenticatable
         'password',
         'name',
         'bio',
-        'website',
-        'profile_image_url',
-        'partner_id',
-        'pair_id',
+        // 'profile_image_url',
         'followers_count',
         'following_count',
     ];
@@ -45,5 +42,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-
+    /**
+     * ユーザーが投稿したストーリーを取得
+     */
+    public function stories()
+    {
+        return $this->hasMany(Story::class);
+    }
 }

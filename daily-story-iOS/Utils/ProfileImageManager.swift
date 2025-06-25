@@ -2,12 +2,6 @@ import Foundation
 import UIKit
 import Combine
 
-enum ImagePickerError: Error {
-    case compressionFailed
-    case uploadFailed
-    case unknown
-}
-
 class ProfileImageManager {
     func uploadImage(_ image: UIImage) -> AnyPublisher<URL, Error> {
         // 画像をリサイズして圧縮

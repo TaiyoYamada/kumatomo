@@ -186,12 +186,16 @@ class AuthService: ObservableObject {
 
     @MainActor
     func fetchCurrentUser() async throws {
-        guard AuthTokenManager.shared.token != nil else {
-            print("⚠️ トークンが存在しません")
+        guard let token = AuthTokenManager.shared.token, !token.isEmpty else {
+            print("⚠️ トークンが存在しないか空です")
             throw AuthError.unauthorized
         }
         
-        let url = URL(string: "\(baseURL)/users")!
+        // トークンの内容を確認（デバッグ用）
+        print("🔑 現在のトークン: \(token)")
+        
+        // Laravelの標準的な認証済みユーザー取得エンドポイント /api/user に変更
+        let url = URL(string: "\(baseURL)/user")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -199,19 +203,21 @@ class AuthService: ObservableObject {
 
         print("📡 リクエスト先URL:", request.url?.absoluteString ?? "nil")
         print("📡 Authorizationヘッダー:", request.allHTTPHeaderFields?["Authorization"] ?? "なし")
+        print("📡 全ヘッダー:", request.allHTTPHeaderFields ?? [:])
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpResponse = response as? HTTPURLResponse {
                 print("📡 ステータスコード:", httpResponse.statusCode)
+                print("📡 レスポンスヘッダー:", httpResponse.allHeaderFields)
             } else {
                 print("⚠️ HTTPレスポンスではありません")
             }
 
             // レスポンスデータを一度文字列で出力（デバッグ用）
             if let jsonString = String(data: data, encoding: .utf8) {
-//                print("📡 レスポンスJSON:", jsonString)
+                print("📡 レスポンスJSON:", jsonString)
             }
 
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -219,9 +225,9 @@ class AuthService: ObservableObject {
             }
 
             if httpResponse.statusCode == 401 {
+                print("⚠️ 認証エラー（401）- トークンが無効か期限切れの可能性があります")
                 AuthTokenManager.shared.clearToken()
                 self.isAuthenticated = false
-                print("⚠️ 認証エラー（401）")
                 throw AuthError.unauthorized
             }
 
@@ -230,10 +236,45 @@ class AuthService: ObservableObject {
                 throw AuthError.fetchUserFailed
             }
 
-            self.currentUser = try JSONDecoder().decode(UserResponse.self, from: data).data
-
-            print("✅ ユーザー情報取得成功: \(self.currentUser?.email ?? "不明")")
-
+            // JSONデコーダーの設定
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            decoder.keyDecodingStrategy = .convertFromSnakeCase  // snake_caseをcamelCaseに変換
+            
+            // デコード処理を試行
+            do {
+                // 直接User型としてデコード
+                self.currentUser = try decoder.decode(User.self, from: data)
+                self.isAuthenticated = true
+                print("✅ ユーザー情報取得成功: \(self.currentUser?.email ?? "不明"), 名前: \(self.currentUser?.name ?? "未設定")")
+            } catch let decodingError {
+                print("🚨 ユーザーデータのデコードに失敗: \(decodingError)")
+                
+                // レスポンスの形式を詳しく調査
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    print("📊 JSONの構造: \(json.keys)")
+                    
+                    // dataフィールド内にユーザー情報がネストされている場合の対応
+                    if let userData = json["data"] as? [String: Any] {
+                        print("📊 data内の構造: \(userData.keys)")
+                        
+                        // UserResponse型（data属性にネストされている）としてデコード
+                        do {
+                            let userResponse = try decoder.decode(UserResponse.self, from: data)
+                            self.currentUser = userResponse.data
+                            self.isAuthenticated = true
+                            print("✅ ネストされたユーザー情報取得成功: \(self.currentUser?.email ?? "不明")")
+                        } catch {
+                            print("🚨 ネストされたユーザーデータのデコードにも失敗: \(error)")
+                            throw error
+                        }
+                    } else {
+                        throw decodingError
+                    }
+                } else {
+                    throw decodingError
+                }
+            }
         } catch {
             print("🚨 通信エラー: \(error.localizedDescription)")
             throw error
@@ -287,42 +328,6 @@ class AuthService: ObservableObject {
         
         // 成功したら最新のユーザー情報を取得
         try await fetchCurrentUser()
-    }
-}
-
-// エラー定義
-enum AuthError: Error, LocalizedError {
-    case invalidCredentials
-    case invalidResponse
-    case registrationFailed
-    case unauthorized
-    case fetchUserFailed
-    case logoutFailed
-    case updateProfileFailed
-    case userNotFound
-    case serverError(message: String)
-    
-    var errorDescription: String? {
-        switch self {
-        case .invalidCredentials:
-            return "メールアドレスまたはパスワードが正しくありません"
-        case .invalidResponse:
-            return "サーバーからの応答が無効です"
-        case .registrationFailed:
-            return "ユーザー登録に失敗しました"
-        case .unauthorized:
-            return "認証が必要です"
-        case .fetchUserFailed:
-            return "ユーザー情報の取得に失敗しました"
-        case .logoutFailed:
-            return "ログアウトに失敗しました"
-        case .updateProfileFailed:
-            return "プロフィールの更新に失敗しました"
-        case .userNotFound:
-            return "ユーザー情報が見つかりません"
-        case .serverError(let message):
-            return message
-        }
     }
 }
 

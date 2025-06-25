@@ -154,10 +154,10 @@ struct MyPageView: View {
                 }
             } else {
                 let user = profileViewModel.profile
-                Text(user.name)
+                Text(user.name ?? "")
                     .font(.headline)
                 
-                Text(user.bio)
+                Text(user.bio ?? "")
                     .font(.subheadline)
                     .fixedSize(horizontal: false, vertical: true)
                 

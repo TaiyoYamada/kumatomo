@@ -13,15 +13,13 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         // バリデーション（メールとパスワードのチェック）
-        $validatedData = $request->validate([
-            // 'name' => 'required|string|max:255',
+        $validatedData = $request->validate([ // nameが必須の場合、ここを有効にする
             'email' => 'required|email|unique:users,email', // メールアドレスがユニークであること
             'password' => 'required|min:6', // パスワードは6文字以上
         ]);
 
         // ユーザーの作成
-        $user = User::create([
-            // 'name' => $validatedData['name'],
+        $user = User::create([ // $validatedDataを直接渡す
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']), // パスワードをハッシュ化して保存
         ]);

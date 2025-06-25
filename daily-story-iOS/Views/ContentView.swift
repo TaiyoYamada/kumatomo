@@ -32,7 +32,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selection) {
             //  ホームタブ
-            Text("ホーム画面")
+            FeedView()
                 .tabItem {
                     Image(systemName: "house.fill")
                 }
@@ -46,7 +46,7 @@ struct MainTabView: View {
                 .tag(Selection.search)
 
             //  投稿タブ
-            Text("投稿画面")
+            PostView()
                 .tabItem {
                     Image(systemName: "plus.circle.fill")
                 }
@@ -61,7 +61,7 @@ struct MainTabView: View {
 
             
             //  プロフィールタブ
-            MyPageView()
+            MyProfileView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
                 }
@@ -77,3 +77,4 @@ struct MainTabView: View {
 //        ContentView()
 //    }
 //}
+
