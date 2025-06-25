@@ -32,8 +32,6 @@ class ProfileViewModel: ObservableObject {
             website: nil,
             followingCount: 0,
             followersCount: 0,
-            partnerId: nil,
-            pairId: nil,
             createdAt: nil
         )
         loadProfile(userID: userID)

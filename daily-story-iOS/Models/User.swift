@@ -10,8 +10,6 @@ struct User: Codable, Identifiable {
     var website: String?
     var followingCount: Int
     var followersCount: Int
-    var partnerId: String?
-    var pairId: String?
     var createdAt: Date?
 
     enum CodingKeys: String, CodingKey {
@@ -23,8 +21,6 @@ struct User: Codable, Identifiable {
         case website
         case followingCount = "following_count"
         case followersCount = "followers_count"
-        case partnerId = "partner_id"
-        case pairId = "pair_id"
         case createdAt = "created_at"
     }
 }
@@ -37,8 +33,6 @@ struct CreateUserRequest: Codable {
     var name: String
     var birthDate: Date?
     var profileImageURL: String?
-    var partnerId: String?
-    var pairId: String?
     var bio: String
 }
 
@@ -48,8 +42,6 @@ extension CreateUserRequest {
         self.email = user.email
         self.name = user.name
         self.profileImageURL = user.profileImageURL
-        self.partnerId = user.partnerId
-        self.pairId = user.pairId
         self.bio = user.bio
     }
 }

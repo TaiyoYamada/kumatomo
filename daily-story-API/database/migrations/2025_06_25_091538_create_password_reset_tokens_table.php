@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('stories', function (Blueprint $table) {
-            $table->text('body');
-            $table->unsignedBigInteger('user_id');
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
@@ -22,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('stories', function (Blueprint $table) {
-            $table->dropColumn(['body', 'user_id']);
-        });
+        Schema::dropIfExists('password_reset_tokens');
     }
 };
