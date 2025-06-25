@@ -99,24 +99,6 @@ struct PostView: View {
             }
         }
         .overlay {
-            // 投稿成功時のオーバーレイ
-            if showingPostSuccess {
-                Color.black.opacity(0.4)
-                    .edgesIgnoringSafeArea(.all)
-                    .overlay(
-                        VStack {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 60))
-                                .foregroundColor(.white)
-                            
-                            Text("投稿しました！")
-                                .font(.title3)
-                                .foregroundColor(.white)
-                                .padding(.top, 8)
-                        }
-                    )
-            }
-            
             // エラーメッセージ
             if let errorMessage = viewModel.errorMessage {
                 Color.black.opacity(0.4)
@@ -140,6 +122,38 @@ struct PostView: View {
                     )
             }
         }
+        // 投稿成功時のモーダル
+        .sheet(isPresented: $showingPostSuccess) {
+            SuccessModalView()
+                .presentationDetents([.height(200)])
+                .presentationBackground(.clear)
+                .presentationCornerRadius(20)
+                .interactiveDismissDisabled()
+        }
+    }
+}
+
+// 投稿成功モーダル
+struct SuccessModalView: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 60))
+                .foregroundColor(.green)
+            
+            Text("投稿しました！")
+                .font(.title3.bold())
+                .foregroundColor(.primary)
+            
+            Text("タイムラインに反映されます")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 30)
+        .background(Color(UIColor.systemBackground))
+        .cornerRadius(20)
+        .shadow(radius: 10)
     }
 }
 

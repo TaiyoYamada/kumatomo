@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		E52546AB2E09A1E900FF0CA8 /* daily-story-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "daily-story-Info.plist"; sourceTree = "<group>"; };
-		E5A326AC2E0B9CE80051AAD3 /* daily-story.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "daily-story.app"; path = "/Users/yamadataiyou/Developer/daily-story/build/Debug-iphoneos/daily-story.app"; sourceTree = "<absolute>"; };
+		E519315F2E0C496200B017A9 /* daily-story.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "daily-story.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -41,6 +40,7 @@
 				ViewModels/StoryViewModel.swift,
 				Views/ContentView.swift,
 				Views/FeedView.swift,
+				Views/LaunchScreenView.swift,
 				Views/LoginView.swift,
 				Views/MyPage/EditProfileView.swift,
 				Views/MyPage/MyPageView.swift,
@@ -79,7 +79,7 @@
 			isa = PBXGroup;
 			children = (
 				E5A1B6D62E0C421600C42D5C /* daily-story-iOS */,
-				E52546AB2E09A1E900FF0CA8 /* daily-story-Info.plist */,
+				E519315F2E0C496200B017A9 /* daily-story.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -102,7 +102,7 @@
 			packageProductDependencies = (
 			);
 			productName = "daily-story";
-			productReference = E5A326AC2E0B9CE80051AAD3 /* daily-story.app */;
+			productReference = E519315F2E0C496200B017A9 /* daily-story.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -297,7 +297,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "daily-story";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
@@ -328,7 +327,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "daily-story";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
