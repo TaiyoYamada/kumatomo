@@ -71,8 +71,6 @@ docker compose exec laravel.test php artisan migrate:status　#　マイグレ�
 docker compose down          # コンテナ停止
 docker compose ps            # 実行中コンテナの確認
 ```
----
-
 ```
 ipconfig getifaddr en0 # IPアドレスの確認
 ```
