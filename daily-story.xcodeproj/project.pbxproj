@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		E52546AA2E09A1E300FF0CA8 /* daily-story.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "daily-story.app"; path = "/Users/yamadataiyou/Developer/daily-story/build/Debug-iphoneos/daily-story.app"; sourceTree = "<absolute>"; };
 		E52546AB2E09A1E900FF0CA8 /* daily-story-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "daily-story-Info.plist"; sourceTree = "<group>"; };
+		E5A326AC2E0B9CE80051AAD3 /* daily-story.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "daily-story.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -35,6 +35,7 @@
 			children = (
 				E52546AB2E09A1E900FF0CA8 /* daily-story-Info.plist */,
 				E525451B2E09495100FF0CA8 /* daily-story-iOS */,
+				E5A326AC2E0B9CE80051AAD3 /* daily-story.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,7 +61,7 @@
 			packageProductDependencies = (
 			);
 			productName = "daily-story";
-			productReference = E52546AA2E09A1E300FF0CA8 /* daily-story.app */;
+			productReference = E5A326AC2E0B9CE80051AAD3 /* daily-story.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
