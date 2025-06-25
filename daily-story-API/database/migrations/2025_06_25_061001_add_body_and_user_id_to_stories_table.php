@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-
-        Schema::create('stories', function (Blueprint $table) {
-            $table->id();
-            $table->text('body'); // ← 追加
-            $table->unsignedBigInteger('user_id'); // ← 必要なら追加
-            $table->timestamps();
+        Schema::table('stories', function (Blueprint $table) {
+            $table->text('body');
+            $table->unsignedBigInteger('user_id');
         });
     }
 
@@ -25,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stories');
+        Schema::table('stories', function (Blueprint $table) {
+            $table->dropColumn(['body', 'user_id']);
+        });
     }
 };
