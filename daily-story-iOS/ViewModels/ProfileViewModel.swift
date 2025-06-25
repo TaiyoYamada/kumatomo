@@ -56,8 +56,8 @@ class ProfileViewModel: ObservableObject {
     }
 
     private func updateFormFields(with profile: User) {
-        name = profile.name
-        bio = profile.bio
+        name = profile.name ?? ""
+        bio = profile.bio ?? ""
     }
 
     func saveProfile() {
@@ -121,8 +121,8 @@ class ProfileViewModel: ObservableObject {
     
     // Reset form fields to the current profile values
     func resetFormFields() {
-        name = profile.name
-        bio = profile.bio
+        name = profile.name ?? ""
+        bio = profile.bio ?? ""
         website = profile.website ?? ""
     }
 

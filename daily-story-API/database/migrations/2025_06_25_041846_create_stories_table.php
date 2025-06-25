@@ -14,8 +14,11 @@ return new class extends Migration
 
         Schema::create('stories', function (Blueprint $table) {
             $table->id();
-            $table->text('body'); // ← 追加
-            $table->unsignedBigInteger('user_id'); // ← 必要なら追加
+            $table->text('content');
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

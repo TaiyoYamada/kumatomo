@@ -20,10 +20,10 @@ class ProfileEditViewModel: ObservableObject {
     
     init(profile: User) {
         self.originalProfile = profile
-        self.name = profile.name
-        self.email = profile.email
+        self.name = profile.name ?? ""
+        self.email = profile.email ?? ""
         self.website = profile.website ?? ""
-        self.bio = profile.bio
+        self.bio = profile.bio ?? ""
         
     }
     

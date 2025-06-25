@@ -172,15 +172,15 @@ struct ProfileHeaderView: View {
                 
                 // ユーザー情報
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(user.name)
+                    Text(user.name ?? "なめこ")
                         .font(.title3)
                         .fontWeight(.bold)
                     
-                    Text("@\(user.email.components(separatedBy: "@")[0])")
+                    Text("@\(user.email ?? "".components(separatedBy: "@")[0])")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     
-                    Text(user.bio)
+                    Text(user.bio ?? "")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.top, 4)

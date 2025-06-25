@@ -3,13 +3,13 @@ import Foundation
 /// ユーザーモデル（SwiftUI / Laravel API 両対応）
 struct User: Codable, Identifiable {
     var id: Int?
-    var email: String
-    var name: String
+    var email: String?
+    var name: String?
     var profileImageURL: String?
-    var bio: String
+    var bio: String?
     var website: String?
-    var followingCount: Int
-    var followersCount: Int
+    var followingCount: Int?
+    var followersCount: Int?
     var createdAt: Date?
 
     enum CodingKeys: String, CodingKey {
@@ -29,20 +29,13 @@ struct User: Codable, Identifiable {
 /// Laravel の POST /api/users に送信するユーザー作成リクエスト
 struct CreateUserRequest: Codable {
     var id: Int?
-    var email: String
-    var name: String
-    var birthDate: Date?
-    var profileImageURL: String?
-    var bio: String
+    var email: String?
 }
 
 extension CreateUserRequest {
     init(from user: User) {
         self.id = user.id
         self.email = user.email
-        self.name = user.name
-        self.profileImageURL = user.profileImageURL
-        self.bio = user.bio
     }
 }
 

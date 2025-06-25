@@ -20,8 +20,6 @@ class UserResource extends JsonResource
             'website' => $this->website,
             'following_count' => $this->following_count ?? 0,
             'followers_count' => $this->followers_count ?? 0,
-            'partner_id' => $this->partnerId,
-            'pair_id' => $this->pairId,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

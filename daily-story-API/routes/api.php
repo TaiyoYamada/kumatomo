@@ -28,4 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/stories', [StoryController::class, 'index']);
     
     Route::post('/stories', [StoryController::class, 'store']);
+
+    // 特定ユーザーのストーリー一覧
+    Route::get('/users/{user}/stories', [StoryController::class, 'indexByUser']);
 });

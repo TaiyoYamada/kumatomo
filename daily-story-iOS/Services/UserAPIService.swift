@@ -26,12 +26,33 @@ class UserAPIService {
 
     // 🔹 ユーザープロフィール取得（GET /api/users/{id}）
     func fetchProfile(userID: String) -> AnyPublisher<User, Error> {
-        let url = baseURL.appendingPathComponent(userID)
+        // 正しいURLパスを構築
+        let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
+        
+        // デバッグ用のログ出力
+        print("📡 リクエストURL: \(url.absoluteString)")
+        
+        // 認証トークンを追加
+        if let token = AuthTokenManager.shared.token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
 
         return URLSession.shared.dataTaskPublisher(for: request)
             .tryMap { data, response in
+                // デバッグ用にレスポンスの詳細を出力
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("📡 ステータスコード: \(httpResponse.statusCode)")
+                    
+                    if httpResponse.statusCode >= 400 {
+                        print("⚠️ ユーザー取得失敗（ステータス: \(httpResponse.statusCode)）")
+                        if let responseBody = String(data: data, encoding: .utf8) {
+                            print("📄 エラーレスポンス: \(responseBody)")
+                        }
+                    }
+                }
                 try self.validateResponse(response)
                 return try self.jsonDecoder.decode(User.self, from: data)
             }
