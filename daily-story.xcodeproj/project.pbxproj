@@ -30,6 +30,7 @@
 				Services/StorageService.swift,
 				Services/StoryAPIService.swift,
 				Services/UserAPIService.swift,
+				Utils/APIHelper.swift,
 				Utils/ImageLoader.swift,
 				Utils/ProfileImageManager.swift,
 				Utils/TabBarHider.swift,

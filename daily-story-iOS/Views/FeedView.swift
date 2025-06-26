@@ -120,13 +120,13 @@ struct StoryCardView: View {
             // ヘッダー（ユーザー情報）
             HStack(spacing: 10) {
                 // ユーザーアイコン
-                Image(systemName: mockAvatars[story.userId] ?? "person.circle")
+                Image(systemName: mockAvatars[story.userId ?? 1] ?? "person.circle")
                     .font(.system(size: 36))
                     .foregroundColor(.blue)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     // ユーザー名
-                    Text(mockNames[story.userId] ?? "ユーザー")
+                    Text(mockNames[story.userId ?? 1] ?? "ユーザー")
                         .font(.headline)
                     
                     // 投稿日時
