@@ -4,7 +4,7 @@
 
 ---
 
-## 特徴
+## 主な特徴
 
 - **毎日更新されるお題** に対して物語を投稿
 - **100文字以内**のショートストーリー制限
@@ -25,30 +25,10 @@
 | DB      | MySQL 8.x（Dockerで起動）               |
 | 認証      | Laravel Sanctum（トークンベース認証）           |
 | API通信   | REST API（JSON形式、Bearerトークンによる認証）     ||
-| ストレージ   | ImgBB（画像アップロード用の無料外部APIを使用予定）        |
-| 管理ツール   | Postman（APIテスト） / Sequel Ace（DB確認） |
-|　サーバー　|　Render?? |
-| 管理者画面       | Vue.js + TypeScript + Vuetify（SPA構成で構築予定）                         |
-
----
-
-
-## ディレクトリ構成（ローカル）
-
-```plaintext
-CoupleMate/
-├── CoupleMate-iOS/       # iOSアプリ (SwiftUI)
-│   └── CoupleMate.xcodeproj
-│   └── Views/, Models/, Services/, ...
-│   └── GoogleService-Info.plist（追加済）
-│   └── .gitignore（Xcode用）
-│
-├── CoupleMate-api/       # Laravel APIサーバー
-│   └── app/, routes/, database/, ...
-│   └── .env（Git除外）
-│   └── docker-compose.yml
-│   └── .gitignore（Laravel用）
-```
+| 画像ストレージ   | ImgBB（画像アップロード用の無料外部APIを使用予定） |
+| 管理者画面       | Vue.js + TypeScript + Vuetify（SPA構成で構築予定）|
+| その他開発ツール   | Postman（APIテスト） / Sequel Ace（DB確認） |
+|　本番環境（予定）　| Render |
 
 ---
 
