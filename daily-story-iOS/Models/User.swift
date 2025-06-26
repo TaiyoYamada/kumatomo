@@ -1,8 +1,8 @@
 import Foundation
 
-/// ユーザーモデル（SwiftUI / Laravel API 両対応）
+/// ユーザーモデル
 struct User: Codable, Identifiable {
-    var id: Int?
+    var id: Int
     var email: String?
     var name: String?
     var profileImageURL: String?
@@ -28,7 +28,7 @@ struct User: Codable, Identifiable {
 
 /// Laravel の POST /api/users に送信するユーザー作成リクエスト
 struct CreateUserRequest: Codable {
-    var id: Int?
+    var id: Int
     var email: String?
 }
 

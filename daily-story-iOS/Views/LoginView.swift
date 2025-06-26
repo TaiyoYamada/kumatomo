@@ -7,18 +7,10 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                // ヘッダーとロゴ
-                Image(systemName: "heart.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(.pink)
-                    .padding(.top, 40)
-                
-                Text("CoupleMateへようこそ")
+                Text("DailyStoryへようこそ")
                     .font(.title)
                     .fontWeight(.bold)
-                    .padding(.vertical)
+                    .padding(.vertical, 50)
                 
                 // 入力フォーム
                 VStack(spacing: 24) {

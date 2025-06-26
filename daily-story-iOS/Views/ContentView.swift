@@ -2,13 +2,25 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var viewModel = AuthViewModel()
-    
+    @State private var isSplashFinished = false
+
     var body: some View {
         Group {
-            if viewModel.isAuthenticated {
-                MainTabView(viewModel: viewModel)
+            if !isSplashFinished {
+                LaunchScreenView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            withAnimation {
+                                isSplashFinished = true
+                            }
+                        }
+                    }
             } else {
-                LoginView()
+                if viewModel.isAuthenticated {
+                    MainTabView(viewModel: viewModel)
+                } else {
+                    LoginView()
+                }
             }
         }
     }

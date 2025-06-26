@@ -120,13 +120,13 @@ struct StoryCardView: View {
             // ヘッダー（ユーザー情報）
             HStack(spacing: 10) {
                 // ユーザーアイコン
-                Image(systemName: mockAvatars[story.userId] ?? "person.circle")
+                Image(systemName: mockAvatars[story.userId ?? 1] ?? "person.circle")
                     .font(.system(size: 36))
                     .foregroundColor(.blue)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     // ユーザー名
-                    Text(mockNames[story.userId] ?? "ユーザー")
+                    Text(mockNames[story.userId ?? 1] ?? "ユーザー")
                         .font(.headline)
                     
                     // 投稿日時
@@ -163,11 +163,5 @@ struct StoryCardView: View {
         .background(cardBackground)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-    }
-}
-
-struct FeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        FeedView()
     }
 }

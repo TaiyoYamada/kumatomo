@@ -24,7 +24,7 @@ class ProfileViewModel: ObservableObject {
 
     init(userID: String) {
         self.profile = User(
-            id: nil,
+            id: 0,
             email: "",
             name: "",
             profileImageURL: nil,

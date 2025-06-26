@@ -2,8 +2,8 @@ import SwiftUI
 
 struct PostView: View {
     @StateObject private var viewModel = StoryViewModel()
-    @State private var showingPostSuccess = false
     @Environment(\.dismiss) private var dismiss
+    @State private var userId: Int = 1 // デフォルト値
     
     // フォントとカラー定数
     private let titleFont = Font.headline
@@ -36,15 +36,12 @@ struct PostView: View {
                 
                 Button(action: {
                     Task {
-                        // 仮のユーザーID（実際の実装では認証済みユーザーのIDを使用）
-                        let userId = 1
-                        let success = await viewModel.postStory(userId: userId, content: viewModel.storyContent)
-                        if success {
-                            showingPostSuccess = true
-                            // 少し待ってから画面を閉じる
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                dismiss()
-                            }
+                        // 認証サービスから現在のユーザーIDを取得
+                        if let currentUser = AuthService.shared.currentUser {
+                            let success = await viewModel.postStory(userId: currentUser.id, content: viewModel.storyContent)
+                            // 成功時はviewModelのshowSuccessModal状態変数を使用
+                        } else {
+                            viewModel.errorMessage = "ユーザー情報が取得できません。再ログインしてください。"
                         }
                     }
                 }) {
@@ -99,24 +96,6 @@ struct PostView: View {
             }
         }
         .overlay {
-            // 投稿成功時のオーバーレイ
-            if showingPostSuccess {
-                Color.black.opacity(0.4)
-                    .edgesIgnoringSafeArea(.all)
-                    .overlay(
-                        VStack {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 60))
-                                .foregroundColor(.white)
-                            
-                            Text("投稿しました！")
-                                .font(.title3)
-                                .foregroundColor(.white)
-                                .padding(.top, 8)
-                        }
-                    )
-            }
-            
             // エラーメッセージ
             if let errorMessage = viewModel.errorMessage {
                 Color.black.opacity(0.4)
@@ -139,12 +118,54 @@ struct PostView: View {
                         }
                     )
             }
+            
+            // 投稿成功時のモーダル（中央表示）
+            if viewModel.showSuccessModal {
+                Color.black.opacity(0.4)
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        VStack(spacing: 20) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 60))
+                                .foregroundColor(.green)
+                            
+                            Text("投稿しました！")
+                                .font(.title3.bold())
+                                .foregroundColor(.primary)
+                            
+                            Text("タイムラインに反映されます")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(30)
+                        .background(Color(UIColor.systemBackground))
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                        .padding(.horizontal, 40)
+                    )
+                    .onAppear {
+                        // 3秒後に自動で閉じて前の画面に戻る
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            viewModel.showSuccessModal = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                dismiss()
+                            }
+                        }
+                    }
+            }
+        }
+        .onAppear {
+            // 画面表示時に現在のユーザーIDを取得
+            if let currentUser = AuthService.shared.currentUser {
+                userId = currentUser.id
+            }
         }
     }
 }
 
-//struct PostView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PostView()
-//    }
-//}
+// プレビュー用
+struct PostView_Previews: PreviewProvider {
+    static var previews: some View {
+        PostView()
+    }
+}
