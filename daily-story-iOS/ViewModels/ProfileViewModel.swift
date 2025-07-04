@@ -12,6 +12,7 @@ class ProfileViewModel: ObservableObject {
     @Published var selectedImage: UIImage?
     @Published var isImageUploading = false
     @Published var showSuccessMessage = false
+    @Published var stories: [Story] = []
 
     // 編集用プロパティ
     @Published var name: String = ""
@@ -19,12 +20,14 @@ class ProfileViewModel: ObservableObject {
     @Published var website: String = ""
     
     private let userAPIService = UserAPIService()
+    private let storyAPIService = StoryAPIService()
     private let imageManager = ProfileImageManager()
     private var cancellables = Set<AnyCancellable>()
-
-    init(userID: String) {
+    
+    // userIDをInt型に変更
+    init(userID: Int) {
         self.profile = User(
-            id: 0,
+            id: userID,
             email: "",
             name: "",
             profileImageURL: nil,
@@ -35,13 +38,13 @@ class ProfileViewModel: ObservableObject {
             createdAt: nil
         )
         loadProfile(userID: userID)
+        loadUserStories(userID: userID)
     }
     
-    
-
-    func loadProfile(userID: String) {
+    // userIDをInt型に変更
+    func loadProfile(userID: Int) {
         isLoading = true
-        userAPIService.fetchProfile(userID: userID)
+        userAPIService.fetchProfile(userID: String(userID)) // String型に変換
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 self?.isLoading = false
@@ -54,10 +57,31 @@ class ProfileViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    
+    // ユーザーのストーリーを読み込むメソッドを追加
+    func loadUserStories(userID: Int) {
+        isLoading = true
+        
+        Task {
+            do {
+                let fetchedStories = try await storyAPIService.fetchUserStories(userId: userID)
+                await MainActor.run {
+                    self.stories = fetchedStories
+                    self.isLoading = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.handleError(error)
+                    self.isLoading = false
+                }
+            }
+        }
+    }
 
     private func updateFormFields(with profile: User) {
         name = profile.name ?? ""
         bio = profile.bio ?? ""
+        website = profile.website ?? ""
     }
 
     func saveProfile() {

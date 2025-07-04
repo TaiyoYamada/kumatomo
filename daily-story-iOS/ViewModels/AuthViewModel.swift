@@ -104,9 +104,9 @@ final class AuthViewModel: ObservableObject {
             )
             
             // プロフィール画像が選択されていればアップロード
-            if let image = profileImage {
-                await uploadProfileImage(image)
-            }
+//            if let image = profileImage {
+//                await uploadProfileImage(image)
+//            }
             
             resetForm()
         } catch {
@@ -135,42 +135,31 @@ final class AuthViewModel: ObservableObject {
     
     // - プロフィール画像アップロード
     
-    /// UIImage を StorageService 経由でアップロードし、URL を AuthService に登録
-    /// プロフィール画像をアップロードし、APIのユーザープロフィールも更新する
-    @MainActor
-    private func uploadProfileImage(_ image: UIImage) async {
-        // 1. ユーザーが認証済みか確認
-        guard isAuthenticated, let user = currentUser else { return }
-        
-        // 2. ローディング開始
-        isLoading = true
-        defer { isLoading = false }    // 処理後に必ずローディング停止
-        
-//        do {
-//            // 3. StorageService で画像をアップロード → URL を取得
+//    // プロフィール画像をアップロードし、APIのユーザープロフィールも更新する
+//    @MainActor
+//    private func uploadProfileImage(_ image: UIImage) async {
+//        guard isAuthenticated, let user = currentUser, let userId = user.id else {
+//            errorMessage = "ユーザーIDが取得できません。再ログインしてください。"
+//            return
+//        }
 //
-//            guard let userId = user.id else {
-//                throw NSError(domain: "AuthViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "ユーザーIDが取得できません"])
-//            }
-//            
-//            // IntのuserIdをStringに変換
+//        isLoading = true
+//        defer { isLoading = false }
+//
+//        do {
 //            let userIdString = String(userId)
-//            
 //            let url = try await StorageService.shared.uploadImage(
 //                image,
 //                path: StoragePath.profile(uid: userIdString)
 //            )
-//            
-//            // 4. URL を文字列に変換して AuthService へ渡し、API上のプロフィールを更新
+//
 //            let urlString = url.absoluteString
 //            try await authService.updateProfileImage(withImageUrl: urlString)
-//            
 //        } catch {
-//            // 5. エラー発生時はメッセージをセット
 //            errorMessage = error.localizedDescription
 //            print("DEBUG: 画像アップロード失敗 -> \(error.localizedDescription)")
 //        }
-    }
+//    }
 
     
     // - PhotosPicker から UIImage を取得

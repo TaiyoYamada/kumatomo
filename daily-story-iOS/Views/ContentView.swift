@@ -74,6 +74,7 @@ struct MainTabView: View {
             
             //  プロフィールタブ
             MyProfileView()
+//            MyPageView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
                 }
