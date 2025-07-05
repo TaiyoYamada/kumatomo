@@ -20,7 +20,7 @@ struct MyProfileView: View {
                         .padding(.bottom, 16)
                     
                     // タブセクション
-                    TabSectionView(selectedTab: $selectedTab)
+//                    TabSectionView(selectedTab: $selectedTab)
                     
                     // 投稿グリッド
                     PostGridView(stories: viewModel.stories)
@@ -186,55 +186,55 @@ struct ProfileHeaderView: View {
 }
 
 // タブセクションビュー
-struct TabSectionView: View {
-    @Binding var selectedTab: Int
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-                .background(Color.gray.opacity(0.3))
-            
-            HStack(spacing: 0) {
-                TabButton(
-                    icon: "grid",
-                    isSelected: selectedTab == 0,
-                    action: { selectedTab = 0 }
-                )
-                
-                TabButton(
-                    icon: "person.crop.square",
-                    isSelected: selectedTab == 1,
-                    action: { selectedTab = 1 }
-                )
-            }
-            
-            Divider()
-                .background(Color.gray.opacity(0.3))
-        }
-    }
-}
+//struct TabSectionView: View {
+//    @Binding var selectedTab: Int
+//    
+//    var body: some View {
+//        VStack(spacing: 0) {
+//            Divider()
+//                .background(Color.gray.opacity(0.3))
+//            
+//            HStack(spacing: 0) {
+//                TabButton(
+//                    icon: "grid",
+//                    isSelected: selectedTab == 0,
+//                    action: { selectedTab = 0 }
+//                )
+//                
+//                TabButton(
+//                    icon: "person.crop.square",
+//                    isSelected: selectedTab == 1,
+//                    action: { selectedTab = 1 }
+//                )
+//            }
+//            
+//            Divider()
+//                .background(Color.gray.opacity(0.3))
+//        }
+//    }
+//}
 
-struct TabButton: View {
-    let icon: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundColor(isSelected ? .primary : .gray)
-                
-                Rectangle()
-                    .fill(isSelected ? Color.primary : Color.clear)
-                    .frame(height: 1)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-        }
-    }
-}
+//struct TabButton: View {
+//    let icon: String
+//    let isSelected: Bool
+//    let action: () -> Void
+//    
+//    var body: some View {
+//        Button(action: action) {
+//            VStack(spacing: 8) {
+//                Image(systemName: icon)
+//                    .font(.title3)
+//                    .foregroundColor(isSelected ? .primary : .gray)
+//                
+//                Rectangle()
+//                    .fill(isSelected ? Color.primary : Color.clear)
+//                    .frame(height: 1)
+//            }
+//            .frame(maxWidth: .infinity)
+//            .padding(.vertical, 12)
+//        }
+//    }
+//}
 
 // 投稿グリッドビュー
 struct PostGridView: View {
