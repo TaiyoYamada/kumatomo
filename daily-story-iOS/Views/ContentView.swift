@@ -34,9 +34,7 @@ struct MainTabView: View {
     
     enum Selection{
         case home
-        case search
         case post
-        case notification
         case profile
         
     }
@@ -50,26 +48,12 @@ struct MainTabView: View {
                 }
                 .tag(Selection.home)
 
-            //  プラン探しタブ
-            Text("プラン探し画面")
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                }
-                .tag(Selection.search)
-
             //  投稿タブ
             PostView()
                 .tabItem {
                     Image(systemName: "plus.circle.fill")
                 }
                 .tag(Selection.post)
-            
-            //  思い出タブ
-            Text("お知らせ画面")
-                .tabItem {
-                    Image(systemName: "bell.fill")
-                }
-                .tag(Selection.notification)
 
             
             //  プロフィールタブ
