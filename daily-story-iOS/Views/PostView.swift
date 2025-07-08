@@ -16,10 +16,8 @@ struct PostView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Top navigation bar
             HStack {
                 Button(action: {
-                    dismiss()
                 }) {
                     Image(systemName: "xmark")
                         .foregroundColor(.black)
@@ -160,12 +158,5 @@ struct PostView: View {
                 userId = currentUser.id
             }
         }
-    }
-}
-
-// プレビュー用
-struct PostView_Previews: PreviewProvider {
-    static var previews: some View {
-        PostView()
     }
 }
