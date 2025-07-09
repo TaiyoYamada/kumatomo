@@ -23,6 +23,8 @@ class User extends Authenticatable
         // 'profile_image_url',
         'followers_count',
         'following_count',
+        'website',
+        'profile_image_url', // プロフィール画像のURL
     ];
 
     /**

@@ -10,8 +10,8 @@ class StoryAPIService {
         return AuthTokenManager.shared.token ?? ""
     }
     
-    // ストーリーを投稿する
-    func postStory(userId: Int, content: String) async throws -> Story {
+    // ストーリーを投稿する（画像URL、タイトル、タグに対応）
+    func postStory(userId: Int, title: String, content: String, imageUrl: String? = nil, tags: [String] = []) async throws -> Story {
         let endpoint = "\(baseURL)/stories"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
@@ -31,10 +31,21 @@ class StoryAPIService {
         }
         
         // リクエストボディの作成
-        let body: [String: Any] = [
+        var body: [String: Any] = [
             "user_id": userId,
+            "title": title,
             "content": content
         ]
+        
+        // 画像URLがある場合は追加
+        if let imageUrl = imageUrl, !imageUrl.isEmpty {
+            body["image_url"] = imageUrl
+        }
+        
+        // タグがある場合は追加
+        if !tags.isEmpty {
+            body["tags"] = tags
+        }
         
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         
@@ -196,6 +207,20 @@ class StoryAPIService {
                     return try decoder.decode([Story].self, from: data)
                 } catch {
                     print("🚨 デコードエラー: \(error)")
+                    if let decodingError = error as? DecodingError {
+                        switch decodingError {
+                        case .keyNotFound(let key, _):
+                            print("🔑 キーが見つかりません: \(key)")
+                        case .typeMismatch(let type, _):
+                            print("📊 型の不一致: \(type)")
+                        case .valueNotFound(let type, _):
+                            print("⚠️ 値が見つかりません: \(type)")
+                        case .dataCorrupted(let context):
+                            print("🔄 データ破損: \(context)")
+                        @unknown default:
+                            print("🧩 その他のデコードエラー")
+                        }
+                    }
                     throw StoryAPIError.decodingError(error)
                 }
             } else if let jsonString = String(data: data, encoding: .utf8) {

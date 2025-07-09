@@ -1,61 +1,45 @@
 import SwiftUI
 
 struct MyProfileView: View {
-    @StateObject private var viewModel = ProfileViewModel(userID: 0) // ユーザーIDは適宜変更してください
+    @StateObject private var viewModel = ProfileViewModel(userID: 0)
+    @StateObject private var storyviewModel = StoryViewModel()
     @State private var showingNewPost = false
     @State private var selectedTab = 0
-    
-    // カラー定数
-    private let backgroundColor = Color(UIColor.systemBackground)
-    private let cardBackground = Color.white
-    private let accentColor = Color.blue
+    @State private var showingEditProfile = false
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
-                    // プロフィールヘッダー
-                    ProfileHeaderView(user: viewModel.profile)
+                    // カバー画像とプロフィール
+                    ProfileCoverView(user: viewModel.profile, showingEditProfile: $showingEditProfile)
+                    
+                    // プロフィール情報
+                    ProfileInfoView(user: viewModel.profile)
                         .padding(.horizontal, 16)
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 20)
                     
                     // タブセクション
-//                    TabSectionView(selectedTab: $selectedTab)
+                    TabSectionView(selectedTab: $selectedTab)
                     
                     // 投稿グリッド
-                    PostGridView(stories: viewModel.stories)
+                    PostGridItemView(story: storyviewModel.stories)
                 }
             }
-            .background(backgroundColor)
-            .navigationTitle(viewModel.profile.name ?? "プロフィール")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 16) {
-                        Button(action: {
-                            showingNewPost = true
-                        }) {
-                            Image(systemName: "plus.app")
-                                .font(.title3)
-                                .foregroundColor(.primary)
-                        }
-                        
-                        Button(action: {
-                            // メニュー表示
-                        }) {
-                            Image(systemName: "line.3.horizontal")
-                                .font(.title3)
-                                .foregroundColor(.primary)
-                        }
-                    }
-                }
+            .navigationBarHidden(true)
+            .overlay(alignment: .top) {
+                // カスタムナビゲーションバー
+                CustomNavigationBar(
+                    profileName: viewModel.profile.name ?? "プロフィール",
+                    showingNewPost: $showingNewPost
+                )
             }
-            .sheet(isPresented: $showingNewPost) {
-                PostView()
+            .sheet(isPresented: $showingEditProfile) {
+                ProfileEditView(user: viewModel.profile)
             }
             .overlay {
                 if viewModel.isLoading {
-                    Color.black.opacity(0.3)
+                    Color.white.opacity(0.5)
                         .ignoresSafeArea()
                         .overlay(
                             ProgressView()
@@ -66,7 +50,6 @@ struct MyProfileView: View {
             }
         }
         .onAppear {
-            // 画面表示時にプロフィールとストーリーを読み込む
             let userId = AuthService.shared.currentUser?.id ?? 0
             viewModel.loadProfile(userID: userId)
             viewModel.loadUserStories(userID: userId)
@@ -79,187 +62,357 @@ struct MyProfileView: View {
     }
 }
 
-// プロフィールヘッダービュー
-struct ProfileHeaderView: View {
-    let user: User
+// カスタムナビゲーションバー
+struct CustomNavigationBar: View {
+    let profileName: String
+    @Binding var showingNewPost: Bool
     
     var body: some View {
-        VStack(spacing: 16) {
-            HStack(alignment: .center, spacing: 20) {
-                // プロフィール画像
-                if let imageURL = user.profileImageURL, let url = URL(string: imageURL) {
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(width: 90, height: 90)
-                    .clipShape(Circle())
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.gray)
-                        .frame(width: 90, height: 90)
-                }
-                
-                // 統計情報
-                HStack(spacing: 30) {
-                    VStack(spacing: 4) {
-//                        Text("\(user.postsCount ?? 0)")
-//                            .font(.title2)
-//                            .fontWeight(.bold)
-                        Text("投稿")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    VStack(spacing: 4) {
-                        Text("\(user.followersCount)")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        Text("フォロワー")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    VStack(spacing: 4) {
-                        Text("\(user.followingCount)")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        Text("フォロー中")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
-                Spacer()
+        HStack {
+            Button(action: {
+                // 戻る
+            }) {
+                Image(systemName: "arrow.left")
+                    .font(.title3)
+                    .foregroundColor(.black)
             }
             
-            // ユーザー情報
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(profileName)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+            }
+            
+            Spacer()
+            
+            HStack(spacing: 20) {
+                Button(action: {
+                    showingNewPost = true
+                }) {
+                    Image(systemName: "plus.app")
+                        .font(.title3)
+                        .foregroundColor(.black)
+                }
+                
+                Button(action: {
+                    // メニュー
+                }) {
+                    Image(systemName: "ellipsis")
+                        .font(.title3)
+                        .foregroundColor(.black)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+//        .background(
+//            LinearGradient(
+//                gradient: Gradient(colors: [Color.black.opacity(0.8), Color.clear]),
+//                startPoint: .top,
+//                endPoint: .bottom
+//            )
+//        )
+    }
+}
+
+// カバー画像とプロフィール
+struct ProfileCoverView: View {
+    let user: User
+    @Binding var showingEditProfile: Bool
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // カバー画像
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient( colors: [
+                            Color.blue.opacity(0.8),
+                            Color.purple.opacity(0.8)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(height: 200)
+            
+            // プロフィール画像とアクションボタン
+            ZStack(alignment: .topTrailing) {
                 HStack {
-                    Text(user.name ?? "")
-                        .font(.headline)
-                        .fontWeight(.semibold)
+                    // プロフィール画像
+                    ZStack {
+                        Circle()
+                            .fill(Color.black)
+                            .frame(width: 84, height: 84)
+                        
+                        if let imageURL = user.ProfileImageURL, let url = URL(string: imageURL) {
+                            AsyncImage(url: url) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            } placeholder: {
+                                ProgressView()
+                                    .tint(.white)
+                            }
+                            .frame(width: 80, height: 80)
+                            .clipShape(Circle())
+                        } else {
+                            Image(systemName: "person.circle.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(.gray)
+                                .frame(width: 80, height: 80)
+                        }
+                    }
+                    .offset(y: -42)
+                    
                     Spacer()
                 }
                 
-                if let website = user.website, !website.isEmpty {
-                    Text(website)
-                        .font(.body)
-                        .foregroundColor(.blue)
-                        .underline()
-                }
-            }
-            
-            // アクションボタン
-            HStack(spacing: 8) {
+                // アクションボタン
                 Button(action: {
-                    // プロフィール編集画面へ
+                    showingEditProfile = true
                 }) {
                     Text("プロフィールを編集")
-                        .font(.footnote)
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity, minHeight: 32)
-                        .background(Color.gray.opacity(0.1))
-                        .foregroundColor(.primary)
-                        .cornerRadius(6)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                        )
                 }
-                
-                Button(action: {
-                    // プロフィール共有
-                }) {
-                    Text("プロフィールをシェア")
-                        .font(.footnote)
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity, minHeight: 32)
-                        .background(Color.gray.opacity(0.1))
-                        .foregroundColor(.primary)
-                        .cornerRadius(6)
-                }
+                .padding(.top, 12)
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 12)
         }
     }
 }
 
-
-// 投稿グリッドビュー
-struct PostGridView: View {
-    let stories: [Story]
-    
-    let columns = [
-        GridItem(.flexible(), spacing: 1),
-        GridItem(.flexible(), spacing: 1),
-        GridItem(.flexible(), spacing: 1)
-    ]
+// プロフィール情報
+struct ProfileInfoView: View {
+    let user: User
     
     var body: some View {
-        if stories.isEmpty {
-            VStack(spacing: 20) {
-                Image(systemName: "camera")
-                    .font(.system(size: 60))
-                    .foregroundColor(.gray)
-                    .padding(.top, 60)
-                
-                Text("投稿がありません")
+        VStack(alignment: .leading, spacing: 12) {
+            // 名前とユーザーネーム
+                Text(user.name ?? "名前")
                     .font(.title2)
-                    .fontWeight(.medium)
-                    .foregroundColor(.primary)
-                
-                Text("最初の投稿を作成して、友達と写真をシェアしましょう")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            }
-            .padding(.top, 40)
-        } else {
-            LazyVGrid(columns: columns, spacing: 1) {
-                ForEach(stories) { story in
-                    PostGridItemView(story: story)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+            
+            // バイオ
+//            if let bio = user.bio, !bio.isEmpty {
+//                Text(bio)
+//                    .font(.body)
+//                    .foregroundColor(.black)
+//                    .lineLimit(nil)
+//            }
+            
+//                if let website = user.website, !website.isEmpty {
+//                    HStack(spacing: 4) {
+//                        Image(systemName: "link")
+//                            .font(.caption)
+//                            .foregroundColor(.gray)
+//                        Text(website)
+//                            .font(.body)
+//                            .foregroundColor(.blue)
+//                    }
+//                }
+            
+            
+            // フォロワー情報
+            HStack(spacing: 20) {
+                HStack(spacing: 4) {
+                    Text("\(user.followingCount)")
+                        .font(.body)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                    Text("フォロー中")
+                        .font(.body)
+                        .foregroundColor(.gray)
                 }
+                
+                HStack(spacing: 4) {
+                    Text("\(user.followersCount)")
+                        .font(.body)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                    Text("フォロワー")
+                        .font(.body)
+                        .foregroundColor(.gray)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+// タブセクション
+struct TabSectionView: View {
+    @Binding var selectedTab: Int
+    
+    let tabs = ["投稿", "返信"]
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                ForEach(0..<tabs.count, id: \.self) { index in
+                    Button(action: {
+                        selectedTab = index
+                    }) {
+                        VStack(spacing: 8) {
+                            Text(tabs[index])
+                                .font(.body)
+                                .fontWeight(.medium)
+                                .foregroundColor(selectedTab == index ? .black : .gray)
+                            
+                            Rectangle()
+                                .fill(selectedTab == index ? Color.blue : Color.clear)
+                                .frame(height: 2)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.horizontal, 16)
+            
+            Divider()
+                .background(Color.gray.opacity(0.3))
+        }
+    }
+}
+
+// 投稿グリッド
+struct PostGridItemView: View {
+    @StateObject private var storyviewModel = StoryViewModel()
+    let story: [Story]
+    
+    var body: some View {
+        LazyVStack(spacing: 0) {
+            ForEach(storyviewModel.stories) { story in
+                XPostCardView(story: story)
+                
+                Divider()
+                    .background(Color.gray.opacity(0.3))
             }
         }
     }
 }
 
-struct PostGridItemView: View {
+// X風投稿カード
+struct XPostCardView: View {
     let story: Story
     
     var body: some View {
-//        if let imageURL = story.imageURL, let url = URL(string: imageURL) {
-//            AsyncImage(url: url) { image in
-//                image
-//                    .resizable()
-//                    .aspectRatio(contentMode: .fill)
-//            } placeholder: {
-//                Rectangle()
-//                    .fill(Color.gray.opacity(0.3))
-//                    .overlay(
-//                        ProgressView()
-//                            .tint(.white)
-//                    )
-//            }
-//            .aspectRatio(1, contentMode: .fit)
-//            .clipped()
-//            .onTapGesture {
-//                // 投稿詳細を表示
-//            }
-//        } else {
-//            Rectangle()
-//                .fill(Color.gray.opacity(0.3))
-//                .aspectRatio(1, contentMode: .fit)
-//                .overlay(
-//                    Image(systemName: "photo")
-//                        .font(.title2)
-//                        .foregroundColor(.white)
-//                )
-//                .onTapGesture {
-//                    // 投稿詳細を表示
+        HStack(alignment: .top, spacing: 12) {
+            // プロフィール画像
+            Circle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 40, height: 40)
+                .overlay(
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.gray)
+                )
+            
+            VStack(alignment: .leading, spacing: 8) {
+                // ユーザー名と時間
+                HStack {
+                    Text(story.user?.name ?? "Unknown")
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.black)
+                    
+                    Text("@username")
+                        .font(.body)
+                        .foregroundColor(.gray)
+                    
+                    Text("·")
+                        .foregroundColor(.gray)
+                    
+                    Text("2時間")
+                        .font(.body)
+                        .foregroundColor(.gray)
+                    
+                    Spacer()
+                    
+                    Button(action: {}) {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 16))
+                            .foregroundColor(.gray)
+                    }
+                }
+                
+                // 投稿内容
+                Text(story.content)
+                    .font(.body)
+                    .foregroundColor(.black)
+                    .lineLimit(nil)
+                
+                // 投稿画像
+//                if let imageURL = story.imageURL, let url = URL(string: imageURL) {
+//                    AsyncImage(url: url) { image in
+//                        image
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fill)
+//                    } placeholder: {
+//                        Rectangle()
+//                            .fill(Color.gray.opacity(0.3))
+//                            .frame(height: 200)
+//                    }
+//                    .frame(maxHeight: 300)
+//                    .clipped()
+//                    .cornerRadius(12)
 //                }
-//        }
+                
+                // アクションボタン
+                HStack(spacing: 60) {
+                    Button(action: {}) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "message")
+                                .font(.system(size: 16))
+                            Text("12")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.gray)
+                    }
+                    
+                    Button(action: {}) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.2.squarepath")
+                                .font(.system(size: 16))
+                            Text("5")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.gray)
+                    }
+                    
+                    Button(action: {}) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "heart")
+                                .font(.system(size: 16))
+                            Text("24")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.gray)
+                    }
+                    
+                    Button(action: {}) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 16))
+                            .foregroundColor(.gray)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.top, 8)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 }

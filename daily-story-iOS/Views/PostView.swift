@@ -1,9 +1,10 @@
 import SwiftUI
+import PhotosUI
 
 struct PostView: View {
     @StateObject private var viewModel = StoryViewModel()
     @Environment(\.dismiss) private var dismiss
-    @State private var userId: Int = 1 // デフォルト値
+    @State private var selectedItem: PhotosPickerItem?
     
     // フォントとカラー定数
     private let titleFont = Font.headline
@@ -13,84 +14,106 @@ struct PostView: View {
     private let regularColor = Color.gray
     private let cardBackground = Color.white
     private let backgroundColor = Color(UIColor.systemGray6)
+    private let tagBackgroundColor = Color.blue.opacity(0.1)
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Button(action: {
-                }) {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.black)
-                        .font(.system(size: 20, weight: .semibold))
-                }
-                
-                Spacer()
-                
-                Text("新規投稿")
-                    .foregroundColor(.black)
-                    .font(.system(size: 16, weight: .semibold))
-                
-                Spacer()
-                
-                Button(action: {
-                    Task {
-                        // 認証サービスから現在のユーザーIDを取得
-                        if let currentUser = AuthService.shared.currentUser {
-                            let success = await viewModel.postStory(userId: currentUser.id, content: viewModel.storyContent)
-                            // 成功時はviewModelのshowSuccessModal状態変数を使用
-                        } else {
-                            viewModel.errorMessage = "ユーザー情報が取得できません。再ログインしてください。"
-                        }
-                    }
-                }) {
-                    Text("投稿")
-                        .foregroundColor(viewModel.isContentValid() && !viewModel.isContentOverLimit() ? primaryColor : .gray)
-                        .font(.system(size: 16, weight: .semibold))
-                }
-                .disabled(!viewModel.isContentValid() || viewModel.isContentOverLimit() || viewModel.isLoading)
-            }
-            .padding(.top, 10)
-            .padding(.horizontal)
-            .padding(.vertical, 12)
-            .background(Color.white)
-            .shadow(color: Color.black.opacity(0.1), radius: 1)
-            
-            // テキストエディタ部分
-            ZStack(alignment: .topLeading) {
+        NavigationView {
+            ZStack {
                 backgroundColor.ignoresSafeArea()
                 
-                VStack(alignment: .leading, spacing: 12) {
-                    // エディター部分
-                    ZStack(alignment: .topLeading) {
-                        if viewModel.storyContent.isEmpty {
-                            Text("今日の出来事を100文字以内で共有しよう...")
-                                .foregroundColor(.gray)
-                                .font(contentFont)
-                                .padding(.horizontal, 16)
-                                .padding(.top, 16)
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // タイトル入力
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("タイトル")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            
+                            TextField("タイトルを入力（任意）", text: $viewModel.storyTitle)
+                                .font(.title3)
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .shadow(color: .black.opacity(0.05), radius: 2)
                         }
+                        .padding(.horizontal)
                         
-                        TextEditor(text: $viewModel.storyContent)
-                            .font(contentFont)
-                            .padding(.horizontal, 8)
-                            .scrollContentBackground(.hidden)
-                            .background(backgroundColor)
-                            .frame(maxWidth: .infinity, minHeight: 200)
+                        // コンテンツ入力
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("内容")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            
+                            ZStack(alignment: .topLeading) {
+                                if viewModel.storyContent.isEmpty {
+                                    Text("今日の出来事を100文字以内で共有しよう...")
+                                        .foregroundColor(.gray)
+                                        .font(contentFont)
+                                        .padding(.horizontal, 16)
+                                        .padding(.top, 16)
+                                }
+                                
+                                TextEditor(text: $viewModel.storyContent)
+                                    .font(contentFont)
+                                    .padding(.horizontal, 8)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.white)
+                                    .frame(minHeight: 150)
+                                    .cornerRadius(10)
+                                    .shadow(color: .black.opacity(0.05), radius: 2)
+                            }
+                            
+                            // 文字数カウンター
+                            HStack {
+                                Spacer()
+                                Text("\(viewModel.storyContent.count)/100")
+                                    .font(.caption)
+                                    .foregroundColor(viewModel.storyContent.count > 100 ? errorColor : regularColor)
+                            }
+                            .padding(.horizontal)
+                        }
+                        .padding(.horizontal)
                     }
-                    
-                    Spacer()
-                    
-                    // 文字数カウンター
-                    HStack {
-                        Spacer()
-                        Text("\(viewModel.storyContent.count)/100")
-                            .font(.subheadline)
-                            .foregroundColor(viewModel.isContentOverLimit() ? errorColor : regularColor)
-                            .padding(.trailing, 16)
-                            .padding(.bottom, 16)
+                    .padding(.vertical)
+                }
+            }
+            .navigationTitle("新規投稿")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("キャンセル") {
+                        dismiss()
                     }
                 }
-                .padding(.top, 8)
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("投稿") {
+                        Task {
+                            // 認証サービスから現在のユーザーIDを取得
+                            if let currentUser = AuthService.shared.currentUser {
+                                let success = await viewModel.postStory(
+                                    userId: currentUser.id,
+                                    title: viewModel.storyTitle,
+                                    content: viewModel.storyContent
+                                )
+                            } else {
+                                viewModel.errorMessage = "ユーザー情報が取得できません。再ログインしてください。"
+                            }
+                        }
+                    }
+                    .disabled(viewModel.storyContent.isEmpty || viewModel.storyContent.count > 100 || viewModel.isLoading)
+                    .foregroundColor(!viewModel.storyContent.isEmpty && viewModel.storyContent.count <= 100 && !viewModel.isLoading ? primaryColor : .gray)
+                }
+            }
+            .onChange(of: selectedItem) { newItem in
+                Task {
+                    if let data = try? await newItem?.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        await MainActor.run {
+                            viewModel.selectedImage = uiImage
+                        }
+                    }
+                }
             }
         }
         .overlay {
@@ -151,11 +174,16 @@ struct PostView: View {
                         }
                     }
             }
-        }
-        .onAppear {
-            // 画面表示時に現在のユーザーIDを取得
-            if let currentUser = AuthService.shared.currentUser {
-                userId = currentUser.id
+            
+            // ローディング表示
+            if viewModel.isLoading {
+                Color.black.opacity(0.3)
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.white)
+                    )
             }
         }
     }

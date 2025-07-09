@@ -12,11 +12,8 @@ xcuserdata/
 /.build/
 /Packages/
 
-# CocoaPods（使っていれば）
+# CocoaPods（使ってないけど、一応）
 Pods/
-
-# Carthage（使っていれば）
-Carthage/
 
 # Firebase / Secrets
 GoogleService-Info.plist

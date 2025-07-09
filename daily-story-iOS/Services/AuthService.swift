@@ -292,7 +292,7 @@ class AuthService: ObservableObject {
             throw AuthError.userNotFound
         }
         
-        user.profileImageURL = url
+        user.ProfileImageURL = url
         
         let apiUrl = URL(string: "\(baseURL)/user/profile")!
         var request = URLRequest(url: apiUrl)

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Story; // Storyモデルをインポート
+use App\Models\Story;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class StoryController extends Controller
 {
@@ -18,25 +17,16 @@ class StoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'title' => 'nullable|string|max:50',
             'content' => 'required|string|max:100',
-        ]);
-
-        $story = Story::create([
-            'user_id' => $validated['user_id'],
-            'content' => $validated['content'],
+            'image_url' => 'nullable|url|max:2048',
+            'tags' => 'nullable|array',
+            'tags.*' => 'string|max:20',
         ]);
 
         $story = $request->user()->stories()->create($validated);
 
         return response()->json($story->load('user'), 201);
-    }
-    public function userStories($userId)
-    {
-        return Story::where('user_id', $userId)
-            ->with('user')
-            ->latest()
-            ->get();
     }
 
     /**

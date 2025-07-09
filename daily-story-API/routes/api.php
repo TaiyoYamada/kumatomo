@@ -4,8 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController; // ここを修正
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\StoryController;
+use App\Http\Controllers\ImageUploadController;
 
 // 新規ユーザー登録
 Route::post('/register', [AuthController::class, 'register']);
@@ -20,6 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return new UserResource($request->user());
     });
+
+
+    Route::post('/upload-image', [ImageUploadController::class, 'store']);
 
     // プロフィール更新
     Route::put('/users/{id}', [UserController::class, 'update']);

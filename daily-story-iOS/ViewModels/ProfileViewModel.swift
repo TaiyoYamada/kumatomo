@@ -2,6 +2,7 @@ import SwiftUI
 import Foundation
 import UIKit
 import Combine
+import PhotosUI
 
 class ProfileViewModel: ObservableObject {
     // 表示用プロパティ
@@ -18,10 +19,15 @@ class ProfileViewModel: ObservableObject {
     @Published var name: String = ""
     @Published var bio: String = ""
     @Published var website: String = ""
+    @Published var location: String = "" // 追加: 場所フィールド
+    @Published var profileImage: UIImage? // 追加: プロフィール画像選択用
+    @Published var coverImage: UIImage? // 追加: カバー画像選択用
+    @Published var isProcessing = false // 追加: 処理中フラグ
     
     private let userAPIService = UserAPIService()
     private let storyAPIService = StoryAPIService()
     private let imageManager = ProfileImageManager()
+    private let imageUploadService = ImageUploadService() // 追加: 画像アップロードサービス
     private var cancellables = Set<AnyCancellable>()
     
     // userIDをInt型に変更
@@ -30,7 +36,7 @@ class ProfileViewModel: ObservableObject {
             id: userID,
             email: "",
             name: "",
-            profileImageURL: nil,
+            ProfileImageURL: nil,
             bio: "",
             website: nil,
             followingCount: 0,
@@ -39,6 +45,18 @@ class ProfileViewModel: ObservableObject {
         )
         loadProfile(userID: userID)
         loadUserStories(userID: userID)
+    }
+    
+    // プロフィール編集用の初期化処理を追加
+    init(profile: User) {
+        self.profile = profile
+        self.name = profile.name ?? ""
+        self.bio = profile.bio ?? ""
+        self.website = profile.website ?? ""
+//        self.location = profile.location ?? "" // 場所の初期化
+        
+        // ユーザーストーリーを読み込む
+        loadUserStories(userID: profile.id)
     }
     
     // userIDをInt型に変更
@@ -82,6 +100,7 @@ class ProfileViewModel: ObservableObject {
         name = profile.name ?? ""
         bio = profile.bio ?? ""
         website = profile.website ?? ""
+//        location = profile.location ?? "" // 場所も更新
     }
 
     func saveProfile() {
@@ -89,12 +108,14 @@ class ProfileViewModel: ObservableObject {
         var updatedProfile = profile
         updatedProfile.name = name
         updatedProfile.bio = bio
+        updatedProfile.website = website
+//        updatedProfile.location = location // 場所も保存
 
         if let image = selectedImage {
             uploadProfileImage(image) { [weak self] result in
                 switch result {
                 case .success(let url):
-                    updatedProfile.profileImageURL = url.absoluteString
+                    updatedProfile.ProfileImageURL = url.absoluteString
                     self?.saveProfileData(updatedProfile)
                 case .failure(let error):
                     self?.handleError(error)
@@ -102,6 +123,83 @@ class ProfileViewModel: ObservableObject {
             }
         } else {
             saveProfileData(updatedProfile)
+        }
+    }
+    
+    // ProfileEditViewModel相当の非同期プロフィール更新機能を追加
+    @MainActor
+    func updateProfile() async {
+        isProcessing = true
+        errorMessage = nil
+        
+        do {
+            var updatedProfile = profile
+            updatedProfile.name = name
+            updatedProfile.bio = bio
+            updatedProfile.website = website
+//            updatedProfile.location = location
+            
+            // プロフィール画像があれば先にアップロード
+            if let image = profileImage {
+                do {
+                    let imageUrl = try await imageUploadService.uploadImage(image)
+                    updatedProfile.ProfileImageURL = imageUrl
+                    print("✅ プロフィール画像アップロード成功: \(imageUrl)")
+                } catch {
+                    print("❌ プロフィール画像アップロード失敗: \(error.localizedDescription)")
+                    isProcessing = false
+                    errorMessage = "画像アップロードに失敗しました: \(error.localizedDescription)"
+                    return
+                }
+            }
+            
+            // カバー画像があれば先にアップロード
+            if let image = coverImage {
+                do {
+                    let imageUrl = try await imageUploadService.uploadImage(image)
+                    updatedProfile.ProfileImageURL = imageUrl
+                    print("✅ カバー画像アップロード成功: \(imageUrl)")
+                } catch {
+                    print("❌ カバー画像アップロード失敗: \(error.localizedDescription)")
+                    isProcessing = false
+                    errorMessage = "画像アップロードに失敗しました: \(error.localizedDescription)"
+                    return
+                }
+            }
+            
+            // プロフィール情報を更新
+            print("📤 プロフィール更新開始")
+            try await saveProfileAsync(updatedProfile)
+            
+            // 成功したらプロフィール情報を更新
+            self.profile = updatedProfile
+            
+            isProcessing = false
+            showSuccessMessage = true
+            print("✅ プロフィール更新完了")
+        } catch {
+            isProcessing = false
+            errorMessage = "プロフィール更新に失敗しました: \(error.localizedDescription)"
+            print("❌ プロフィール更新エラー: \(error.localizedDescription)")
+        }
+    }
+    
+    // 非同期でプロフィール保存するメソッドを追加
+    private func saveProfileAsync(_ user: User) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            userAPIService.saveProfile(user)
+                .receive(on: DispatchQueue.main)
+                .sink { completionResult in
+                    switch completionResult {
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    case .finished:
+                        break
+                    }
+                } receiveValue: { response in
+                    continuation.resume(returning: ())
+                }
+                .store(in: &cancellables)
         }
     }
 
@@ -120,8 +218,6 @@ class ProfileViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    
-
     func uploadProfileImage(_ image: UIImage, completion: @escaping (Result<URL, Error>) -> Void) {
         isImageUploading = true
 
@@ -148,22 +244,9 @@ class ProfileViewModel: ObservableObject {
         name = profile.name ?? ""
         bio = profile.bio ?? ""
         website = profile.website ?? ""
-    }
-
-    // Validate input fields
-    func validateInput() -> Bool {
-        if name.isEmpty {
-            errorMessage = "Name cannot be empty."
-            showError = true
-            return false
-        }
-        return true
-    }
-
-    // Save changes from EditPageView
-    func saveChanges() {
-        guard validateInput() else { return }
-        saveProfile()
+//        location = profile.location ?? ""
+        profileImage = nil
+        coverImage = nil
     }
 }
 

@@ -23,30 +23,31 @@ struct FeedView: View {
                     .padding(.vertical)
                 }
                 
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            showingNewPost = true
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                                .frame(width: 60, height: 60)
-                                .background(Color.blue)
-                                .clipShape(Circle())
-                                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
-                        }
-                        .padding(.trailing, 20)
-                        .padding(.bottom, 20)
-                    }
-                }
+//                VStack {
+//                    Spacer()
+//                    HStack {
+//                        Spacer()
+//                        Button(action: {
+//                            showingNewPost = true
+//                        }) {
+//                            Image(systemName: "plus")
+//                                .font(.title2)
+//                                .foregroundColor(.white)
+//                                .frame(width: 60, height: 60)
+//                                .background(Color.blue)
+//                                .clipShape(Circle())
+//                                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
+//                        }
+//                        .padding(.trailing, 20)
+//                        .padding(.bottom, 20)
+//                    }
+//                }
             }
             .navigationTitle("タイムライン")
-            .sheet(isPresented: $showingNewPost) {
-                PostView()
-            }
+            .toolbarTitleDisplayMode(.inline)
+//            .sheet(isPresented: $showingNewPost) {
+//                PostView()
+//            }
             .overlay {
                 if viewModel.isLoading {
                     Color.black.opacity(0.3)
@@ -108,12 +109,15 @@ struct StoryCardView: View {
     
     // 日付フォーマッター
     private var formattedDate: String {
+        guard let createdAt = story.createdAt else { return "" }
+
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         formatter.locale = Locale(identifier: "ja_JP")
-        return formatter.string(from: story.createdAt)
+        return formatter.string(from: createdAt)
     }
+
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

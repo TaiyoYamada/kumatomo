@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * 
      * Run the migrations.
      */
     public function up(): void
@@ -14,11 +15,17 @@ return new class extends Migration
 
         Schema::create('stories', function (Blueprint $table) {
             $table->id();
-            $table->text('content');
             $table->foreignId('user_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+
+            // StoryControllerのバリデーションに合わせてカラムを追加・修正
+            $table->string('title', 50)->nullable();
+            $table->string('content', 100);
+            $table->string('image_url', 2048)->nullable();
+            $table->json('tags')->nullable();
+
             $table->timestamps();
         });
     }

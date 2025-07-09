@@ -9,9 +9,18 @@ class Story extends Model
 {
     use HasFactory;
 
+    /**
+     * 一括代入可能な属性。
+     */
     protected $fillable = [
-        'user_id',
+        'title',
         'content',
+        'image_url',
+        'tags',
+    ];
+
+    protected $casts = [
+        'tags' => 'array',
     ];
 
     public function user()

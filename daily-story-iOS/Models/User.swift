@@ -5,7 +5,7 @@ struct User: Codable, Identifiable {
     var id: Int
     var email: String?
     var name: String?
-    var profileImageURL: String?
+    var ProfileImageURL: String?
     var bio: String?
     var postCount: Int?
     var website: String?
@@ -17,7 +17,7 @@ struct User: Codable, Identifiable {
         case id
         case email
         case name
-        case profileImageURL = "profile_image_url"
+        case ProfileImageURL = "profile_image_url"
         case bio
         case postCount = "post_count"
         case website
