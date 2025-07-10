@@ -7,6 +7,8 @@ struct User: Codable, Identifiable {
     var name: String?
     var ProfileImageURL: String?
     var bio: String?
+    var city: String?
+    var birthday: String?
     var postCount: Int?
     var website: String?
     var followingCount: Int?
@@ -19,6 +21,8 @@ struct User: Codable, Identifiable {
         case name
         case ProfileImageURL = "profile_image_url"
         case bio
+        case city
+        case birthday
         case postCount = "post_count"
         case website
         case followingCount = "following_count"

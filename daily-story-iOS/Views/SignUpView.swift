@@ -3,7 +3,9 @@ import PhotosUI
 
 struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = AuthViewModel()
+    @EnvironmentObject private var authViewModel: AuthViewModel
+    @State private var showInitialSetup = false
+    @State private var navigatetoInitialSetup = false
     
     var body: some View {
         VStack(spacing: 30) {
@@ -20,10 +22,23 @@ struct SignUpView: View {
             signUpButton
             
             Spacer()
+            
+            NavigationLink(
+                destination: InitialSetupView(),
+                isActive: $navigatetoInitialSetup,
+                label: {
+                    EmptyView()
+                }
+            )
         }
         .padding(.top, 20)
         .navigationBarHidden(true)
         .background(Color(.systemBackground))
+        .onChange(of: showInitialSetup) { newValue in
+            if newValue {
+                navigatetoInitialSetup = true
+            }
+        }
     }
     
     // MARK: - Components
@@ -55,14 +70,14 @@ struct SignUpView: View {
     
     private var inputForm: some View {
         VStack(spacing: 20) {
-            InputField(text: $viewModel.email,
+            InputField(text: $authViewModel.email,
                       title: "メールアドレス",
                       placeholder: "your@email.com",
                       systemImage: "envelope")
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
             
-            SecureInputField(text: $viewModel.password,
+            SecureInputField(text: $authViewModel.password,
                             title: "パスワード",
                             placeholder: "パスワードを入力 (6文字以上)",
                             systemImage: "lock")
@@ -72,8 +87,8 @@ struct SignUpView: View {
     
     private var errorMessage: some View {
         Group {
-            if !viewModel.errorMessage.isEmpty {
-                Text(viewModel.errorMessage)
+            if let errorMessage = authViewModel.errorMessage, !errorMessage.isEmpty {
+                Text(errorMessage)
                     .foregroundColor(.red)
                     .font(.caption)
                     .padding(.top, 4)
@@ -87,13 +102,14 @@ struct SignUpView: View {
     
     private var signUpButton: some View {
         Button {
-            Task { await viewModel.createUser() }
+            Task { await authViewModel.createUser() }
+            showInitialSetup = true
         } label: {
             HStack {
                 Text("登録する")
                     .fontWeight(.semibold)
                 
-                if viewModel.isLoading {
+                if authViewModel.isLoading {
                     ProgressView()
                         .padding(.leading, 4)
                         .tint(.white)
@@ -108,7 +124,8 @@ struct SignUpView: View {
             )
             .foregroundColor(.white)
         }
+        
         .padding(.horizontal)
-        .disabled(viewModel.isLoading)
+        .disabled(authViewModel.isLoading)
     }
 }

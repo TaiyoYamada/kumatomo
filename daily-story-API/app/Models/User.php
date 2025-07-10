@@ -20,11 +20,14 @@ class User extends Authenticatable
         'password',
         'name',
         'bio',
-        // 'profile_image_url',
+        'city',
+        'birthday',
+        'website',
+        'post_count',
         'followers_count',
         'following_count',
-        'website',
-        'profile_image_url', // プロフィール画像のURL
+        'profile_image_url', // プロフィール背景のURL
+        'profile_icon_image_url', // プロフィールアイコンのURL
     ];
 
     /**

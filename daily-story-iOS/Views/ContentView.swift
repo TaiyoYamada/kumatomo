@@ -17,8 +17,11 @@ struct ContentView: View {
                     }
             } else {
                 if viewModel.isAuthenticated {
+        
                     MainTabView(viewModel: viewModel)
+                    
                 } else {
+                    
                     LoginView()
                 }
             }

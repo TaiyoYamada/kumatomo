@@ -25,6 +25,8 @@ class UserController extends Controller
 
         // バリデーション
         $validated = $request->validate([
+            'city' => 'nullable|string|max:255',
+            'birthday' => 'nullable|date_format:Y-m-d',
             'name' => 'sometimes|required|string|max:255',
             // emailはユニークだが、自分自身のメールアドレスは許可する
             'email' => ['sometimes', 'required', 'email', Rule::unique('users')->ignore($user->id)],

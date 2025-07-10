@@ -21,12 +21,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return new UserResource($request->user());
     });
-
+    // Route::get('/users/{id}', [UserController::class, 'updateprofile']);
 
     Route::post('/upload-image', [ImageUploadController::class, 'store']);
 
     // プロフィール更新
-    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::put('/users/user/update', [UserController::class, 'update']);
 
     // ストーリー（ショート物語）の投稿・取得
     Route::get('/stories', [StoryController::class, 'index']);

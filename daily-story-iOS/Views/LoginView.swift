@@ -7,7 +7,7 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Text("DailyStoryへようこそ")
+                Text("こんにちはようこそ")
                     .font(.title)
                     .fontWeight(.bold)
                     .padding(.vertical, 50)
@@ -30,8 +30,8 @@ struct LoginView: View {
                 .padding(.top)
                 
                 // エラーメッセージ
-                if !viewModel.errorMessage.isEmpty {
-                    Text(viewModel.errorMessage)
+                if ((viewModel.errorMessage?.isEmpty) == nil) {
+                    Text(viewModel.errorMessage ?? "")
                         .foregroundColor(.red)
                         .font(.caption)
                         .padding(.top, 8)

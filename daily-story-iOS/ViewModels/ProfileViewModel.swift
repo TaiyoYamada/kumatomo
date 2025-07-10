@@ -30,7 +30,6 @@ class ProfileViewModel: ObservableObject {
     private let imageUploadService = ImageUploadService() // 追加: 画像アップロードサービス
     private var cancellables = Set<AnyCancellable>()
     
-    // userIDをInt型に変更
     init(userID: Int) {
         self.profile = User(
             id: userID,
@@ -38,7 +37,10 @@ class ProfileViewModel: ObservableObject {
             name: "",
             ProfileImageURL: nil,
             bio: "",
-            website: nil,
+            city: "",
+            birthday: "",
+            postCount: 0,
+            website: "",
             followingCount: 0,
             followersCount: 0,
             createdAt: nil

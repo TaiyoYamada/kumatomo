@@ -20,6 +20,10 @@ return new class extends Migration {
             $table->string('name')->nullable();
             $table->text('bio')->nullable();
             $table->string('website')->nullable();
+            $table->string('city')->nullable();
+            $table->date('birthday')->nullable();
+            $table->unsignedInteger('post_count')->default(0); // ストーリーの投稿数
+            $table->string('profile_icon_image_url')->nullable();
             $table->string('profile_image_url')->nullable();
 
             // フォロー関連（初期値0）

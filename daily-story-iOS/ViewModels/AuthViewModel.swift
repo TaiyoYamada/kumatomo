@@ -3,52 +3,39 @@ import PhotosUI
 import SwiftUI
 import Combine
 
-/// 認証関連のビジネスロジックを担う ViewModel
+
 final class AuthViewModel: ObservableObject {
-    // - 認証／ユーザー情報の状態管理
-    
-    // 認証状態（trueならログイン済み）
     @Published var isAuthenticated: Bool = false
-    // API から取得したユーザーモデル
     @Published var currentUser: User?
-    
-    // - サインイン／サインアップ用フォーム
-    
-    @Published var email = ""                         // メールアドレス入力
-    @Published var password = ""                      // パスワード入力
-    @Published var name = ""                          // サインアップ時の氏名
-    @Published var birthDate: Date =                  // サインアップ時の生年月日
+    @Published var email = ""
+    @Published var password = ""
+    @Published var name = ""
+    @Published var bio = ""
+    @Published var birthDate: Date =
         Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
+    @Published var city = ""
+    @Published var bisthday = Date()
+    @Published var profileImage: UIImage?
+    @Published var selectedImage: PhotosPickerItem?
     
-    // - プロフィール画像アップロード用
-    
-    @Published var profileImage: UIImage?             // アップロード対象 UIImage
-    @Published var selectedImage: PhotosPickerItem?   // PhotosPicker からのアイテム
-    
-    // - UI フラグ
-    
-    @Published var errorMessage = ""                  // エラー表示用
-    @Published var isLoading = false                  // ローディングインジケーター用
+    @Published var errorMessage:String? = ""
+    @Published var isLoading = false
     
     // - サービス依存性
     
     private let authService = AuthService.shared       // 認証・ユーザー取得サービス
-//    private let storageService = StorageService.shared // 画像アップロードサービス
+    private let imageUploadService = ImageUploadService.shared // 画像アップロードサービス
     
-    private var cancellables = Set<AnyCancellable>()   // Combine の購読保持
-    
-    // - イニシャライザ
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
         // 初期状態をサービスから取得
         self.isAuthenticated = authService.isAuthenticated
         self.currentUser = authService.currentUser
         
-        // 購読を開始
         addSubscribers()
     }
     
-    // - Combine 購読設定
     
     private func addSubscribers() {
         // 認証状態の変化を反映
@@ -58,6 +45,7 @@ final class AuthViewModel: ObservableObject {
                 self?.isAuthenticated = isAuth
             }
             .store(in: &cancellables)
+
         
         // API から取得したユーザーモデルの変化を反映
         authService.$currentUser
@@ -68,9 +56,7 @@ final class AuthViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // - サインイン処理
-    
-    // メール／パスワードでサインイン
+
     @MainActor
     func signIn() async {
         isLoading = true
@@ -99,8 +85,6 @@ final class AuthViewModel: ObservableObject {
             try await authService.createUser(
                 withEmail: email,
                 password: password,
-                name: name,
-                birthDate: birthDate
             )
             
             // プロフィール画像が選択されていればアップロード
@@ -162,7 +146,9 @@ final class AuthViewModel: ObservableObject {
 //    }
 
     
-    // - PhotosPicker から UIImage を取得
+    private func handleSubmit() {
+        
+    }
     
     /// PhotosPickerItem → UIImage 変換
     func loadProfileImage() {
@@ -191,5 +177,53 @@ final class AuthViewModel: ObservableObject {
         name = ""
         profileImage = nil
         selectedImage = nil
+    }
+    
+    // 初期設定を保存
+    func saveInitialSetup() async -> Bool {
+        isLoading = true
+        errorMessage = ""
+        
+        // バリデーション
+        if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            errorMessage = "名前を入力してください"
+            isLoading = false
+            return false
+        }
+        
+        do {
+            // 画像がある場合はアップロード
+            var profileImageURL: String? = nil
+            if let image = profileImage {
+                profileImageURL = try await uploadProfileImage(image)
+            }
+            
+            // プロフィール情報を更新
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let birthdayString = dateFormatter.string(from: birthDate)
+            
+            
+            try await authService.updateUser(
+                withName: name,
+                profileImageURL: profileImageURL,
+                bio: bio,
+                city: city,
+                birthday: birthDate
+            )
+
+            
+            isLoading = false
+            return true
+        } catch {
+            errorMessage = "プロフィールの保存に失敗しました: \(error.localizedDescription)"
+            isLoading = false
+            return false
+        }
+    }
+    
+    // プロフィール画像のアップロード
+    private func uploadProfileImage(_ image: UIImage) async throws -> String {
+        return try await imageUploadService.uploadImage(image)
     }
 }
