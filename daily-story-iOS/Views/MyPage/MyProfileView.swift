@@ -146,7 +146,7 @@ struct ProfileCoverView: View {
                             .fill(Color.black)
                             .frame(width: 84, height: 84)
                         
-                        if let imageURL = user.ProfileImageURL, let url = URL(string: imageURL) {
+                        if let imageURL = user.profileImageURL, let url = URL(string: imageURL) {
                             AsyncImage(url: url) { image in
                                 image
                                     .resizable()

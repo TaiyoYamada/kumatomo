@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->boolean('has_completed_setup')->default(false);
+
 
             // プロフィール情報
             $table->string('name')->nullable();
@@ -22,7 +24,7 @@ return new class extends Migration {
             $table->string('website')->nullable();
             $table->string('city')->nullable();
             $table->date('birthday')->nullable();
-            $table->unsignedInteger('post_count')->default(0); // ストーリーの投稿数
+            $table->unsignedInteger('post_count')->default(0);
             $table->string('profile_icon_image_url')->nullable();
             $table->string('profile_image_url')->nullable();
 

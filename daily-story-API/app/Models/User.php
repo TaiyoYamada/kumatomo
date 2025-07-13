@@ -28,14 +28,18 @@ class User extends Authenticatable
         'following_count',
         'profile_image_url', // プロフィール背景のURL
         'profile_icon_image_url', // プロフィールアイコンのURL
+        'has_completed_setup',
+        'created_at',
     ];
 
     /**
      * キャスト（自動型変換）
      */
     protected $casts = [
+        'email_verified_at' => 'datetime',
         'followers_count' => 'integer',
         'following_count' => 'integer',
+        'has_completed_setup' => 'boolean',
         'password' => 'hashed',
     ];
 

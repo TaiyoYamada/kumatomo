@@ -3,10 +3,14 @@ import PhotosUI
 import SwiftUI
 import Combine
 
-
+@MainActor
 final class AuthViewModel: ObservableObject {
     @Published var isAuthenticated: Bool = false
     @Published var currentUser: User?
+    @Published var accounts: [User] = []
+    @Published var selectedAccount: User?
+    
+    @Published var hasCompletedSetup = false
     @Published var email = ""
     @Published var password = ""
     @Published var name = ""
@@ -14,7 +18,7 @@ final class AuthViewModel: ObservableObject {
     @Published var birthDate: Date =
         Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
     @Published var city = ""
-    @Published var bisthday = Date()
+    @Published var birthday = Date()
     @Published var profileImage: UIImage?
     @Published var selectedImage: PhotosPickerItem?
     
@@ -33,25 +37,39 @@ final class AuthViewModel: ObservableObject {
         self.isAuthenticated = authService.isAuthenticated
         self.currentUser = authService.currentUser
         
+        if let currentUser = currentUser {
+            self.hasCompletedSetup = currentUser.hasCompletedSetup ?? false
+        }
+        
+        print("\(hasCompletedSetup)あああああああああああああああああ")
+        
         addSubscribers()
     }
     
     
     private func addSubscribers() {
-        // 認証状態の変化を反映
+        // 認証状態の変化を監視
         authService.$isAuthenticated
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isAuth in
                 self?.isAuthenticated = isAuth
             }
             .store(in: &cancellables)
-
-        
-        // API から取得したユーザーモデルの変化を反映
+            
+        // ユーザー情報の変化を監視
         authService.$currentUser
             .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
-                self?.currentUser = user
+                guard let self = self else { return }
+                self.currentUser = user
+                
+                // ユーザー情報が更新されたらhasCompletedSetupも更新
+                if let user = user {
+                    print("DEBUG: ユーザー情報更新 - hasCompletedSetup: \(user.hasCompletedSetup ?? false)")
+                    self.hasCompletedSetup = user.hasCompletedSetup ?? false
+                } else {
+                    self.hasCompletedSetup = false
+                }
             }
             .store(in: &cancellables)
     }
@@ -147,7 +165,48 @@ final class AuthViewModel: ObservableObject {
 
     
     private func handleSubmit() {
+        guard isFormValid else { return }
+        isLoading = true
         
+        Task {
+            do {
+                // プロフィール画像がある場合はアップロード
+                var profileImageURL: String? = nil
+                if let image = profileImage {
+                    profileImageURL = try await uploadProfileImage(image)
+                }
+                
+                
+                // 初期設定完了を記録
+                self.hasCompletedSetup = true
+                
+                
+                // ユーザー情報を更新
+                try await authService.updateUser(
+                    withName: name,
+                    profileImageURL: profileImageURL,
+                    bio: bio,
+                    city: city,
+                    birthday: birthDate,
+                    hasCompletedSetup: true
+                )
+            
+                
+                await MainActor.run {
+                    isLoading = false
+                    errorMessage = nil
+                }
+            } catch {
+                await MainActor.run {
+                    isLoading = false
+                    errorMessage = "プロフィール情報の更新に失敗しました: \(error.localizedDescription)"
+                }
+            }
+        }
+    }
+    
+    private var isFormValid: Bool {
+        return !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     /// PhotosPickerItem → UIImage 変換
@@ -167,8 +226,6 @@ final class AuthViewModel: ObservableObject {
             }
         }
     }
-    
-    // - フォームリセット
     
     /// すべての入力フォームを初期状態に戻す
     private func resetForm() {
@@ -209,7 +266,8 @@ final class AuthViewModel: ObservableObject {
                 profileImageURL: profileImageURL,
                 bio: bio,
                 city: city,
-                birthday: birthDate
+                birthday: birthDate,
+                hasCompletedSetup: true
             )
 
             

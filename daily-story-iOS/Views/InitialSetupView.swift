@@ -212,26 +212,19 @@ struct InitialSetupView: View {
         }
     }
     
-    // 選択された画像を読み込み
     private func loadSelectedImage() {
         Task {
-            guard let item = selectedImage else { return }
-            
-            do {
-                if let data = try await item.loadTransferable(type: Data.self),
-                   let image = UIImage(data: data) {
-                    await MainActor.run {
-                        displayImage = image
-                        viewModel.profileImage = image
-                    }
+            if let selectedImage = selectedImage,
+               let data = try? await selectedImage.loadTransferable(type: Data.self),
+               let uiImage = UIImage(data: data) {
+                await MainActor.run {
+                    displayImage = uiImage
+                    viewModel.profileImage = uiImage
                 }
-            } catch {
-                print("画像の読み込みに失敗しました: \(error.localizedDescription)")
             }
         }
     }
     
-    // フォームの送信処理
     private func handleSubmit() {
         guard isFormValid else { return }
         isSubmitting = true
@@ -240,26 +233,27 @@ struct InitialSetupView: View {
         viewModel.name = username
         viewModel.city = selectedCity
         viewModel.birthDate = birthday
+        // プロフィール画像はloadSelectedImageメソッドで既にセット済み
         
-        // 非同期でプロフィール保存
         Task {
             let success = await viewModel.saveInitialSetup()
             
             await MainActor.run {
                 isSubmitting = false
                 
-//                if success {
-//                    
-//                    
-//                } else if let error = viewModel.errorMessage {
-//                    alertMessage = error
-//                    showAlert = true
-//                } else {
-//                    alertMessage = "不明なエラーが発生しました"
-//                    showAlert = true
-//                }
-                
-                
+                if success {
+                    // 成功したらMainTabViewに遷移するよう状態を更新
+                    viewModel.hasCompletedSetup = true
+                    viewModel.isAuthenticated = true
+                    dismiss()
+                    print("笑笑笑笑笑笑笑笑笑笑笑笑笑")
+                } else if let error = viewModel.errorMessage {
+                    alertMessage = error
+                    showAlert = true
+                } else {
+                    alertMessage = "不明なエラーが発生しました"
+                    showAlert = true
+                }
             }
         }
     }

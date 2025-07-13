@@ -87,6 +87,12 @@ struct PostView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
+                    // 計算プロパティを定義して複雑な条件を分割
+                    let isContentEmpty = viewModel.storyContent.isEmpty
+                    let isContentTooLong = viewModel.storyContent.count > 100
+                    let isButtonDisabled = isContentEmpty || isContentTooLong || viewModel.isLoading
+                    let buttonColor = (!isContentEmpty && !isContentTooLong && !viewModel.isLoading) ? primaryColor : Color.gray
+                    
                     Button("投稿") {
                         Task {
                             // 認証サービスから現在のユーザーIDを取得
@@ -101,8 +107,8 @@ struct PostView: View {
                             }
                         }
                     }
-                    .disabled(viewModel.storyContent.isEmpty || viewModel.storyContent.count > 100 || viewModel.isLoading)
-                    .foregroundColor(!viewModel.storyContent.isEmpty && viewModel.storyContent.count <= 100 && !viewModel.isLoading ? primaryColor : .gray)
+                    .disabled(isButtonDisabled)
+                    .foregroundColor(buttonColor)
                 }
             }
             .onChange(of: selectedItem) { newItem in

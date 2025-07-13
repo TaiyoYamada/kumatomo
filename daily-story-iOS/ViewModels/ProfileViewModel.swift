@@ -35,7 +35,7 @@ class ProfileViewModel: ObservableObject {
             id: userID,
             email: "",
             name: "",
-            ProfileImageURL: nil,
+            profileImageURL: nil,
             bio: "",
             city: "",
             birthday: "",
@@ -43,6 +43,7 @@ class ProfileViewModel: ObservableObject {
             website: "",
             followingCount: 0,
             followersCount: 0,
+            hasCompletedSetup: false,
             createdAt: nil
         )
         loadProfile(userID: userID)
@@ -117,7 +118,7 @@ class ProfileViewModel: ObservableObject {
             uploadProfileImage(image) { [weak self] result in
                 switch result {
                 case .success(let url):
-                    updatedProfile.ProfileImageURL = url.absoluteString
+                    updatedProfile.profileImageURL = url.absoluteString
                     self?.saveProfileData(updatedProfile)
                 case .failure(let error):
                     self?.handleError(error)
@@ -145,7 +146,7 @@ class ProfileViewModel: ObservableObject {
             if let image = profileImage {
                 do {
                     let imageUrl = try await imageUploadService.uploadImage(image)
-                    updatedProfile.ProfileImageURL = imageUrl
+                    updatedProfile.profileImageURL = imageUrl
                     print("✅ プロフィール画像アップロード成功: \(imageUrl)")
                 } catch {
                     print("❌ プロフィール画像アップロード失敗: \(error.localizedDescription)")
@@ -159,7 +160,7 @@ class ProfileViewModel: ObservableObject {
             if let image = coverImage {
                 do {
                     let imageUrl = try await imageUploadService.uploadImage(image)
-                    updatedProfile.ProfileImageURL = imageUrl
+                    updatedProfile.profileImageURL = imageUrl
                     print("✅ カバー画像アップロード成功: \(imageUrl)")
                 } catch {
                     print("❌ カバー画像アップロード失敗: \(error.localizedDescription)")

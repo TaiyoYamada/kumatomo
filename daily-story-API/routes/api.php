@@ -26,11 +26,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/upload-image', [ImageUploadController::class, 'store']);
 
     // プロフィール更新
-    Route::put('/users/user/update', [UserController::class, 'update']);
+    Route::put('/user/update', [UserController::class, 'update']);
 
     // ストーリー（ショート物語）の投稿・取得
     Route::get('/stories', [StoryController::class, 'index']);
-    
+
     Route::post('/stories', [StoryController::class, 'store']);
 
     // 特定ユーザーのストーリー一覧

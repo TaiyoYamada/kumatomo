@@ -223,7 +223,7 @@ struct CoverImageEditSection: View {
                     .scaledToFill()
                     .frame(height: 150)
                     .clipped()
-            } else if let ProfileImageURL = viewModel.profile.ProfileImageURL, !ProfileImageURL.isEmpty {
+            } else if let ProfileImageURL = viewModel.profile.profileImageURL, !ProfileImageURL.isEmpty {
                 AsyncImage(url: URL(string: ProfileImageURL)) { phase in
                     switch phase {
                     case .empty:
@@ -287,7 +287,7 @@ struct ProfileImageEditSection: View {
                         .frame(width: 80, height: 80)
                         .clipShape(Circle())
                         .shadow(radius: 5)
-                } else if let profileImageURL = viewModel.profile.ProfileImageURL, !profileImageURL.isEmpty {
+                } else if let profileImageURL = viewModel.profile.profileImageURL, !profileImageURL.isEmpty {
                     AsyncImage(url: URL(string: profileImageURL)) { phase in
                         switch phase {
                         case .empty:

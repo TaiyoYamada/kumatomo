@@ -19,11 +19,13 @@ class AuthService: ObservableObject {
                 guard let self = self else { return }
                 do {
                     try await self.fetchCurrentUser()
-                    print("✅ 自動ログイン成功: \(self.currentUser?.email ?? "不明")")
+                    await MainActor.run {
+                        print("✅ 自動ログイン成功: \(self.currentUser?.email ?? "不明")")
+                    }
                 } catch {
                     print("⚠️ 自動ログイン失敗: \(error.localizedDescription)")
                     AuthTokenManager.shared.clearToken()
-                    DispatchQueue.main.async {
+                    await MainActor.run {
                         self.isAuthenticated = false
                     }
                 }
@@ -177,14 +179,14 @@ class AuthService: ObservableObject {
     }
     
     @MainActor
-    func updateUser(withName name: String?, profileImageURL: String?, bio: String?, city: String?, birthday: Date?) async throws {
+    func updateUser(withName name: String?, profileImageURL: String?, bio: String?, city: String?, birthday: Date?, hasCompletedSetup: Bool?) async throws {
         guard AuthTokenManager.shared.token != nil else {
             throw AuthError.unauthorized
         }
         
         let url = URL(string: "\(baseURL)/user/update")!
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // 認証トークンをヘッダーに追加
@@ -213,6 +215,10 @@ class AuthService: ObservableObject {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd"
             updateData["birthday"] = formatter.string(from: birthday)
+        }
+        
+        if let hasCompletedSetup = hasCompletedSetup {
+            updateData["has_completed_setup"] = hasCompletedSetup
         }
         
         request.httpBody = try JSONSerialization.data(withJSONObject: updateData)
@@ -302,8 +308,11 @@ class AuthService: ObservableObject {
 
             // デコード処理を試行
             do {
+                
+                let userResponse = try decoder.decode(UserResponse.self, from: data)
+                 
                 // 直接User型としてデコード
-                self.currentUser = try decoder.decode(User.self, from: data)
+                self.currentUser = userResponse.data
                 self.isAuthenticated = true
                 print("✅ ユーザー情報取得成功: \(self.currentUser?.email ?? "不明"), 名前: \(self.currentUser?.name ?? "未設定")")
             } catch let decodingError {
@@ -351,7 +360,7 @@ class AuthService: ObservableObject {
             throw AuthError.userNotFound
         }
         
-        user.ProfileImageURL = url
+        user.profileImageURL = url
         
         let apiUrl = URL(string: "\(baseURL)/user/profile")!
         var request = URLRequest(url: apiUrl)

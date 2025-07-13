@@ -1,11 +1,11 @@
 import Foundation
 
-/// ユーザーモデル
 struct User: Codable, Identifiable {
     var id: Int
     var email: String?
     var name: String?
-    var ProfileImageURL: String?
+    var profileImageURL: String?
+    var profileIconImageURL: String?
     var bio: String?
     var city: String?
     var birthday: String?
@@ -13,13 +13,15 @@ struct User: Codable, Identifiable {
     var website: String?
     var followingCount: Int?
     var followersCount: Int?
+    var hasCompletedSetup: Bool?
     var createdAt: Date?
 
     enum CodingKeys: String, CodingKey {
         case id
         case email
         case name
-        case ProfileImageURL = "profile_image_url"
+        case profileImageURL = "profile_image_url"
+        case profileIconImageURL = "profile_icon_image_url"
         case bio
         case city
         case birthday
@@ -27,12 +29,11 @@ struct User: Codable, Identifiable {
         case website
         case followingCount = "following_count"
         case followersCount = "followers_count"
+        case hasCompletedSetup = "has_completed_setup"
         case createdAt = "created_at"
     }
 }
 
-
-/// Laravel の POST /api/users に送信するユーザー作成リクエスト
 struct CreateUserRequest: Codable {
     var id: Int
     var email: String?

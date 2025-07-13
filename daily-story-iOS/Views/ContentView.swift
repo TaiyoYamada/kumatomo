@@ -15,15 +15,16 @@ struct ContentView: View {
                             }
                         }
                     }
-            } else {
-                if viewModel.isAuthenticated {
-        
+            } else if viewModel.isAuthenticated {
+                if viewModel.hasCompletedSetup {
                     MainTabView(viewModel: viewModel)
-                    
                 } else {
-                    
-                    LoginView()
+                    InitialSetupView()
+                        .environmentObject(viewModel)
                 }
+            } else {
+                LoginView()
+                    .environmentObject(viewModel)
             }
         }
     }
