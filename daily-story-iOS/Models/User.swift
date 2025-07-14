@@ -16,22 +16,8 @@ struct User: Codable, Identifiable {
     var hasCompletedSetup: Bool?
     var createdAt: Date?
 
-    enum CodingKeys: String, CodingKey {
-        case id
-        case email
-        case name
-        case profileImageURL = "profile_image_url"
-        case profileIconImageURL = "profile_icon_image_url"
-        case bio
-        case city
-        case birthday
-        case postCount = "post_count"
-        case website
-        case followingCount = "following_count"
-        case followersCount = "followers_count"
-        case hasCompletedSetup = "has_completed_setup"
-        case createdAt = "created_at"
-    }
+    // The CodingKeys enum has been removed to allow the JSONDecoder's
+    // .convertFromSnakeCase strategy to handle the mapping automatically.
 }
 
 struct CreateUserRequest: Codable {

@@ -24,7 +24,7 @@ class UserAPIService {
         return encoder
     }
 
-    // 🔹 ユーザープロフィール取得（GET /api/users/{id}）
+    // ユーザープロフィール取得（GET /api/users/{id}）
     func fetchProfile(userID: String) -> AnyPublisher<User, Error> {
         // 正しいURLパスを構築
         let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
@@ -54,7 +54,8 @@ class UserAPIService {
                     }
                 }
                 try self.validateResponse(response)
-                return try self.jsonDecoder.decode(User.self, from: data)
+                let userResponse = try self.jsonDecoder.decode(UserResponse.self, from: data)
+                return userResponse.data
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()

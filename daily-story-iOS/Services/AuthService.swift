@@ -303,45 +303,22 @@ class AuthService: ObservableObject {
 
             // JSONデコーダーの設定
             let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase // snake_case から camelCase へ変換
             decoder.dateDecodingStrategy = .iso8601
-            decoder.keyDecodingStrategy = .convertFromSnakeCase  // snake_caseをcamelCaseに変換
 
-            // デコード処理を試行
             do {
-                
+                // APIレスポンスは "data" キーでラップされているため、UserResponse.self を使用
                 let userResponse = try decoder.decode(UserResponse.self, from: data)
-                 
-                // 直接User型としてデコード
                 self.currentUser = userResponse.data
                 self.isAuthenticated = true
-                print("✅ ユーザー情報取得成功: \(self.currentUser?.email ?? "不明"), 名前: \(self.currentUser?.name ?? "未設定")")
+                print("✅ ユーザー情報取得成功: \(self.currentUser?.email ?? "不明"), hasCompletedSetup: \(self.currentUser?.hasCompletedSetup ?? false)")
             } catch let decodingError {
                 print("🚨 ユーザーデータのデコードに失敗: \(decodingError)")
-
-                // レスポンスの形式を詳しく調査
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    print("📊 JSONの構造: \(json.keys)")
-
-                    // dataフィールド内にユーザー情報がネストされている場合の対応
-                    if let userData = json["data"] as? [String: Any] {
-                        print("📊 data内の構造: \(userData.keys)")
-
-                        // UserResponse型（data属性にネストされている）としてデコード
-                        do {
-                            let userResponse = try decoder.decode(UserResponse.self, from: data)
-                            self.currentUser = userResponse.data
-                            self.isAuthenticated = true
-                            print("✅ ネストされたユーザー情報取得成功: \(self.currentUser?.email ?? "不明")")
-                        } catch {
-                            print("🚨 ネストされたユーザーデータのデコードにも失敗: \(error)")
-                            throw error
-                        }
-                    } else {
-                        throw decodingError
-                    }
-                } else {
-                    throw decodingError
+                // エラーの詳細を出力
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("📄 デコードに失敗したJSON: \(jsonString)")
                 }
+                throw decodingError // エラーを再スローして呼び出し元に伝える
             }
         } catch {
             print("🚨 通信エラー: \(error.localizedDescription)")
