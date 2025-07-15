@@ -14,13 +14,11 @@ Route::post('/register', [AuthController::class, 'register']);
 // ログイン
 Route::post('/login', [AuthController::class, 'login']);
 
-// 認証が必要なAPI（Sanctum）
+// 認証が必要なAPI
 Route::middleware('auth:sanctum')->group(function () {
 
     // 自分のユーザー情報取得
-    Route::get('/user', function (Request $request) {
-        return new UserResource($request->user());
-    });
+    Route::get('/user', [UserController::class, 'me']);
     // Route::get('/users/{id}', [UserController::class, 'updateprofile']);
 
     Route::post('/upload-image', [ImageUploadController::class, 'store']);

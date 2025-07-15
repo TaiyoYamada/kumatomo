@@ -68,4 +68,15 @@ class UserController extends Controller
 
         return new UserResource($user); // 更新後のユーザー情報を返す
     }
+
+    /**
+     * 認証済みのユーザー情報を取得する
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \App\Http\Resources\UserResource
+     */
+    public function me(Request $request)
+    {
+        return new UserResource($request->user());
+    }
 }
