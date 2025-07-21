@@ -3,7 +3,6 @@ import Foundation
 enum PostError: LocalizedError {
     case contentEmpty
     case contentOverLimit(currentCount: Int, maxCount: Int)
-    case titleEmpty
     case tagLimitExceeded(currentCount: Int, maxCount: Int)
     case duplicateTag(tagName: String)
     case invalidImageData
@@ -15,8 +14,6 @@ enum PostError: LocalizedError {
             return "ストーリーの内容を入力してください"
         case .contentOverLimit(let currentCount, let maxCount):
             return "文字数制限を超えています (\(currentCount)/\(maxCount)文字)"
-        case .titleEmpty:
-            return "タイトルを入力してください"
         case .tagLimitExceeded(let currentCount, let maxCount):
             return "タグの数が上限を超えています (\(currentCount)/\(maxCount)個)"
         case .duplicateTag(let tagName):
@@ -34,8 +31,6 @@ enum PostError: LocalizedError {
             return "ストーリーの内容を入力してから投稿してください"
         case .contentOverLimit:
             return "文字数を減らしてから投稿してください"
-        case .titleEmpty:
-            return "タイトルを入力してから投稿してください"
         case .tagLimitExceeded:
             return "不要なタグを削除してから追加してください"
         case .duplicateTag:

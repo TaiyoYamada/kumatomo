@@ -5,14 +5,13 @@ import Combine
 @MainActor
 class PostViewModel: ObservableObject {
     @Published var postContent: String = ""
-    @Published var postTitle: String = ""
     @Published var selectedImage: UIImage?
     @Published var imageURL: String?
     @Published var tags: [String] = []
     @Published var tagInput: String = ""
     
-    @Published var stories: [Post] = []
-    @Published var userStories: [Post] = []
+    @Published var posts: [Post] = []
+    @Published var userPosts: [Post] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var showSuccessModal: Bool = false
@@ -35,18 +34,6 @@ class PostViewModel: ObservableObject {
         return .success(())
     }
     
-    func validateTitle() -> Result<Void, PostValidationError> {
-        if postTitle.isEmpty {
-            return .failure(.titleEmpty)
-        }
-        
-        if postTitle.count > 50 {
-            return .failure(.titleTooLong(currentCount: postTitle.count, maxCount: 50))
-        }
-        
-        return .success(())
-    }
-    
     func validateForSubmission() -> Result<Void, PostError> {
         if isSubmitting {
             return .failure(.submissionInProgress)
@@ -55,13 +42,6 @@ class PostViewModel: ObservableObject {
         switch validateContent() {
         case .failure(let error):
             return .failure(PostError.contentEmpty) // Convert validation error to post error
-        case .success:
-            break
-        }
-        
-        switch validateTitle() {
-        case .failure(let error):
-            return .failure(PostError.titleEmpty) // Convert validation error to post error
         case .success:
             break
         }
@@ -108,19 +88,19 @@ class PostViewModel: ObservableObject {
     
     // MARK: - API Calls
     
-    func fetchAllStories() async {
+    func fetchAllPosts() async {
         await performAsyncOperation {
-            self.stories = try await self.postAPIService.fetchAllStories()
+            self.posts = try await self.postAPIService.fetchAllPosts()
         }
     }
     
-    func fetchUserStories(userId: Int) async {
+    func fetchUserPosts(userId: Int) async {
         await performAsyncOperation {
-            self.userStories = try await self.postAPIService.fetchUserStories(userId: userId)
+            self.userPosts = try await self.postAPIService.fetchUserPosts(userId: userId)
         }
     }
     
-    func postPost(userId: Int, title: String, content: String) async -> Bool {
+    func postPost(userId: Int, content: String) async -> Bool {
         // Validate before submission
         switch validateForSubmission() {
         case .failure(let error):
@@ -145,7 +125,6 @@ class PostViewModel: ObservableObject {
             // Post post
             let newPost = try await postAPIService.createPost(
                 userId: userId,
-                title: title,
                 content: content,
                 imageUrl: uploadedImageURL,
                 tags: tags
@@ -184,12 +163,11 @@ class PostViewModel: ObservableObject {
     }
     
     private func handleSuccessfulSubmission(_ newPost: Post) async {
-        stories.insert(newPost, at: 0)
-        userStories.insert(newPost, at: 0)
+        posts.insert(newPost, at: 0)
+        userPosts.insert(newPost, at: 0)
         
         // Reset form
         postContent = ""
-        postTitle = ""
         selectedImage = nil
         imageURL = nil
         tags = []

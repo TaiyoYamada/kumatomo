@@ -2,10 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Resources\UserResource;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\StoryController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageUploadController;
 
 // 新規ユーザー登録
@@ -26,11 +25,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // プロフィール更新
     Route::put('/user/update', [UserController::class, 'update']);
 
-    // ストーリー（ショート物語）の投稿・取得
-    Route::get('/stories', [StoryController::class, 'index']);
+    // 投稿の取得
+    Route::get('/posts', [PostController::class, 'index']);
 
-    Route::post('/stories', [StoryController::class, 'store']);
+    // 投稿の作成
+    Route::post('/posts', [PostController::class, 'store']);
 
     // 特定ユーザーのストーリー一覧
-    Route::get('/users/{user}/stories', [StoryController::class, 'indexByUser']);
+    Route::get('/users/{user}/posts', [PostController::class, 'indexByUser']);
 });

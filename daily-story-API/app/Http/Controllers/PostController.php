@@ -3,30 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Story;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
-class StoryController extends Controller
+class PostController extends Controller
 {
     public function index()
     {
-        $stories = Story::with('user')->latest()->get();
-        return response()->json($stories);
+        $posts = Post::with('user')->latest()->get();
+        return response()->json($posts);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'nullable|string|max:50',
-            'content' => 'required|string|max:100',
+            'content' => 'required|string|max:200',
             'image_url' => 'nullable|url|max:2048',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:20',
         ]);
 
-        $story = $request->user()->stories()->create($validated);
+        $post = $request->user()->stories()->create($validated);
 
-        return response()->json($story->load('user'), 201);
+        return response()->json($post->load('user'), 201);
     }
 
     /**
@@ -37,6 +36,6 @@ class StoryController extends Controller
      */
     public function indexByUser(User $user)
     {
-        return $user->stories()->with('user')->latest()->get();
+        return $user->posts()->with('user')->latest()->get();
     }
 }

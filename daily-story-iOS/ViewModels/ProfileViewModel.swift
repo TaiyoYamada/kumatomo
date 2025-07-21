@@ -47,7 +47,7 @@ class ProfileViewModel: ObservableObject {
             createdAt: nil
         )
         loadProfile(userID: userID)
-        loadUserStories(userID: userID)
+        loadUserPosts(userID: userID)
     }
     
     // プロフィール編集用の初期化処理を追加
@@ -59,7 +59,7 @@ class ProfileViewModel: ObservableObject {
 //        self.location = profile.location ?? "" // 場所の初期化
         
         // ユーザーストーリーを読み込む
-        loadUserStories(userID: profile.id)
+        loadUserPosts(userID: profile.id)
     }
     
     // userIDをInt型に変更
@@ -80,14 +80,14 @@ class ProfileViewModel: ObservableObject {
     }
     
     // ユーザーのストーリーを読み込むメソッドを追加
-    func loadUserStories(userID: Int) {
+    func loadUserPosts(userID: Int) {
         isLoading = true
         
         Task {
             do {
-                let fetchedStories = try await postAPIService.fetchUserStories(userId: userID)
+                let fetchedPosts = try await postAPIService.fetchUserPosts(userId: userID)
                 await MainActor.run {
-                    self.posts = fetchedStories
+                    self.posts = fetchedPosts
                     self.isLoading = false
                 }
             } catch {

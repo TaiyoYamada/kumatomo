@@ -11,8 +11,8 @@ class PostAPIService {
     }
     
     // ストーリーを投稿する（画像URL、タイトル、タグに対応）
-    func createPost(userId: Int, title: String, content: String, imageUrl: String? = nil, tags: [String] = []) async throws -> Post {
-        let endpoint = "\(baseURL)/stories"
+    func createPost(userId: Int, content: String, imageUrl: String? = nil, tags: [String] = []) async throws -> Post {
+        let endpoint = "\(baseURL)/posts"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
             throw PostAPIError.invalidURL
@@ -33,7 +33,6 @@ class PostAPIService {
         // リクエストボディの作成
         var body: [String: Any] = [
             "user_id": userId,
-            "title": title,
             "content": content
         ]
         
@@ -93,8 +92,8 @@ class PostAPIService {
     }
     
     // 全ユーザーのストーリーを取得する
-    func fetchAllStories() async throws -> [Post] {
-        let endpoint = "\(baseURL)/stories"
+    func fetchAllPosts() async throws -> [Post] {
+        let endpoint = "\(baseURL)/posts"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
             throw PostAPIError.invalidURL
@@ -166,8 +165,8 @@ class PostAPIService {
     }
     
     // 特定ユーザーのストーリーを取得する
-    func fetchUserStories(userId: Int) async throws -> [Post] {
-        let endpoint = "\(baseURL)/users/\(userId)/stories"
+    func fetchUserPosts(userId: Int) async throws -> [Post] {
+        let endpoint = "\(baseURL)/users/\(userId)/posts"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
             throw PostAPIError.invalidURL

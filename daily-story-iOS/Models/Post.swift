@@ -3,7 +3,6 @@ import Foundation
 struct Post: Identifiable, Codable {
     var id: Int
     var userId: Int?
-    var title: String?
     var content: String
     var imageUrl: String?
     var tags: [String]?
@@ -16,7 +15,6 @@ struct Post: Identifiable, Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case userId = "user_id"
-        case title
         case content
         case imageUrl = "image_url"
         case tags
@@ -26,12 +24,10 @@ struct Post: Identifiable, Codable {
     }
 }
 
-// POST /api/stories に送信するストーリー作成リクエスト
 extension Post {
-    init(id: Int = 0, userId: Int, title: String? = nil, content: String, imageUrl: String? = nil, tags: [String]? = nil) {
+    init(id: Int = 0, userId: Int, content: String, imageUrl: String? = nil, tags: [String]? = nil) {
         self.id = id
         self.userId = userId
-        self.title = title
         self.content = content
         self.imageUrl = imageUrl
         self.tags = tags

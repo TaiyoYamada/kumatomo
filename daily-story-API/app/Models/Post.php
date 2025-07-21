@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Story extends Model
+class Post extends Model
 {
     use HasFactory;
 
@@ -13,7 +13,6 @@ class Story extends Model
      * 一括代入可能な属性。
      */
     protected $fillable = [
-        'title',
         'content',
         'image_url',
         'tags',

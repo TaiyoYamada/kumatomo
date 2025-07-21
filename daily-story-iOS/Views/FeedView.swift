@@ -15,33 +15,13 @@ struct FeedView: View {
                 
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(viewModel.stories) { post in
+                        ForEach(viewModel.posts) { post in
                             PostCardView(post: post)
                                 .padding(.horizontal)
                         }
                     }
                     .padding(.vertical)
                 }
-                
-//                VStack {
-//                    Spacer()
-//                    HStack {
-//                        Spacer()
-//                        Button(action: {
-//                            showingNewPost = true
-//                        }) {
-//                            Image(systemName: "plus")
-//                                .font(.title2)
-//                                .foregroundColor(.white)
-//                                .frame(width: 60, height: 60)
-//                                .background(Color.blue)
-//                                .clipShape(Circle())
-//                                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
-//                        }
-//                        .padding(.trailing, 20)
-//                        .padding(.bottom, 20)
-//                    }
-//                }
             }
             .navigationTitle("タイムライン")
             .toolbarTitleDisplayMode(.inline)
@@ -75,12 +55,12 @@ struct FeedView: View {
             }
         }
         .task {
-            if viewModel.stories.isEmpty {
-                await viewModel.fetchAllStories()
+            if viewModel.posts.isEmpty {
+                await viewModel.fetchAllPosts()
             }
         }
         .refreshable {
-            await viewModel.fetchAllStories()
+            await viewModel.fetchAllPosts()
         }
     }
 }

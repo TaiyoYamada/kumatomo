@@ -23,7 +23,7 @@ struct MyProfileView: View {
                     TabSectionView(selectedTab: $selectedTab)
                     
                     // 投稿グリッド
-                    PostGridItemView(post: postviewModel.stories)
+                    PostGridItemView(post: postviewModel.posts)
                 }
             }
             .navigationBarHidden(true)
@@ -52,16 +52,15 @@ struct MyProfileView: View {
         .onAppear {
             let userId = AuthService.shared.currentUser?.id ?? 0
             viewModel.loadProfile(userID: userId)
-            viewModel.loadUserStories(userID: userId)
+            viewModel.loadUserPosts(userID: userId)
         }
         .refreshable {
             let userId = AuthService.shared.currentUser?.id ?? 0
             viewModel.loadProfile(userID: userId)
-            viewModel.loadUserStories(userID: userId)
+            viewModel.loadUserPosts(userID: userId)
         }
     }
 }
-
 // カスタムナビゲーションバー
 struct CustomNavigationBar: View {
     let profileName: String
@@ -293,7 +292,7 @@ struct PostGridItemView: View {
     
     var body: some View {
         LazyVStack(spacing: 0) {
-            ForEach(postviewModel.stories) { post in
+            ForEach(postviewModel.posts) { post in
                 XPostCardView(post: post)
                 
                 Divider()
