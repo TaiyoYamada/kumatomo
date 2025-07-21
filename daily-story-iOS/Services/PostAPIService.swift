@@ -1,7 +1,7 @@
 import Foundation
 
-class StoryAPIService {
-    static let shared = StoryAPIService()
+class PostAPIService {
+    static let shared = PostAPIService()
     
     private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
     
@@ -11,11 +11,11 @@ class StoryAPIService {
     }
     
     // ストーリーを投稿する（画像URL、タイトル、タグに対応）
-    func postStory(userId: Int, title: String, content: String, imageUrl: String? = nil, tags: [String] = []) async throws -> Story {
+    func createPost(userId: Int, title: String, content: String, imageUrl: String? = nil, tags: [String] = []) async throws -> Post {
         let endpoint = "\(baseURL)/stories"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
-            throw StoryAPIError.invalidURL
+            throw PostAPIError.invalidURL
         }
         
         var request = URLRequest(url: url)
@@ -56,7 +56,7 @@ class StoryAPIService {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw StoryAPIError.invalidResponse
+                throw PostAPIError.invalidResponse
             }
             
             print("📡 ステータスコード: \(httpResponse.statusCode)")
@@ -71,33 +71,33 @@ class StoryAPIService {
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode(Story.self, from: data)
+                    return try decoder.decode(Post.self, from: data)
                 } catch {
                     print("🚨 デコードエラー: \(error)")
-                    throw StoryAPIError.decodingError(error)
+                    throw PostAPIError.decodingError(error)
                 }
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 // エラーレスポンスの詳細を確認
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw StoryAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
             } else {
-                throw StoryAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
             }
-        } catch let error as StoryAPIError {
-            print("🚨 StoryAPIError: \(error)")
+        } catch let error as PostAPIError {
+            print("🚨 PostAPIError: \(error)")
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw StoryAPIError.networkError(error)
+            throw PostAPIError.networkError(error)
         }
     }
     
     // 全ユーザーのストーリーを取得する
-    func fetchAllStories() async throws -> [Story] {
+    func fetchAllStories() async throws -> [Post] {
         let endpoint = "\(baseURL)/stories"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
-            throw StoryAPIError.invalidURL
+            throw PostAPIError.invalidURL
         }
         
         var request = URLRequest(url: url)
@@ -116,7 +116,7 @@ class StoryAPIService {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw StoryAPIError.invalidResponse
+                throw PostAPIError.invalidResponse
             }
             
             print("📡 ステータスコード: \(httpResponse.statusCode)")
@@ -131,7 +131,7 @@ class StoryAPIService {
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode([Story].self, from: data)
+                    return try decoder.decode([Post].self, from: data)
                 } catch {
                     print("🚨 デコードエラー: \(error)")
                     if let decodingError = error as? DecodingError {
@@ -148,29 +148,29 @@ class StoryAPIService {
                             print("🧩 その他のデコードエラー")
                         }
                     }
-                    throw StoryAPIError.decodingError(error)
+                    throw PostAPIError.decodingError(error)
                 }
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw StoryAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
             } else {
-                throw StoryAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
             }
-        } catch let error as StoryAPIError {
-            print("🚨 StoryAPIError: \(error)")
+        } catch let error as PostAPIError {
+            print("🚨 PostAPIError: \(error)")
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw StoryAPIError.networkError(error)
+            throw PostAPIError.networkError(error)
         }
     }
     
     // 特定ユーザーのストーリーを取得する
-    func fetchUserStories(userId: Int) async throws -> [Story] {
+    func fetchUserStories(userId: Int) async throws -> [Post] {
         let endpoint = "\(baseURL)/users/\(userId)/stories"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
-            throw StoryAPIError.invalidURL
+            throw PostAPIError.invalidURL
         }
         
         var request = URLRequest(url: url)
@@ -189,7 +189,7 @@ class StoryAPIService {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw StoryAPIError.invalidResponse
+                throw PostAPIError.invalidResponse
             }
             
             print("📡 ステータスコード: \(httpResponse.statusCode)")
@@ -204,7 +204,7 @@ class StoryAPIService {
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode([Story].self, from: data)
+                    return try decoder.decode([Post].self, from: data)
                 } catch {
                     print("🚨 デコードエラー: \(error)")
                     if let decodingError = error as? DecodingError {
@@ -221,20 +221,20 @@ class StoryAPIService {
                             print("🧩 その他のデコードエラー")
                         }
                     }
-                    throw StoryAPIError.decodingError(error)
+                    throw PostAPIError.decodingError(error)
                 }
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw StoryAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
             } else {
-                throw StoryAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
             }
-        } catch let error as StoryAPIError {
-            print("🚨 StoryAPIError: \(error)")
+        } catch let error as PostAPIError {
+            print("🚨 PostAPIError: \(error)")
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw StoryAPIError.networkError(error)
+            throw PostAPIError.networkError(error)
         }
     }
 }

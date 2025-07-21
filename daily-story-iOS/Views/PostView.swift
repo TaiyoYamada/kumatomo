@@ -2,7 +2,7 @@ import SwiftUI
 import PhotosUI
 
 struct PostView: View {
-    @StateObject private var viewModel = StoryViewModel()
+    @StateObject private var viewModel = PostViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var selectedItem: PhotosPickerItem?
     
@@ -29,7 +29,7 @@ struct PostView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
-                            TextField("タイトルを入力（任意）", text: $viewModel.storyTitle)
+                            TextField("タイトルを入力（任意）", text: $viewModel.postTitle)
                                 .font(.title3)
                                 .padding()
                                 .background(Color.white)
@@ -45,7 +45,7 @@ struct PostView: View {
                                 .foregroundColor(.primary)
                             
                             ZStack(alignment: .topLeading) {
-                                if viewModel.storyContent.isEmpty {
+                                if viewModel.postContent.isEmpty {
                                     Text("今日の出来事を100文字以内で共有しよう...")
                                         .foregroundColor(.gray)
                                         .font(contentFont)
@@ -53,7 +53,7 @@ struct PostView: View {
                                         .padding(.top, 16)
                                 }
                                 
-                                TextEditor(text: $viewModel.storyContent)
+                                TextEditor(text: $viewModel.postContent)
                                     .font(contentFont)
                                     .padding(.horizontal, 8)
                                     .scrollContentBackground(.hidden)
@@ -66,9 +66,9 @@ struct PostView: View {
                             // 文字数カウンター
                             HStack {
                                 Spacer()
-                                Text("\(viewModel.storyContent.count)/100")
+                                Text("\(viewModel.postContent.count)/100")
                                     .font(.caption)
-                                    .foregroundColor(viewModel.storyContent.count > 100 ? errorColor : regularColor)
+                                    .foregroundColor(viewModel.postContent.count > 100 ? errorColor : regularColor)
                             }
                             .padding(.horizontal)
                         }
@@ -88,8 +88,8 @@ struct PostView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     // 計算プロパティを定義して複雑な条件を分割
-                    let isContentEmpty = viewModel.storyContent.isEmpty
-                    let isContentTooLong = viewModel.storyContent.count > 100
+                    let isContentEmpty = viewModel.postContent.isEmpty
+                    let isContentTooLong = viewModel.postContent.count > 100
                     let isButtonDisabled = isContentEmpty || isContentTooLong || viewModel.isLoading
                     let buttonColor = (!isContentEmpty && !isContentTooLong && !viewModel.isLoading) ? primaryColor : Color.gray
                     
@@ -97,10 +97,10 @@ struct PostView: View {
                         Task {
                             // 認証サービスから現在のユーザーIDを取得
                             if let currentUser = AuthService.shared.currentUser {
-                                let success = await viewModel.postStory(
+                                let success = await viewModel.postPost(
                                     userId: currentUser.id,
-                                    title: viewModel.storyTitle,
-                                    content: viewModel.storyContent
+                                    title: viewModel.postTitle,
+                                    content: viewModel.postContent
                                 )
                             } else {
                                 viewModel.errorMessage = "ユーザー情報が取得できません。再ログインしてください。"

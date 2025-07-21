@@ -1,6 +1,6 @@
 import Foundation
 
-enum StoryValidationError: LocalizedError {
+enum PostValidationError: LocalizedError {
     case contentEmpty
     case contentTooShort(currentCount: Int, minCount: Int)
     case contentTooLong(currentCount: Int, maxCount: Int)

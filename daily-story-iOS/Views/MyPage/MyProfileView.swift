@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MyProfileView: View {
     @StateObject private var viewModel = ProfileViewModel(userID: 0)
-    @StateObject private var storyviewModel = StoryViewModel()
+    @StateObject private var postviewModel = PostViewModel()
     @State private var showingNewPost = false
     @State private var selectedTab = 0
     @State private var showingEditProfile = false
@@ -23,7 +23,7 @@ struct MyProfileView: View {
                     TabSectionView(selectedTab: $selectedTab)
                     
                     // 投稿グリッド
-                    PostGridItemView(story: storyviewModel.stories)
+                    PostGridItemView(post: postviewModel.stories)
                 }
             }
             .navigationBarHidden(true)
@@ -288,13 +288,13 @@ struct TabSectionView: View {
 
 // 投稿グリッド
 struct PostGridItemView: View {
-    @StateObject private var storyviewModel = StoryViewModel()
-    let story: [Story]
+    @StateObject private var postviewModel = PostViewModel()
+    let post: [Post]
     
     var body: some View {
         LazyVStack(spacing: 0) {
-            ForEach(storyviewModel.stories) { story in
-                XPostCardView(story: story)
+            ForEach(postviewModel.stories) { post in
+                XPostCardView(post: post)
                 
                 Divider()
                     .background(Color.gray.opacity(0.3))
@@ -305,7 +305,7 @@ struct PostGridItemView: View {
 
 // X風投稿カード
 struct XPostCardView: View {
-    let story: Story
+    let post: Post
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -322,7 +322,7 @@ struct XPostCardView: View {
             VStack(alignment: .leading, spacing: 8) {
                 // ユーザー名と時間
                 HStack {
-                    Text(story.user?.name ?? "Unknown")
+                    Text(post.user?.name ?? "Unknown")
                         .font(.body)
                         .fontWeight(.semibold)
                         .foregroundColor(.black)
@@ -348,13 +348,13 @@ struct XPostCardView: View {
                 }
                 
                 // 投稿内容
-                Text(story.content)
+                Text(post.content)
                     .font(.body)
                     .foregroundColor(.black)
                     .lineLimit(nil)
                 
                 // 投稿画像
-//                if let imageURL = story.imageURL, let url = URL(string: imageURL) {
+//                if let imageURL = post.imageURL, let url = URL(string: imageURL) {
 //                    AsyncImage(url: url) { image in
 //                        image
 //                            .resizable()

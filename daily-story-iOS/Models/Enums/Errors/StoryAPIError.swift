@@ -1,6 +1,6 @@
 import Foundation
 
-enum StoryAPIError: Error {
+enum PostAPIError: Error {
     case invalidURL
     case networkError(Error)
     case invalidResponse

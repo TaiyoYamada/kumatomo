@@ -1,6 +1,6 @@
 import Foundation
 
-enum StoryError: LocalizedError {
+enum PostError: LocalizedError {
     case contentEmpty
     case contentOverLimit(currentCount: Int, maxCount: Int)
     case titleEmpty

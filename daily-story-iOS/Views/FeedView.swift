@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FeedView: View {
-    @StateObject private var viewModel = StoryViewModel()
+    @StateObject private var viewModel = PostViewModel()
     @State private var showingNewPost = false
     
     // カラー定数
@@ -15,8 +15,8 @@ struct FeedView: View {
                 
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(viewModel.stories) { story in
-                            StoryCardView(story: story)
+                        ForEach(viewModel.stories) { post in
+                            PostCardView(post: post)
                                 .padding(.horizontal)
                         }
                     }
@@ -85,9 +85,9 @@ struct FeedView: View {
     }
 }
 
-// Story Card View
-struct StoryCardView: View {
-    let story: Story
+// Post Card View
+struct PostCardView: View {
+    let post: Post
     
     // カラー定数
     private let cardBackground = Color.white
@@ -109,7 +109,7 @@ struct StoryCardView: View {
     
     // 日付フォーマッター
     private var formattedDate: String {
-        guard let createdAt = story.createdAt else { return "" }
+        guard let createdAt = post.createdAt else { return "" }
 
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -124,13 +124,13 @@ struct StoryCardView: View {
             // ヘッダー（ユーザー情報）
             HStack(spacing: 10) {
                 // ユーザーアイコン
-                Image(systemName: mockAvatars[story.userId ?? 1] ?? "person.circle")
+                Image(systemName: mockAvatars[post.userId ?? 1] ?? "person.circle")
                     .font(.system(size: 36))
                     .foregroundColor(.blue)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     // ユーザー名
-                    Text(mockNames[story.userId ?? 1] ?? "ユーザー")
+                    Text(mockNames[post.userId ?? 1] ?? "ユーザー")
                         .font(.headline)
                     
                     // 投稿日時
@@ -143,7 +143,7 @@ struct StoryCardView: View {
             }
             
             // 投稿内容
-            Text(story.content)
+            Text(post.content)
                 .font(.body)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.vertical, 4)

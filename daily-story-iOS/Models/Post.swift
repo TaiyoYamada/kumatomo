@@ -1,6 +1,6 @@
 import Foundation
 
-struct Story: Identifiable, Codable {
+struct Post: Identifiable, Codable {
     var id: Int
     var userId: Int?
     var title: String?
@@ -27,7 +27,7 @@ struct Story: Identifiable, Codable {
 }
 
 // POST /api/stories に送信するストーリー作成リクエスト
-extension Story {
+extension Post {
     init(id: Int = 0, userId: Int, title: String? = nil, content: String, imageUrl: String? = nil, tags: [String]? = nil) {
         self.id = id
         self.userId = userId

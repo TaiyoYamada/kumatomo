@@ -56,7 +56,7 @@ class ImageUploadService {
             
             // レスポンスのステータスコードを確認
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw StoryAPIError.invalidResponse
+                throw PostAPIError.invalidResponse
             }
             
             print("📡 ステータスコード: \(httpResponse.statusCode)")
@@ -66,7 +66,7 @@ class ImageUploadService {
                 if let responseString = String(data: data, encoding: .utf8) {
                     print("🚨 サーバーエラーレスポンス: \(responseString)")
                 }
-                throw StoryAPIError.invalidResponse
+                throw PostAPIError.invalidResponse
             }
             
             // JSONデコード

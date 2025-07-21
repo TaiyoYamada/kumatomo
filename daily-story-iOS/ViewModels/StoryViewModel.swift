@@ -3,65 +3,65 @@ import SwiftUI
 import Combine
 
 @MainActor
-class StoryViewModel: ObservableObject {
-    @Published var storyContent: String = ""
-    @Published var storyTitle: String = ""
+class PostViewModel: ObservableObject {
+    @Published var postContent: String = ""
+    @Published var postTitle: String = ""
     @Published var selectedImage: UIImage?
     @Published var imageURL: String?
     @Published var tags: [String] = []
     @Published var tagInput: String = ""
     
-    @Published var stories: [Story] = []
-    @Published var userStories: [Story] = []
+    @Published var stories: [Post] = []
+    @Published var userStories: [Post] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var showSuccessModal: Bool = false
     @Published var isSubmitting: Bool = false
     
-    private let storyAPIService = StoryAPIService()
+    private let postAPIService = PostAPIService()
     private let imageUploadService = ImageUploadService()
     
     // MARK: - Validation
     
-    func validateContent() -> Result<Void, StoryValidationError> {
-        if storyContent.isEmpty {
+    func validateContent() -> Result<Void, PostValidationError> {
+        if postContent.isEmpty {
             return .failure(.contentEmpty)
         }
         
-        if storyContent.count > 100 {
-            return .failure(.contentTooLong(currentCount: storyContent.count, maxCount: 100))
+        if postContent.count > 100 {
+            return .failure(.contentTooLong(currentCount: postContent.count, maxCount: 100))
         }
         
         return .success(())
     }
     
-    func validateTitle() -> Result<Void, StoryValidationError> {
-        if storyTitle.isEmpty {
+    func validateTitle() -> Result<Void, PostValidationError> {
+        if postTitle.isEmpty {
             return .failure(.titleEmpty)
         }
         
-        if storyTitle.count > 50 {
-            return .failure(.titleTooLong(currentCount: storyTitle.count, maxCount: 50))
+        if postTitle.count > 50 {
+            return .failure(.titleTooLong(currentCount: postTitle.count, maxCount: 50))
         }
         
         return .success(())
     }
     
-    func validateForSubmission() -> Result<Void, StoryError> {
+    func validateForSubmission() -> Result<Void, PostError> {
         if isSubmitting {
             return .failure(.submissionInProgress)
         }
         
         switch validateContent() {
         case .failure(let error):
-            return .failure(StoryError.contentEmpty) // Convert validation error to story error
+            return .failure(PostError.contentEmpty) // Convert validation error to post error
         case .success:
             break
         }
         
         switch validateTitle() {
         case .failure(let error):
-            return .failure(StoryError.titleEmpty) // Convert validation error to story error
+            return .failure(PostError.titleEmpty) // Convert validation error to post error
         case .success:
             break
         }
@@ -78,7 +78,7 @@ class StoryViewModel: ObservableObject {
     
     // MARK: - Tag Management
     
-    func addTag() -> Result<Void, StoryValidationError> {
+    func addTag() -> Result<Void, PostValidationError> {
         let trimmedTag = tagInput.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if trimmedTag.isEmpty {
@@ -110,21 +110,21 @@ class StoryViewModel: ObservableObject {
     
     func fetchAllStories() async {
         await performAsyncOperation {
-            self.stories = try await self.storyAPIService.fetchAllStories()
+            self.stories = try await self.postAPIService.fetchAllStories()
         }
     }
     
     func fetchUserStories(userId: Int) async {
         await performAsyncOperation {
-            self.userStories = try await self.storyAPIService.fetchUserStories(userId: userId)
+            self.userStories = try await self.postAPIService.fetchUserStories(userId: userId)
         }
     }
     
-    func postStory(userId: Int, title: String, content: String) async -> Bool {
+    func postPost(userId: Int, title: String, content: String) async -> Bool {
         // Validate before submission
         switch validateForSubmission() {
         case .failure(let error):
-            await handleStoryError(error)
+            await handlePostError(error)
             return false
         case .success:
             break
@@ -142,8 +142,8 @@ class StoryViewModel: ObservableObject {
                 uploadedImageURL = try await uploadImage(image)
             }
             
-            // Post story
-            let newStory = try await storyAPIService.postStory(
+            // Post post
+            let newPost = try await postAPIService.createPost(
                 userId: userId,
                 title: title,
                 content: content,
@@ -152,11 +152,11 @@ class StoryViewModel: ObservableObject {
             )
             
             // Success handling
-            await handleSuccessfulSubmission(newStory)
+            await handleSuccessfulSubmission(newPost)
             return true
             
-        } catch let error as StoryAPIError {
-            await handleStoryAPIError(error)
+        } catch let error as PostAPIError {
+            await handlePostAPIError(error)
         } catch let error as ImageUploadError {
             await handleImageUploadError(error)
         } catch {
@@ -183,13 +183,13 @@ class StoryViewModel: ObservableObject {
         }
     }
     
-    private func handleSuccessfulSubmission(_ newStory: Story) async {
-        stories.insert(newStory, at: 0)
-        userStories.insert(newStory, at: 0)
+    private func handleSuccessfulSubmission(_ newPost: Post) async {
+        stories.insert(newPost, at: 0)
+        userStories.insert(newPost, at: 0)
         
         // Reset form
-        storyContent = ""
-        storyTitle = ""
+        postContent = ""
+        postTitle = ""
         selectedImage = nil
         imageURL = nil
         tags = []
@@ -213,8 +213,8 @@ class StoryViewModel: ObservableObject {
         do {
             _ = try await operation()
             isLoading = false
-        } catch let error as StoryAPIError {
-            await handleStoryAPIError(error)
+        } catch let error as PostAPIError {
+            await handlePostAPIError(error)
         } catch {
             await handleGenericError(error, context: "データ取得")
         }
@@ -222,12 +222,12 @@ class StoryViewModel: ObservableObject {
     
     // MARK: - Error Handling
     
-    private func handleStoryError(_ error: StoryError) async {
+    private func handlePostError(_ error: PostError) async {
         errorMessage = error.localizedDescription
-        print("🚨 StoryError: \(error.localizedDescription)")
+        print("🚨 PostError: \(error.localizedDescription)")
     }
     
-    private func handleStoryAPIError(_ error: StoryAPIError) async {
+    private func handlePostAPIError(_ error: PostAPIError) async {
         isLoading = false
 
         let apiError: APIError
@@ -299,7 +299,7 @@ class StoryViewModel: ObservableObject {
         }
     }
     
-    private func handleValidationError(_ error: StoryValidationError) async {
+    private func handleValidationError(_ error: PostValidationError) async {
         errorMessage = error.localizedDescription
         print("🚨 ValidationError: \(error.localizedDescription)")
         

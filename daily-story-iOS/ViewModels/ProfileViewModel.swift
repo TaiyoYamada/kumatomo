@@ -13,7 +13,7 @@ class ProfileViewModel: ObservableObject {
     @Published var selectedImage: UIImage?
     @Published var isImageUploading = false
     @Published var showSuccessMessage = false
-    @Published var stories: [Story] = []
+    @Published var posts: [Post] = []
 
     // 編集用プロパティ
     @Published var name: String = ""
@@ -25,7 +25,7 @@ class ProfileViewModel: ObservableObject {
     @Published var isProcessing = false // 追加: 処理中フラグ
     
     private let userAPIService = UserAPIService()
-    private let storyAPIService = StoryAPIService()
+    private let postAPIService = PostAPIService()
     private let imageManager = ProfileImageManager()
     private let imageUploadService = ImageUploadService() // 追加: 画像アップロードサービス
     private var cancellables = Set<AnyCancellable>()
@@ -85,9 +85,9 @@ class ProfileViewModel: ObservableObject {
         
         Task {
             do {
-                let fetchedStories = try await storyAPIService.fetchUserStories(userId: userID)
+                let fetchedStories = try await postAPIService.fetchUserStories(userId: userID)
                 await MainActor.run {
-                    self.stories = fetchedStories
+                    self.posts = fetchedStories
                     self.isLoading = false
                 }
             } catch {
