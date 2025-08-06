@@ -1,20 +1,8 @@
-#  dailystory　（仮）
+#  ひだまり
 
-**daily-story** は、毎日のお題に対してユーザーが100文字以内の物語を投稿し、みんなで共有・評価し合うSNS型の物語投稿アプリです。
 
----
+## 主な特徴
 
-## 特徴
-
-- **毎日更新されるお題** に対して物語を投稿
-- **100文字以内**のショートストーリー制限
-- 投稿は **全体公開**、他のユーザーの投稿が一覧表示
-- **いいね機能** による共感評価
-- 日別・週間・月間の **ランキング機能**
-- **ログイン必須**（ユーザーアカウント管理あり）
-- 管理者画面（お題の管理や不適切投稿の削除）
-
----
 
 ## 開発環境まとめ
 
@@ -25,33 +13,18 @@
 | DB      | MySQL 8.x（Dockerで起動）               |
 | 認証      | Laravel Sanctum（トークンベース認証）           |
 | API通信   | REST API（JSON形式、Bearerトークンによる認証）     ||
-| ストレージ   | ImgBB（画像アップロード用の無料外部APIを使用予定）        |
-| 管理ツール   | Postman（APIテスト） / Sequel Ace（DB確認） |
-|　サーバー　|　Render?? |
-| 管理者画面       | Vue.js + TypeScript + Vuetify（SPA構成で構築予定）                         |
+| 画像ストレージ   | ImgBB（画像アップロード用の無料外部APIを使用予定） |
+| 管理者画面       | Vue.js + TypeScript + Vuetify（SPA構成で構築予定）|
+| その他開発ツール   | Postman（APIテスト） / Sequel Ace（DB確認） |
+|　本番環境（予定）　| Render |
 
 ---
 
 
-## ディレクトリ構成（ローカル）
-
-```plaintext
-CoupleMate/
-├── CoupleMate-iOS/       # iOSアプリ (SwiftUI)
-│   └── CoupleMate.xcodeproj
-│   └── Views/, Models/, Services/, ...
-│   └── GoogleService-Info.plist（追加済）
-│   └── .gitignore（Xcode用）
-│
-├── CoupleMate-api/       # Laravel APIサーバー
-│   └── app/, routes/, database/, ...
-│   └── .env（Git除外）
-│   └── docker-compose.yml
-│   └── .gitignore（Laravel用）
-```
+## 設計書もろもろ
+https://docs.google.com/spreadsheets/d/1mYCOM8me72SK_WAiY8aZAGK7daOr7pVdh0_Mcgv9Zto/edit?gid=1467023154#gid=1467023154
 
 ---
-
 ## Laravel APIの起動手順（ローカル専用）
 
 ```bash
