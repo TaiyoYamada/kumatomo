@@ -1,8 +1,19 @@
 #  ひだまり
 
-
 ## 主な特徴
 
+## 設計書
+
+### 基本設計書
+```
+https://docs.google.com/document/d/1oieeV_WKE8YKsUwU8Ret50e5lnSVQDKWlBRMlKIioBg/edit?tab=t.0
+```
+
+### DB設計書
+```
+https://docs.google.com/spreadsheets/d/1mYCOM8me72SK_WAiY8aZAGK7daOr7pVdh0_Mcgv9Zto/edit?gid=1467023154#gid=1467023154
+
+```
 
 ## 開発環境まとめ
 
@@ -17,12 +28,6 @@
 | 管理者画面       | Vue.js + TypeScript + Vuetify（SPA構成で構築予定）|
 | その他開発ツール   | Postman（APIテスト） / Sequel Ace（DB確認） |
 |　本番環境（予定）　| Render |
-
----
-
-
-## 設計書もろもろ
-https://docs.google.com/spreadsheets/d/1mYCOM8me72SK_WAiY8aZAGK7daOr7pVdh0_Mcgv9Zto/edit?gid=1467023154#gid=1467023154
 
 ---
 ## Laravel APIの起動手順（ローカル専用）
