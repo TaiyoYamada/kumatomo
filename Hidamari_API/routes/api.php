@@ -8,6 +8,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AdminShopController;
+use App\Http\Controllers\SearchController;
 
 // 新規ユーザー登録
 Route::post('/register', [AuthController::class, 'register']);
@@ -48,6 +49,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // 特定お店の投稿一覧
     Route::get('/shops/{shopId}/posts', [PostController::class, 'indexByShop']);
 
+
+    // 統合検索API
+    Route::get('/search', [SearchController::class, 'search']);
 
     Route::get('/shops', [ShopController::class, 'index']);
     Route::get('/shops/search', [ShopController::class, 'search']);

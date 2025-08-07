@@ -39,6 +39,7 @@ struct MainTabView: View {
     enum Selection{
         case home
         case shops
+        case search
         case post
         case profile
         
@@ -59,6 +60,13 @@ struct MainTabView: View {
                     Image(systemName: "storefront.fill")
                 }
                 .tag(Selection.shops)
+
+            //  検索タブ
+            SearchView()
+                .tabItem {
+                    Image(systemName: "magnifyingglass")
+                }
+                .tag(Selection.search)
 
             //  投稿タブ
             PostView()
