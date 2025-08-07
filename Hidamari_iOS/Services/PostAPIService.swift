@@ -10,6 +10,119 @@ class PostAPIService {
         return AuthTokenManager.shared.token ?? ""
     }
     
+    // デバッグ用：JSONレスポンスの構造を詳しく確認
+    private func debugJSONResponse(_ data: Data, context: String) {
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("📡 レスポンスJSON (\(context)): \(jsonString)")
+            
+            // JSONの構造を詳しく確認
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data) {
+                if let postsArray = jsonObject as? [[String: Any]] {
+                    print("📊 投稿数: \(postsArray.count)")
+                    if let firstPost = postsArray.first {
+                        print("📊 最初の投稿のキー: \(firstPost.keys.sorted())")
+                        if let images = firstPost["images"] as? [[String: Any]] {
+                            print("📊 画像数: \(images.count)")
+                            if let firstImage = images.first {
+                                print("📊 最初の画像のキー: \(firstImage.keys.sorted())")
+                            }
+                        }
+                    }
+                } else if let singlePost = jsonObject as? [String: Any] {
+                    print("📊 単一投稿のキー: \(singlePost.keys.sorted())")
+                    if let images = singlePost["images"] as? [[String: Any]] {
+                        print("📊 画像数: \(images.count)")
+                        if let firstImage = images.first {
+                            print("📊 最初の画像のキー: \(firstImage.keys.sorted())")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // 投稿を作成する（複数画像対応）
+    func createPostWithMultipleImages(userId: Int, content: String, shopId: Int? = nil, imageUrls: [String], tags: [String] = []) async throws -> Post {
+        let endpoint = "\(baseURL)/posts"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+        }
+        
+        // リクエストボディの作成
+        var body: [String: Any] = [
+            "user_id": userId,
+            "content": content,
+            "image_urls": imageUrls
+        ]
+        
+        // お店IDがある場合は追加
+        if let shopId = shopId {
+            body["shop_id"] = shopId
+        }
+        
+        // タグがある場合は追加
+        if !tags.isEmpty {
+            body["tags"] = tags
+        }
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        print("📡 POST リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        print("📡 ボディ: \(body)")
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            // レスポンスボディをデバッグ出力
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("📡 レスポンスJSON: \(jsonString)")
+            }
+            
+            if httpResponse.statusCode == 200 || httpResponse.statusCode == 201 {
+                // APIHelperを使用してデコード
+                let decoder = APIHelper.makeDecoder()
+                
+                do {
+                    return try decoder.decode(Post.self, from: data)
+                } catch {
+                    print("🚨 デコードエラー: \(error)")
+                    throw PostAPIError.decodingError(error)
+                }
+            } else if let jsonString = String(data: data, encoding: .utf8) {
+                // エラーレスポンスの詳細を確認
+                print("🚨 エラーレスポンス: \(jsonString)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+            } else {
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+            }
+        } catch let error as PostAPIError {
+            print("🚨 PostAPIError: \(error)")
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
+    
     // ストーリーを投稿する（画像URL、タイトル、タグに対応）
     func createPost(userId: Int, content: String, imageUrl: String? = nil, tags: [String] = []) async throws -> Post {
         let endpoint = "\(baseURL)/posts"
@@ -222,6 +335,208 @@ class PostAPIService {
                     }
                     throw PostAPIError.decodingError(error)
                 }
+            } else if let jsonString = String(data: data, encoding: .utf8) {
+                print("🚨 エラーレスポンス: \(jsonString)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+            } else {
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+            }
+        } catch let error as PostAPIError {
+            print("🚨 PostAPIError: \(error)")
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
+    
+    // 投稿を更新する
+    func updatePost(postId: Int, content: String, shopId: Int? = nil, tags: [String] = []) async throws -> Post {
+        let endpoint = "\(baseURL)/posts/\(postId)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+        }
+        
+        // リクエストボディの作成
+        var body: [String: Any] = [
+            "content": content
+        ]
+        
+        // お店IDがある場合は追加
+        if let shopId = shopId {
+            body["shop_id"] = shopId
+        }
+        
+        // タグがある場合は追加
+        if !tags.isEmpty {
+            body["tags"] = tags
+        }
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        print("📡 PUT リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        print("📡 ボディ: \(body)")
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            // レスポンスボディをデバッグ出力
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("📡 レスポンスJSON: \(jsonString)")
+            }
+            
+            if httpResponse.statusCode == 200 {
+                // APIHelperを使用してデコード
+                let decoder = APIHelper.makeDecoder()
+                
+                do {
+                    return try decoder.decode(Post.self, from: data)
+                } catch {
+                    print("🚨 デコードエラー: \(error)")
+                    throw PostAPIError.decodingError(error)
+                }
+            } else if httpResponse.statusCode == 403 {
+                throw PostAPIError.apiError(403, "この投稿を編集する権限がありません")
+            } else if httpResponse.statusCode == 404 {
+                throw PostAPIError.apiError(404, "投稿が見つかりません")
+            } else if let jsonString = String(data: data, encoding: .utf8) {
+                // エラーレスポンスの詳細を確認
+                print("🚨 エラーレスポンス: \(jsonString)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+            } else {
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+            }
+        } catch let error as PostAPIError {
+            print("🚨 PostAPIError: \(error)")
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
+    
+    // 投稿を削除する
+    func deletePost(postId: Int) async throws {
+        let endpoint = "\(baseURL)/posts/\(postId)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+        }
+        
+        print("📡 DELETE リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            // レスポンスボディをデバッグ出力
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("📡 レスポンスJSON: \(jsonString)")
+            }
+            
+            if httpResponse.statusCode == 200 {
+                print("✅ 投稿削除成功")
+            } else if httpResponse.statusCode == 403 {
+                throw PostAPIError.apiError(403, "この投稿を削除する権限がありません")
+            } else if httpResponse.statusCode == 404 {
+                throw PostAPIError.apiError(404, "投稿が見つかりません")
+            } else if let jsonString = String(data: data, encoding: .utf8) {
+                // エラーレスポンスの詳細を確認
+                print("🚨 エラーレスポンス: \(jsonString)")
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+            } else {
+                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+            }
+        } catch let error as PostAPIError {
+            print("🚨 PostAPIError: \(error)")
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
+    
+    // 投稿詳細を取得する
+    func fetchPost(postId: Int) async throws -> Post {
+        let endpoint = "\(baseURL)/posts/\(postId)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+        }
+        
+        print("📡 GET リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            // レスポンスボディをデバッグ出力
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("📡 レスポンスJSON: \(jsonString)")
+            }
+            
+            if httpResponse.statusCode == 200 {
+                // APIHelperを使用してデコード
+                let decoder = APIHelper.makeDecoder()
+                
+                do {
+                    return try decoder.decode(Post.self, from: data)
+                } catch {
+                    print("🚨 デコードエラー: \(error)")
+                    throw PostAPIError.decodingError(error)
+                }
+            } else if httpResponse.statusCode == 404 {
+                throw PostAPIError.apiError(404, "投稿が見つかりません")
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 print("🚨 エラーレスポンス: \(jsonString)")
                 throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")

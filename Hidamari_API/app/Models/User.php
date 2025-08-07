@@ -58,4 +58,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    /**
+     * ユーザーが投稿した投稿を取得（storiesのエイリアス）
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }

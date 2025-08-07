@@ -5,7 +5,9 @@ import Combine
 @MainActor
 class PostViewModel: ObservableObject {
     @Published var postContent: String = ""
-    @Published var selectedImage: UIImage?
+    @Published var selectedImage: UIImage? // Deprecated: use selectedImages instead
+    @Published var selectedImages: [UIImage] = []
+    @Published var selectedShop: Shop?
     @Published var imageURL: String?
     @Published var tags: [String] = []
     @Published var tagInput: String = ""
@@ -17,18 +19,45 @@ class PostViewModel: ObservableObject {
     @Published var showSuccessModal: Bool = false
     @Published var isSubmitting: Bool = false
     
+    // Edit/Delete related properties
+    @Published var isEditing: Bool = false
+    @Published var editingPost: Post?
+    @Published var showDeleteConfirmation: Bool = false
+    @Published var postToDelete: Post?
+    @Published var isDeleting: Bool = false
+    @Published var isUpdating: Bool = false
+    
     private let postAPIService = PostAPIService()
     private let imageUploadService = ImageUploadService()
     
     // MARK: - Validation
     
-    func validateContent() -> Result<Void, PostValidationError> {
+    func validateContent() -> Result<Void, PostError> {
         if postContent.isEmpty {
             return .failure(.contentEmpty)
         }
         
-        if postContent.count > 100 {
-            return .failure(.contentTooLong(currentCount: postContent.count, maxCount: 100))
+        if postContent.count > 500 {
+            return .failure(.contentOverLimit(currentCount: postContent.count, maxCount: 500))
+        }
+        
+        return .success(())
+    }
+    
+    func validateImages() -> Result<Void, PostError> {
+        if selectedImages.isEmpty {
+            return .failure(.noImagesSelected) // At least one image is required
+        }
+        
+        if selectedImages.count > 5 {
+            return .failure(.tooManyImages(currentCount: selectedImages.count, maxCount: 5))
+        }
+        
+        // Validate each image
+        for image in selectedImages {
+            if image.size.width == 0 || image.size.height == 0 {
+                return .failure(.invalidImageData)
+            }
         }
         
         return .success(())
@@ -41,16 +70,16 @@ class PostViewModel: ObservableObject {
         
         switch validateContent() {
         case .failure(let error):
-            return .failure(PostError.contentEmpty) // Convert validation error to post error
+            return .failure(error)
         case .success:
             break
         }
         
-        if let image = selectedImage {
-            // Basic image validation
-            if image.size.width == 0 || image.size.height == 0 {
-                return .failure(.invalidImageData)
-            }
+        switch validateImages() {
+        case .failure(let error):
+            return .failure(error)
+        case .success:
+            break
         }
         
         return .success(())
@@ -58,7 +87,7 @@ class PostViewModel: ObservableObject {
     
     // MARK: - Tag Management
     
-    func addTag() -> Result<Void, PostValidationError> {
+    func addTag() -> Result<Void, PostError> {
         let trimmedTag = tagInput.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if trimmedTag.isEmpty {
@@ -70,7 +99,7 @@ class PostViewModel: ObservableObject {
         }
         
         if tags.count >= 5 {
-            return .failure(.tooManyTags(currentCount: tags.count, maxCount: 5))
+            return .failure(.tagLimitExceeded(currentCount: tags.count, maxCount: 5))
         }
         
         if trimmedTag.count > 20 {
@@ -146,6 +175,278 @@ class PostViewModel: ObservableObject {
         return false
     }
     
+    func createPostWithMultipleImages(userId: Int, content: String, shopId: Int?, images: [UIImage]) async -> Bool {
+        // Validate before submission
+        switch validateForSubmission() {
+        case .failure(let error):
+            await handlePostError(error)
+            return false
+        case .success:
+            break
+        }
+        
+        isSubmitting = true
+        isLoading = true
+        errorMessage = nil
+        showSuccessModal = false
+        
+        do {
+            // Upload multiple images
+            var uploadedImageURLs: [String] = []
+            for (index, image) in images.enumerated() {
+                let imageURL = try await uploadImage(image)
+                uploadedImageURLs.append(imageURL)
+                print("✅ 画像 \(index + 1)/\(images.count) アップロード完了: \(imageURL)")
+            }
+            
+            // Create post with multiple images
+            let newPost = try await postAPIService.createPostWithMultipleImages(
+                userId: userId,
+                content: content,
+                shopId: shopId,
+                imageUrls: uploadedImageURLs,
+                tags: tags
+            )
+            
+            // Success handling
+            await handleSuccessfulSubmission(newPost)
+            return true
+            
+        } catch let error as PostAPIError {
+            await handlePostAPIError(error)
+        } catch let error as ImageUploadError {
+            await handleImageUploadError(error)
+        } catch {
+            await handleGenericError(error, context: "投稿作成")
+        }
+        
+        isSubmitting = false
+        return false
+    }
+    
+    // MARK: - Edit/Delete Methods
+    
+    func startEditing(_ post: Post) {
+        editingPost = post
+        postContent = post.content
+        selectedShop = post.shop
+        tags = post.tags ?? []
+        isEditing = true
+    }
+    
+    func cancelEditing() {
+        editingPost = nil
+        postContent = ""
+        selectedShop = nil
+        tags = []
+        isEditing = false
+        errorMessage = nil
+    }
+    
+    func updatePost() async -> Bool {
+        guard let post = editingPost else {
+            errorMessage = "編集対象の投稿が見つかりません"
+            return false
+        }
+        
+        // Validate before submission
+        switch validateContent() {
+        case .failure(let error):
+            await handleValidationError(error)
+            return false
+        case .success:
+            break
+        }
+        
+        isUpdating = true
+        isLoading = true
+        errorMessage = nil
+        
+        // Store original post for rollback
+        let originalPost = post
+        let originalIndex = posts.firstIndex { $0.id == post.id }
+        let originalUserIndex = userPosts.firstIndex { $0.id == post.id }
+        
+        // Optimistic update
+        var updatedPost = post
+        updatedPost.content = postContent
+        updatedPost.shopId = selectedShop?.id
+        updatedPost.shop = selectedShop
+        updatedPost.tags = tags.isEmpty ? nil : tags
+        updatedPost.updatedAt = Date()
+        
+        // Update UI optimistically
+        if let index = originalIndex {
+            posts[index] = updatedPost
+        }
+        if let index = originalUserIndex {
+            userPosts[index] = updatedPost
+        }
+        
+        do {
+            let serverPost = try await postAPIService.updatePost(
+                postId: post.id,
+                content: postContent,
+                shopId: selectedShop?.id,
+                tags: tags
+            )
+            
+            // Update with server response
+            if let index = originalIndex {
+                posts[index] = serverPost
+            }
+            if let index = originalUserIndex {
+                userPosts[index] = serverPost
+            }
+            
+            // Success handling
+            await handleSuccessfulUpdate()
+            return true
+            
+        } catch let error as PostAPIError {
+            // Rollback optimistic update
+            if let index = originalIndex {
+                posts[index] = originalPost
+            }
+            if let index = originalUserIndex {
+                userPosts[index] = originalPost
+            }
+            
+            await handlePostAPIError(error)
+        } catch {
+            // Rollback optimistic update
+            if let index = originalIndex {
+                posts[index] = originalPost
+            }
+            if let index = originalUserIndex {
+                userPosts[index] = originalPost
+            }
+            
+            await handleGenericError(error, context: "投稿更新")
+        }
+        
+        isUpdating = false
+        return false
+    }
+    
+    func confirmDelete(_ post: Post) {
+        postToDelete = post
+        showDeleteConfirmation = true
+    }
+    
+    func cancelDelete() {
+        postToDelete = nil
+        showDeleteConfirmation = false
+    }
+    
+    func deletePost() async -> Bool {
+        guard let post = postToDelete else {
+            errorMessage = "削除対象の投稿が見つかりません"
+            return false
+        }
+        
+        isDeleting = true
+        isLoading = true
+        errorMessage = nil
+        
+        // Store original data for rollback
+        let originalIndex = posts.firstIndex { $0.id == post.id }
+        let originalUserIndex = userPosts.firstIndex { $0.id == post.id }
+        
+        // Optimistic update - remove from UI
+        posts.removeAll { $0.id == post.id }
+        userPosts.removeAll { $0.id == post.id }
+        
+        do {
+            try await postAPIService.deletePost(postId: post.id)
+            
+            // Success handling
+            await handleSuccessfulDeletion()
+            return true
+            
+        } catch let error as PostAPIError {
+            // Rollback optimistic update
+            if let index = originalIndex {
+                posts.insert(post, at: index)
+            }
+            if let index = originalUserIndex {
+                userPosts.insert(post, at: index)
+            }
+            
+            await handlePostAPIError(error)
+        } catch {
+            // Rollback optimistic update
+            if let index = originalIndex {
+                posts.insert(post, at: index)
+            }
+            if let index = originalUserIndex {
+                userPosts.insert(post, at: index)
+            }
+            
+            await handleGenericError(error, context: "投稿削除")
+        }
+        
+        isDeleting = false
+        return false
+    }
+    
+    func fetchPost(postId: Int) async -> Post? {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let post = try await postAPIService.fetchPost(postId: postId)
+            isLoading = false
+            return post
+        } catch let error as PostAPIError {
+            await handlePostAPIError(error)
+            return nil
+        } catch {
+            await handleGenericError(error, context: "投稿取得")
+            return nil
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    func isPostOwner(_ post: Post) -> Bool {
+        guard let currentUser = AuthService.shared.currentUser else { return false }
+        return post.userId == currentUser.id
+    }
+    
+    private func handleSuccessfulUpdate() async {
+        // Reset editing state
+        editingPost = nil
+        postContent = ""
+        selectedShop = nil
+        tags = []
+        isEditing = false
+        
+        isLoading = false
+        isUpdating = false
+        
+        // Show success message briefly
+        showSuccessModal = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.showSuccessModal = false
+        }
+    }
+    
+    private func handleSuccessfulDeletion() async {
+        // Reset deletion state
+        postToDelete = nil
+        showDeleteConfirmation = false
+        
+        isLoading = false
+        isDeleting = false
+        
+        // Show success message briefly
+        showSuccessModal = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.showSuccessModal = false
+        }
+    }
+    
     // MARK: - Private Methods
     
     private func uploadImage(_ image: UIImage) async throws -> String {
@@ -169,6 +470,8 @@ class PostViewModel: ObservableObject {
         // Reset form
         postContent = ""
         selectedImage = nil
+        selectedImages = []
+        selectedShop = nil
         imageURL = nil
         tags = []
         tagInput = ""
@@ -277,7 +580,7 @@ class PostViewModel: ObservableObject {
         }
     }
     
-    private func handleValidationError(_ error: PostValidationError) async {
+    private func handleValidationError(_ error: PostError) async {
         errorMessage = error.localizedDescription
         print("🚨 ValidationError: \(error.localizedDescription)")
         

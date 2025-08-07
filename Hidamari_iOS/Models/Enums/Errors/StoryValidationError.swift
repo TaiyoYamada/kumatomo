@@ -19,11 +19,11 @@ enum PostValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .contentEmpty:
-            return "ストーリーの内容を入力してください"
+            return "投稿内容を入力してください"
         case .contentTooShort(let currentCount, let minCount):
-            return "ストーリーの内容が短すぎます (\(currentCount)/\(minCount)文字以上)"
+            return "投稿内容が短すぎます (\(currentCount)/\(minCount)文字以上)"
         case .contentTooLong(let currentCount, let maxCount):
-            return "ストーリーの内容が長すぎます (\(currentCount)/\(maxCount)文字以下)"
+            return "投稿内容が長すぎます (\(currentCount)/\(maxCount)文字以下)"
         case .titleEmpty:
             return "タイトルを入力してください"
         case .titleTooShort(let currentCount, let minCount):
@@ -52,7 +52,7 @@ enum PostValidationError: LocalizedError {
     var recoverySuggestion: String? {
         switch self {
         case .contentEmpty:
-            return "ストーリーの内容を入力してから投稿してください"
+            return "投稿内容を入力してから投稿してください"
         case .contentTooShort:
             return "もう少し詳しく書いてみてください"
         case .contentTooLong:

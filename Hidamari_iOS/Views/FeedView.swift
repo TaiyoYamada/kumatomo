@@ -68,6 +68,7 @@ struct FeedView: View {
 // Post Card View
 struct PostCardView: View {
     let post: Post
+    @State private var showingPostDetail = false
     
     // カラー定数
     private let cardBackground = Color.white
@@ -100,52 +101,157 @@ struct PostCardView: View {
 
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // ヘッダー（ユーザー情報）
-            HStack(spacing: 10) {
-                // ユーザーアイコン
-                Image(systemName: mockAvatars[post.userId ?? 1] ?? "person.circle")
-                    .font(.system(size: 36))
-                    .foregroundColor(.blue)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    // ユーザー名
-                    Text(mockNames[post.userId ?? 1] ?? "ユーザー")
-                        .font(.headline)
+        Button(action: { showingPostDetail = true }) {
+            VStack(alignment: .leading, spacing: 12) {
+                // ヘッダー（ユーザー情報）
+                HStack(spacing: 10) {
+                    // ユーザーアイコン
+                    Image(systemName: mockAvatars[post.userId ?? 1] ?? "person.circle")
+                        .font(.system(size: 36))
+                        .foregroundColor(.blue)
                     
-                    // 投稿日時
-                    Text(formattedDate)
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        // ユーザー名
+                        Text(mockNames[post.userId ?? 1] ?? "ユーザー")
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        
+                        // 投稿日時
+                        Text(formattedDate)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
                 }
                 
-                Spacer()
-            }
-            
-            // 投稿内容
-            Text(post.content)
-                .font(.body)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.vertical, 4)
-            
-            // フッター（いいねやコメント数など）
-            HStack(spacing: 20) {
-                // コメントボタン
-                Label("0", systemImage: "message")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                // 投稿内容
+                Text(post.content)
+                    .font(.body)
+                    .foregroundStyle(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.vertical, 4)
+                    .lineLimit(3)
                 
-                // いいねボタン
-                Label("0", systemImage: "heart")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                // 画像プレビュー（最初の1枚のみ）
+                if let images = post.images, let firstImage = images.first {
+                    AsyncImage(url: URL(string: firstImage.imageUrl)) { imagePhase in
+                        switch imagePhase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: 150)
+                                .clipped()
+                                .cornerRadius(8)
+                        case .failure(_):
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 150)
+                                .cornerRadius(8)
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 24))
+                                        .foregroundStyle(.secondary)
+                                }
+                        case .empty:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(height: 150)
+                                .cornerRadius(8)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                } else if let imageUrl = post.imageUrl {
+                    // Backward compatibility for single image
+                    AsyncImage(url: URL(string: imageUrl)) { imagePhase in
+                        switch imagePhase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: 150)
+                                .clipped()
+                                .cornerRadius(8)
+                        case .failure(_):
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 150)
+                                .cornerRadius(8)
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 24))
+                                        .foregroundStyle(.secondary)
+                                }
+                        case .empty:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(height: 150)
+                                .cornerRadius(8)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                }
                 
-                Spacer()
+                // Shop info if available
+                if let shop = post.shop {
+                    HStack {
+                        Image(systemName: "location")
+                            .font(.caption)
+                            .foregroundStyle(.blue)
+                        
+                        Text(shop.name)
+                            .font(.caption)
+                            .foregroundStyle(.blue)
+                        
+                        Spacer()
+                    }
+                }
+                
+                // フッター（いいねやコメント数など）
+                HStack(spacing: 20) {
+                    // コメントボタン
+                    Label("0", systemImage: "message")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    // いいねボタン
+                    Label("0", systemImage: "heart")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    // Multiple images indicator
+                    if let images = post.images, images.count > 1 {
+                        HStack(spacing: 2) {
+                            Image(systemName: "photo.stack")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            
+                            Text("\(images.count)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
             }
+            .padding()
+            .background(cardBackground)
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         }
-        .padding()
-        .background(cardBackground)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .buttonStyle(PlainButtonStyle())
+        .sheet(isPresented: $showingPostDetail) {
+            PostDetailView(post: post)
+        }
     }
 }

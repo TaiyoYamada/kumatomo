@@ -4,7 +4,9 @@ import PhotosUI
 struct PostView: View {
     @StateObject private var viewModel = PostViewModel()
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedItem: PhotosPickerItem?
+    @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var showingShopPicker = false
+    @State private var showingPreview = false
     
     var body: some View {
         NavigationView {
@@ -12,10 +14,31 @@ struct PostView: View {
                 Color(UIColor.systemGroupedBackground).ignoresSafeArea()
                 
                 ScrollView {
-                    ContentInputCard(
-                        content: $viewModel.postContent,
-                        characterCount: viewModel.postContent.count
-                    )
+                    VStack(spacing: 20) {
+                        // Multiple Image Selection Section
+                        ImageSelectionCard(
+                            selectedImages: $viewModel.selectedImages,
+                            selectedItems: $selectedItems
+                        )
+                        
+                        // Shop Selection Section
+                        ShopSelectionCard(
+                            selectedShop: $viewModel.selectedShop,
+                            showingShopPicker: $showingShopPicker
+                        )
+                        
+                        // Content Input Section
+                        ContentInputCard(
+                            content: $viewModel.postContent,
+                            characterCount: viewModel.postContent.count
+                        )
+                        
+                        // Preview Button
+                        PreviewButton(
+                            isEnabled: canPreview,
+                            showingPreview: $showingPreview
+                        )
+                    }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 20)
                 }
@@ -23,6 +46,12 @@ struct PostView: View {
             .navigationTitle("新規投稿")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("キャンセル") {
+                        dismiss()
+                    }
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     PostButton(
                         isEnabled: canPost,
@@ -38,8 +67,22 @@ struct PostView: View {
                 dismiss()
             }
         }
-        .onChange(of: selectedItem) { newItem in
-            handleImageSelection(newItem)
+        .sheet(isPresented: $showingShopPicker) {
+            ShopPickerView(selectedShop: $viewModel.selectedShop)
+        }
+        .sheet(isPresented: $showingPreview) {
+            PostPreviewView(
+                content: viewModel.postContent,
+                images: viewModel.selectedImages,
+                shop: viewModel.selectedShop,
+                onPost: {
+                    showingPreview = false
+                    handlePost()
+                }
+            )
+        }
+        .onChange(of: selectedItems) { newItems in
+            handleMultipleImageSelection(newItems)
         }
     }
 }
@@ -48,8 +91,15 @@ struct PostView: View {
 private extension PostView {
     var canPost: Bool {
         !viewModel.postContent.isEmpty &&
-        viewModel.postContent.count <= 200 &&
+        viewModel.postContent.count <= 500 &&
+        !viewModel.selectedImages.isEmpty &&
         !viewModel.isLoading
+    }
+    
+    var canPreview: Bool {
+        !viewModel.postContent.isEmpty &&
+        viewModel.postContent.count <= 500 &&
+        !viewModel.selectedImages.isEmpty
     }
 }
 
@@ -58,10 +108,11 @@ private extension PostView {
     func handlePost() {
         Task {
             if let currentUser = AuthService.shared.currentUser {
-                let success = await viewModel.postPost(
+                let success = await viewModel.createPostWithMultipleImages(
                     userId: currentUser.id,
-                    
-                    content: viewModel.postContent
+                    content: viewModel.postContent,
+                    shopId: viewModel.selectedShop?.id,
+                    images: viewModel.selectedImages
                 )
             } else {
                 viewModel.errorMessage = "ユーザー情報が取得できません。再ログインしてください。"
@@ -69,13 +120,19 @@ private extension PostView {
         }
     }
     
-    func handleImageSelection(_ newItem: PhotosPickerItem?) {
+    func handleMultipleImageSelection(_ newItems: [PhotosPickerItem]) {
         Task {
-            if let data = try? await newItem?.loadTransferable(type: Data.self),
-               let uiImage = UIImage(data: data) {
-                await MainActor.run {
-                    viewModel.selectedImage = uiImage
+            var images: [UIImage] = []
+            
+            for item in newItems.prefix(5) { // Maximum 5 images
+                if let data = try? await item.loadTransferable(type: Data.self),
+                   let uiImage = UIImage(data: data) {
+                    images.append(uiImage)
                 }
+            }
+            
+            await MainActor.run {
+                viewModel.selectedImages = images
             }
         }
     }
@@ -86,15 +143,26 @@ private struct ContentInputCard: View {
     let characterCount: Int
     
     private var isOverLimit: Bool {
-        characterCount > 200
+        characterCount > 500
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("内容")
-                .font(.headline.weight(.medium))
-                .foregroundStyle(.primary)
-            
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("投稿内容")
+                    .font(.headline.weight(.medium))
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+                
+                Text("必須")
+                    .font(.caption)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.red)
+                    .cornerRadius(4)
+            }
             
             TextEditor(text: $content)
                 .font(.body)
@@ -109,24 +177,351 @@ private struct ContentInputCard: View {
                     radius: 1,
                     y: 1
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(isOverLimit ? Color.red : Color.clear, lineWidth: 1)
+                )
             
             CharacterCounter(
                 count: characterCount,
+                maxCount: 500,
                 isOverLimit: isOverLimit
             )
         }
+        .padding(16)
+        .background(Color(UIColor.systemBackground))
+        .cornerRadius(12)
+        .shadow(
+            color: .black.opacity(0.05),
+            radius: 2,
+            y: 1
+        )
+    }
+}
+
+// MARK: - Image Selection Card
+private struct ImageSelectionCard: View {
+    @Binding var selectedImages: [UIImage]
+    @Binding var selectedItems: [PhotosPickerItem]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("写真")
+                    .font(.headline.weight(.medium))
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+                
+                Text("必須")
+                    .font(.caption)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.red)
+                    .cornerRadius(4)
+            }
+            
+            if selectedImages.isEmpty {
+                PhotosPickerPlaceholder(selectedItems: $selectedItems)
+            } else {
+                ImagePreviewGrid(
+                    selectedImages: $selectedImages,
+                    selectedItems: $selectedItems
+                )
+            }
+            
+            HStack {
+                Image(systemName: "info.circle")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Text("最大5枚まで選択できます")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Spacer()
+                
+                Text("\(selectedImages.count)/5")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(16)
+        .background(Color(UIColor.systemBackground))
+        .cornerRadius(12)
+        .shadow(
+            color: .black.opacity(0.05),
+            radius: 2,
+            y: 1
+        )
+    }
+}
+
+// MARK: - Photos Picker Placeholder
+private struct PhotosPickerPlaceholder: View {
+    @Binding var selectedItems: [PhotosPickerItem]
+    
+    var body: some View {
+        PhotosPicker(
+            selection: $selectedItems,
+            maxSelectionCount: 5,
+            matching: .images
+        ) {
+            VStack(spacing: 12) {
+                Image(systemName: "photo.badge.plus")
+                    .font(.system(size: 32))
+                    .foregroundStyle(.secondary)
+                
+                Text("写真を選択")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.primary)
+                
+                Text("タップして写真を追加してください")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 120)
+            .background(Color(UIColor.secondarySystemBackground))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.secondary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [5]))
+            )
+        }
+    }
+}
+
+// MARK: - Image Preview Grid
+private struct ImagePreviewGrid: View {
+    @Binding var selectedImages: [UIImage]
+    @Binding var selectedItems: [PhotosPickerItem]
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+                ForEach(Array(selectedImages.enumerated()), id: \.offset) { index, image in
+                    ImagePreviewCell(
+                        image: image,
+                        onRemove: {
+                            selectedImages.remove(at: index)
+                            if selectedItems.indices.contains(index) {
+                                selectedItems.remove(at: index)
+                            }
+                        }
+                    )
+                }
+                
+                if selectedImages.count < 5 {
+                    PhotosPicker(
+                        selection: $selectedItems,
+                        maxSelectionCount: 5,
+                        matching: .images
+                    ) {
+                        AddImageCell()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Image Preview Cell
+private struct ImagePreviewCell: View {
+    let image: UIImage
+    let onRemove: () -> Void
+    
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 100, height: 100)
+                .clipped()
+                .cornerRadius(8)
+            
+            Button(action: onRemove) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.white)
+                    .background(Color.black.opacity(0.6))
+                    .clipShape(Circle())
+            }
+            .offset(x: 8, y: -8)
+        }
+    }
+}
+
+// MARK: - Add Image Cell
+private struct AddImageCell: View {
+    var body: some View {
+        VStack(spacing: 4) {
+            Image(systemName: "plus")
+                .font(.system(size: 20))
+                .foregroundStyle(.secondary)
+            
+            Text("追加")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(width: 100, height: 100)
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.secondary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [3]))
+        )
+    }
+}
+
+// MARK: - Shop Selection Card
+private struct ShopSelectionCard: View {
+    @Binding var selectedShop: Shop?
+    @Binding var showingShopPicker: Bool
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("お店")
+                    .font(.headline.weight(.medium))
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+                
+                Text("任意")
+                    .font(.caption)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.secondary)
+                    .cornerRadius(4)
+            }
+            
+            Button(action: { showingShopPicker = true }) {
+                HStack {
+                    if let shop = selectedShop {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(shop.name)
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            
+                            if let address = shop.address {
+                                Text(address)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                            
+                            if let genre = shop.genre {
+                                Text(genre)
+                                    .font(.caption)
+                                    .foregroundStyle(.blue)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.blue.opacity(0.1))
+                                    .cornerRadius(4)
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundStyle(.secondary)
+                            
+                            Text("お店を検索・選択")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    if selectedShop != nil {
+                        Button(action: { selectedShop = nil }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    } else {
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(12)
+                .background(Color(UIColor.secondarySystemBackground))
+                .cornerRadius(8)
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            HStack {
+                Image(systemName: "info.circle")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Text("お店を選択すると、そのお店の詳細ページに投稿が表示されます")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(16)
+        .background(Color(UIColor.systemBackground))
+        .cornerRadius(12)
+        .shadow(
+            color: .black.opacity(0.05),
+            radius: 2,
+            y: 1
+        )
+    }
+}
+
+// MARK: - Preview Button
+private struct PreviewButton: View {
+    let isEnabled: Bool
+    @Binding var showingPreview: Bool
+    
+    var body: some View {
+        Button(action: { showingPreview = true }) {
+            HStack {
+                Image(systemName: "eye")
+                    .font(.subheadline)
+                
+                Text("プレビュー")
+                    .font(.subheadline.weight(.medium))
+            }
+            .foregroundStyle(isEnabled ? .blue : .secondary)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isEnabled ? Color.blue : Color.secondary.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .disabled(!isEnabled)
+        .padding(.horizontal, 16)
     }
 }
 
 // MARK: - Character Counter
 private struct CharacterCounter: View {
     let count: Int
+    let maxCount: Int
     let isOverLimit: Bool
     
     var body: some View {
         HStack {
+            if isOverLimit {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.caption)
+                    .foregroundStyle(Color.red)
+                
+                Text("文字数制限を超えています")
+                    .font(.caption)
+                    .foregroundStyle(Color.red)
+            }
+            
             Spacer()
-            Text("\(count)/200")
+            
+            Text("\(count)/\(maxCount)")
                 .font(.caption)
                 .foregroundStyle(isOverLimit ? Color.red : Color.secondary)
                 .animation(.easeInOut(duration: 0.3), value: isOverLimit)

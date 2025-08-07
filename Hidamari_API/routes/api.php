@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageUploadController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\AdminShopController;
 
 // 新規ユーザー登録
 Route::post('/register', [AuthController::class, 'register']);
@@ -31,6 +33,35 @@ Route::middleware('auth:sanctum')->group(function () {
     // 投稿の作成
     Route::post('/posts', [PostController::class, 'store']);
 
+    // 投稿の詳細取得
+    Route::get('/posts/{post}', [PostController::class, 'show']);
+
+    // 投稿の更新
+    Route::put('/posts/{post}', [PostController::class, 'update']);
+
+    // 投稿の削除
+    Route::delete('/posts/{post}', [PostController::class, 'destroy']);
+
     // 特定ユーザーのストーリー一覧
     Route::get('/users/{user}/posts', [PostController::class, 'indexByUser']);
+
+    // 特定お店の投稿一覧
+    Route::get('/shops/{shopId}/posts', [PostController::class, 'indexByShop']);
+
+
+    Route::get('/shops', [ShopController::class, 'index']);
+    Route::get('/shops/search', [ShopController::class, 'search']);
+    Route::get('/shops/{id}', [ShopController::class, 'show']);
+    Route::get('/shops/{id}/posts', [ShopController::class, 'posts']);
+
+
+
+    // 管理者用お店管理API
+    Route::prefix('admin')->group(function () {
+        Route::get('/shops', [AdminShopController::class, 'index']);
+        Route::post('/shops', [AdminShopController::class, 'store']);
+        Route::get('/shops/{id}', [AdminShopController::class, 'show']);
+        Route::put('/shops/{id}', [AdminShopController::class, 'update']);
+        Route::delete('/shops/{id}', [AdminShopController::class, 'destroy']);
+    });
 });

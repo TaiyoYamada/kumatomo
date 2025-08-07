@@ -10,7 +10,7 @@ class ImageUploadService {
     static let shared = ImageUploadService()
     private let baseURL: String = "http://localhost:8000/api"
     
-    func uploadImage(_ image: UIImage, endpoint: String = "/upload/image") async throws -> String {
+    func uploadImage(_ image: UIImage, endpoint: String = "/upload-image") async throws -> String {
         guard let url = URL(string: baseURL + endpoint) else {
             throw APIError.invalidURL
         }
@@ -50,6 +50,8 @@ class ImageUploadService {
         request.httpBody = body
         
         print("🖼️ 画像アップロードを開始します: \(url)")
+        print("📡 リクエストヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        print("📡 画像データサイズ: \(imageData.count) bytes")
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -60,13 +62,19 @@ class ImageUploadService {
             }
             
             print("📡 ステータスコード: \(httpResponse.statusCode)")
+            print("📡 レスポンスヘッダー: \(httpResponse.allHeaderFields)")
+            
+            // レスポンスボディを文字列として出力
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("📡 レスポンスボディ: \(responseString)")
+            }
             
             // ステータスコードが200番台でない場合はエラー
             guard (200...299).contains(httpResponse.statusCode) else {
                 if let responseString = String(data: data, encoding: .utf8) {
-                    print("🚨 サーバーエラーレスポンス: \(responseString)")
+                    print("🚨 サーバーエラーレスポンス (ステータス: \(httpResponse.statusCode)): \(responseString)")
                 }
-                throw PostAPIError.invalidResponse
+                throw ImageUploadError.uploadFailed(reason: "HTTP \(httpResponse.statusCode): サーバーエラー")
             }
             
             // JSONデコード
