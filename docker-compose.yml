@@ -33,11 +33,11 @@ services:
             context: ./Hidamari_admin
             dockerfile: Dockerfile
         ports:
-            - '3000:5173'  # Viteのデフォルトポート5173
+            - '3000:3000'  # ポート3000に統一
         volumes:
             - ./Hidamari_admin:/app
             - /app/node_modules
-        command: sh -c "npm install && npm run dev"
+        command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
         working_dir: /app
         networks:
             - sail
