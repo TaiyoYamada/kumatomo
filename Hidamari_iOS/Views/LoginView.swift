@@ -7,7 +7,7 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Text("こんにちはようこそ")
+                Text("Hidamariへようこそ")
                     .font(.title)
                     .fontWeight(.bold)
                     .padding(.vertical, 50)

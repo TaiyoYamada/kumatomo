@@ -60,7 +60,6 @@ class PostController extends Controller
                 'content' => $validated['content'],
                 'shop_id' => $validated['shop_id'] ?? null,
                 'tags' => $validated['tags'] ?? null,
-                'image_url' => $validated['image_url'] ?? null, // 後方互換性
             ];
 
             $post = Post::create($postData);

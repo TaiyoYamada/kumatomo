@@ -33,7 +33,7 @@ services:
             context: ../Hidamari_admin
             dockerfile: Dockerfile
         ports:
-            - '3000:5173'  # Viteのデフォルトポート
+            - '3000:5173'  # Viteのデフォルトポート5173
         volumes:
             - ../Hidamari_admin:/app
             - /app/node_modules

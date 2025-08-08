@@ -1649,3 +1649,32 @@
 "} 
 [2025-08-07 02:09:11] local.INFO: 投稿一覧レスポンス {"posts_count":6} 
 [2025-08-07 02:09:11] local.INFO: 最初の投稿詳細 {"post_id":6,"images_count":2,"first_image":{"id":6,"post_id":6,"image_url":"http://localhost:8000/storage/uploads/dwYh2bav3AyUbaxjohL2EtLErRAJ489NZLBA27Bi.jpg","display_order":1,"created_at":"2025-08-07T01:24:54.000000Z","updated_at":"2025-08-07T01:24:54.000000Z"}} 
+[2025-08-08 02:37:15] local.INFO: 投稿一覧レスポンス {"posts_count":0} 
+[2025-08-08 02:37:20] local.INFO: 投稿一覧レスポンス {"posts_count":0} 
+[2025-08-08 02:37:40] local.INFO: 画像アップロードリクエスト受信 {"headers":{"host":["localhost:8000"],"content-type":["multipart/form-data; boundary=33EE692C-A82D-4C1C-AF2B-2DBB586EBB5E"],"user-agent":["Hidamari/1 CFNetwork/3852.100.1 Darwin/25.0.0"],"connection":["keep-alive"],"accept":["*/*"],"accept-language":["ja"],"content-length":["6883"],"accept-encoding":["gzip, deflate"],"authorization":["Bearer 1|se4RTWJHK7MuawliXnjn4jQDVjZJQWvO2PNqfSfca2b7eb7c"]},"files":{"image":{"Illuminate\\Http\\UploadedFile":"/tmp/php7kel580vnrl94fooKHs"}},"content_type":"multipart/form-data; boundary=33EE692C-A82D-4C1C-AF2B-2DBB586EBB5E"} 
+[2025-08-08 02:37:40] local.INFO: バリデーション成功 {"image_info":{"name":"image.jpg","size":6703,"mime":"image/jpeg"}} 
+[2025-08-08 02:37:40] local.INFO: 画像アップロード成功 {"path":"uploads/imlIpauPhQMHNVtDQk4elsqknidBeVVo3VLvCz9l.jpg","url":"http://localhost:8000/storage/uploads/imlIpauPhQMHNVtDQk4elsqknidBeVVo3VLvCz9l.jpg"} 
+[2025-08-08 02:37:40] local.INFO: 投稿作成成功 {"post_id":1,"user_id":2} 
+[2025-08-08 02:37:40] local.INFO: 画像URL処理開始 {"post_id":1,"image_urls":["http://localhost:8000/storage/uploads/imlIpauPhQMHNVtDQk4elsqknidBeVVo3VLvCz9l.jpg"]} 
+[2025-08-08 02:37:40] local.INFO: PostImage作成 {"post_id":1,"image_url":"http://localhost:8000/storage/uploads/imlIpauPhQMHNVtDQk4elsqknidBeVVo3VLvCz9l.jpg","display_order":1} 
+[2025-08-08 02:37:40] local.INFO: PostImage作成成功 {"post_image_id":1} 
+[2025-08-08 02:37:40] local.INFO: 画像URL処理完了  
+[2025-08-08 02:37:40] local.INFO: 作成された投稿の詳細 {"post_id":1,"images_count":1,"images_data":[{"id":1,"post_id":1,"image_url":"http://localhost:8000/storage/uploads/imlIpauPhQMHNVtDQk4elsqknidBeVVo3VLvCz9l.jpg","display_order":1,"created_at":"2025-08-08T02:37:40.000000Z","updated_at":"2025-08-08T02:37:40.000000Z"}]} 
+[2025-08-08 02:37:42] local.INFO: 投稿一覧レスポンス {"posts_count":1} 
+[2025-08-08 02:37:42] local.INFO: 最初の投稿詳細 {"post_id":1,"images_count":1,"first_image":{"id":1,"post_id":1,"image_url":"http://localhost:8000/storage/uploads/imlIpauPhQMHNVtDQk4elsqknidBeVVo3VLvCz9l.jpg","display_order":1,"created_at":"2025-08-08T02:37:40.000000Z","updated_at":"2025-08-08T02:37:40.000000Z"}} 
+[2025-08-08 02:37:45] local.INFO: 投稿一覧レスポンス {"posts_count":1} 
+[2025-08-08 02:37:45] local.INFO: 最初の投稿詳細 {"post_id":1,"images_count":1,"first_image":{"id":1,"post_id":1,"image_url":"http://localhost:8000/storage/uploads/imlIpauPhQMHNVtDQk4elsqknidBeVVo3VLvCz9l.jpg","display_order":1,"created_at":"2025-08-08T02:37:40.000000Z","updated_at":"2025-08-08T02:37:40.000000Z"}} 
+[2025-08-08 02:37:47] local.INFO: 投稿一覧レスポンス {"posts_count":1} 
+[2025-08-08 02:37:47] local.INFO: 最初の投稿詳細 {"post_id":1,"images_count":1,"first_image":{"id":1,"post_id":1,"image_url":"http://localhost:8000/storage/uploads/imlIpauPhQMHNVtDQk4elsqknidBeVVo3VLvCz9l.jpg","display_order":1,"created_at":"2025-08-08T02:37:40.000000Z","updated_at":"2025-08-08T02:37:40.000000Z"}} 
+[2025-08-08 02:56:28] local.INFO: 画像アップロードリクエスト受信 {"headers":{"host":["localhost:8000"],"content-type":["multipart/form-data; boundary=CAB5C5B7-6ED0-4F67-A6D0-82775CCEDAEF"],"user-agent":["Hidamari/1 CFNetwork/3852.100.1 Darwin/25.0.0"],"connection":["keep-alive"],"accept":["*/*"],"accept-language":["ja"],"content-length":["17328"],"accept-encoding":["gzip, deflate"],"authorization":["Bearer 1|se4RTWJHK7MuawliXnjn4jQDVjZJQWvO2PNqfSfca2b7eb7c"]},"files":{"image":{"Illuminate\\Http\\UploadedFile":"/tmp/phpvflu3qp2jelp1ZmE8wH"}},"content_type":"multipart/form-data; boundary=CAB5C5B7-6ED0-4F67-A6D0-82775CCEDAEF"} 
+[2025-08-08 02:56:28] local.INFO: バリデーション成功 {"image_info":{"name":"image.jpg","size":17148,"mime":"image/jpeg"}} 
+[2025-08-08 02:56:28] local.INFO: 画像アップロード成功 {"path":"uploads/l1OR11gsaEje3YqmOpmuRylYQC5oCTRRyLnfpa48.jpg","url":"http://localhost:8000/storage/uploads/l1OR11gsaEje3YqmOpmuRylYQC5oCTRRyLnfpa48.jpg"} 
+[2025-08-08 02:56:28] local.INFO: 投稿作成成功 {"post_id":2,"user_id":2} 
+[2025-08-08 02:56:28] local.INFO: 画像URL処理開始 {"post_id":2,"image_urls":["http://localhost:8000/storage/uploads/l1OR11gsaEje3YqmOpmuRylYQC5oCTRRyLnfpa48.jpg"]} 
+[2025-08-08 02:56:28] local.INFO: PostImage作成 {"post_id":2,"image_url":"http://localhost:8000/storage/uploads/l1OR11gsaEje3YqmOpmuRylYQC5oCTRRyLnfpa48.jpg","display_order":1} 
+[2025-08-08 02:56:28] local.INFO: PostImage作成成功 {"post_image_id":2} 
+[2025-08-08 02:56:28] local.INFO: 画像URL処理完了  
+[2025-08-08 02:56:28] local.INFO: 作成された投稿の詳細 {"post_id":2,"images_count":1,"images_data":[{"id":2,"post_id":2,"image_url":"http://localhost:8000/storage/uploads/l1OR11gsaEje3YqmOpmuRylYQC5oCTRRyLnfpa48.jpg","display_order":1,"created_at":"2025-08-08T02:56:28.000000Z","updated_at":"2025-08-08T02:56:28.000000Z"}]} 
+[2025-08-08 02:56:35] local.INFO: 投稿一覧レスポンス {"posts_count":2} 
+[2025-08-08 02:56:35] local.INFO: 最初の投稿詳細 {"post_id":2,"images_count":1,"first_image":{"id":2,"post_id":2,"image_url":"http://localhost:8000/storage/uploads/l1OR11gsaEje3YqmOpmuRylYQC5oCTRRyLnfpa48.jpg","display_order":1,"created_at":"2025-08-08T02:56:28.000000Z","updated_at":"2025-08-08T02:56:28.000000Z"}} 
+[2025-08-08 03:01:29] local.INFO: 投稿一覧レスポンス {"posts_count":0} 
