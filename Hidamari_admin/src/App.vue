@@ -1,9 +1,13 @@
 <script setup>
 import AdminLayout from './layouts/AdminLayout.vue'
+import NetworkStatus from './components/common/NetworkStatus.vue'
 </script>
 
 <template>
-  <AdminLayout />
+  <div id="app">
+    <NetworkStatus />
+    <AdminLayout />
+  </div>
 </template>
 
 <style>

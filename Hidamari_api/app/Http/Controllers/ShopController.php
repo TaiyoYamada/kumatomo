@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shop;
+use App\Services\ErrorHandlingService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -48,14 +49,15 @@ class ShopController extends Controller
                 ]
             ]);
 
+        } catch (ValidationException $e) {
+            return ErrorHandlingService::createErrorResponse(
+                'VALIDATION_ERROR',
+                null,
+                $e->errors(),
+                422
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => [
-                    'code' => 'SHOP_FETCH_ERROR',
-                    'message' => 'お店の取得に失敗しました',
-                    'details' => config('app.debug') ? $e->getMessage() : null
-                ]
-            ], 500);
+            return ErrorHandlingService::handleShopError($e, 'fetch shops list');
         }
     }
 
@@ -71,24 +73,18 @@ class ShopController extends Controller
             }])->find($id);
 
             if (!$shop) {
-                return response()->json([
-                    'error' => [
-                        'code' => 'SHOP_NOT_FOUND',
-                        'message' => 'お店が見つかりません'
-                    ]
-                ], 404);
+                return ErrorHandlingService::createErrorResponse(
+                    'SHOP_NOT_FOUND',
+                    null,
+                    null,
+                    404
+                );
             }
 
             return response()->json(['data' => $shop]);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => [
-                    'code' => 'SHOP_FETCH_ERROR',
-                    'message' => 'お店の取得に失敗しました',
-                    'details' => config('app.debug') ? $e->getMessage() : null
-                ]
-            ], 500);
+            return ErrorHandlingService::handleShopError($e, "fetch shop details (ID: {$id})");
         }
     }
 
@@ -101,12 +97,12 @@ class ShopController extends Controller
             $shop = Shop::find($id);
 
             if (!$shop) {
-                return response()->json([
-                    'error' => [
-                        'code' => 'SHOP_NOT_FOUND',
-                        'message' => 'お店が見つかりません'
-                    ]
-                ], 404);
+                return ErrorHandlingService::createErrorResponse(
+                    'SHOP_NOT_FOUND',
+                    null,
+                    null,
+                    404
+                );
             }
 
             $posts = $shop->posts()
@@ -125,13 +121,7 @@ class ShopController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => [
-                    'code' => 'POST_FETCH_ERROR',
-                    'message' => '投稿の取得に失敗しました',
-                    'details' => config('app.debug') ? $e->getMessage() : null
-                ]
-            ], 500);
+            return ErrorHandlingService::handlePostError($e, "fetch posts for shop (ID: {$id})");
         }
     }
 
@@ -161,21 +151,14 @@ class ShopController extends Controller
             ]);
 
         } catch (ValidationException $e) {
-            return response()->json([
-                'error' => [
-                    'code' => 'VALIDATION_ERROR',
-                    'message' => '入力データに問題があります',
-                    'details' => $e->errors()
-                ]
-            ], 422);
+            return ErrorHandlingService::createErrorResponse(
+                'VALIDATION_ERROR',
+                null,
+                $e->errors(),
+                422
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => [
-                    'code' => 'SEARCH_ERROR',
-                    'message' => '検索に失敗しました',
-                    'details' => config('app.debug') ? $e->getMessage() : null
-                ]
-            ], 500);
+            return ErrorHandlingService::handleShopError($e, "search shops with query: {$request->q}");
         }
     }
 }

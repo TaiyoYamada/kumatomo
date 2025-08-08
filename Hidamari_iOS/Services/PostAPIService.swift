@@ -239,23 +239,41 @@ class PostAPIService {
             }
             
             if httpResponse.statusCode == 200 {
+                // デバッグ用：レスポンスの詳細を確認
+                debugJSONResponse(data, context: "fetchAllPosts")
+                
                 // APIHelperを使用してデコード
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode([Post].self, from: data)
+                    let posts = try decoder.decode([Post].self, from: data)
+                    print("✅ デコード成功: \(posts.count)件の投稿")
+                    
+                    // 画像データの確認
+                    for (index, post) in posts.enumerated() {
+                        if let images = post.images, !images.isEmpty {
+                            print("📸 投稿\(index + 1): \(images.count)枚の画像")
+                            for (imageIndex, image) in images.enumerated() {
+                                print("  画像\(imageIndex + 1): \(image.imageUrl)")
+                            }
+                        } else {
+                            print("📸 投稿\(index + 1): 画像なし")
+                        }
+                    }
+                    
+                    return posts
                 } catch {
                     print("🚨 デコードエラー: \(error)")
                     if let decodingError = error as? DecodingError {
                         switch decodingError {
-                        case .keyNotFound(let key, _):
-                            print("🔑 キーが見つかりません: \(key)")
-                        case .typeMismatch(let type, _):
-                            print("📊 型の不一致: \(type)")
-                        case .valueNotFound(let type, _):
-                            print("⚠️ 値が見つかりません: \(type)")
+                        case .keyNotFound(let key, let context):
+                            print("🔑 キーが見つかりません: \(key.stringValue) at \(context.codingPath)")
+                        case .typeMismatch(let type, let context):
+                            print("📊 型の不一致: \(type) at \(context.codingPath)")
+                        case .valueNotFound(let type, let context):
+                            print("⚠️ 値が見つかりません: \(type) at \(context.codingPath)")
                         case .dataCorrupted(let context):
-                            print("🔄 データ破損: \(context)")
+                            print("🔄 データ破損: \(context.debugDescription) at \(context.codingPath)")
                         @unknown default:
                             print("🧩 その他のデコードエラー")
                         }

@@ -46,7 +46,10 @@ struct MainTabView: View {
     }
     
     var body: some View {
-        TabView(selection: $selection) {
+        VStack(spacing: 0) {
+            NetworkStatusBanner()
+            
+            TabView(selection: $selection) {
             //  ホームタブ
             FeedView()
                 .tabItem {
@@ -84,8 +87,10 @@ struct MainTabView: View {
                 }
                 .tag(Selection.profile)
             
+            }
+            .accentColor(.pink)
         }
-        .accentColor(.pink)
+        .errorOverlay()
     }
 }
 

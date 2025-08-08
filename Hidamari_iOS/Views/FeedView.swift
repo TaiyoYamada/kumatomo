@@ -73,20 +73,7 @@ struct PostCardView: View {
     // カラー定数
     private let cardBackground = Color.white
     
-    // モック用アバター画像とユーザー名マッピング
-    private let mockAvatars: [Int: String] = [
-        1: "person.circle.fill",
-        2: "person.circle",
-        3: "person.crop.circle.fill",
-        4: "person.crop.circle"
-    ]
-    
-    private let mockNames: [Int: String] = [
-        1: "山田太郎",
-        2: "佐藤花子",
-        3: "鈴木一郎",
-        4: "田中めぐみ"
-    ]
+
     
     // 日付フォーマッター
     private var formattedDate: String {
@@ -106,13 +93,13 @@ struct PostCardView: View {
                 // ヘッダー（ユーザー情報）
                 HStack(spacing: 10) {
                     // ユーザーアイコン
-                    Image(systemName: mockAvatars[post.userId ?? 1] ?? "person.circle")
+                    Image(systemName: "person.circle")
                         .font(.system(size: 36))
                         .foregroundColor(.blue)
                     
                     VStack(alignment: .leading, spacing: 2) {
                         // ユーザー名
-                        Text(mockNames[post.userId ?? 1] ?? "ユーザー")
+                        Text(post.user?.name ?? "ユーザー")
                             .font(.headline)
                             .foregroundStyle(.primary)
                         

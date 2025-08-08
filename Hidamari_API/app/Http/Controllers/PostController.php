@@ -32,6 +32,9 @@ class PostController extends Controller
                 'images_count' => $firstPost->images ? $firstPost->images->count() : 0,
                 'first_image' => $firstPost->images && $firstPost->images->count() > 0 ? $firstPost->images->first()->toArray() : null
             ]);
+            
+            // 実際のJSONレスポンスをログ出力
+            \Log::info('実際のJSONレスポンス', ['json' => $posts->toJson()]);
         }
         
         return response()->json($posts);

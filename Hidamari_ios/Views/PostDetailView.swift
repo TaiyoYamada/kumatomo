@@ -175,38 +175,38 @@ private struct PostImagesSection: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(images.sorted(by: { $0.displayOrder < $1.displayOrder })) { image in
+                    ForEach(images.sorted(by: { ($0.displayOrder ?? 1) < ($1.displayOrder ?? 1) })) { image in
                         AsyncImage(url: URL(string: image.imageUrl)) { imagePhase in
-                            switch imagePhase {
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 250, height: 200)
-                                    .clipped()
-                                    .cornerRadius(12)
-                            case .failure(_):
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.3))
-                                    .frame(width: 250, height: 200)
-                                    .cornerRadius(12)
-                                    .overlay {
-                                        Image(systemName: "photo")
-                                            .font(.system(size: 32))
-                                            .foregroundStyle(.secondary)
-                                    }
-                            case .empty:
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(width: 250, height: 200)
-                                    .cornerRadius(12)
-                                    .overlay {
-                                        ProgressView()
-                                    }
-                            @unknown default:
-                                EmptyView()
+                                switch imagePhase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 250, height: 200)
+                                        .clipped()
+                                        .cornerRadius(12)
+                                case .failure(_):
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.3))
+                                        .frame(width: 250, height: 200)
+                                        .cornerRadius(12)
+                                        .overlay {
+                                            Image(systemName: "photo")
+                                                .font(.system(size: 32))
+                                                .foregroundStyle(.secondary)
+                                        }
+                                case .empty:
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(width: 250, height: 200)
+                                        .cornerRadius(12)
+                                        .overlay {
+                                            ProgressView()
+                                        }
+                                @unknown default:
+                                    EmptyView()
+                                }
                             }
-                        }
                     }
                 }
                 .padding(.horizontal, 16)

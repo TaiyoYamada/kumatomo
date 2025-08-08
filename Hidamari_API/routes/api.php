@@ -9,6 +9,7 @@ use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AdminShopController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ImageController;
 
 // 新規ユーザー登録
 Route::post('/register', [AuthController::class, 'register']);
@@ -48,6 +49,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 特定お店の投稿一覧
     Route::get('/shops/{shopId}/posts', [PostController::class, 'indexByShop']);
+
+    // 画像配信（認証不要）
+    Route::get('/images/{path}', [ImageController::class, 'show'])->where('path', '.*');
 
 
     // 統合検索API

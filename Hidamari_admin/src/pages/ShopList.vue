@@ -142,12 +142,13 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { shopService } from '../services/shopService.js'
-import { handleApiError } from '../utils/errorHandler.js'
+import { handleApiError, handleApiErrorWithRetry, createErrorNotification, isNetworkOnline } from '../utils/errorHandler.js'
 
 // Reactive data
 const shops = ref([])
 const loading = ref(false)
 const error = ref('')
+const notifications = ref([])
 const searchQuery = ref('')
 const selectedGenre = ref('')
 const pagination = ref(null)
@@ -160,6 +161,11 @@ const deleting = ref(false)
 
 // Methods
 const fetchShops = async () => {
+  if (!isNetworkOnline()) {
+    error.value = 'インターネット接続を確認してください'
+    return
+  }
+
   try {
     loading.value = true
     error.value = ''
@@ -176,12 +182,21 @@ const fetchShops = async () => {
     if (selectedGenre.value) {
       params.genre = selectedGenre.value
     }
+
+    const response = await handleApiErrorWithRetry(
+      null,
+      () => shopService.getShops(params),
+      3
+    )
     
-    const response = await shopService.getShops(params)
     shops.value = response.data
     pagination.value = response.meta || response.pagination
   } catch (err) {
     error.value = handleApiError(err, 'お店の取得に失敗しました')
+    
+    // Add error notification
+    const notification = createErrorNotification(err, 'お店一覧の取得')
+    notifications.value.push(notification)
   } finally {
     loading.value = false
   }

@@ -175,7 +175,7 @@ struct ShopListContentView: View {
         if isLoading && shops.isEmpty {
             LoadingView()
         } else if let errorMessage = errorMessage, shops.isEmpty {
-            ErrorView(message: errorMessage, onRetry: onRefresh)
+            ShopErrorView(message: errorMessage, onRetry: onRefresh)
         } else {
             RefreshableScrollView(onRefresh: onRefresh) {
                 LazyVStack(spacing: 16) {
@@ -296,8 +296,8 @@ struct LoadingView: View {
     }
 }
 
-// MARK: - Error View
-struct ErrorView: View {
+// MARK: - Shop Error View
+struct ShopErrorView: View {
     let message: String
     let onRetry: () -> Void
     
