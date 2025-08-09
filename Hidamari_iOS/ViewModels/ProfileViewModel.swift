@@ -17,12 +17,14 @@ class ProfileViewModel: ObservableObject {
 
     // 編集用プロパティ
     @Published var name: String = ""
+    @Published var username: String = ""
     @Published var bio: String = ""
     @Published var website: String = ""
-    @Published var location: String = "" // 追加: 場所フィールド
-    @Published var profileImage: UIImage? // 追加: プロフィール画像選択用
-    @Published var coverImage: UIImage? // 追加: カバー画像選択用
-    @Published var isProcessing = false // 追加: 処理中フラグ
+    @Published var location: String = ""
+    @Published var birthday: Date = Date()
+    @Published var profileImage: UIImage?
+    @Published var coverImage: UIImage?
+    @Published var isProcessing = false
     
     private let userAPIService = UserAPIService()
     private let postAPIService = PostAPIService()
@@ -35,16 +37,22 @@ class ProfileViewModel: ObservableObject {
             id: userID,
             email: "",
             name: "",
+            username: "",
             profileImageURL: nil,
+            profileIconImageURL: nil,
+            coverImageURL: nil,
             bio: "",
             city: "",
+            location: "",
             birthday: "",
             postCount: 0,
             website: "",
             followingCount: 0,
             followersCount: 0,
             hasCompletedSetup: false,
-            createdAt: nil
+            createdAt: nil,
+            isVerified: false,
+            joinedDate: ""
         )
         loadProfile(userID: userID)
         loadUserPosts(userID: userID)
@@ -54,9 +62,17 @@ class ProfileViewModel: ObservableObject {
     init(profile: User) {
         self.profile = profile
         self.name = profile.name ?? ""
+        self.username = profile.username ?? ""
         self.bio = profile.bio ?? ""
         self.website = profile.website ?? ""
-//        self.location = profile.location ?? "" // 場所の初期化
+        self.location = profile.location ?? ""
+        
+        // 誕生日の初期化
+        if let birthdayString = profile.birthday, !birthdayString.isEmpty {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            self.birthday = formatter.date(from: birthdayString) ?? Date()
+        }
         
         // ユーザーストーリーを読み込む
         loadUserPosts(userID: profile.id)
@@ -101,18 +117,32 @@ class ProfileViewModel: ObservableObject {
 
     private func updateFormFields(with profile: User) {
         name = profile.name ?? ""
+        username = profile.username ?? ""
         bio = profile.bio ?? ""
         website = profile.website ?? ""
-//        location = profile.location ?? "" // 場所も更新
+        location = profile.location ?? ""
+        
+        // 誕生日の更新
+        if let birthdayString = profile.birthday, !birthdayString.isEmpty {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            birthday = formatter.date(from: birthdayString) ?? Date()
+        }
     }
 
     func saveProfile() {
         isLoading = true
         var updatedProfile = profile
         updatedProfile.name = name
+        updatedProfile.username = username
         updatedProfile.bio = bio
         updatedProfile.website = website
-//        updatedProfile.location = location // 場所も保存
+        updatedProfile.location = location
+        
+        // 誕生日の保存
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        updatedProfile.birthday = formatter.string(from: birthday)
 
         if let image = selectedImage {
             uploadProfileImage(image) { [weak self] result in
@@ -138,9 +168,15 @@ class ProfileViewModel: ObservableObject {
         do {
             var updatedProfile = profile
             updatedProfile.name = name
+            updatedProfile.username = username
             updatedProfile.bio = bio
             updatedProfile.website = website
-//            updatedProfile.location = location
+            updatedProfile.location = location
+            
+            // 誕生日の保存
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            updatedProfile.birthday = formatter.string(from: birthday)
             
             // プロフィール画像があれば先にアップロード
             if let image = profileImage {
@@ -160,7 +196,7 @@ class ProfileViewModel: ObservableObject {
             if let image = coverImage {
                 do {
                     let imageUrl = try await imageUploadService.uploadImage(image)
-                    updatedProfile.profileImageURL = imageUrl
+                    updatedProfile.coverImageURL = imageUrl
                     print("✅ カバー画像アップロード成功: \(imageUrl)")
                 } catch {
                     print("❌ カバー画像アップロード失敗: \(error.localizedDescription)")
@@ -245,9 +281,18 @@ class ProfileViewModel: ObservableObject {
     // Reset form fields to the current profile values
     func resetFormFields() {
         name = profile.name ?? ""
+        username = profile.username ?? ""
         bio = profile.bio ?? ""
         website = profile.website ?? ""
-//        location = profile.location ?? ""
+        location = profile.location ?? ""
+        
+        // 誕生日のリセット
+        if let birthdayString = profile.birthday, !birthdayString.isEmpty {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            birthday = formatter.date(from: birthdayString) ?? Date()
+        }
+        
         profileImage = nil
         coverImage = nil
     }
