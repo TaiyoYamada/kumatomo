@@ -120,38 +120,89 @@ struct PostCardView: View {
                     .padding(.vertical, 4)
                     .lineLimit(3)
                 
-                // 画像プレビュー（最初の1枚のみ）
-                if let images = post.images, let firstImage = images.first {
-                    AsyncImage(url: URL(string: firstImage.imageUrl)) { imagePhase in
-                        switch imagePhase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(height: 150)
-                                .clipped()
-                                .cornerRadius(8)
-                        case .failure(_):
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(height: 150)
-                                .cornerRadius(8)
-                                .overlay {
-                                    Image(systemName: "photo")
-                                        .font(.system(size: 24))
-                                        .foregroundStyle(.secondary)
-                                }
-                        case .empty:
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(height: 150)
-                                .cornerRadius(8)
-                                .overlay {
-                                    ProgressView()
-                                }
-                        @unknown default:
-                            EmptyView()
+                // 画像プレビュー（最適化された遅延読み込み）
+                if let images = post.images, !images.isEmpty {
+                    if images.count == 1 {
+                        // 単一画像の場合
+                        AsyncImage(url: URL(string: images.first!.imageUrl)) { imagePhase in
+                            switch imagePhase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(height: 150)
+                                    .clipped()
+                                    .cornerRadius(8)
+                            case .failure(_):
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.3))
+                                    .frame(height: 150)
+                                    .cornerRadius(8)
+                                    .overlay {
+                                        Image(systemName: "photo")
+                                            .font(.system(size: 24))
+                                            .foregroundStyle(.secondary)
+                                    }
+                            case .empty:
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(height: 150)
+                                    .cornerRadius(8)
+                                    .overlay {
+                                        ProgressView()
+                                    }
+                            @unknown default:
+                                EmptyView()
+                            }
                         }
+                    } else {
+                        // 複数画像の場合は最初の3枚をプレビュー表示
+                        HStack(spacing: 8) {
+                            ForEach(Array(images.prefix(3).enumerated()), id: \.element.id) { index, image in
+                                AsyncImage(url: URL(string: image.imageUrl)) { imagePhase in
+                                    switch imagePhase {
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 60, height: 60)
+                                            .clipped()
+                                            .cornerRadius(8)
+                                    case .failure(_):
+                                        Rectangle()
+                                            .fill(Color.gray.opacity(0.3))
+                                            .frame(width: 60, height: 60)
+                                            .cornerRadius(8)
+                                    case .empty:
+                                        Rectangle()
+                                            .fill(Color.gray.opacity(0.2))
+                                            .frame(width: 60, height: 60)
+                                            .cornerRadius(8)
+                                            .overlay {
+                                                ProgressView()
+                                                    .scaleEffect(0.5)
+                                            }
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }
+                                .overlay(alignment: .bottomTrailing) {
+                                    if index == 2 && images.count > 3 {
+                                        Rectangle()
+                                            .fill(Color.black.opacity(0.6))
+                                            .cornerRadius(8)
+                                            .overlay {
+                                                Text("+\(images.count - 3)")
+                                                    .font(.caption)
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(.white)
+                                            }
+                                    }
+                                }
+                            }
+                            Spacer()
+                        }
+                        .frame(height: 60)
                     }
                 } else if let imageUrl = post.imageUrl {
                     // Backward compatibility for single image

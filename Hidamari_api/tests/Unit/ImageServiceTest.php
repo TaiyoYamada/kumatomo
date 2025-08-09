@@ -71,12 +71,33 @@ class ImageServiceTest extends TestCase
         
         $result = $this->imageService->uploadAndProcessImage($image);
         
-        $this->assertIsString($result);
-        $this->assertStringContainsString('storage/uploads/', $result);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('original', $result);
+        $this->assertArrayHasKey('medium', $result);
+        $this->assertArrayHasKey('thumbnail', $result);
+        $this->assertArrayHasKey('metadata', $result);
         
-        // Verify file was stored
-        $path = str_replace(url('storage/'), '', $result);
-        $this->assertTrue(Storage::disk('public')->exists($path));
+        // Verify URLs are strings and contain storage path
+        $this->assertIsString($result['original']);
+        $this->assertStringContainsString('storage/original_uploads/', $result['original']);
+        $this->assertStringContainsString('storage/medium_uploads/', $result['medium']);
+        $this->assertStringContainsString('storage/thumb_uploads/', $result['thumbnail']);
+        
+        // Verify metadata
+        $this->assertIsArray($result['metadata']);
+        $this->assertArrayHasKey('original_name', $result['metadata']);
+        $this->assertArrayHasKey('size', $result['metadata']);
+        $this->assertArrayHasKey('width', $result['metadata']);
+        $this->assertArrayHasKey('height', $result['metadata']);
+        
+        // Verify files were stored
+        $originalPath = str_replace(url('storage/'), '', $result['original']);
+        $mediumPath = str_replace(url('storage/'), '', $result['medium']);
+        $thumbnailPath = str_replace(url('storage/'), '', $result['thumbnail']);
+        
+        $this->assertTrue(Storage::disk('public')->exists($originalPath));
+        $this->assertTrue(Storage::disk('public')->exists($mediumPath));
+        $this->assertTrue(Storage::disk('public')->exists($thumbnailPath));
     }
 
     public function test_upload_multiple_images()
@@ -92,12 +113,20 @@ class ImageServiceTest extends TestCase
         $this->assertCount(3, $results);
         
         foreach ($results as $result) {
-            $this->assertIsString($result);
-            $this->assertStringContainsString('storage/uploads/', $result);
+            $this->assertIsArray($result);
+            $this->assertArrayHasKey('original', $result);
+            $this->assertArrayHasKey('medium', $result);
+            $this->assertArrayHasKey('thumbnail', $result);
+            $this->assertArrayHasKey('metadata', $result);
             
-            // Verify file was stored
-            $path = str_replace(url('storage/'), '', $result);
-            $this->assertTrue(Storage::disk('public')->exists($path));
+            // Verify files were stored
+            $originalPath = str_replace(url('storage/'), '', $result['original']);
+            $mediumPath = str_replace(url('storage/'), '', $result['medium']);
+            $thumbnailPath = str_replace(url('storage/'), '', $result['thumbnail']);
+            
+            $this->assertTrue(Storage::disk('public')->exists($originalPath));
+            $this->assertTrue(Storage::disk('public')->exists($mediumPath));
+            $this->assertTrue(Storage::disk('public')->exists($thumbnailPath));
         }
     }
 }

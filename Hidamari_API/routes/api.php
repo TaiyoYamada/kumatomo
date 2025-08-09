@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/users/{id}', [UserController::class, 'updateprofile']);
 
     Route::post('/upload-image', [ImageUploadController::class, 'store']);
+    Route::post('/upload-images', [ImageUploadController::class, 'storeMultiple']);
 
     // プロフィール更新
     Route::put('/user/update', [UserController::class, 'update']);

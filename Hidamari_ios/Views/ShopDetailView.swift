@@ -10,22 +10,35 @@ struct ShopDetailView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    // 店舗画像
-                    AsyncImage(url: URL(string: shop.imageUrl ?? "")) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Rectangle()
-                            .fill(Color(.systemGray5))
-                            .overlay(
-                                Image(systemName: "photo")
-                                    .foregroundColor(.gray)
-                                    .font(.largeTitle)
-                            )
+                    // 店舗画像（最適化された遅延読み込み）
+                    AsyncImage(url: URL(string: shop.imageUrl ?? "")) { imagePhase in
+                        switch imagePhase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: 250)
+                                .clipped()
+                        case .failure(_):
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 250)
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 32))
+                                        .foregroundStyle(.secondary)
+                                }
+                        case .empty:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(height: 250)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
-                    .frame(height: 250)
-                    .clipped()
                     
                     VStack(alignment: .leading, spacing: 16) {
                         // 店舗名とジャンル
