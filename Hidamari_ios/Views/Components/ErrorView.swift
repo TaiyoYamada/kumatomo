@@ -283,34 +283,3 @@ extension View {
         modifier(ErrorOverlayModifier())
     }
 }
-
-// MARK: - Preview
-
-struct ErrorView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            ErrorView(
-                error: AppError.networkError(
-                    URLError(.notConnectedToInternet),
-                    context: "Loading posts"
-                ),
-                onRetry: {},
-                onDismiss: {}
-            )
-            .previewDisplayName("Network Error")
-            
-            ErrorView(
-                error: AppError.validationError(
-                    "投稿内容は500文字以内で入力してください",
-                    context: "Post creation"
-                ),
-                onRetry: nil,
-                onDismiss: {}
-            )
-            .previewDisplayName("Validation Error")
-            
-            NetworkStatusBanner()
-                .previewDisplayName("Network Status Banner")
-        }
-    }
-}

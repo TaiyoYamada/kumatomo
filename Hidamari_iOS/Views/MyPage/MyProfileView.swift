@@ -37,7 +37,7 @@ struct MyProfileView: View {
                             .padding(.bottom, 24)
                         
                         // タブセクション
-                        ModernTabSectionView(selectedTab: $selectedTab)
+//                        ModernTabSectionView(selectedTab: $selectedTab)
                         
                         // 投稿グリッド
                         ModernPostGridView(posts: viewModel.posts)
@@ -389,44 +389,44 @@ struct StatItemView: View {
 }
 
 // モダンなタブセクション
-struct ModernTabSectionView: View {
-    @Binding var selectedTab: Int
-    
-    let tabs = ["投稿", "メディア", "いいね"]
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 0) {
-                    ForEach(0..<tabs.count, id: \.self) { index in
-                        Button(action: {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                selectedTab = index
-                            }
-                        }) {
-                            VStack(spacing: 12) {
-                                Text(tabs[index])
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(selectedTab == index ? .primary : .secondary)
-                                
-                                Rectangle()
-                                    .fill(selectedTab == index ? Color.accentColor : Color.clear)
-                                    .frame(height: 3)
-                                    .animation(.easeInOut(duration: 0.3), value: selectedTab)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                }
-                .padding(.horizontal, 20)
-            }
-            
-            Divider()
-                .background(Color.secondary.opacity(0.3))
-        }
-        .background(.regularMaterial)
-    }
-}
+//struct ModernTabSectionView: View {
+//    @Binding var selectedTab: Int
+//    
+//    let tabs = ["投稿", "メディア", "いいね"]
+//    
+//    var body: some View {
+//        VStack(spacing: 0) {
+//            ScrollView(.horizontal, showsIndicators: false) {
+//                HStack(spacing: 0) {
+//                    ForEach(0..<tabs.count, id: \.self) { index in
+//                        Button(action: {
+//                            withAnimation(.easeInOut(duration: 0.3)) {
+//                                selectedTab = index
+//                            }
+//                        }) {
+//                            VStack(spacing: 12) {
+//                                Text(tabs[index])
+//                                    .font(.system(size: 16, weight: .semibold))
+//                                    .foregroundColor(selectedTab == index ? .primary : .secondary)
+//                                
+//                                Rectangle()
+//                                    .fill(selectedTab == index ? Color.accentColor : Color.clear)
+//                                    .frame(height: 3)
+//                                    .animation(.easeInOut(duration: 0.3), value: selectedTab)
+//                            }
+//                        }
+//                        .frame(maxWidth: .infinity)
+//                    }
+//                }
+//                .padding(.horizontal, 20)
+//            }
+//            
+//            Divider()
+//                .background(Color.secondary.opacity(0.3))
+//        }
+//        .background(.regularMaterial)
+//    }
+//}
 
 // モダンな投稿グリッド
 struct ModernPostGridView: View {
@@ -469,7 +469,7 @@ struct EmptyStateView: View {
     }
 }
 
-// モダンな投稿カード
+// 投稿カード
 struct ModernPostCardView: View {
     let post: Post
     

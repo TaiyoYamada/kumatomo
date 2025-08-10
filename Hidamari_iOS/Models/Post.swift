@@ -5,7 +5,7 @@ struct Post: Identifiable, Codable {
     var userId: Int?
     var shopId: Int?
     var content: String
-    var imageUrl: String? // Deprecated: use images array instead
+    var imageUrl: String?
     var tags: [String]?
     var createdAt: Date?
     var updatedAt: Date?

@@ -57,26 +57,28 @@ struct MainTabView: View {
                 }
                 .tag(Selection.home)
 
-            //  お店タブ
-            ShopListView()
-                .tabItem {
-                    Image(systemName: "storefront.fill")
-                }
-                .tag(Selection.shops)
-
-            //  検索タブ
+                
             SearchView()
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                 }
                 .tag(Selection.search)
 
-            //  投稿タブ
+                
+            
             PostView()
                 .tabItem {
                     Image(systemName: "plus.circle.fill")
                 }
                 .tag(Selection.post)
+
+
+                
+            ShopListView()
+                .tabItem {
+                    Image(systemName: "storefront.fill")
+                }
+                .tag(Selection.shops)
 
             
             //  プロフィールタブ

@@ -51,20 +51,3 @@ struct SearchHistory: Identifiable, Codable {
     }
 }
 
-// 検索フィルタータイプ
-enum SearchFilterType: String, CaseIterable {
-    case all = "all"
-    case posts = "posts"
-    case shops = "shops"
-    
-    var displayName: String {
-        switch self {
-        case .all:
-            return "すべて"
-        case .posts:
-            return "投稿"
-        case .shops:
-            return "お店"
-        }
-    }
-}

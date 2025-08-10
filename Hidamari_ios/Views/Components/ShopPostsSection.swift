@@ -254,31 +254,3 @@ struct PostImageGallery: View {
         }
     }
 }
-
-#Preview {
-    ScrollView {
-        VStack(spacing: 20) {
-            ShopPostsSection(
-                posts: [
-                    Post(
-                        id: 1,
-                        userId: 1,
-                        content: "とても美味しいコーヒーでした！雰囲気も良くて、また来たいと思います。",
-                        shopId: 1,
-                        imageUrl: "https://example.com/image1.jpg"
-                    ),
-                    Post(
-                        id: 2,
-                        userId: 2,
-                        content: "ランチがとても美味しかったです。スタッフの方も親切でした。",
-                        shopId: 1
-                    )
-                ],
-                isLoading: false,
-                errorMessage: nil,
-                onRefresh: {}
-            )
-        }
-        .padding()
-    }
-}
