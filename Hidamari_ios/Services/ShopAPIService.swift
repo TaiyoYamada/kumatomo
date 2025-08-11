@@ -3,7 +3,7 @@ import Foundation
 class ShopAPIService {
     static let shared = ShopAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost:8000/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
     private let networkMonitor = NetworkMonitor.shared
     private let errorManager = ErrorManager.shared
     
@@ -81,7 +81,7 @@ class ShopAPIService {
             do {
                 try await checkNetworkConnectivity()
                 
-                let (data, response) = try await URLSession.shared.data(for: request)
+                let (data, response) = try await APISession.shared.session.data(for: request)
                 let validatedData = try handleAPIResponse(data: data, response: response)
                 
                 return try decoder.decode(type, from: validatedData)
@@ -182,7 +182,7 @@ class ShopAPIService {
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw ShopAPIError.invalidResponse
             }
@@ -247,7 +247,7 @@ class ShopAPIService {
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw ShopAPIError.invalidResponse
             }
@@ -310,7 +310,7 @@ class ShopAPIService {
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw ShopAPIError.invalidResponse
             }

@@ -6,7 +6,7 @@ class UserAPIService {
     private var baseURL: URL {
         guard let urlString = ProcessInfo.processInfo.environment["API_BASE_URL"],
               let url = URL(string: urlString) else {
-            return URL(string: "https://localhost:8000/api")!
+            return URL(string: "https://localhost/api")!
         }
         return url
     }
@@ -40,7 +40,7 @@ class UserAPIService {
         }
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        return URLSession.shared.dataTaskPublisher(for: request)
+        return APISession.shared.session.dataTaskPublisher(for: request)
             .tryMap { data, response in
                 // デバッグ用にレスポンスの詳細を出力
                 if let httpResponse = response as? HTTPURLResponse {
@@ -78,7 +78,7 @@ class UserAPIService {
             return Fail(error: error).eraseToAnyPublisher()
         }
 
-        return URLSession.shared.dataTaskPublisher(for: request)
+        return APISession.shared.session.dataTaskPublisher(for: request)
             .tryMap { data, response in
                 if let httpResponse = response as? HTTPURLResponse {
                     print("📡 ステータスコード: \(httpResponse.statusCode)")
@@ -107,7 +107,7 @@ class UserAPIService {
             return Fail(error: error).eraseToAnyPublisher()
         }
 
-        return URLSession.shared.dataTaskPublisher(for: request)
+        return APISession.shared.session.dataTaskPublisher(for: request)
             .tryMap { _, response in
                 try self.validateResponse(response)
                 return true

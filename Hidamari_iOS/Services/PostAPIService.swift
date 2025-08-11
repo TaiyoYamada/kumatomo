@@ -3,7 +3,7 @@ import Foundation
 class PostAPIService {
     static let shared = PostAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost:8000/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
     
     // 認証トークンの取得
     private func getAuthToken() -> String {
@@ -85,7 +85,7 @@ class PostAPIService {
         print("📡 ボディ: \(body)")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw PostAPIError.invalidResponse
             }
@@ -166,7 +166,7 @@ class PostAPIService {
         print("📡 ボディ: \(body)")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw PostAPIError.invalidResponse
             }
@@ -226,7 +226,7 @@ class PostAPIService {
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw PostAPIError.invalidResponse
             }
@@ -317,7 +317,7 @@ class PostAPIService {
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw PostAPIError.invalidResponse
             }
@@ -410,7 +410,7 @@ class PostAPIService {
         print("📡 ボディ: \(body)")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw PostAPIError.invalidResponse
             }
@@ -475,7 +475,7 @@ class PostAPIService {
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw PostAPIError.invalidResponse
             }
@@ -531,7 +531,7 @@ class PostAPIService {
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw PostAPIError.invalidResponse
             }

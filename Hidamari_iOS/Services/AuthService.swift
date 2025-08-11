@@ -8,7 +8,7 @@ class AuthService: ObservableObject {
     static let shared = AuthService()
     
     private var cancellables = Set<AnyCancellable>()
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost:8000/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
 
     init() {
         print("🚀 AuthService init called")
@@ -44,7 +44,7 @@ class AuthService: ObservableObject {
         let credentials = ["email": email, "password": password]
         request.httpBody = try JSONEncoder().encode(credentials)
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await APISession.shared.session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
@@ -89,7 +89,7 @@ class AuthService: ObservableObject {
         AuthTokenManager.shared.authorizedRequest(&request)
         
         do {
-            let (_, response) = try await URLSession.shared.data(for: request)
+            let (_, response) = try await APISession.shared.session.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw URLError(.badServerResponse)
@@ -140,7 +140,7 @@ class AuthService: ObservableObject {
         }
 
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             print("📡 サーバーからレスポンスを受信")
 
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -223,7 +223,7 @@ class AuthService: ObservableObject {
         
         request.httpBody = try JSONSerialization.data(withJSONObject: updateData)
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await APISession.shared.session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
@@ -271,7 +271,7 @@ class AuthService: ObservableObject {
         print("📡 全ヘッダー:", request.allHTTPHeaderFields ?? [:])
 
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
 
             if let httpResponse = response as? HTTPURLResponse {
                 print("📡 ステータスコード:", httpResponse.statusCode)
@@ -351,7 +351,7 @@ class AuthService: ObservableObject {
         let profileData = ["profile_image_url": url]
         request.httpBody = try JSONEncoder().encode(profileData)
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await APISession.shared.session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)

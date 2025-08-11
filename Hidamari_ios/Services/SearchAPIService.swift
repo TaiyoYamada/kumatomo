@@ -3,7 +3,7 @@ import Foundation
 class SearchAPIService {
     static let shared = SearchAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost:8000/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
     
     // 認証トークンの取得
     private func getAuthToken() -> String {
@@ -40,7 +40,7 @@ class SearchAPIService {
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.invalidResponse
             }

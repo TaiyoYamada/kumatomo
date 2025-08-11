@@ -8,7 +8,7 @@ struct ImageUploadResponse: Codable {
 
 class ImageUploadService {
     static let shared = ImageUploadService()
-    private let baseURL: String = "https://localhost:8000/api"
+    private let baseURL: String = "https://localhost/api"
     
     func uploadImage(_ image: UIImage, endpoint: String = "/upload-image") async throws -> String {
         guard let url = URL(string: baseURL + endpoint) else {
@@ -54,7 +54,7 @@ class ImageUploadService {
         print("📡 画像データサイズ: \(imageData.count) bytes")
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await APISession.shared.session.data(for: request)
             
             // レスポンスのステータスコードを確認
             guard let httpResponse = response as? HTTPURLResponse else {
