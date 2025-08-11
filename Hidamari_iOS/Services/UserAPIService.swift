@@ -6,7 +6,7 @@ class UserAPIService {
     private var baseURL: URL {
         guard let urlString = ProcessInfo.processInfo.environment["API_BASE_URL"],
               let url = URL(string: urlString) else {
-            return URL(string: "http://localhost:8000/api")!
+            return URL(string: "https://localhost:8000/api")!
         }
         return url
     }
