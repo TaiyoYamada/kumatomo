@@ -1,56 +1,69 @@
 <template>
   <div class="dashboard">
     <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">🏪</div>
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.totalShops }}</div>
-          <div class="stat-label">総店舗数</div>
+    <div class="stats-grid mb-6">
+      <v-card class="stat-card pa-4 d-flex align-center" elevation="1">
+        <div class="stat-icon mr-4">
+          <v-icon color="white" size="24">mdi-store</v-icon>
         </div>
-        <div class="stat-change positive">+12%</div>
-      </div>
+        <div class="stat-content flex-grow-1">
+          <div class="stat-number text-h4 font-weight-bold">{{ stats.totalShops }}</div>
+          <div class="stat-label text-body-2 text-medium-emphasis">総店舗数</div>
+        </div>
+        <v-chip class="stat-change" color="success" variant="tonal" size="small">+12%</v-chip>
+      </v-card>
       
-      <div class="stat-card">
-        <div class="stat-icon">👥</div>
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.totalUsers }}</div>
-          <div class="stat-label">登録ユーザー</div>
+      <v-card class="stat-card pa-4 d-flex align-center" elevation="1">
+        <div class="stat-icon mr-4">
+          <v-icon color="white" size="24">mdi-account-group</v-icon>
         </div>
-        <div class="stat-change positive">+8%</div>
-      </div>
+        <div class="stat-content flex-grow-1">
+          <div class="stat-number text-h4 font-weight-bold">{{ stats.totalUsers }}</div>
+          <div class="stat-label text-body-2 text-medium-emphasis">登録ユーザー</div>
+        </div>
+        <v-chip class="stat-change" color="success" variant="tonal" size="small">+8%</v-chip>
+      </v-card>
       
-      <div class="stat-card">
-        <div class="stat-icon">📊</div>
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.monthlyViews }}</div>
-          <div class="stat-label">月間閲覧数</div>
+      <v-card class="stat-card pa-4 d-flex align-center" elevation="1">
+        <div class="stat-icon mr-4">
+          <v-icon color="white" size="24">mdi-chart-line</v-icon>
         </div>
-        <div class="stat-change negative">-3%</div>
-      </div>
+        <div class="stat-content flex-grow-1">
+          <div class="stat-number text-h4 font-weight-bold">{{ stats.monthlyViews }}</div>
+          <div class="stat-label text-body-2 text-medium-emphasis">月間閲覧数</div>
+        </div>
+        <v-chip class="stat-change" color="error" variant="tonal" size="small">-3%</v-chip>
+      </v-card>
       
-      <div class="stat-card">
-        <div class="stat-icon">⭐</div>
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.averageRating }}</div>
-          <div class="stat-label">平均評価</div>
+      <v-card class="stat-card pa-4 d-flex align-center" elevation="1">
+        <div class="stat-icon mr-4">
+          <v-icon color="white" size="24">mdi-star</v-icon>
         </div>
-        <div class="stat-change positive">+0.2</div>
-      </div>
+        <div class="stat-content flex-grow-1">
+          <div class="stat-number text-h4 font-weight-bold">{{ stats.averageRating }}</div>
+          <div class="stat-label text-body-2 text-medium-emphasis">平均評価</div>
+        </div>
+        <v-chip class="stat-change" color="success" variant="tonal" size="small">+0.2</v-chip>
+      </v-card>
     </div>
 
     <!-- Charts and Recent Activity -->
-    <div class="dashboard-grid">
+    <div class="dashboard-grid mb-6">
       <!-- Chart Section -->
-      <div class="chart-section">
-        <div class="section-header">
-          <h3>月別店舗登録数</h3>
-          <select class="period-select">
-            <option>過去6ヶ月</option>
-            <option>過去12ヶ月</option>
-          </select>
+      <v-card class="chart-section pa-4" elevation="1">
+        <div class="section-header d-flex justify-space-between align-center mb-4">
+          <h3 class="text-h6 font-weight-medium">月別店舗登録数</h3>
+          <v-select
+            class="period-select"
+            :items="['過去6ヶ月', '過去12ヶ月']"
+            model-value="過去6ヶ月"
+            variant="outlined"
+            density="compact"
+            hide-details
+            style="max-width: 150px;"
+          />
         </div>
-        <div class="chart-placeholder">
+        <div class="chart-placeholder d-flex align-end justify-space-around pa-4" style="height: 200px;">
           <div class="chart-bar" style="height: 60%"></div>
           <div class="chart-bar" style="height: 80%"></div>
           <div class="chart-bar" style="height: 45%"></div>
@@ -58,69 +71,131 @@
           <div class="chart-bar" style="height: 70%"></div>
           <div class="chart-bar" style="height: 85%"></div>
         </div>
-      </div>
+      </v-card>
 
       <!-- Recent Activity -->
-      <div class="activity-section">
-        <div class="section-header">
-          <h3>最近のアクティビティ</h3>
-          <button class="view-all-btn">すべて表示</button>
+      <v-card class="activity-section pa-4" elevation="1">
+        <div class="section-header d-flex justify-space-between align-center mb-4">
+          <h3 class="text-h6 font-weight-medium">最近のアクティビティ</h3>
+          <v-btn variant="text" color="primary" size="small">すべて表示</v-btn>
         </div>
-        <div class="activity-list">
-          <div class="activity-item">
-            <div class="activity-icon">🏪</div>
-            <div class="activity-content">
-              <div class="activity-text">新しい店舗「カフェ・ド・パリ」が登録されました</div>
-              <div class="activity-time">2時間前</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon">👤</div>
-            <div class="activity-content">
-              <div class="activity-text">ユーザー「田中太郎」がアカウントを作成しました</div>
-              <div class="activity-time">4時間前</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon">⭐</div>
-            <div class="activity-content">
-              <div class="activity-text">「イタリアンレストラン・ベラ」に新しいレビューが投稿されました</div>
-              <div class="activity-time">6時間前</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon">🏪</div>
-            <div class="activity-content">
-              <div class="activity-text">「和食処・さくら」の情報が更新されました</div>
-              <div class="activity-time">1日前</div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <v-list class="activity-list pa-0">
+          <v-list-item class="activity-item px-0 py-2">
+            <template v-slot:prepend>
+              <v-avatar class="activity-icon mr-3" color="primary" size="32">
+                <v-icon color="white" size="16">mdi-store</v-icon>
+              </v-avatar>
+            </template>
+            <v-list-item-title class="activity-text text-body-2">
+              新しい店舗「カフェ・ド・パリ」が登録されました
+            </v-list-item-title>
+            <v-list-item-subtitle class="activity-time text-caption">
+              2時間前
+            </v-list-item-subtitle>
+          </v-list-item>
+          
+          <v-list-item class="activity-item px-0 py-2">
+            <template v-slot:prepend>
+              <v-avatar class="activity-icon mr-3" color="primary" size="32">
+                <v-icon color="white" size="16">mdi-account</v-icon>
+              </v-avatar>
+            </template>
+            <v-list-item-title class="activity-text text-body-2">
+              ユーザー「田中太郎」がアカウントを作成しました
+            </v-list-item-title>
+            <v-list-item-subtitle class="activity-time text-caption">
+              4時間前
+            </v-list-item-subtitle>
+          </v-list-item>
+          
+          <v-list-item class="activity-item px-0 py-2">
+            <template v-slot:prepend>
+              <v-avatar class="activity-icon mr-3" color="primary" size="32">
+                <v-icon color="white" size="16">mdi-star</v-icon>
+              </v-avatar>
+            </template>
+            <v-list-item-title class="activity-text text-body-2">
+              「イタリアンレストラン・ベラ」に新しいレビューが投稿されました
+            </v-list-item-title>
+            <v-list-item-subtitle class="activity-time text-caption">
+              6時間前
+            </v-list-item-subtitle>
+          </v-list-item>
+          
+          <v-list-item class="activity-item px-0 py-2">
+            <template v-slot:prepend>
+              <v-avatar class="activity-icon mr-3" color="primary" size="32">
+                <v-icon color="white" size="16">mdi-store</v-icon>
+              </v-avatar>
+            </template>
+            <v-list-item-title class="activity-text text-body-2">
+              「和食処・さくら」の情報が更新されました
+            </v-list-item-title>
+            <v-list-item-subtitle class="activity-time text-caption">
+              1日前
+            </v-list-item-subtitle>
+          </v-list-item>
+        </v-list>
+      </v-card>
     </div>
 
     <!-- Quick Actions -->
-    <div class="quick-actions">
-      <h3>クイックアクション</h3>
+    <v-card class="quick-actions pa-4" elevation="1">
+      <h3 class="text-h6 font-weight-medium mb-4">クイックアクション</h3>
       <div class="actions-grid">
-        <router-link to="/shops/create" class="action-card">
-          <div class="action-icon">➕</div>
-          <div class="action-text">新規店舗登録</div>
-        </router-link>
-        <router-link to="/shops" class="action-card">
-          <div class="action-icon">📋</div>
-          <div class="action-text">店舗一覧</div>
-        </router-link>
-        <router-link to="/analytics" class="action-card">
-          <div class="action-icon">📈</div>
-          <div class="action-text">分析レポート</div>
-        </router-link>
-        <router-link to="/settings" class="action-card">
-          <div class="action-icon">⚙️</div>
-          <div class="action-text">システム設定</div>
-        </router-link>
+        <v-card 
+          to="/shops/create" 
+          class="action-card pa-3 d-flex align-center" 
+          variant="outlined"
+          hover
+          ripple
+        >
+          <v-avatar class="action-icon mr-3" color="primary" size="40">
+            <v-icon color="white" size="20">mdi-plus</v-icon>
+          </v-avatar>
+          <span class="action-text text-body-1 font-weight-medium">新規店舗登録</span>
+        </v-card>
+        
+        <v-card 
+          to="/shops" 
+          class="action-card pa-3 d-flex align-center" 
+          variant="outlined"
+          hover
+          ripple
+        >
+          <v-avatar class="action-icon mr-3" color="primary" size="40">
+            <v-icon color="white" size="20">mdi-format-list-bulleted</v-icon>
+          </v-avatar>
+          <span class="action-text text-body-1 font-weight-medium">店舗一覧</span>
+        </v-card>
+        
+        <v-card 
+          to="/analytics" 
+          class="action-card pa-3 d-flex align-center" 
+          variant="outlined"
+          hover
+          ripple
+        >
+          <v-avatar class="action-icon mr-3" color="primary" size="40">
+            <v-icon color="white" size="20">mdi-chart-line</v-icon>
+          </v-avatar>
+          <span class="action-text text-body-1 font-weight-medium">分析レポート</span>
+        </v-card>
+        
+        <v-card 
+          to="/settings" 
+          class="action-card pa-3 d-flex align-center" 
+          variant="outlined"
+          hover
+          ripple
+        >
+          <v-avatar class="action-icon mr-3" color="primary" size="40">
+            <v-icon color="white" size="20">mdi-cog</v-icon>
+          </v-avatar>
+          <span class="action-text text-body-1 font-weight-medium">システム設定</span>
+        </v-card>
       </div>
-    </div>
+    </v-card>
   </div>
 </template>
 
@@ -136,253 +211,93 @@ const stats = ref({
 </script>
 
 <style scoped>
+/* Dashboard layout with consistent spacing */
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
 }
 
-/* Stats Grid */
+/* Stats Grid with consistent spacing */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 
 .stat-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .stat-icon {
-  font-size: 2rem;
   width: 3rem;
   height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)), #ff6f00);
+  border-radius: 0.75rem;
 }
 
-.stat-content {
-  flex: 1;
-}
-
-.stat-number {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #1e293b;
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-top: 0.25rem;
-}
-
-.stat-change {
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-}
-
-.stat-change.positive {
-  color: #059669;
-  background-color: #d1fae5;
-}
-
-.stat-change.negative {
-  color: #dc2626;
-  background-color: #fee2e2;
-}
-
-/* Dashboard Grid */
+/* Dashboard Grid with consistent spacing */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
-.chart-section,
-.activity-section {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.section-header h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0;
-}
-
-.period-select {
-  padding: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 0.875rem;
-}
-
-.view-all-btn {
-  background: none;
-  border: none;
-  color: #3b82f6;
-  font-size: 0.875rem;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-/* Chart Placeholder */
-.chart-placeholder {
-  height: 200px;
-  display: flex;
-  align-items: end;
-  justify-content: space-around;
-  gap: 1rem;
-  padding: 1rem 0;
-}
-
+/* Chart styling with consistent spacing */
 .chart-bar {
-  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(180deg, rgb(var(--v-theme-primary)), #ff6f00);
   width: 2rem;
-  border-radius: 4px 4px 0 0;
-  transition: all 0.3s;
+  border-radius: 0.25rem 0.25rem 0 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chart-bar:hover {
   opacity: 0.8;
+  transform: scale(1.05);
 }
 
-/* Activity List */
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
+/* Activity list styling */
 .activity-item {
-  display: flex;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0.5rem;
 }
 
 .activity-item:hover {
-  background-color: #f8fafc;
+  background-color: rgba(var(--v-theme-primary), 0.04);
 }
 
-.activity-icon {
-  font-size: 1.25rem;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f1f5f9;
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-
-.activity-content {
-  flex: 1;
-}
-
-.activity-text {
-  font-size: 0.875rem;
-  color: #374151;
-  line-height: 1.4;
-}
-
-.activity-time {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  margin-top: 0.25rem;
-}
-
-/* Quick Actions */
-.quick-actions {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.quick-actions h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 1.5rem 0;
-}
-
+/* Quick Actions Grid with consistent spacing */
 .actions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
 }
 
 .action-card {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
-  color: #374151;
-  transition: all 0.2s;
+  color: inherit;
 }
 
 .action-card:hover {
-  border-color: #3b82f6;
-  background-color: #f8fafc;
   transform: translateY(-1px);
+  border-color: rgb(var(--v-theme-primary)) !important;
 }
 
-.action-icon {
-  font-size: 1.25rem;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-  border-radius: 8px;
-}
-
-.action-text {
-  font-weight: 500;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
+/* Responsive design with consistent breakpoints */
+@media (max-width: 960px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  
+}
+
+@media (max-width: 600px) {
   .stats-grid {
     grid-template-columns: 1fr;
   }

@@ -1,368 +1,619 @@
 <template>
-  <div class="admin-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo">
-          <span class="logo-icon">🌻</span>
-          <span class="logo-text">Hidamari</span>
-        </div>
-      </div>
-      
-      <nav class="sidebar-nav">
-        <router-link to="/dashboard" class="nav-item">
-          <span class="nav-icon">📊</span>
-          <span class="nav-text">ダッシュボード</span>
-        </router-link>
-        <router-link to="/shops" class="nav-item">
-          <span class="nav-icon">🏪</span>
-          <span class="nav-text">お店管理</span>
-        </router-link>
-        <router-link to="/users" class="nav-item">
-          <span class="nav-icon">👥</span>
-          <span class="nav-text">ユーザー管理</span>
-        </router-link>
-        <router-link to="/analytics" class="nav-item">
-          <span class="nav-icon">📈</span>
-          <span class="nav-text">分析</span>
-        </router-link>
-        <router-link to="/settings" class="nav-item">
-          <span class="nav-icon">⚙️</span>
-          <span class="nav-text">設定</span>
-        </router-link>
-      </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <div class="main-wrapper">
-      <!-- Top Header -->
-      <header class="top-header">
-        <div class="header-left">
-          <h1 class="page-title">{{ pageTitle }}</h1>
-        </div>
-        <div class="header-right">
-          <div class="search-box">
-            <input type="text" placeholder="検索..." class="search-input">
-            <span class="search-icon">🔍</span>
-          </div>
-          <div class="user-menu">
-            <div class="user-avatar">👤</div>
-            <span class="user-name">管理者</span>
-          </div>
-        </div>
-      </header>
-
-      <!-- Page Content -->
-      <main class="main-content">
-        <router-view />
-      </main>
+  <!-- App Bar (Fixed Header) -->
+  <v-app-bar
+    app
+    fixed
+    color="surface"
+    elevation="0"
+    height="64"
+    class="app-header"
+  >
+    <!-- Mobile/Tablet menu button -->
+    <v-app-bar-nav-icon
+      v-if="isDrawerTemporary"
+      @click="toggleDrawer"
+      color="on-surface"
+      class="drawer-toggle-btn"
+    />
+    
+    <!-- Logo/System Name -->
+    <div class="d-flex align-center logo-section">
+      <v-icon
+        v-if="!isMobile"
+        color="primary"
+        size="32"
+        class="mr-3 logo-icon"
+      >
+        mdi-flower
+      </v-icon>
+      <v-toolbar-title class="text-h5 font-weight-bold system-title">
+        Hidamari
+      </v-toolbar-title>
+      <v-chip
+        v-if="!isMobile"
+        size="x-small"
+        color="primary"
+        variant="outlined"
+        class="ml-2"
+      >
+        Admin
+      </v-chip>
     </div>
-  </div>
+
+    <v-spacer />
+
+    <!-- Search Box -->
+    <v-text-field
+      v-if="isDesktop"
+      v-model="searchQuery"
+      placeholder="検索..."
+      prepend-inner-icon="mdi-magnify"
+      variant="outlined"
+      density="compact"
+      hide-details
+      class="search-field mr-4"
+      style="max-width: 300px;"
+    />
+
+    <!-- User Actions -->
+    <div class="d-flex align-center user-actions">
+      <!-- Notification Button -->
+      <v-btn
+        icon
+        variant="text"
+        color="on-surface"
+        class="mr-2 notification-btn"
+        size="40"
+      >
+        <v-icon size="20">mdi-bell-outline</v-icon>
+        <v-badge
+          color="error"
+          content="3"
+          offset-x="2"
+          offset-y="2"
+        />
+      </v-btn>
+
+      <!-- User Menu -->
+      <v-menu offset-y>
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            variant="text"
+            class="d-flex align-center user-menu-btn"
+            height="40"
+          >
+            <v-avatar
+              color="primary"
+              size="32"
+              class="mr-2"
+            >
+              <v-icon color="white" size="18">mdi-account</v-icon>
+            </v-avatar>
+            <div v-if="isDesktop" class="d-flex flex-column align-start mr-2">
+              <span class="text-body-2 font-weight-medium">管理者</span>
+              <span class="text-caption text-medium-emphasis">admin@hidamari.com</span>
+            </div>
+            <v-icon v-if="isDesktop" size="18">mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+        <v-list min-width="200">
+          <v-list-item prepend-icon="mdi-account-circle">
+            <v-list-item-title>プロフィール</v-list-item-title>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-cog">
+            <v-list-item-title>設定</v-list-item-title>
+          </v-list-item>
+          <v-divider />
+          <v-list-item prepend-icon="mdi-logout" class="text-error">
+            <v-list-item-title>ログアウト</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
+  </v-app-bar>
+
+  <!-- Navigation Drawer (Sidebar) -->
+  <v-navigation-drawer
+    v-model="drawer"
+    app
+    :permanent="isDrawerPermanent"
+    :temporary="isDrawerTemporary"
+    color="surface"
+    width="280"
+    elevation="8"
+    :touchless="false"
+    :disable-resize-watcher="false"
+    :disable-route-watcher="false"
+    class="navigation-drawer"
+    @click:outside="closeDrawerOnMobile"
+  >
+    <!-- Logo Section for Mobile/Tablet -->
+    <div v-if="isDrawerTemporary" class="pa-4 d-flex align-center drawer-header">
+      <v-icon
+        color="primary"
+        size="32"
+        class="mr-3 drawer-logo-icon"
+      >
+        mdi-flower
+      </v-icon>
+      <span class="text-h6 font-weight-bold drawer-title">Hidamari</span>
+      <v-spacer />
+      <v-btn
+        icon
+        variant="text"
+        size="small"
+        @click="closeDrawerOnMobile"
+        class="drawer-close-btn"
+      >
+        <v-icon size="20">mdi-close</v-icon>
+      </v-btn>
+    </div>
+
+    <v-divider v-if="isDrawerTemporary" />
+
+    <!-- Navigation Items -->
+    <v-list nav>
+      <v-list-item
+        v-for="item in navigationItems"
+        :key="item.route"
+        :to="item.route"
+        :prepend-icon="item.icon"
+        :title="item.title"
+        :active="isActiveRoute(item.route)"
+        color="primary"
+        class="nav-item"
+        :class="{ 'nav-item--active': isActiveRoute(item.route) }"
+        @click="closeDrawerOnMobile"
+      />
+    </v-list>
+  </v-navigation-drawer>
+
+  <!-- Main Content Area -->
+  <v-main class="main-content">
+    <v-container fluid class="pa-6 main-container">
+      <router-view />
+    </v-container>
+  </v-main>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useDisplay } from 'vuetify'
 import { useRoute } from 'vue-router'
 
+// Vuetify display composable for responsive behavior
+const { width } = useDisplay()
 const route = useRoute()
 
-const pageTitle = computed(() => {
-  const titles = {
-    '/dashboard': 'ダッシュボード',
-    '/shops': 'お店管理',
-    '/shops/create': '新規お店登録',
-    '/users': 'ユーザー管理',
-    '/analytics': '分析',
-    '/settings': '設定'
+// Reactive data
+const drawer = ref(true)
+const searchQuery = ref('')
+
+// Computed properties for responsive breakpoints
+const isDesktop = computed(() => width.value >= 1024)
+const isTablet = computed(() => width.value >= 768 && width.value < 1024)
+const isMobile = computed(() => width.value < 768)
+
+// Computed property for drawer behavior
+const isDrawerTemporary = computed(() => !isDesktop.value)
+const isDrawerPermanent = computed(() => isDesktop.value)
+
+// Helper function to determine active route
+const isActiveRoute = (itemRoute) => {
+  // Handle exact match for dashboard
+  if (itemRoute === '/dashboard') {
+    return route.path === '/dashboard'
   }
-  return titles[route.path] || 'Hidamari 管理画面'
+  
+  // Handle nested routes (e.g., /shops includes /shops/create, /shops/:id/edit)
+  if (itemRoute === '/shops') {
+    return route.path.startsWith('/shops')
+  }
+  
+  // Handle other routes with exact match
+  return route.path === itemRoute
+}
+
+// Navigation items
+const navigationItems = [
+  {
+    title: 'ダッシュボード',
+    icon: 'mdi-view-dashboard',
+    route: '/dashboard'
+  },
+  {
+    title: 'お店管理',
+    icon: 'mdi-store',
+    route: '/shops'
+  },
+  {
+    title: 'ユーザー管理',
+    icon: 'mdi-account-group',
+    route: '/users'
+  },
+  {
+    title: '分析',
+    icon: 'mdi-chart-line',
+    route: '/analytics'
+  },
+  {
+    title: '設定',
+    icon: 'mdi-cog',
+    route: '/settings'
+  }
+]
+
+// Handle responsive drawer behavior
+const handleResize = () => {
+  if (isDesktop.value) {
+    // Desktop: drawer is always open and permanent
+    drawer.value = true
+  } else {
+    // Mobile/Tablet: drawer is closed by default and temporary
+    drawer.value = false
+  }
+}
+
+// Toggle drawer function for mobile navigation
+const toggleDrawer = () => {
+  drawer.value = !drawer.value
+}
+
+// Close drawer when clicking outside on mobile/tablet
+const closeDrawerOnMobile = () => {
+  if (isDrawerTemporary.value) {
+    drawer.value = false
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  handleResize()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 
 <style scoped>
-.admin-layout {
-  min-height: 100vh;
-  background-color: #f1f5f9;
-  position: relative;
+/* CSS Custom Properties for consistent orange accent usage */
+:root {
+  --orange-primary: 249, 168, 37;
+  --orange-hover: rgba(249, 168, 37, 0.08);
+  --orange-active: rgba(249, 168, 37, 0.12);
+  --orange-shadow: rgba(249, 168, 37, 0.15);
+  --orange-focus: rgba(249, 168, 37, 0.2);
 }
-
-/* Sidebar - 完全固定 */
-.sidebar {
-  width: 280px;
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  color: white;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  z-index: 1000;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-}
-
-.sidebar-header {
-  padding: 2rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.logo-icon {
-  font-size: 2rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-.logo-text {
-  font-size: 1.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.025em;
-}
-
-.sidebar-nav {
-  padding: 2rem 0;
-  height: calc(100vh - 120px);
-  overflow-y: auto;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  margin: 0.25rem 1rem;
-  color: #cbd5e1;
-  text-decoration: none;
+/* Custom styling for search field */
+.search-field :deep(.v-field__outline) {
   border-radius: 12px;
+}
+
+.search-field :deep(.v-field--focused .v-field__outline) {
+  border-color: rgb(var(--v-theme-primary));
+}
+
+/* Enhanced navigation item styling with consistent spacing */
+.nav-item {
+  margin: 0.25rem 0.75rem;
+  border-radius: 0.75rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  font-weight: 500;
+  overflow: hidden;
 }
 
+/* Add subtle ripple effect */
 .nav-item::before {
   content: '';
   position: absolute;
+  top: 0;
   left: 0;
-  top: 0;
+  right: 0;
   bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
-  border-radius: 0 4px 4px 0;
-  transform: scaleY(0);
-  transition: transform 0.3s ease;
+  background: radial-gradient(circle, rgba(var(--orange-primary), 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 
+.nav-item:active::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Hover effects with light orange background */
 .nav-item:hover {
-  background: rgba(59, 130, 246, 0.1);
-  color: white;
+  background-color: var(--orange-hover) !important;
   transform: translateX(4px);
+  box-shadow: 0 2px 8px var(--orange-shadow);
 }
 
-.nav-item:hover::before {
-  transform: scaleY(1);
+.nav-item:hover :deep(.v-list-item__prepend .v-icon) {
+  color: rgb(var(--v-theme-primary)) !important;
+  transform: scale(1.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-item.router-link-active {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(29, 78, 216, 0.1));
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-}
-
-.nav-item.router-link-active::before {
-  transform: scaleY(1);
-}
-
-.nav-icon {
-  font-size: 1.25rem;
-  min-width: 1.25rem;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
-}
-
-.nav-text {
-  font-size: 0.95rem;
-  letter-spacing: 0.025em;
-}
-
-/* Main Wrapper - サイドバー分のマージン */
-.main-wrapper {
-  margin-left: 280px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Top Header - 固定 */
-.top-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  padding: 1.25rem 2rem;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 900;
-}
-
-.page-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-  letter-spacing: -0.025em;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.search-box {
-  position: relative;
-}
-
-.search-input {
-  padding: 0.75rem 3rem 0.75rem 1.25rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  width: 350px;
-  font-size: 0.95rem;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1);
-  background: white;
-}
-
-.search-input::placeholder {
-  color: #94a3b8;
-}
-
-.search-icon {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #64748b;
-  font-size: 1.1rem;
-}
-
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.user-menu:hover {
-  background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
-}
-
-.user-avatar {
-  width: 2.25rem;
-  height: 2.25rem;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-}
-
-.user-name {
+.nav-item:hover :deep(.v-list-item-title) {
+  color: rgb(var(--v-theme-primary)) !important;
   font-weight: 600;
-  color: #1e293b;
-  font-size: 0.95rem;
 }
 
-/* Main Content - スクロール可能 */
+/* Active state styling with orange accent */
+.nav-item--active,
+.nav-item.v-list-item--active {
+  background-color: var(--orange-active) !important;
+  border-left: 4px solid rgb(var(--v-theme-primary));
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px var(--orange-focus);
+}
+
+.nav-item--active :deep(.v-list-item__prepend .v-icon),
+.nav-item.v-list-item--active :deep(.v-list-item__prepend .v-icon) {
+  color: rgb(var(--v-theme-primary)) !important;
+  transform: scale(1.15);
+}
+
+.nav-item--active :deep(.v-list-item-title),
+.nav-item.v-list-item--active :deep(.v-list-item-title) {
+  color: rgb(var(--v-theme-primary)) !important;
+  font-weight: 700;
+}
+
+/* Focus states for accessibility */
+.nav-item:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}
+
+/* Smooth icon transitions */
+.nav-item :deep(.v-list-item__prepend .v-icon) {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item :deep(.v-list-item-title) {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Main content styling with consistent spacing */
 .main-content {
-  flex: 1;
-  padding: 2.5rem;
-  background: #f1f5f9;
-  min-height: calc(100vh - 100px);
+  background-color: rgb(var(--v-theme-background));
+  min-height: 100vh;
 }
 
-/* カスタムスクロールバー */
-.sidebar-nav::-webkit-scrollbar {
-  width: 6px;
+.main-container {
+  max-width: none;
+  padding: 1.5rem;
 }
 
-.sidebar-nav::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+/* Navigation drawer styling with subtle shadows */
+.v-navigation-drawer {
+  border-right: 1px solid rgba(var(--v-theme-on-surface), 0.08);
 }
 
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
+/* App bar styling with subtle shadows and consistent spacing */
+.app-header {
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.95) !important;
 }
 
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+/* Enhanced app bar with consistent padding */
+.app-header :deep(.v-toolbar__content) {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .search-input {
-    width: 250px;
+/* Enhanced user actions styling with consistent spacing */
+.user-actions {
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.notification-btn {
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-btn:hover {
+  background-color: var(--orange-hover) !important;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px var(--orange-shadow);
+}
+
+.notification-btn:hover :deep(.v-icon) {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+.user-menu-btn {
+  border-radius: 12px;
+  padding: 4px 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.user-menu-btn:hover {
+  background-color: rgba(var(--orange-primary), 0.06) !important;
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(var(--orange-primary), 0.1);
+}
+
+.user-menu-btn:hover :deep(.v-avatar) {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(var(--orange-primary), 0.3);
+}
+
+/* Focus states for accessibility */
+.notification-btn:focus-visible,
+.user-menu-btn:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}
+
+/* Logo and title styling with consistent spacing */
+.logo-section {
+  transition: all 0.2s ease;
+  padding: 0 0.5rem;
+}
+
+.logo-icon {
+  transition: transform 0.2s ease;
+  margin-right: 0.75rem;
+}
+
+.logo-section:hover .logo-icon {
+  transform: rotate(5deg) scale(1.05);
+}
+
+.system-title {
+  color: rgb(var(--v-theme-on-surface));
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)), #ff6f00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Enhanced search field with orange accent */
+.search-field {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-field:hover :deep(.v-field__outline) {
+  border-color: rgba(var(--orange-primary), 0.4);
+  box-shadow: 0 0 0 1px rgba(var(--orange-primary), 0.1);
+}
+
+.search-field:focus-within :deep(.v-field__outline) {
+  border-color: rgb(var(--v-theme-primary)) !important;
+  box-shadow: 0 0 0 2px var(--orange-focus);
+}
+
+.search-field :deep(.v-field__prepend-inner .v-icon) {
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-field:hover :deep(.v-field__prepend-inner .v-icon) {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+/* Mobile/Tablet navigation button styling */
+.drawer-toggle-btn {
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawer-toggle-btn:hover {
+  background-color: var(--orange-hover) !important;
+  transform: scale(1.05);
+}
+
+.drawer-toggle-btn:hover :deep(.v-icon) {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+/* Navigation drawer responsive styling */
+.navigation-drawer {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Drawer header styling for mobile/tablet */
+.drawer-header {
+  background: linear-gradient(135deg, rgba(var(--orange-primary), 0.05), rgba(var(--orange-primary), 0.02));
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+}
+
+.drawer-logo-icon {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawer-header:hover .drawer-logo-icon {
+  transform: rotate(5deg) scale(1.05);
+}
+
+.drawer-title {
+  color: rgb(var(--v-theme-on-surface));
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)), #ff6f00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.drawer-close-btn {
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawer-close-btn:hover {
+  background-color: var(--orange-hover) !important;
+  transform: scale(1.1);
+}
+
+.drawer-close-btn:hover :deep(.v-icon) {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+/* Enhanced drawer animations for mobile/tablet */
+@media (max-width: 1023px) {
+  .navigation-drawer :deep(.v-navigation-drawer__content) {
+    overflow-x: hidden;
+  }
+  
+  .navigation-drawer :deep(.v-overlay__scrim) {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
+/* Desktop-specific drawer styling with subtle shadows */
+@media (min-width: 1024px) {
+  .navigation-drawer {
+    border-right: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* Touch-friendly navigation items on mobile/tablet with consistent spacing */
+@media (max-width: 1023px) {
+  .nav-item {
+    min-height: 3rem;
+    margin: 0.375rem 1rem;
+    border-radius: 1rem;
   }
   
-  .sidebar.sidebar-open {
-    transform: translateX(0);
+  .nav-item :deep(.v-list-item__content) {
+    padding: 0.5rem 0;
   }
   
-  .main-wrapper {
-    margin-left: 0;
+  .nav-item :deep(.v-list-item-title) {
+    font-size: 1rem;
+    font-weight: 500;
   }
   
-  .search-input {
-    width: 200px;
+  .nav-item :deep(.v-list-item__prepend .v-icon) {
+    font-size: 1.5rem;
   }
-  
-  .user-name {
-    display: none;
-  }
-  
-  .header-right {
-    gap: 1rem;
-  }
-  
-  .main-content {
-    padding: 1.5rem;
-  }
+}
+
+/* Smooth drawer slide animations */
+.v-navigation-drawer--temporary {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.v-navigation-drawer--temporary.v-navigation-drawer--active {
+  transform: translateX(0);
+}
+
+.v-navigation-drawer--temporary:not(.v-navigation-drawer--active) {
+  transform: translateX(-100%);
 }
 </style>

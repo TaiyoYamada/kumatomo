@@ -1,141 +1,209 @@
 <template>
   <div class="shop-list">
-    <div class="page-header">
-      <h2 class="page-title">お店管理</h2>
-      <router-link to="/shops/create" class="btn btn-primary">
+    <!-- Page Header -->
+    <v-card class="page-header pa-4 mb-6 d-flex justify-space-between align-center" elevation="1">
+      <h2 class="page-title text-h4 font-weight-bold ma-0">お店管理</h2>
+      <v-btn 
+        to="/shops/create" 
+        color="primary" 
+        prepend-icon="mdi-plus"
+        size="large"
+      >
         新規お店登録
-      </router-link>
-    </div>
+      </v-btn>
+    </v-card>
 
     <!-- Search and Filter Section -->
-    <div class="filters">
-      <div class="search-box">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="お店名で検索..."
-          class="search-input"
-          @input="handleSearch"
-        />
-      </div>
-      
-      <div class="filter-box">
-        <select v-model="selectedGenre" @change="handleFilter" class="filter-select">
-          <option value="">全ジャンル</option>
-          <option value="レストラン">レストラン</option>
-          <option value="カフェ">カフェ</option>
-          <option value="居酒屋">居酒屋</option>
-          <option value="ファストフード">ファストフード</option>
-          <option value="その他">その他</option>
-        </select>
-      </div>
-    </div>
+    <v-card class="filters pa-4 mb-6" elevation="1">
+      <v-row align="center" no-gutters>
+        <v-col cols="12" md="8">
+          <v-text-field
+            v-model="searchQuery"
+            placeholder="お店名で検索..."
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            clearable
+            @input="handleSearch"
+          />
+        </v-col>
+        
+        <v-col cols="12" md="4" class="pl-md-4">
+          <v-select
+            v-model="selectedGenre"
+            :items="[
+              { title: '全ジャンル', value: '' },
+              { title: 'レストラン', value: 'レストラン' },
+              { title: 'カフェ', value: 'カフェ' },
+              { title: '居酒屋', value: '居酒屋' },
+              { title: 'ファストフード', value: 'ファストフード' },
+              { title: 'その他', value: 'その他' }
+            ]"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            @update:model-value="handleFilter"
+          />
+        </v-col>
+      </v-row>
+    </v-card>
 
     <!-- Loading State -->
-    <div v-if="loading" class="loading">
-      読み込み中...
-    </div>
+    <v-card v-if="loading" class="pa-8 text-center" elevation="1">
+      <v-progress-circular indeterminate color="primary" class="mb-4" />
+      <p class="text-body-1">読み込み中...</p>
+    </v-card>
 
     <!-- Error State -->
-    <div v-if="error" class="error">
+    <v-alert v-if="error" type="error" class="mb-6">
       {{ error }}
-    </div>
+    </v-alert>
 
     <!-- Shops Table -->
-    <div v-if="!loading && !error" class="table-container">
-      <table class="shops-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>お店名</th>
-            <th>ジャンル</th>
-            <th>住所</th>
-            <th>電話番号</th>
-            <th>登録日</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="shop in shops" :key="shop.id">
-            <td>{{ shop.id }}</td>
-            <td class="shop-name">
-              <div class="shop-info">
-                <img 
-                  v-if="shop.image_url" 
-                  :src="shop.image_url" 
-                  :alt="shop.name"
-                  class="shop-thumbnail"
-                />
-                <span>{{ shop.name }}</span>
-              </div>
-            </td>
-            <td>{{ shop.genre || '-' }}</td>
-            <td>{{ shop.address || '-' }}</td>
-            <td>{{ shop.phone || '-' }}</td>
-            <td>{{ formatDate(shop.created_at) }}</td>
-            <td class="actions">
-              <router-link 
-                :to="`/shops/${shop.id}/edit`" 
-                class="btn btn-sm btn-secondary"
-              >
-                編集
-              </router-link>
-              <button 
-                @click="confirmDelete(shop)" 
-                class="btn btn-sm btn-danger"
-              >
-                削除
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <v-card v-if="!loading && !error" class="table-container" elevation="1">
+      <v-data-table
+        :headers="headers"
+        :items="shops"
+        :loading="loading"
+        class="shops-table"
+        item-key="id"
+        no-data-text="お店が見つかりませんでした。"
+        loading-text="読み込み中..."
+      >
+        <template v-slot:item.name="{ item }">
+          <div class="shop-info d-flex align-center">
+            <v-avatar
+              v-if="item.image_url"
+              :image="item.image_url"
+              size="40"
+              class="mr-3"
+              rounded
+            />
+            <v-avatar
+              v-else
+              color="grey-lighten-2"
+              size="40"
+              class="mr-3"
+              rounded
+            >
+              <v-icon color="grey">mdi-store</v-icon>
+            </v-avatar>
+            <span class="text-body-1 font-weight-medium">{{ item.name }}</span>
+          </div>
+        </template>
 
-      <!-- Empty State -->
-      <div v-if="shops.length === 0" class="empty-state">
-        <p>お店が見つかりませんでした。</p>
-      </div>
-    </div>
+        <template v-slot:item.genre="{ item }">
+          <v-chip
+            v-if="item.genre"
+            :text="item.genre"
+            color="primary"
+            variant="tonal"
+            size="small"
+          />
+          <span v-else class="text-medium-emphasis">-</span>
+        </template>
+
+        <template v-slot:item.address="{ item }">
+          <span class="text-body-2">{{ item.address || '-' }}</span>
+        </template>
+
+        <template v-slot:item.phone="{ item }">
+          <span class="text-body-2">{{ item.phone || '-' }}</span>
+        </template>
+
+        <template v-slot:item.created_at="{ item }">
+          <span class="text-body-2">{{ formatDate(item.created_at) }}</span>
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+          <div class="actions d-flex ga-2">
+            <v-btn
+              :to="`/shops/${item.id}/edit`"
+              color="primary"
+              variant="outlined"
+              size="small"
+              prepend-icon="mdi-pencil"
+            >
+              編集
+            </v-btn>
+            <v-btn
+              @click="confirmDelete(item)"
+              color="error"
+              variant="outlined"
+              size="small"
+              prepend-icon="mdi-delete"
+            >
+              削除
+            </v-btn>
+          </div>
+        </template>
+      </v-data-table>
+    </v-card>
 
     <!-- Pagination -->
-    <div v-if="pagination && pagination.last_page > 1" class="pagination">
-      <button 
+    <v-card 
+      v-if="pagination && pagination.last_page > 1" 
+      class="pagination pa-4 mt-6 d-flex justify-center align-center" 
+      elevation="1"
+    >
+      <v-btn
         @click="changePage(pagination.current_page - 1)"
         :disabled="pagination.current_page <= 1"
-        class="btn btn-sm"
+        variant="outlined"
+        prepend-icon="mdi-chevron-left"
+        class="mr-4"
       >
         前へ
-      </button>
+      </v-btn>
       
-      <span class="page-info">
+      <span class="page-info text-body-1 mx-4">
         {{ pagination.current_page }} / {{ pagination.last_page }}
       </span>
       
-      <button 
+      <v-btn
         @click="changePage(pagination.current_page + 1)"
         :disabled="pagination.current_page >= pagination.last_page"
-        class="btn btn-sm"
+        variant="outlined"
+        append-icon="mdi-chevron-right"
+        class="ml-4"
       >
         次へ
-      </button>
-    </div>
+      </v-btn>
+    </v-card>
 
-    <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteModal" class="modal-overlay" @click="closeDeleteModal">
-      <div class="modal" @click.stop>
-        <h3>削除確認</h3>
-        <p>「{{ shopToDelete?.name }}」を削除しますか？</p>
-        <p class="warning">この操作は取り消せません。</p>
-        <div class="modal-actions">
-          <button @click="closeDeleteModal" class="btn btn-secondary">
+    <!-- Delete Confirmation Dialog -->
+    <v-dialog v-model="showDeleteModal" max-width="400">
+      <v-card class="pa-4">
+        <v-card-title class="text-h6 font-weight-bold">
+          削除確認
+        </v-card-title>
+        
+        <v-card-text class="py-4">
+          <p class="text-body-1 mb-2">「{{ shopToDelete?.name }}」を削除しますか？</p>
+          <p class="text-body-2 text-error">この操作は取り消せません。</p>
+        </v-card-text>
+        
+        <v-card-actions class="pt-0">
+          <v-spacer />
+          <v-btn
+            @click="closeDeleteModal"
+            variant="outlined"
+            color="grey"
+          >
             キャンセル
-          </button>
-          <button @click="deleteShop" class="btn btn-danger" :disabled="deleting">
-            {{ deleting ? '削除中...' : '削除' }}
-          </button>
-        </div>
-      </div>
-    </div>
+          </v-btn>
+          <v-btn
+            @click="deleteShop"
+            :loading="deleting"
+            color="error"
+            variant="flat"
+          >
+            削除
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -153,6 +221,17 @@ const searchQuery = ref('')
 const selectedGenre = ref('')
 const pagination = ref(null)
 const currentPage = ref(1)
+
+// Table headers
+const headers = ref([
+  { title: 'ID', key: 'id', sortable: true, width: '80px' },
+  { title: 'お店名', key: 'name', sortable: true },
+  { title: 'ジャンル', key: 'genre', sortable: true, width: '120px' },
+  { title: '住所', key: 'address', sortable: false },
+  { title: '電話番号', key: 'phone', sortable: false, width: '140px' },
+  { title: '登録日', key: 'created_at', sortable: true, width: '120px' },
+  { title: '操作', key: 'actions', sortable: false, width: '180px' }
+])
 
 // Delete modal
 const showDeleteModal = ref(false)
@@ -258,239 +337,56 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Shop list layout with consistent spacing */
 .shop-list {
   height: 100%;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.page-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0;
-}
-
-.filters {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.search-box,
-.filter-box {
-  flex: 1;
-  min-width: 200px;
-}
-
-.search-input,
-.filter-select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-
-.search-input:focus,
-.filter-select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.loading,
-.error {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1rem;
-}
-
-.error {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-}
-
-.table-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.shops-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.shops-table th,
-.shops-table td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.shops-table th {
-  background-color: #f8fafc;
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.shops-table tbody tr {
-  transition: background-color 0.2s;
-}
-
-.shops-table tbody tr:hover {
-  background-color: #f8fafc;
-}
-
+/* Shop info styling with consistent spacing */
 .shop-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
-.shop-thumbnail {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
+/* Actions styling with consistent spacing */
 .actions {
   display: flex;
   gap: 0.5rem;
 }
 
-.empty-state {
-  text-align: center;
-  padding: 3rem;
-  color: #666;
+/* Responsive design */
+@media (max-width: 960px) {
+  .filters :deep(.v-row) {
+    flex-direction: column;
+  }
+  
+  .filters :deep(.pl-md-4) {
+    padding-left: 0 !important;
+    margin-top: 1rem;
+  }
 }
 
+/* Data table customization */
+.shops-table :deep(.v-data-table__wrapper) {
+  border-radius: 0;
+}
+
+.shops-table :deep(.v-data-table-header) {
+  background-color: rgb(var(--v-theme-surface));
+}
+
+.shops-table :deep(.v-data-table-header th) {
+  font-weight: 600;
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 0.875rem;
+}
+
+.shops-table :deep(.v-data-table__tr:hover) {
+  background-color: rgba(var(--v-theme-primary), 0.04);
+}
+
+/* Pagination styling */
 .pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.page-info {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* Button Styles */
-.btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #545b62;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
-}
-
-.btn-sm {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 90%;
-}
-
-.modal h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.modal p {
-  margin-bottom: 1rem;
-  color: #666;
-}
-
-.warning {
-  color: #dc3545;
-  font-size: 0.9rem;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
+  background-color: rgb(var(--v-theme-surface));
 }
 </style>
