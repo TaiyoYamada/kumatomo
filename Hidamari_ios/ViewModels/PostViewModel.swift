@@ -19,6 +19,10 @@ class PostViewModel: ObservableObject {
     @Published var showSuccessModal: Bool = false
     @Published var isSubmitting: Bool = false
     
+    // Bulletin Board specific properties
+    @Published var activeTab: TabType = .all
+    @Published var selectedMunicipality: String?
+    
     // Edit/Delete related properties
     @Published var isEditing: Bool = false
     @Published var editingPost: Post?
@@ -598,5 +602,52 @@ class PostViewModel: ObservableObject {
         isLoading = false
         errorMessage = "\(context)エラー: \(error.localizedDescription)"
         print("🚨 \(context)エラー: \(error.localizedDescription)")
+    }
+}
+
+// MARK: - Tab Management
+
+extension PostViewModel {
+    func changeTab(_ tab: TabType) {
+        activeTab = tab
+        Task {
+            await fetchPostsForCurrentTab()
+        }
+    }
+    
+    func changeMunicipality(_ municipality: String) {
+        selectedMunicipality = municipality
+        if activeTab == .municipality {
+            Task {
+                await fetchPostsForCurrentTab()
+            }
+        }
+    }
+    
+    private func fetchPostsForCurrentTab() async {
+        switch activeTab {
+        case .all:
+            await fetchAllPosts()
+        case .municipality:
+            if let municipality = selectedMunicipality {
+                await fetchMunicipalityPosts(municipality: municipality)
+            }
+        case .following:
+            await fetchFollowingPosts()
+        }
+    }
+    
+    private func fetchMunicipalityPosts(municipality: String) async {
+        await performAsyncOperation {
+            // TODO: Implement municipality-specific API call
+            self.posts = try await self.postAPIService.fetchAllPosts()
+        }
+    }
+    
+    private func fetchFollowingPosts() async {
+        await performAsyncOperation {
+            // TODO: Implement following-specific API call
+            self.posts = try await self.postAPIService.fetchAllPosts()
+        }
     }
 }
