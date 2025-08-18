@@ -3,7 +3,7 @@ import Foundation
 class PostAPIService {
     static let shared = PostAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
     
     // 認証トークンの取得
     private func getAuthToken() -> String {
