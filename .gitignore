@@ -2,6 +2,5 @@
 .env
 .env.example
 
-.github
 .kiro
 .vscode

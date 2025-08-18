@@ -3,9 +3,13 @@ import Foundation
 class ShopAPIService {
     static let shared = ShopAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
-    private let networkMonitor = NetworkMonitor.shared
-    private let errorManager = ErrorManager.shared
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
+    private var networkMonitor: NetworkMonitor {
+        NetworkMonitor.shared
+    }
+    private var errorManager: ErrorManager {
+        ErrorManager.shared
+    }
     
     // 認証トークンの取得
     private func getAuthToken() -> String {
@@ -14,8 +18,10 @@ class ShopAPIService {
     
     // Network connectivity check
     private func checkNetworkConnectivity() async throws {
-        guard await networkMonitor.checkConnectivity() else {
-            throw APIError.networkError(URLError(.notConnectedToInternet))
+        await MainActor.run {
+            guard networkMonitor.isConnected else {
+                return
+            }
         }
     }
     

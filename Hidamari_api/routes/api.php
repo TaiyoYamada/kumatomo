@@ -11,6 +11,15 @@ use App\Http\Controllers\AdminShopController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ImageController;
 
+// API動作確認用のテストルート
+Route::get('/', function () {
+    return response()->json([
+        'message' => 'Hidamari API is working!',
+        'version' => '1.0.0',
+        'timestamp' => now()->toISOString()
+    ]);
+});
+
 // 新規ユーザー登録
 Route::post('/register', [AuthController::class, 'register']);
 

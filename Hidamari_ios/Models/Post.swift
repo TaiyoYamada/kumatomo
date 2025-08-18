@@ -10,6 +10,15 @@ struct Post: Identifiable, Codable {
     var createdAt: Date?
     var updatedAt: Date?
     
+    // 掲示板機能用の新しいプロパティ
+    var category: CategoryType?
+    var hashtags: [String]?
+    var reactions: PostReactions?
+    var userReaction: ReactionType?
+    var commentCount: Int?
+    var isBookmarked: Bool?
+    var municipality: String?
+    
     // 関連データ
     var user: User?
     var shop: Shop?
@@ -24,6 +33,13 @@ struct Post: Identifiable, Codable {
         case tags
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+        case category
+        case hashtags
+        case reactions
+        case userReaction = "user_reaction"
+        case commentCount = "comment_count"
+        case isBookmarked = "is_bookmarked"
+        case municipality
         case user
         case shop
         case images
@@ -44,11 +60,21 @@ struct Post: Identifiable, Codable {
         tags = try container.decodeIfPresent([String].self, forKey: .tags)
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
         updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        
+        // 新しいプロパティ
+        category = try container.decodeIfPresent(CategoryType.self, forKey: .category)
+        hashtags = try container.decodeIfPresent([String].self, forKey: .hashtags)
+        reactions = try container.decodeIfPresent(PostReactions.self, forKey: .reactions)
+        userReaction = try container.decodeIfPresent(ReactionType.self, forKey: .userReaction)
+        commentCount = try container.decodeIfPresent(Int.self, forKey: .commentCount)
+        isBookmarked = try container.decodeIfPresent(Bool.self, forKey: .isBookmarked)
+        municipality = try container.decodeIfPresent(String.self, forKey: .municipality)
+        
         user = try container.decodeIfPresent(User.self, forKey: .user)
         shop = try container.decodeIfPresent(Shop.self, forKey: .shop)
         images = try container.decodeIfPresent([PostImage].self, forKey: .images)
         
-        print("🔍 Post デコード結果: id=\(id), images=\(images?.count ?? 0)枚")
+        print("🔍 Post デコード結果: id=\(id), images=\(images?.count ?? 0)枚, reactions=\(reactions?.thumbsUp ?? 0)")
     }
     
     // Encodable実装
@@ -62,6 +88,16 @@ struct Post: Identifiable, Codable {
         try container.encodeIfPresent(tags, forKey: .tags)
         try container.encodeIfPresent(createdAt, forKey: .createdAt)
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
+        
+        // 新しいプロパティ
+        try container.encodeIfPresent(category, forKey: .category)
+        try container.encodeIfPresent(hashtags, forKey: .hashtags)
+        try container.encodeIfPresent(reactions, forKey: .reactions)
+        try container.encodeIfPresent(userReaction, forKey: .userReaction)
+        try container.encodeIfPresent(commentCount, forKey: .commentCount)
+        try container.encodeIfPresent(isBookmarked, forKey: .isBookmarked)
+        try container.encodeIfPresent(municipality, forKey: .municipality)
+        
         try container.encodeIfPresent(user, forKey: .user)
         try container.encodeIfPresent(shop, forKey: .shop)
         try container.encodeIfPresent(images, forKey: .images)
@@ -100,3 +136,4 @@ extension Post {
         self.updatedAt = Date()
     }
 }
+
