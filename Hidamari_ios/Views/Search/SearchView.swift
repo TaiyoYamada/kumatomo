@@ -2,14 +2,21 @@ import SwiftUI
 
 struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
+    @StateObject private var userManager = CurrentUserManager.shared
     @State private var showingPostDetail = false
     @State private var selectedPost: Post?
     @State private var showingShopDetail = false
     @State private var selectedShop: Shop?
+    @State private var showingSidebar = false
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
+            ZStack {
+                // Sliding sidebar
+                SlidingSidebar(isPresented: $showingSidebar, user: userManager.currentUser)
+                    .zIndex(2)
+                
+                VStack(spacing: 0) {
                 // 検索バー
                 searchBar
                 
@@ -30,16 +37,26 @@ struct SearchView: View {
                 }
                 
                 Spacer()
-            }
-            .navigationTitle("検索")
-            .navigationBarTitleDisplayMode(.large)
-            .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
-                Button("OK") {
-                    viewModel.errorMessage = nil
                 }
-            } message: {
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
+                .navigationTitle("検索")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        ProfileIconButton(user: userManager.currentUser) {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                showingSidebar = true
+                            }
+                        }
+                    }
+                }
+                .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
+                    Button("OK") {
+                        viewModel.errorMessage = nil
+                    }
+                } message: {
+                    if let errorMessage = viewModel.errorMessage {
+                        Text(errorMessage)
+                    }
                 }
             }
         }

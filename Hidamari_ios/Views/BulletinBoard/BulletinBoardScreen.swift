@@ -1,14 +1,21 @@
 import SwiftUI
 
 struct BulletinBoardScreen: View {
-    @StateObject private var viewModel = BulletinBoardViewModel()
+    @EnvironmentObject private var viewModel: BulletinBoardViewModel
+    @StateObject private var userManager = CurrentUserManager.shared
     @State private var showToast = false
     @State private var toastMessage = ""
     @State private var toastType: ToastView.ToastType = .info
+    @State private var showingSidebar = false
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
     var body: some View {
         NavigationView {
             ZStack {
+                // Sliding sidebar
+                SlidingSidebar(isPresented: $showingSidebar, user: userManager.currentUser)
+                    .zIndex(2)
+                
                 VStack(spacing: 0) {
                     TabNavigationHeader(
                         activeTab: viewModel.activeTab,
@@ -21,15 +28,19 @@ struct BulletinBoardScreen: View {
                         // Main content
                         if viewModel.isLoading && viewModel.posts.isEmpty {
                             SkeletonLoadingView()
+                                .accessibilityLabel("投稿を読み込み中")
+                                .accessibilityIdentifier("bulletin_board_loading")
                         } else if let errorMessage = viewModel.errorMessage, viewModel.posts.isEmpty {
                             if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
                                 NetworkErrorView {
                                     viewModel.refreshPosts()
                                 }
+                                .accessibilityIdentifier("bulletin_board_network_error")
                             } else {
                                 ErrorStateView(error: errorMessage) {
                                     viewModel.refreshPosts()
                                 }
+                                .accessibilityIdentifier("bulletin_board_error")
                             }
                         } else {
                             PostTimeline(
@@ -39,6 +50,7 @@ struct BulletinBoardScreen: View {
                                 onLoadMore: viewModel.loadMorePosts
                             )
                             .environmentObject(viewModel)
+                            .accessibilityIdentifier("bulletin_board_timeline")
                         }
                     }
                 }
@@ -54,9 +66,20 @@ struct BulletinBoardScreen: View {
                     Spacer()
                 }
                 .zIndex(1)
+                .accessibilityElement(children: .contain)
             }
-            .navigationTitle("掲示板")
+            .navigationTitle("ホーム")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    ProfileIconButton(user: userManager.currentUser) {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            showingSidebar = true
+                        }
+                    }
+                }
+            }
+            .accessibilityIdentifier("bulletin_board_screen")
         }
         .onAppear {
             viewModel.loadInitialPosts()
@@ -66,6 +89,7 @@ struct BulletinBoardScreen: View {
                 showToastMessage(error, type: .error)
             }
         }
+
     }
     
     private func showToastMessage(_ message: String, type: ToastView.ToastType) {
@@ -79,4 +103,5 @@ struct BulletinBoardScreen: View {
 
 #Preview {
     BulletinBoardScreen()
+        .environmentObject(BulletinBoardViewModel())
 }

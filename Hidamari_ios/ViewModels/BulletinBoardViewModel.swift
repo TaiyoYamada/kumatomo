@@ -26,7 +26,7 @@ class BulletinBoardViewModel: ObservableObject {
     
     // MARK: - Private Properties
     
-    private let postAPIService = PostAPIService()
+    private let postAPIService = PostAPIService.shared
     private var currentPage = 1
     private let postsPerPage = 20
     private var cancellables = Set<AnyCancellable>()
@@ -104,6 +104,25 @@ class BulletinBoardViewModel: ObservableObject {
         print("Navigate to comments for post \(post.id)")
     }
     
+    // MARK: - Cache Management
+    
+    func clearCache() {
+        PostCacheManager.shared.clearAllCache()
+        print("📦 キャッシュをクリアしました")
+    }
+    
+    func getCacheInfo() -> (totalSize: Int, itemCount: Int, lastUpdated: Date?) {
+        return PostCacheManager.shared.getCacheInfo()
+    }
+    
+    func isOfflineMode() -> Bool {
+        return !NetworkMonitor.shared.isConnected
+    }
+    
+    func getNetworkStatus() -> String {
+        return NetworkMonitor.shared.getNetworkStatusMessage()
+    }
+    
     // MARK: - Private Methods
     
     private func setupBindings() {
@@ -115,6 +134,16 @@ class BulletinBoardViewModel: ObservableObject {
                     Task { @MainActor in
                         self?.handleNetworkConnectivityChange()
                     }
+                }
+            }
+            .store(in: &cancellables)
+        
+        // Monitor connection type changes for data usage optimization
+        NetworkMonitor.shared.$connectionType
+            .dropFirst()
+            .sink { [weak self] connectionType in
+                Task { @MainActor in
+                    self?.handleConnectionTypeChange(connectionType)
                 }
             }
             .store(in: &cancellables)
@@ -185,20 +214,33 @@ class BulletinBoardViewModel: ObservableObject {
     }
     
     private func fetchPostsBasedOnTab(page: Int = 1) async throws -> [Post] {
+        let isConnected = NetworkMonitor.shared.isConnected
+        let shouldLimitData = NetworkMonitor.shared.shouldLimitDataUsage()
+        let useCache = !isConnected || shouldLimitData
+        
         switch activeTab {
         case .all:
-            return try await postAPIService.fetchAllPosts(page: page, limit: postsPerPage)
+            return try await postAPIService.fetchAllPostsWithCache(
+                page: page, 
+                limit: postsPerPage, 
+                useCache: useCache
+            )
         case .municipality:
             guard let municipality = selectedMunicipality else {
                 throw BulletinBoardError.municipalityNotSelected
             }
-            return try await postAPIService.fetchMunicipalityPosts(
+            return try await postAPIService.fetchMunicipalityPostsWithCache(
                 municipality: municipality,
                 page: page,
-                limit: postsPerPage
+                limit: postsPerPage,
+                useCache: useCache
             )
         case .following:
-            return try await postAPIService.fetchFollowingPosts(page: page, limit: postsPerPage)
+            return try await postAPIService.fetchFollowingPostsWithCache(
+                page: page, 
+                limit: postsPerPage, 
+                useCache: useCache
+            )
         }
     }
     
@@ -229,20 +271,31 @@ class BulletinBoardViewModel: ObservableObject {
             post.userReaction = userReactions[postId]
         }
         
+        // Save to cache immediately for offline support
+        PostCacheManager.shared.cacheReactions(reactionUpdates)
+        
         do {
-            // Send to server
-            let serverReactions = try await postAPIService.toggleReaction(
-                postId: postId,
-                reactionType: reactionType
-            )
-            
-            // Update with server response
-            reactionUpdates[postId] = serverReactions.reactions
-            userReactions[postId] = serverReactions.userReaction
-            
-            updatePostInList(postId: postId) { post in
-                post.reactions = serverReactions.reactions
-                post.userReaction = serverReactions.userReaction
+            // Send to server if online
+            if NetworkMonitor.shared.isConnected {
+                let serverReactions = try await postAPIService.toggleReaction(
+                    postId: postId,
+                    reactionType: reactionType
+                )
+                
+                // Update with server response
+                reactionUpdates[postId] = serverReactions.reactions
+                userReactions[postId] = serverReactions.userReaction
+                
+                updatePostInList(postId: postId) { post in
+                    post.reactions = serverReactions.reactions
+                    post.userReaction = serverReactions.userReaction
+                }
+                
+                // Update cache with server data
+                PostCacheManager.shared.cacheReactions(reactionUpdates)
+            } else {
+                print("📱 オフライン: リアクションをローカルに保存")
+                // TODO: Queue for sync when online
             }
             
         } catch {
@@ -254,6 +307,9 @@ class BulletinBoardViewModel: ObservableObject {
                 post.reactions = post.reactions
                 post.userReaction = currentUserReaction
             }
+            
+            // Restore cache
+            PostCacheManager.shared.cacheReactions(reactionUpdates)
             
             await handleError(error, context: "リアクションの更新")
         }
@@ -274,19 +330,30 @@ class BulletinBoardViewModel: ObservableObject {
             post.isBookmarked = !wasBookmarked
         }
         
+        // Save to cache immediately for offline support
+        PostCacheManager.shared.cacheBookmarks(bookmarkedPosts)
+        
         do {
-            // Send to server
-            let isBookmarked = try await postAPIService.toggleBookmark(postId: postId)
-            
-            // Update with server response
-            if isBookmarked {
-                bookmarkedPosts.insert(postId)
+            // Send to server if online
+            if NetworkMonitor.shared.isConnected {
+                let isBookmarked = try await postAPIService.toggleBookmark(postId: postId)
+                
+                // Update with server response
+                if isBookmarked {
+                    bookmarkedPosts.insert(postId)
+                } else {
+                    bookmarkedPosts.remove(postId)
+                }
+                
+                updatePostInList(postId: postId) { post in
+                    post.isBookmarked = isBookmarked
+                }
+                
+                // Update cache with server data
+                PostCacheManager.shared.cacheBookmarks(bookmarkedPosts)
             } else {
-                bookmarkedPosts.remove(postId)
-            }
-            
-            updatePostInList(postId: postId) { post in
-                post.isBookmarked = isBookmarked
+                print("📱 オフライン: ブックマークをローカルに保存")
+                // TODO: Queue for sync when online
             }
             
         } catch {
@@ -301,6 +368,9 @@ class BulletinBoardViewModel: ObservableObject {
                 post.isBookmarked = wasBookmarked
             }
             
+            // Restore cache
+            PostCacheManager.shared.cacheBookmarks(bookmarkedPosts)
+            
             await handleError(error, context: "ブックマークの更新")
         }
     }
@@ -314,9 +384,20 @@ class BulletinBoardViewModel: ObservableObject {
     private func handleNetworkConnectivityChange() {
         // Refresh posts when network connectivity is restored
         if NetworkMonitor.shared.isConnected {
+            errorMessage = nil // Clear offline error message
             Task {
                 await refreshPostsForCurrentTab()
             }
+        }
+    }
+    
+    private func handleConnectionTypeChange(_ connectionType: NetworkMonitor.ConnectionType) {
+        // Adjust behavior based on connection type
+        if NetworkMonitor.shared.shouldLimitDataUsage() {
+            print("📱 データ使用量制限モードに切り替え")
+            // Could implement lower quality images, reduced refresh rate, etc.
+        } else {
+            print("📱 通常モードに切り替え")
         }
     }
     
@@ -324,36 +405,60 @@ class BulletinBoardViewModel: ObservableObject {
         // Load saved municipality preference
         selectedMunicipality = UserDefaults.standard.string(forKey: "selectedMunicipality")
         
-        // Load bookmarked posts
-        if let bookmarkedData = UserDefaults.standard.data(forKey: "bookmarkedPosts"),
-           let bookmarked = try? JSONDecoder().decode(Set<Int>.self, from: bookmarkedData) {
-            bookmarkedPosts = bookmarked
-        }
+        // Load cached data
+        reactionUpdates = PostCacheManager.shared.getCachedReactions()
+        bookmarkedPosts = PostCacheManager.shared.getCachedBookmarks()
+        
+        print("📦 ユーザー設定を読み込み: 市町村=\(selectedMunicipality ?? "未選択"), ブックマーク=\(bookmarkedPosts.count)件")
     }
     
     private func saveUserPreferences() {
         // Save municipality preference
         UserDefaults.standard.set(selectedMunicipality, forKey: "selectedMunicipality")
         
-        // Save bookmarked posts
-        if let bookmarkedData = try? JSONEncoder().encode(bookmarkedPosts) {
-            UserDefaults.standard.set(bookmarkedData, forKey: "bookmarkedPosts")
-        }
+        // Save cached data
+        PostCacheManager.shared.cacheReactions(reactionUpdates)
+        PostCacheManager.shared.cacheBookmarks(bookmarkedPosts)
+        
+        print("📦 ユーザー設定を保存: 市町村=\(selectedMunicipality ?? "未選択"), ブックマーク=\(bookmarkedPosts.count)件")
     }
     
     private func handleError(_ error: Error, context: String) async {
         let errorMessage: String
+        let isNetworkError = NetworkMonitor.shared.isNetworkError(error)
         
         if let bulletinBoardError = error as? BulletinBoardError {
             errorMessage = bulletinBoardError.localizedDescription
         } else if let postAPIError = error as? PostAPIError {
             errorMessage = postAPIError.localizedDescription
+        } else if isNetworkError {
+            errorMessage = NetworkMonitor.shared.getNetworkErrorMessage(error)
         } else {
             errorMessage = "\(context)中にエラーが発生しました: \(error.localizedDescription)"
         }
         
-        self.errorMessage = errorMessage
-        print("🚨 \(context)エラー: \(errorMessage)")
+        // Add network status context
+        if !NetworkMonitor.shared.isConnected {
+            self.errorMessage = "オフライン: \(errorMessage)"
+        } else if NetworkMonitor.shared.shouldLimitDataUsage() {
+            self.errorMessage = "制限モード: \(errorMessage)"
+        } else {
+            self.errorMessage = errorMessage
+        }
+        
+        print("🚨 \(context)エラー: \(self.errorMessage ?? errorMessage)")
+        
+        // Auto-retry for certain network errors
+        if isNetworkError && NetworkMonitor.shared.shouldRetryNetworkRequest(error) {
+            let retryDelay = NetworkMonitor.shared.getRetryDelay(for: error, attempt: 1)
+            print("🔄 \(retryDelay)秒後に自動リトライします")
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + retryDelay) { [weak self] in
+                Task { @MainActor in
+                    await self?.refreshPostsForCurrentTab()
+                }
+            }
+        }
     }
 }
 
@@ -376,34 +481,3 @@ enum BulletinBoardError: LocalizedError {
     }
 }
 
-// MARK: - API Extensions
-
-extension PostAPIService {
-    func fetchAllPosts(page: Int = 1, limit: Int = 20) async throws -> [Post] {
-        // TODO: Implement paginated API call
-        return try await fetchAllPosts()
-    }
-    
-    func fetchMunicipalityPosts(municipality: String, page: Int = 1, limit: Int = 20) async throws -> [Post] {
-        // TODO: Implement municipality-specific API call
-        return try await fetchAllPosts()
-    }
-    
-    func fetchFollowingPosts(page: Int = 1, limit: Int = 20) async throws -> [Post] {
-        // TODO: Implement following-specific API call
-        return try await fetchAllPosts()
-    }
-    
-    func toggleReaction(postId: Int, reactionType: ReactionType) async throws -> (reactions: PostReactions, userReaction: ReactionType?) {
-        // TODO: Implement reaction API call
-        // For now, return mock data
-        let reactions = PostReactions(thumbsUp: 5, drooling: 3, spicy: 1)
-        return (reactions: reactions, userReaction: reactionType)
-    }
-    
-    func toggleBookmark(postId: Int) async throws -> Bool {
-        // TODO: Implement bookmark API call
-        // For now, return mock data
-        return true
-    }
-}

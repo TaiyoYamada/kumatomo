@@ -58,6 +58,18 @@ struct MyProfileView: View {
                     scrollOffset: scrollOffset
                 )
             }
+            .navigationTitle("プロフィール")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: SearchView()) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.primary)
+                    }
+                    .accessibilityLabel("検索")
+                    .accessibilityHint("投稿やお店を検索")
+                }
+            }
             .sheet(isPresented: $showingEditProfile) {
                 ModernProfileEditView(user: viewModel.profile)
             }

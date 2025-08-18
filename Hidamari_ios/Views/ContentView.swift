@@ -35,10 +35,11 @@ struct MainTabView: View {
     @ObservedObject var viewModel: AuthViewModel
     @State private var showingPostView = false
     @State private var selection: Selection = .home
+    @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
+    @StateObject private var userManager = CurrentUserManager.shared
     
     enum Selection{
         case home
-        case shops
         case search
         case post
         case profile
@@ -50,42 +51,36 @@ struct MainTabView: View {
             NetworkStatusBanner()
             
             TabView(selection: $selection) {
-            //  ホームタブ
-            FeedView()
+            //  ホームタブ（掲示板機能を統合）
+            BulletinBoardScreen()
+                .environmentObject(bulletinBoardViewModel)
                 .tabItem {
                     Image(systemName: "house.fill")
+                    Text("ホーム")
                 }
                 .tag(Selection.home)
 
-                
+            //  検索タブ
             SearchView()
                 .tabItem {
                     Image(systemName: "magnifyingglass")
+                    Text("検索")
                 }
                 .tag(Selection.search)
-
                 
-            
+            //  投稿タブ
             PostView()
                 .tabItem {
                     Image(systemName: "plus.circle.fill")
+                    Text("投稿")
                 }
                 .tag(Selection.post)
 
-
-                
-            ShopListView()
-                .tabItem {
-                    Image(systemName: "storefront.fill")
-                }
-                .tag(Selection.shops)
-
-            
             //  プロフィールタブ
             MyProfileView()
-//            MyPageView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
+                    Text("プロフィール")
                 }
                 .tag(Selection.profile)
             
@@ -93,6 +88,9 @@ struct MainTabView: View {
             .accentColor(.pink)
         }
         .errorOverlay()
+        .onAppear {
+            userManager.loadCurrentUser()
+        }
     }
 }
 

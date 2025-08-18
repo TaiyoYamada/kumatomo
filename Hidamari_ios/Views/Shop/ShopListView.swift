@@ -56,11 +56,22 @@ struct ShopListView: View {
             .navigationTitle("お店一覧")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink(destination: SearchView()) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.primary)
+                    }
+                    .accessibilityLabel("検索")
+                    .accessibilityHint("お店や投稿を検索")
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: viewModel.requestLocationPermission) {
                         Image(systemName: "location")
                             .foregroundColor(.pink)
                     }
+                    .accessibilityLabel("位置情報")
+                    .accessibilityHint("現在地を取得")
                 }
             }
             .sheet(isPresented: $showingShopDetail) {

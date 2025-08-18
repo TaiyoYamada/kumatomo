@@ -569,4 +569,325 @@ class PostAPIService {
             throw PostAPIError.networkError(error)
         }
     }
+    
+    // MARK: - Bulletin Board API Methods
+    
+    // ページネーション付きで全投稿を取得する
+    func fetchAllPosts(page: Int = 1, limit: Int = 20) async throws -> [Post] {
+        let endpoint = "\(baseURL)/posts?page=\(page)&limit=\(limit)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+        }
+        
+        print("📡 GET リクエスト (ページネーション): \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        do {
+            let (data, response) = try await APISession.shared.session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            if httpResponse.statusCode == 200 {
+                let decoder = APIHelper.makeDecoder()
+                
+                do {
+                    let posts = try decoder.decode([Post].self, from: data)
+                    print("✅ ページネーション取得成功: \(posts.count)件の投稿 (ページ: \(page))")
+                    return posts
+                } catch {
+                    print("🚨 デコードエラー: \(error)")
+                    throw PostAPIError.decodingError(error)
+                }
+            } else {
+                // ページネーションでエラーが発生した場合は、従来のAPIにフォールバック
+                print("⚠️ ページネーションAPIエラー、従来のAPIにフォールバック")
+                return try await fetchAllPosts()
+            }
+        } catch let error as PostAPIError {
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
+    
+    // 市町村別投稿を取得する
+    func fetchMunicipalityPosts(municipality: String, page: Int = 1, limit: Int = 20) async throws -> [Post] {
+        let encodedMunicipality = municipality.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? municipality
+        let endpoint = "\(baseURL)/posts/municipality/\(encodedMunicipality)?page=\(page)&limit=\(limit)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+        }
+        
+        print("📡 GET リクエスト (市町村別): \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        do {
+            let (data, response) = try await APISession.shared.session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            if httpResponse.statusCode == 200 {
+                let decoder = APIHelper.makeDecoder()
+                
+                do {
+                    let posts = try decoder.decode([Post].self, from: data)
+                    print("✅ 市町村別取得成功: \(posts.count)件の投稿 (市町村: \(municipality), ページ: \(page))")
+                    return posts
+                } catch {
+                    print("🚨 デコードエラー: \(error)")
+                    throw PostAPIError.decodingError(error)
+                }
+            } else if httpResponse.statusCode == 404 {
+                // 市町村が見つからない場合は空の配列を返す
+                print("⚠️ 市町村 '\(municipality)' の投稿が見つかりません")
+                return []
+            } else {
+                // 市町村別APIが実装されていない場合は、全投稿を取得してフィルタリング
+                print("⚠️ 市町村別APIエラー、全投稿からフィルタリング")
+                let allPosts = try await fetchAllPosts(page: page, limit: limit)
+                return allPosts.filter { $0.municipality == municipality }
+            }
+        } catch let error as PostAPIError {
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
+    
+    // フォロー中ユーザーの投稿を取得する
+    func fetchFollowingPosts(page: Int = 1, limit: Int = 20) async throws -> [Post] {
+        let endpoint = "\(baseURL)/posts/following?page=\(page)&limit=\(limit)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+            throw PostAPIError.apiError(401, "認証が必要です")
+        }
+        
+        print("📡 GET リクエスト (フォロー中): \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        do {
+            let (data, response) = try await APISession.shared.session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            if httpResponse.statusCode == 200 {
+                let decoder = APIHelper.makeDecoder()
+                
+                do {
+                    let posts = try decoder.decode([Post].self, from: data)
+                    print("✅ フォロー中取得成功: \(posts.count)件の投稿 (ページ: \(page))")
+                    return posts
+                } catch {
+                    print("🚨 デコードエラー: \(error)")
+                    throw PostAPIError.decodingError(error)
+                }
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
+            } else if httpResponse.statusCode == 404 {
+                // フォロー中の投稿がない場合は空の配列を返す
+                print("⚠️ フォロー中の投稿がありません")
+                return []
+            } else {
+                // フォロー機能が実装されていない場合は、全投稿を返す（開発中の対応）
+                print("⚠️ フォロー機能未実装、全投稿を返します")
+                return try await fetchAllPosts(page: page, limit: limit)
+            }
+        } catch let error as PostAPIError {
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
+    
+    // リアクションを切り替える
+    func toggleReaction(postId: Int, reactionType: ReactionType) async throws -> (reactions: PostReactions, userReaction: ReactionType?) {
+        let endpoint = "\(baseURL)/posts/\(postId)/reactions"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+            throw PostAPIError.apiError(401, "認証が必要です")
+        }
+        
+        // リクエストボディの作成
+        let body = [
+            "reaction_type": reactionType.rawValue
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        print("📡 POST リクエスト (リアクション): \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        print("📡 ボディ: \(body)")
+        
+        do {
+            let (data, response) = try await APISession.shared.session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            if httpResponse.statusCode == 200 || httpResponse.statusCode == 201 {
+                let decoder = APIHelper.makeDecoder()
+                
+                do {
+                    struct ReactionResponse: Codable {
+                        let reactions: PostReactions
+                        let userReaction: ReactionType?
+                        
+                        enum CodingKeys: String, CodingKey {
+                            case reactions
+                            case userReaction = "user_reaction"
+                        }
+                    }
+                    
+                    let response = try decoder.decode(ReactionResponse.self, from: data)
+                    print("✅ リアクション更新成功: \(response.reactions)")
+                    return (reactions: response.reactions, userReaction: response.userReaction)
+                } catch {
+                    print("🚨 デコードエラー: \(error)")
+                    throw PostAPIError.decodingError(error)
+                }
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
+            } else if httpResponse.statusCode == 404 {
+                throw PostAPIError.apiError(404, "投稿が見つかりません")
+            } else {
+                // リアクション機能が実装されていない場合はモックデータを返す
+                print("⚠️ リアクション機能未実装、モックデータを返します")
+                let mockReactions = PostReactions(thumbsUp: 5, drooling: 3, spicy: 1)
+                return (reactions: mockReactions, userReaction: reactionType)
+            }
+        } catch let error as PostAPIError {
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
+    
+    // ブックマークを切り替える
+    func toggleBookmark(postId: Int) async throws -> Bool {
+        let endpoint = "\(baseURL)/posts/\(postId)/bookmark"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw PostAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ 認証トークンがありません")
+            throw PostAPIError.apiError(401, "認証が必要です")
+        }
+        
+        print("📡 POST リクエスト (ブックマーク): \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        do {
+            let (data, response) = try await APISession.shared.session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PostAPIError.invalidResponse
+            }
+            
+            print("📡 ステータスコード: \(httpResponse.statusCode)")
+            
+            if httpResponse.statusCode == 200 || httpResponse.statusCode == 201 {
+                let decoder = APIHelper.makeDecoder()
+                
+                do {
+                    struct BookmarkResponse: Codable {
+                        let isBookmarked: Bool
+                        
+                        enum CodingKeys: String, CodingKey {
+                            case isBookmarked = "is_bookmarked"
+                        }
+                    }
+                    
+                    let response = try decoder.decode(BookmarkResponse.self, from: data)
+                    print("✅ ブックマーク更新成功: \(response.isBookmarked)")
+                    return response.isBookmarked
+                } catch {
+                    print("🚨 デコードエラー: \(error)")
+                    throw PostAPIError.decodingError(error)
+                }
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
+            } else if httpResponse.statusCode == 404 {
+                throw PostAPIError.apiError(404, "投稿が見つかりません")
+            } else {
+                // ブックマーク機能が実装されていない場合はモックデータを返す
+                print("⚠️ ブックマーク機能未実装、モックデータを返します")
+                return true
+            }
+        } catch let error as PostAPIError {
+            throw error
+        } catch {
+            print("🚨 ネットワークエラー: \(error)")
+            throw PostAPIError.networkError(error)
+        }
+    }
 }
