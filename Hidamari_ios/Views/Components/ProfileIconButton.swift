@@ -25,16 +25,3 @@ struct ProfileIconButton: View {
         .accessibilityHint("タップしてメニューを開く")
     }
 }
-
-#Preview {
-    ProfileIconButton(
-        user: User(
-            id: 1,
-            email: "test@example.com",
-            name: "テストユーザー",
-            profileImageURL: nil
-        )
-    ) {
-        print("Profile icon tapped")
-    }
-}

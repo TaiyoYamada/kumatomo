@@ -128,6 +128,24 @@ struct SidebarHeader: View {
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                 }
+                
+                // Follow stats
+                HStack(spacing: 16) {
+                    HStack(spacing: 4) {
+                        Text("\(user?.followingCount ?? 0)")
+                            .font(.subheadline).bold()
+                        Text("フォロー中")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    HStack(spacing: 4) {
+                        Text("\(user?.followersCount ?? 0)")
+                            .font(.subheadline).bold()
+                        Text("フォロワー")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
         }
         .padding(.vertical, 24)
@@ -329,17 +347,4 @@ struct SettingsRow: View {
         }
         .padding(.vertical, 2)
     }
-}
-
-#Preview {
-    SidebarMenu(
-        isPresented: .constant(true),
-        user: User(
-            id: 1,
-            email: "test@example.com",
-            name: "テストユーザー",
-            bio: "これはテストユーザーのプロフィールです。",
-            profileImageURL: nil
-        )
-    )
 }
