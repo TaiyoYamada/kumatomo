@@ -52,7 +52,7 @@ struct MainTabView: View {
             
             TabView(selection: $selection) {
             //  ホームタブ（掲示板機能を統合）
-            BulletinBoardScreen()
+            HomeView()
                 .environmentObject(bulletinBoardViewModel)
                 .tabItem {
                     Image(systemName: "house.fill")

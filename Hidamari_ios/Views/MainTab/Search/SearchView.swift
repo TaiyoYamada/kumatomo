@@ -10,7 +10,7 @@ struct SearchView: View {
     @State private var showingSidebar = false
     
     var body: some View {
-        TwitterSidebarContainer(isPresented: $showingSidebar, user: userManager.currentUser) {
+        SidebarContainer(isPresented: $showingSidebar, user: userManager.currentUser) {
             NavigationView {
                 VStack(spacing: 0) {
                 // 検索バー

@@ -358,7 +358,3 @@ struct RefreshableScrollView<Content: View>: View {
         }
     }
 }
-
-#Preview {
-    ShopListView()
-}
