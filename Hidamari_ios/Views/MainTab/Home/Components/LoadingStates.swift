@@ -572,9 +572,3 @@ struct ToastView: View {
         print("Retry tapped")
     }
 }
-
-#Preview("Network Error") {
-    NetworkErrorView {
-        print("Retry tapped")
-    }
-}

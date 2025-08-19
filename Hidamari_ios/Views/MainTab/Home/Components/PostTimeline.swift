@@ -1,84 +1,122 @@
 import SwiftUI
 
-struct FeedView: View {
-    @StateObject private var viewModel = PostViewModel()
-    @State private var showingNewPost = false
+struct PostTimeline: View {
+    let posts: [Post]
+    let loading: Bool
+    let onRefresh: () -> Void
+    let onLoadMore: () -> Void
+    @State private var selectedPost: Post?
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                // Tab Navigation Header
-                TabNavigationHeader(
-                    activeTab: viewModel.activeTab,
-                    selectedMunicipality: viewModel.selectedMunicipality,
-                    onTabChange: viewModel.changeTab,
-                    onMunicipalityChange: viewModel.changeMunicipality
-                )
-                
-                // Post Timeline
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(viewModel.posts) { post in
-                            PostItemView(post: post)
-                            
-                            // Post separator
-                            Rectangle()
-                                .fill(Color(hex: "E5E7EB"))
-                                .frame(height: 1)
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(posts) { post in
+                    ModernPostCardView(post: post)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedPost = post
                         }
-                    }
+                        .onAppear {
+                            // Trigger load more when near the end
+                            if post.id == posts.last?.id {
+                                onLoadMore()
+                            }
+                        }
+                    
+                    // Post separator
+                    Rectangle()
+                        .fill(Color(hex: "E5E7EB"))
+                        .frame(height: 1)
+                        .accessibilityHidden(true)
                 }
-                .background(Color.white)
-            }
-            .navigationTitle("ホーム")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: SearchView()) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.primary)
-                    }
-                    .accessibilityLabel("検索")
-                    .accessibilityHint("投稿やお店を検索")
+                
+                // Loading indicator for pagination
+                if loading && !posts.isEmpty {
+                    PaginationLoadingView()
                 }
-            }
-//            .sheet(isPresented: $showingNewPost) {
-//                PostView()
-//            }
-            .overlay {
-                if viewModel.isLoading {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-                        .overlay(
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.white)
-                        )
-                }
-            }
-            .overlay {
-                if let error = viewModel.errorMessage {
-                    VStack {
-                        Spacer()
-                        Text(error)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.red)
-                            .cornerRadius(10)
-                            .padding()
-                        Spacer().frame(height: 100)
-                    }
+                
+                // Empty state
+                if posts.isEmpty && !loading {
+                    BulletinEmptyStateView()
+                        .padding(.top, 100)
                 }
             }
         }
-        .task {
-            if viewModel.posts.isEmpty {
-                await viewModel.fetchAllPosts()
-            }
-        }
+        .background(Color.white)
         .refreshable {
-            await viewModel.fetchAllPosts()
+            onRefresh()
         }
+        .accessibilityLabel("投稿タイムライン")
+        .accessibilityHint("上にスワイプして更新")
+        .accessibilityIdentifier("post_timeline")
+        .sheet(item: $selectedPost) { post in
+            PostDetailView(post: post)
+        }
+    }
+}
+
+struct BulletinEmptyStateView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    
+    private var adaptiveTitleSize: CGFloat {
+        switch dynamicTypeSize {
+        case .xSmall, .small:
+            return 16
+        case .medium:
+            return 18
+        case .large:
+            return 20
+        case .xLarge:
+            return 22
+        case .xxLarge:
+            return 24
+        case .xxxLarge:
+            return 26
+        default:
+            return 18
+        }
+    }
+    
+    private var adaptiveSubtitleSize: CGFloat {
+        switch dynamicTypeSize {
+        case .xSmall, .small:
+            return 12
+        case .medium:
+            return 14
+        case .large:
+            return 16
+        case .xLarge:
+            return 17
+        case .xxLarge:
+            return 18
+        case .xxxLarge:
+            return 20
+        default:
+            return 14
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "message.circle")
+                .font(.system(size: 64))
+                .foregroundColor(Color(hex: "6B7280"))
+                .accessibilityHidden(true)
+            
+            Text("まだ投稿がありません")
+                .font(.system(size: adaptiveTitleSize, weight: .medium))
+                .foregroundColor(Color(hex: "1A1A1A"))
+                .multilineTextAlignment(.center)
+            
+            Text("最初の投稿をしてみませんか？")
+                .font(.system(size: adaptiveSubtitleSize))
+                .foregroundColor(Color(hex: "6B7280"))
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 32)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("まだ投稿がありません。最初の投稿をしてみませんか？")
+        .accessibilityIdentifier("bulletin_empty_state")
     }
 }
 
@@ -236,7 +274,6 @@ struct PostItemView: View {
     }
 }
 
-// Post Content with hashtag support
 struct PostContentView: View {
     let content: String
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -290,8 +327,6 @@ struct PostContentView: View {
         return attributedString
     }
 }
-
-// Post Media View
 struct PostMediaView: View {
     let images: [PostImage]?
     let imageUrl: String?
@@ -496,13 +531,13 @@ struct PostActionBar: View {
                     // Handle reaction
                 }
                 
-                ReactionButton(emoji: "🤤", count: 0, isActive: false) {
-                    // Handle reaction
-                }
-                
-                ReactionButton(emoji: "🌶️", count: 0, isActive: false) {
-                    // Handle reaction
-                }
+//                ReactionButton(emoji: "🤤", count: 0, isActive: false) {
+//                    // Handle reaction
+//                }
+//                
+//                ReactionButton(emoji: "🌶️", count: 0, isActive: false) {
+//                    // Handle reaction
+//                }
             }
             .accessibilityElement(children: .contain)
             .accessibilityLabel("リアクションボタン")
@@ -594,10 +629,10 @@ struct ReactionButton: View {
         switch emoji {
         case "👍":
             return "いいね"
-        case "🤤":
-            return "おいしそう"
-        case "🌶️":
-            return "辛そう"
+//        case "🤤":
+//            return "おいしそう"
+//        case "🌶️":
+//            return "辛そう"
         default:
             return "リアクション"
         }

@@ -335,12 +335,3 @@ struct RegionFilterButton: View {
         .accessibilityIdentifier("region_filter_\(title)")
     }
 }
-
-#Preview {
-    TabNavigationHeader(
-        activeTab: .all,
-        selectedMunicipality: nil,
-        onTabChange: { _ in },
-        onMunicipalityChange: { _ in }
-    )
-}

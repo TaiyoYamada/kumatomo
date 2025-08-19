@@ -10,12 +10,8 @@ struct SearchView: View {
     @State private var showingSidebar = false
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                // Sliding sidebar
-                SlidingSidebar(isPresented: $showingSidebar, user: userManager.currentUser)
-                    .zIndex(2)
-                
+        SidebarContainer(isPresented: $showingSidebar, user: userManager.currentUser) {
+            NavigationView {
                 VStack(spacing: 0) {
                 // 検索バー
                 searchBar
