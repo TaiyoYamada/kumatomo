@@ -18,7 +18,8 @@
 
 ## docs
 
-### 基本設計書
+### 要件定義書
+
 ```
 https://docs.google.com/document/d/1oieeV_WKE8YKsUwU8Ret50e5lnSVQDKWlBRMlKIioBg/edit?tab=t.0
 ```
