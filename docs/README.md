@@ -67,6 +67,10 @@ docker compose ps            # 実行中コンテナの確認
 ```
 ipconfig getifaddr en0 # IPアドレスの確認
 ```
+
+```
+xcodebuild -scheme Hidamari -destination 'platform=iOS Simulator,name=iPhone 16' 2>&1 | grep error:
+```
 ## 開発ツールの使い方
 
 ### Postman
