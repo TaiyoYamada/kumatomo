@@ -5,7 +5,7 @@ struct MyProfileView: View {
     @StateObject private var postviewModel = PostViewModel()
     @State private var showingNewPost = false
     @State private var selectedTab = 0
-    @State private var showingEditProfile = false
+    @State private var sheetDestination: SheetDestination?
     @State private var scrollOffset: CGFloat = 0
     
     var body: some View {
@@ -16,8 +16,10 @@ struct MyProfileView: View {
                         // カバー画像とプロフィール
                         ModernProfileHeaderView(
                             user: viewModel.profile,
-                            showingEditProfile: $showingEditProfile,
-                            scrollOffset: scrollOffset
+                            scrollOffset: scrollOffset,
+                            onEditTapped: {
+                                sheetDestination = .profileEdit(viewModel.profile)
+                            }
                         )
                         .background(
                             GeometryReader { geo in
@@ -70,9 +72,7 @@ struct MyProfileView: View {
                     .accessibilityHint("投稿やお店を検索")
                 }
             }
-            .sheet(isPresented: $showingEditProfile) {
-                ModernProfileEditView(user: viewModel.profile)
-            }
+            .withSheetRouter(sheet: $sheetDestination)
             .overlay {
                 if viewModel.isLoading {
                     Color.black.opacity(0.3)
@@ -166,8 +166,8 @@ struct FloatingNavigationBar: View {
 // モダンなプロフィールヘッダー
 struct ModernProfileHeaderView: View {
     let user: User
-    @Binding var showingEditProfile: Bool
     let scrollOffset: CGFloat
+    let onEditTapped: () -> Void
     
     var body: some View {
         GeometryReader { geometry in
@@ -252,7 +252,7 @@ struct ModernProfileHeaderView: View {
                     
                     // 編集ボタン
                     Button(action: {
-                        showingEditProfile = true
+                        onEditTapped()
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "pencil")

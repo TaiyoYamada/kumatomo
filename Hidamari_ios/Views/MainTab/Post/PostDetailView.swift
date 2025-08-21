@@ -4,7 +4,7 @@ struct PostDetailView: View {
     let post: Post
     @StateObject private var viewModel = PostViewModel()
     @Environment(\.dismiss) private var dismiss
-    @State private var showingEditView = false
+    @State private var sheetDestination: SheetDestination?
     
     var body: some View {
         NavigationView {
@@ -52,7 +52,7 @@ struct PostDetailView: View {
                         Menu {
                             Button {
                                 viewModel.startEditing(post)
-                                showingEditView = true
+                                sheetDestination = .postEdit(viewModel: viewModel)
                             } label: {
                                 Label("編集", systemImage: "pencil")
                             }
@@ -74,9 +74,7 @@ struct PostDetailView: View {
                 dismiss()
             }
         }
-        .sheet(isPresented: $showingEditView) {
-            PostEditView(viewModel: viewModel)
-        }
+        .withSheetRouter(sheet: $sheetDestination)
         .alert("投稿を削除", isPresented: $viewModel.showDeleteConfirmation) {
             Button("削除", role: .destructive) {
                 Task {

@@ -1,6 +1,6 @@
 import Foundation
 
-struct PostImage: Identifiable, Codable {
+struct PostImage: Identifiable, Codable, Equatable {
     var id: Int
     var postId: Int?
     var imageUrl: String

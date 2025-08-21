@@ -1,6 +1,6 @@
 import Foundation
 
-struct Post: Identifiable, Codable {
+struct Post: Identifiable, Codable, Equatable {
     var id: Int
     var userId: Int?
     var shopId: Int?

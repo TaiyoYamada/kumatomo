@@ -6,6 +6,7 @@ struct PostTimeline: View {
     let onRefresh: () -> Void
     let onLoadMore: () -> Void
     @State private var selectedPost: Post?
+    @State private var sheetDestination: SheetDestination?
     
     var body: some View {
         ScrollView {
@@ -49,9 +50,12 @@ struct PostTimeline: View {
         .accessibilityLabel("投稿タイムライン")
         .accessibilityHint("上にスワイプして更新")
         .accessibilityIdentifier("post_timeline")
-        .sheet(item: $selectedPost) { post in
-            PostDetailView(post: post)
+        .onChange(of: selectedPost) { post in
+            if let post = post {
+                sheetDestination = .postDetail(post)
+            }
         }
+        .withSheetRouter(sheet: $sheetDestination)
     }
 }
 
@@ -268,8 +272,10 @@ struct PostItemView: View {
         .accessibilityLabel("投稿: \(post.user?.name ?? "ユーザー")、\(formattedDate)、\(post.content)")
         .accessibilityHint("タップして投稿詳細を表示")
         .accessibilityIdentifier("post_item_\(post.id)")
-        .sheet(isPresented: $showingPostDetail) {
-            PostDetailView(post: post)
+        .onChange(of: showingPostDetail) { isPresented in
+            if isPresented {
+                // no-op; parent handles via selectedPost change
+            }
         }
     }
 }

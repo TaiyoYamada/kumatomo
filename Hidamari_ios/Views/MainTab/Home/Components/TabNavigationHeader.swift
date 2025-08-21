@@ -6,7 +6,7 @@ struct TabNavigationHeader: View {
     let onTabChange: (TabType) -> Void
     let onMunicipalityChange: (String) -> Void
     
-    @State private var showMunicipalityPicker = false
+    @State private var sheetDestination: SheetDestination?
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
     private var adaptiveHeaderHeight: CGFloat {
@@ -40,9 +40,12 @@ struct TabNavigationHeader: View {
                 TabButton(
                     title: selectedMunicipality ?? "市町村",
                     isActive: activeTab == .municipality,
-                    action: { 
+                    action: {
                         onTabChange(.municipality)
-                        showMunicipalityPicker = true
+                        sheetDestination = .municipalityPicker(selected: selectedMunicipality) { municipality in
+                            onMunicipalityChange(municipality)
+                            sheetDestination = nil
+                        }
                     }
                 )
                 
@@ -64,15 +67,7 @@ struct TabNavigationHeader: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("タブナビゲーション")
         .accessibilityIdentifier("tab_navigation_header")
-        .sheet(isPresented: $showMunicipalityPicker) {
-            MunicipalityPickerView(
-                selectedMunicipality: selectedMunicipality,
-                onSelection: { municipality in
-                    onMunicipalityChange(municipality)
-                    showMunicipalityPicker = false
-                }
-            )
-        }
+        .withSheetRouter(sheet: $sheetDestination)
     }
 }
 

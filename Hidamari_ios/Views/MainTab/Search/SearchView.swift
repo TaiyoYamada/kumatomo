@@ -3,15 +3,12 @@ import SwiftUI
 struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
     @StateObject private var userManager = CurrentUserManager.shared
-    @State private var showingPostDetail = false
-    @State private var selectedPost: Post?
-    @State private var showingShopDetail = false
-    @State private var selectedShop: Shop?
+    @State private var sheetDestination: SheetDestination?
     @State private var showingSidebar = false
     
     var body: some View {
         SidebarContainer(isPresented: $showingSidebar, user: userManager.currentUser) {
-            NavigationView {
+            NavigationStack {
                 VStack(spacing: 0) {
                 // 検索バー
                 searchBar
@@ -56,16 +53,8 @@ struct SearchView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingPostDetail) {
-            if let post = selectedPost {
-                PostDetailView(post: post)
-            }
-        }
-        .sheet(isPresented: $showingShopDetail) {
-            if let shop = selectedShop {
-                ShopDetailView(shop: shop)
-            }
-        }
+        .withAppRouter()
+        .withSheetRouter(sheet: $sheetDestination)
     }
     
     // 検索バー
@@ -209,8 +198,7 @@ struct SearchView: View {
                         
                         ForEach(results.posts) { post in
                             PostSearchResultCard(post: post) {
-                                selectedPost = post
-                                showingPostDetail = true
+                                sheetDestination = .postDetail(post)
                             }
                         }
                     }
@@ -221,8 +209,7 @@ struct SearchView: View {
                         
                         ForEach(results.shops) { shop in
                             ShopSearchResultCard(shop: shop) {
-                                selectedShop = shop
-                                showingShopDetail = true
+                                sheetDestination = .shopDetail(shop)
                             }
                         }
                     }

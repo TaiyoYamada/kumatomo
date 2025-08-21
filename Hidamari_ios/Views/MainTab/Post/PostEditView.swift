@@ -3,7 +3,7 @@ import SwiftUI
 struct PostEditView: View {
     @ObservedObject var viewModel: PostViewModel
     @Environment(\.dismiss) private var dismiss
-    @State private var showingShopPicker = false
+    @State private var sheetDestination: SheetDestination?
     
     var body: some View {
         NavigationView {
@@ -21,7 +21,7 @@ struct PostEditView: View {
                         // Shop Selection Section
                         ShopEditCard(
                             selectedShop: $viewModel.selectedShop,
-                            showingShopPicker: $showingShopPicker
+                            onPickShop: { sheetDestination = .shopPicker(selectedShop: $viewModel.selectedShop) }
                         )
                         
                         // Tags Section
@@ -69,9 +69,7 @@ struct PostEditView: View {
                 dismiss()
             }
         }
-        .sheet(isPresented: $showingShopPicker) {
-            ShopPickerView(selectedShop: $viewModel.selectedShop)
-        }
+        .withSheetRouter(sheet: $sheetDestination)
     }
 }
 
@@ -161,7 +159,7 @@ private struct ContentEditCard: View {
 // MARK: - Shop Edit Card
 private struct ShopEditCard: View {
     @Binding var selectedShop: Shop?
-    @Binding var showingShopPicker: Bool
+    let onPickShop: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -181,7 +179,7 @@ private struct ShopEditCard: View {
                     .cornerRadius(4)
             }
             
-            Button(action: { showingShopPicker = true }) {
+            Button(action: { onPickShop() }) {
                 HStack {
                     if let shop = selectedShop {
                         VStack(alignment: .leading, spacing: 4) {

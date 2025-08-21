@@ -5,8 +5,7 @@ struct PostView: View {
     @StateObject private var viewModel = PostViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var selectedItems: [PhotosPickerItem] = []
-    @State private var showingShopPicker = false
-    @State private var showingPreview = false
+    @State private var sheetDestination: SheetDestination?
     
     var body: some View {
         NavigationView {
@@ -24,7 +23,9 @@ struct PostView: View {
                         // Shop Selection Section
                         ShopSelectionCard(
                             selectedShop: $viewModel.selectedShop,
-                            showingShopPicker: $showingShopPicker
+                            onPickShop: {
+                                sheetDestination = .shopPicker(selectedShop: $viewModel.selectedShop)
+                            }
                         )
                         
                         // Content Input Section
@@ -36,7 +37,17 @@ struct PostView: View {
                         // Preview Button
                         PreviewButton(
                             isEnabled: canPreview,
-                            showingPreview: $showingPreview
+                            onPreview: {
+                                sheetDestination = .postPreview(
+                                    content: viewModel.postContent,
+                                    images: viewModel.selectedImages,
+                                    shop: viewModel.selectedShop,
+                                    onPost: {
+                                        sheetDestination = nil
+                                        handlePost()
+                                    }
+                                )
+                            }
                         )
                     }
                     .padding(.horizontal, 16)
@@ -67,20 +78,7 @@ struct PostView: View {
                 dismiss()
             }
         }
-        .sheet(isPresented: $showingShopPicker) {
-            ShopPickerView(selectedShop: $viewModel.selectedShop)
-        }
-        .sheet(isPresented: $showingPreview) {
-            PostPreviewView(
-                content: viewModel.postContent,
-                images: viewModel.selectedImages,
-                shop: viewModel.selectedShop,
-                onPost: {
-                    showingPreview = false
-                    handlePost()
-                }
-            )
-        }
+        .withSheetRouter(sheet: $sheetDestination)
         .onChange(of: selectedItems) { newItems in
             handleMultipleImageSelection(newItems)
         }
@@ -378,7 +376,7 @@ private struct AddImageCell: View {
 // MARK: - Shop Selection Card
 private struct ShopSelectionCard: View {
     @Binding var selectedShop: Shop?
-    @Binding var showingShopPicker: Bool
+    let onPickShop: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -398,7 +396,7 @@ private struct ShopSelectionCard: View {
                     .cornerRadius(4)
             }
             
-            Button(action: { showingShopPicker = true }) {
+            Button(action: { onPickShop() }) {
                 HStack {
                     if let shop = selectedShop {
                         VStack(alignment: .leading, spacing: 4) {
@@ -477,10 +475,10 @@ private struct ShopSelectionCard: View {
 // MARK: - Preview Button
 private struct PreviewButton: View {
     let isEnabled: Bool
-    @Binding var showingPreview: Bool
+    let onPreview: () -> Void
     
     var body: some View {
-        Button(action: { showingPreview = true }) {
+        Button(action: { onPreview() }) {
             HStack {
                 Image(systemName: "eye")
                     .font(.subheadline)

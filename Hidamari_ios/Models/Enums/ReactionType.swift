@@ -28,7 +28,7 @@ enum ReactionType: String, Codable, CaseIterable {
     }
 }
 
-struct PostReactions: Codable {
+struct PostReactions: Codable, Equatable {
     var thumbsUp: Int
     var drooling: Int
     var spicy: Int

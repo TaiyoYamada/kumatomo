@@ -88,6 +88,7 @@ struct HomeView: View {
                     showToastMessage(error, type: .error)
                 }
             }
+            .withAppRouter()
         }
     }
     
