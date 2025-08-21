@@ -11,7 +11,7 @@ struct SidebarPanel: View {
     var body: some View {
             VStack(spacing: 0) {
                 // Header - プロフィール画面への遷移
-                NavigationLink(destination: MyProfileView()) {
+                NavigationLink(value: RouterDestination.myProfile) {
                     SidebarHeader(user: user)
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -29,7 +29,7 @@ struct SidebarPanel: View {
                                 }
                             } else {
                                 // NavigationLinkを使用した画面遷移
-                                NavigationLink(destination: destinationView(for: item)) {
+                                NavigationLink(value: routerDestination(for: item)) {
                                     SidebarMenuItemContent(icon: item.icon, title: item.title, subtitle: item.subtitle)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -53,22 +53,21 @@ struct SidebarPanel: View {
             .accessibilityIdentifier("twitter_sidebar_content")
     }
     
-    // 各メニュー項目に対応する遷移先ビューを返す
-    @ViewBuilder
-    private func destinationView(for item: SidebarMenuItemType) -> some View {
+    // 各メニュー項目に対応するRouterDestinationを返す
+    private func routerDestination(for item: SidebarMenuItemType) -> RouterDestination {
         switch item {
         case .shops:
-            ShopListView()
+            return .shopList
         case .bookmarks:
-            BookmarkListView()
+            return .bookmarks
         case .likes:
-            LikeListView()
+            return .likes
         case .coupons:
-            CouponsView()
+            return .coupons
         case .settings:
-            SettingsView()
+            return .settings
         default:
-            EmptyView()
+            return .settings
         }
     }
     

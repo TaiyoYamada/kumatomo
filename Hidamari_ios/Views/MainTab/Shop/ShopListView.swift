@@ -3,11 +3,10 @@ import MapKit
 
 struct ShopListView: View {
     @StateObject private var viewModel = ShopListViewModel()
-    @State private var showingShopDetail = false
-    @State private var selectedShop: Shop?
+    @State private var sheetDestination: SheetDestination?
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // ジャンルフィルター
                 GenreFilterView(
@@ -30,8 +29,7 @@ struct ShopListView: View {
                         shops: viewModel.shops,
                         userLocation: viewModel.userLocation,
                         onShopSelected: { shop in
-                            selectedShop = shop
-                            showingShopDetail = true
+                            sheetDestination = .shopDetail(shop)
                         }
                     )
                 } else {
@@ -46,8 +44,7 @@ struct ShopListView: View {
                             }
                         },
                         onShopTapped: { shop in
-                            selectedShop = shop
-                            showingShopDetail = true
+                            sheetDestination = .shopDetail(shop)
                         },
                         distanceFromUser: viewModel.distanceFromUser
                     )
@@ -57,7 +54,7 @@ struct ShopListView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(destination: SearchView()) {
+                    NavigationLink(value: RouterDestination.search) {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.primary)
                     }
@@ -74,11 +71,8 @@ struct ShopListView: View {
                     .accessibilityHint("現在地を取得")
                 }
             }
-            .sheet(isPresented: $showingShopDetail) {
-                if let shop = selectedShop {
-                    ShopDetailView(shop: shop)
-                }
-            }
+            .withSheetRouter(sheet: $sheetDestination)
+            .withAppRouter()
         }
     }
 }

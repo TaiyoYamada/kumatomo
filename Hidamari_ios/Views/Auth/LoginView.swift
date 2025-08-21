@@ -63,7 +63,7 @@ struct LoginView: View {
                 Spacer()
                 
                 // 新規登録リンク
-                NavigationLink(destination: SignUpView()) {
+                NavigationLink(value: RouterDestination.signUp) {
                     HStack {
                         Text("アカウントをお持ちでないですか？")
                             .font(.footnote)
@@ -78,6 +78,7 @@ struct LoginView: View {
                 }
             }
             .navigationBarHidden(true)
+            .withAppRouter()
         }
     }
 }
