@@ -49,8 +49,6 @@ struct SidebarPanel: View {
                 }
             }
             .background(Color(UIColor.systemBackground))
-            .accessibilityElement(children: .contain)
-            .accessibilityIdentifier("twitter_sidebar_content")
     }
     
     // 各メニュー項目に対応するRouterDestinationを返す
@@ -222,6 +220,5 @@ struct SidebarLinkItem: View {
         }
         .buttonStyle(PlainButtonStyle())
         .background(Color.gray.opacity(0.001))
-        .accessibilityHint("")
     }
 }
