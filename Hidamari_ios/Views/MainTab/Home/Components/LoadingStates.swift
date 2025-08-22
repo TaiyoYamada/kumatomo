@@ -9,7 +9,6 @@ struct SkeletonLoadingView: View {
         VStack(spacing: 0) {
             ForEach(0..<5, id: \.self) { index in
                 SkeletonPostItem()
-                    .accessibilityHidden(true)
                 
                 Rectangle()
                     .fill(Color(hex: "E5E7EB"))
@@ -18,9 +17,6 @@ struct SkeletonLoadingView: View {
             }
         }
         .background(Color.white)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("投稿を読み込み中")
-        .accessibilityIdentifier("skeleton_loading_view")
         .onAppear {
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 isAnimating = true
@@ -186,7 +182,6 @@ struct ErrorStateView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "EF4444"))
-                .accessibilityHidden(true)
             
             VStack(spacing: 8) {
                 Text("エラーが発生しました")
@@ -217,15 +212,9 @@ struct ErrorStateView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .frame(minHeight: 44) // Ensure minimum touch target
-            .accessibilityLabel("再試行")
-            .accessibilityHint("タップして再度読み込みを試行")
-            .accessibilityIdentifier("error_retry_button")
         }
         .padding(.horizontal, 32)
         .padding(.top, 100)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("エラーが発生しました。\(error)")
-        .accessibilityIdentifier("error_state_view")
     }
 }
 
@@ -325,15 +314,9 @@ struct NetworkErrorView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .frame(minHeight: 44) // Ensure minimum touch target
-            .accessibilityLabel("再試行")
-            .accessibilityHint("タップして再度接続を試行")
-            .accessibilityIdentifier("network_retry_button")
         }
         .padding(.horizontal, 32)
         .padding(.top, 100)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("ネットワークに接続できません。インターネット接続を確認してください")
-        .accessibilityIdentifier("network_error_view")
     }
 }
 
@@ -538,9 +521,6 @@ struct ToastView: View {
                         .foregroundColor(Color(hex: "6B7280"))
                 }
                 .frame(minWidth: 44, minHeight: 44) // Ensure minimum touch target
-                .accessibilityLabel("閉じる")
-                .accessibilityHint("通知を閉じる")
-                .accessibilityIdentifier("toast_close_button")
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -549,9 +529,6 @@ struct ToastView: View {
             .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
             .padding(.horizontal, 16)
             .transition(.move(edge: .top).combined(with: .opacity))
-            .accessibilityElement(children: .contain)
-            .accessibilityLabel("\(type.accessibilityLabel): \(message)")
-            .accessibilityIdentifier("toast_notification")
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     withAnimation {
@@ -560,15 +537,5 @@ struct ToastView: View {
                 }
             }
         }
-    }
-}
-
-#Preview("Skeleton Loading") {
-    SkeletonLoadingView()
-}
-
-#Preview("Error State") {
-    ErrorStateView(error: "サーバーに接続できませんでした") {
-        print("Retry tapped")
     }
 }

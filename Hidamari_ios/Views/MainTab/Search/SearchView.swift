@@ -10,26 +10,26 @@ struct SearchView: View {
         SidebarContainer(isPresented: $showingSidebar, user: userManager.currentUser) {
             NavigationStack {
                 VStack(spacing: 0) {
-                // 検索バー
-                searchBar
-                
-                // フィルターセグメント
-                filterSegment
-                
-                // コンテンツ
-                if viewModel.isLoading {
-                    loadingView
-                } else if viewModel.showingSearchHistory {
-                    searchHistoryView
-                } else if viewModel.hasSearchResults {
-                    searchResultsView
-                } else if !viewModel.searchText.isEmpty {
-                    noResultsView
-                } else {
-                    emptyStateView
-                }
-                
-                Spacer()
+                    // 検索バー
+                    searchBar
+                    
+                    // フィルターセグメント
+                    filterSegment
+                    
+                    // コンテンツ
+                    if viewModel.isLoading {
+                        loadingView
+                    } else if viewModel.showingSearchHistory {
+                        searchHistoryView
+                    } else if viewModel.hasSearchResults {
+                        searchResultsView
+                    } else if !viewModel.searchText.isEmpty {
+                        noResultsView
+                    } else {
+                        emptyStateView
+                    }
+                    
+                    Spacer()
                 }
                 .navigationTitle("検索")
                 .navigationBarTitleDisplayMode(.large)

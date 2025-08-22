@@ -21,7 +21,5 @@ struct ProfileIconButton: View {
                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
             )
         }
-        .accessibilityLabel("プロフィールメニュー")
-        .accessibilityHint("タップしてメニューを開く")
     }
 }

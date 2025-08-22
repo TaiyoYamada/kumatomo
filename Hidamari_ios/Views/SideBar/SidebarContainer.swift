@@ -27,12 +27,9 @@ struct SidebarContainer<Content: View>: View {
                                     .opacity(overlayOpacity)
                                     .ignoresSafeArea()
                                     .onTapGesture { closeSidebar() }
-                                    .accessibilityIdentifier("sidebar_overlay")
                             }
                         }
                     )
-                    .accessibilityElement(children: .contain)
-                    .accessibilityIdentifier("overlay_content")
                 
                 // Sidebar panel with proper safe area handling
                 SidebarPanel(user: user, onClose: closeSidebar)

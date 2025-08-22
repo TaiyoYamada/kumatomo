@@ -259,13 +259,8 @@ struct MunicipalityPickerView: View {
                         .frame(minHeight: 44) // Ensure minimum touch target
                     }
                     .buttonStyle(PlainButtonStyle())
-                    .accessibilityLabel(municipality.displayName)
-                    .accessibilityHint(selectedMunicipality == municipality.displayName ? "現在選択中の市町村" : "タップして選択")
-                    .accessibilityAddTraits(selectedMunicipality == municipality.displayName ? .isSelected : [])
-                    .accessibilityIdentifier("municipality_\(municipality.displayName)")
                 }
                 .listStyle(PlainListStyle())
-                .accessibilityIdentifier("municipality_list")
             }
             .navigationTitle("市町村を選択")
             .navigationBarTitleDisplayMode(.inline)
@@ -275,12 +270,8 @@ struct MunicipalityPickerView: View {
                     Button("キャンセル") {
                         dismiss()
                     }
-                    .accessibilityLabel("キャンセル")
-                    .accessibilityHint("市町村選択をキャンセルして戻る")
-                    .accessibilityIdentifier("municipality_cancel_button")
                 }
             }
-            .accessibilityIdentifier("municipality_picker_view")
         }
     }
 }
@@ -324,9 +315,5 @@ struct RegionFilterButton: View {
         }
         .buttonStyle(PlainButtonStyle())
         .frame(minHeight: 44) // Ensure minimum touch target
-        .accessibilityLabel(title)
-        .accessibilityHint(isSelected ? "選択中の地域フィルター" : "タップして\(title)地域でフィルター")
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityIdentifier("region_filter_\(title)")
     }
 }
