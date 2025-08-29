@@ -1,7 +1,7 @@
 services:
     laravel.test:
         # build:
-        #     context: './Hidamari_api/vendor/laravel/sail/runtimes/8.4'
+        #     context: './api/vendor/laravel/sail/runtimes/8.4'
         #     dockerfile: Dockerfile
         #     args:
         #         WWWGROUP: '${WWWGROUP}'
@@ -19,7 +19,7 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
             HTTPS: 'on'
         volumes:
-            - './Hidamari_api:/var/www/html'
+            - './api:/var/www/html'
         networks:
             - sail
         depends_on:
@@ -57,7 +57,7 @@ services:
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
             - 'sail-mysql:/var/lib/mysql'
-            - './Hidamari_api/vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+            - './api/vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
         networks:
             - sail
         healthcheck:
@@ -120,12 +120,12 @@ services:
 
     vue.admin:
         build:
-            context: ./Hidamari_admin
+            context: ./admin
             dockerfile: Dockerfile
         ports:
             - '3000:3000'  # ポート3000に統一
         volumes:
-            - ./Hidamari_admin:/app
+            - ./admin:/app
             - /app/node_modules
         command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
         working_dir: /app
