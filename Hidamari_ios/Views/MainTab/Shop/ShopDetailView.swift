@@ -7,7 +7,7 @@ struct ShopDetailView: View {
     @StateObject private var viewModel = ShopDetailViewModel()
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // 店舗画像（最適化された遅延読み込み）

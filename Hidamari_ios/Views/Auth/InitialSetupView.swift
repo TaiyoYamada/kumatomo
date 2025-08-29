@@ -22,7 +22,7 @@ struct InitialSetupView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color(UIColor.systemGroupedBackground).edgesIgnoringSafeArea(.all)
                 

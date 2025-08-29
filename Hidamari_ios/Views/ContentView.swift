@@ -34,18 +34,12 @@ struct MainTabView: View {
     
     @ObservedObject var viewModel: AuthViewModel
     @State private var showingPostView = false
-    @State private var selection: Selection = .home
+    @State private var selection: TabSelection = .home
     @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
     @StateObject private var userManager = CurrentUserManager.shared
     @StateObject private var sidebarState = SidebarState()
     
-    enum Selection{
-        case home
-        case search
-        case post
-        case profile
-        
-    }
+    // TabSelectionはAppRouter/RouterDestination.swiftに移動
     
     var body: some View {
         SidebarContainer(isPresented: $sidebarState.isPresented, user: userManager.currentUser) {
@@ -62,7 +56,7 @@ struct MainTabView: View {
                         Image(systemName: "house.fill")
                         Text("ホーム")
                     }
-                    .tag(Selection.home)
+                    .tag(TabSelection.home)
 
                 //  検索タブ
                 SearchView()
@@ -72,7 +66,7 @@ struct MainTabView: View {
                         Image(systemName: "magnifyingglass")
                         Text("検索")
                     }
-                    .tag(Selection.search)
+                    .tag(TabSelection.search)
                     
                 //  投稿タブ
                 PostView()
@@ -82,7 +76,7 @@ struct MainTabView: View {
                         Image(systemName: "plus.circle.fill")
                         Text("投稿")
                     }
-                    .tag(Selection.post)
+                    .tag(TabSelection.post)
 
                 //  プロフィールタブ
                 MyProfileView()
@@ -92,7 +86,7 @@ struct MainTabView: View {
                         Image(systemName: "person.crop.circle")
                         Text("プロフィール")
                     }
-                    .tag(Selection.profile)
+                    .tag(TabSelection.profile)
                 
                 }
                 .accentColor(.pink)

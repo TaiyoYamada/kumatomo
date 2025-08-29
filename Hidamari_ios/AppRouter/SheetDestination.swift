@@ -1,14 +1,16 @@
 import SwiftUI
 import UIKit
 
+// MARK: - モーダル表示用のDestination enum
+// 統合済み: 全てのシート・モーダル表示はこのenumで管理
 enum SheetDestination: Identifiable {
-	case postDetail(Post)
-	case shopDetail(Shop)
-	case shopPicker(selectedShop: Binding<Shop?>)
-	case postPreview(content: String, images: [UIImage], shop: Shop?, onPost: () -> Void)
-	case profileEdit(User)
-	case municipalityPicker(selected: String?, onSelect: (String) -> Void)
-	case postEdit(viewModel: PostViewModel)
+	case postDetail(Post)                                                           // 投稿詳細モーダル
+	case shopDetail(Shop)                                                          // お店詳細モーダル
+	case shopPicker(selectedShop: Binding<Shop?>)                                  // お店選択モーダル
+	case postPreview(content: String, images: [UIImage], shop: Shop?, onPost: () -> Void)  // 投稿プレビューモーダル
+	case profileEdit(User)                                                         // プロフィール編集モーダル
+	case municipalityPicker(selected: String?, onSelect: (String) -> Void)         // 市区町村選択モーダル
+	case postEdit(viewModel: PostViewModel)                                        // 投稿編集モーダル
 
 	var id: String {
 		switch self {

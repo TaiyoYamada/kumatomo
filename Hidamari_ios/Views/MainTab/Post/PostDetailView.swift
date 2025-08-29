@@ -7,7 +7,7 @@ struct PostDetailView: View {
     @State private var sheetDestination: SheetDestination?
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color(UIColor.systemGroupedBackground).ignoresSafeArea()
                 
