@@ -20,7 +20,7 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = Post::with(['user', 'shop', 'images'])->latest()->get();
+        $posts = Post::with(['user', 'shop', 'images', 'areas'])->latest()->get();
         
         // デバッグ用：レスポンスをログに出力
         \Log::info('投稿一覧レスポンス', ['posts_count' => $posts->count()]);
@@ -43,11 +43,16 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'content' => 'required|string|max:500',
+            'content' => 'required|string|max:200', // Updated to 200 characters
+            'area_ids' => 'required|array|min:1|max:5', // Required area selection, max 5
+            'area_ids.*' => 'integer|exists:areas,id',
+            'place_name' => 'nullable|string|max:255', // Location name
+            'latitude' => 'nullable|numeric|between:-90,90', // Location latitude
+            'longitude' => 'nullable|numeric|between:-180,180', // Location longitude
             'shop_id' => 'nullable|integer|exists:shops,id',
-            'images' => 'nullable|array|max:5',
+            'images' => 'nullable|array|max:4', // Updated to max 4 images
             'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:5120', // 画像ファイルの場合
-            'image_urls' => 'nullable|array|max:5', // 画像URLの配列
+            'image_urls' => 'nullable|array|max:4', // Updated to max 4 image URLs
             'image_urls.*' => 'url|max:2048',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:20',
@@ -62,6 +67,10 @@ class PostController extends Controller
                 'user_id' => $request->user()->id,
                 'content' => $validated['content'],
                 'shop_id' => $validated['shop_id'] ?? null,
+                'place_name' => $validated['place_name'] ?? null,
+                'latitude' => $validated['latitude'] ?? null,
+                'longitude' => $validated['longitude'] ?? null,
+                'image_url' => $validated['image_url'] ?? null, // Legacy support
                 'tags' => $validated['tags'] ?? null,
             ];
 
@@ -73,12 +82,26 @@ class PostController extends Controller
             
             \Log::info('投稿作成成功', ['post_id' => $post->id, 'user_id' => $post->user_id]);
 
+            // エリアとの関連付け
+            if (isset($validated['area_ids']) && !empty($validated['area_ids'])) {
+                // 最大5つのエリアまで許可
+                $limitedAreaIds = array_slice($validated['area_ids'], 0, 5);
+                $post->areas()->sync($limitedAreaIds);
+                \Log::info('エリア関連付け完了', [
+                    'post_id' => $post->id, 
+                    'area_ids' => $limitedAreaIds
+                ]);
+            }
+
             // 複数画像の処理
             if (isset($validated['images']) && !empty($validated['images'])) {
                 // 画像ファイルがアップロードされた場合
-                $imageUrls = $this->imageService->uploadMultipleImages($validated['images']);
+                $imageResults = $this->imageService->uploadMultipleImages($validated['images']);
                 
-                foreach ($imageUrls as $index => $imageUrl) {
+                foreach ($imageResults as $index => $imageResult) {
+                    // 中サイズの画像URLを使用（存在しない場合はオリジナル）
+                    $imageUrl = $imageResult['medium'] ?? $imageResult['original'];
+                    
                     PostImage::create([
                         'post_id' => $post->id,
                         'image_url' => $imageUrl,
@@ -116,7 +139,7 @@ class PostController extends Controller
             DB::commit();
 
             // 作成後のPostオブジェクトをリロードしてログ出力
-            $createdPost = $post->load(['user', 'shop', 'images']);
+            $createdPost = $post->load(['user', 'shop', 'images', 'areas']);
             
             \Log::info('作成された投稿の詳細', [
                 'post_id' => $createdPost->id,
@@ -127,6 +150,12 @@ class PostController extends Controller
             return response()->json($createdPost, 201);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('投稿作成エラー', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            
             return response()->json([
                 'error' => [
                     'code' => 'POST_CREATION_FAILED',
@@ -139,7 +168,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        return response()->json($post->load(['user', 'shop', 'images']));
+        return response()->json($post->load(['user', 'shop', 'images', 'areas']));
     }
 
     public function update(Request $request, Post $post)
@@ -163,7 +192,7 @@ class PostController extends Controller
 
         $post->update($validated);
 
-        return response()->json($post->load(['user', 'shop', 'images']));
+        return response()->json($post->load(['user', 'shop', 'images', 'areas']));
     }
 
     public function destroy(Request $request, Post $post)
@@ -210,14 +239,28 @@ class PostController extends Controller
     }
 
     /**
-     * 特定のユーザーのストーリーを一覧取得
+     * 特定のユーザーの投稿を一覧取得
      *
+     * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\User $user
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function indexByUser(User $user)
+    public function indexByUser(Request $request, User $user)
     {
-        return $user->stories()->with(['user', 'shop', 'images'])->latest()->get();
+        $validated = $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        $page = $validated['page'] ?? 1;
+        $perPage = $validated['per_page'] ?? 10;
+
+        $posts = $user->posts()
+            ->with(['user', 'shop', 'images', 'areas'])
+            ->latest()
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json($posts);
     }
 
     /**
@@ -238,7 +281,7 @@ class PostController extends Controller
         $perPage = $validated['per_page'] ?? 10;
 
         $posts = Post::where('shop_id', $shopId)
-            ->with(['user', 'shop', 'images'])
+            ->with(['user', 'shop', 'images', 'areas'])
             ->latest()
             ->paginate($perPage, ['*'], 'page', $page);
 

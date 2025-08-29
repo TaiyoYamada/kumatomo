@@ -10,6 +10,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AdminShopController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\AreaController;
 
 // API動作確認用のテストルート
 Route::get('/', function () {
@@ -66,6 +67,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 統合検索API
     Route::get('/search', [SearchController::class, 'search']);
+
+    // エリア関連API
+    Route::get('/areas', [AreaController::class, 'index']);
+    Route::get('/areas/{id}/posts', [AreaController::class, 'posts']);
 
     Route::get('/shops', [ShopController::class, 'index']);
     Route::get('/shops/search', [ShopController::class, 'search']);
