@@ -9,13 +9,16 @@ struct SidebarPanel: View {
     let allItems = SidebarMenuItemType.allCases
     
     var body: some View {
+        
+        GeometryReader { geometry in
             VStack(spacing: 0) {
+                Spacer().frame(height: UIApplication.shared.windows.first?.safeAreaInsets.top ?? 44)
+                
                 // Header - プロフィール画面への遷移
                 NavigationLink(value: RouterDestination.myProfile) {
                     SidebarHeader(user: user)
                 }
                 .buttonStyle(PlainButtonStyle())
-                .accessibilityLabel("プロフィールを開く")
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
@@ -48,7 +51,9 @@ struct SidebarPanel: View {
                     .padding(.vertical, 8)
                 }
             }
+//            .padding(.top, geometry.safeAreaInsets.top)
             .background(Color(UIColor.systemBackground))
+        }
     }
     
     // 各メニュー項目に対応するRouterDestinationを返す
@@ -102,7 +107,7 @@ struct SidebarHeader: View {
             }
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(user?.name ?? "ゲスト")
+                Text(user?.name ?? "名前")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)
                 
@@ -113,7 +118,7 @@ struct SidebarHeader: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.top, 8)
+        .safeAreaPadding(.top)
         .padding(.bottom, 20)
         .background(Color(UIColor.systemBackground))
     }

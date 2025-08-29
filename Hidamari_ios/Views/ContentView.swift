@@ -37,6 +37,7 @@ struct MainTabView: View {
     @State private var selection: Selection = .home
     @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
     @StateObject private var userManager = CurrentUserManager.shared
+    @StateObject private var sidebarState = SidebarState()
     
     enum Selection{
         case home
@@ -47,45 +48,55 @@ struct MainTabView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            NetworkStatusBanner()
-            
-            TabView(selection: $selection) {
-            //  ホームタブ（掲示板機能を統合）
-            HomeView()
-                .environmentObject(bulletinBoardViewModel)
-                .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("ホーム")
-                }
-                .tag(Selection.home)
-
-            //  検索タブ
-            SearchView()
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("検索")
-                }
-                .tag(Selection.search)
+        SidebarContainer(isPresented: $sidebarState.isPresented, user: userManager.currentUser) {
+            VStack(spacing: 0) {
+                NetworkStatusBanner()
                 
-            //  投稿タブ
-            PostView()
-                .tabItem {
-                    Image(systemName: "plus.circle.fill")
-                    Text("投稿")
-                }
-                .tag(Selection.post)
+                TabView(selection: $selection) {
+                //  ホームタブ（掲示板機能を統合）
+                HomeView()
+                    .environmentObject(bulletinBoardViewModel)
+                    .environmentObject(userManager)
+                    .environment(\.openSidebar, sidebarState.open)
+                    .tabItem {
+                        Image(systemName: "house.fill")
+                        Text("ホーム")
+                    }
+                    .tag(Selection.home)
 
-            //  プロフィールタブ
-            MyProfileView()
-                .tabItem {
-                    Image(systemName: "person.crop.circle")
-                    Text("プロフィール")
+                //  検索タブ
+                SearchView()
+                    .environmentObject(userManager)
+                    .environment(\.openSidebar, sidebarState.open)
+                    .tabItem {
+                        Image(systemName: "magnifyingglass")
+                        Text("検索")
+                    }
+                    .tag(Selection.search)
+                    
+                //  投稿タブ
+                PostView()
+                    .environmentObject(userManager)
+                    .environment(\.openSidebar, sidebarState.open)
+                    .tabItem {
+                        Image(systemName: "plus.circle.fill")
+                        Text("投稿")
+                    }
+                    .tag(Selection.post)
+
+                //  プロフィールタブ
+                MyProfileView()
+                    .environmentObject(userManager)
+                    .environment(\.openSidebar, sidebarState.open)
+                    .tabItem {
+                        Image(systemName: "person.crop.circle")
+                        Text("プロフィール")
+                    }
+                    .tag(Selection.profile)
+                
                 }
-                .tag(Selection.profile)
-            
+                .accentColor(.pink)
             }
-            .accentColor(.pink)
         }
         .errorOverlay()
         .onAppear {
