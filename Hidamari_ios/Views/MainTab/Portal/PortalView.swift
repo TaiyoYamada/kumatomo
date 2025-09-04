@@ -48,7 +48,7 @@ struct PortalView: View {
                     VStack(spacing: 16) {
                         // Section header
                         HStack {
-                            Text("サービス一覧（外部サイトに移動します）")
+                            Text("サービス一覧")
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
