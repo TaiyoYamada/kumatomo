@@ -32,7 +32,7 @@ struct SearchView: View {
                     Spacer()
                 }
                 .navigationTitle("検索")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         ProfileIconButton(user: userManager.currentUser) {

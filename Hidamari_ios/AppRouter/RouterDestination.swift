@@ -20,6 +20,7 @@ enum TabSelection: Hashable {
 	case home     // ホームタブ
 	case search   // 検索タブ
 	case post     // 投稿タブ
+	case portal   // ポータルタブ
 	case profile  // プロフィールタブ
 }
 

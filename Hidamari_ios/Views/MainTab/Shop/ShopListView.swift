@@ -58,8 +58,6 @@ struct ShopListView: View {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.primary)
                     }
-                    .accessibilityLabel("検索")
-                    .accessibilityHint("お店や投稿を検索")
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -67,8 +65,6 @@ struct ShopListView: View {
                         Image(systemName: "location")
                             .foregroundColor(.pink)
                     }
-                    .accessibilityLabel("位置情報")
-                    .accessibilityHint("現在地を取得")
                 }
             }
             .withSheetRouter(sheet: $sheetDestination)

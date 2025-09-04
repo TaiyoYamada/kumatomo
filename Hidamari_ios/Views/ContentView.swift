@@ -34,7 +34,7 @@ struct MainTabView: View {
     
     @ObservedObject var viewModel: AuthViewModel
     @State private var showingPostView = false
-    @State private var selection: TabSelection = .home
+    @State private var selection: TabSelection = .portal
     @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
     @StateObject private var userManager = CurrentUserManager.shared
     @StateObject private var sidebarState = SidebarState()
@@ -67,6 +67,17 @@ struct MainTabView: View {
                         Text("検索")
                     }
                     .tag(TabSelection.search)
+        
+                
+                //  ポータルタブ
+                PortalView()
+                    .environmentObject(userManager)
+                    .environment(\.openSidebar, sidebarState.open)
+                    .tabItem {
+                        Image(systemName: "rectangle.grid.2x2")
+                        Text("ポータル")
+                    }
+                    .tag(TabSelection.portal)
                     
                 //  投稿タブ
                 PostView()
@@ -77,6 +88,7 @@ struct MainTabView: View {
                         Text("投稿")
                     }
                     .tag(TabSelection.post)
+
 
                 //  プロフィールタブ
                 MyProfileView()

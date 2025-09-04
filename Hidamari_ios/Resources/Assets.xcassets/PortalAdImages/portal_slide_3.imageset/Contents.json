@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "AppIcon.png",
+      "filename" : "portal_slide_3.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "AppIcon 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "AppIcon 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -68,8 +68,6 @@ struct MyProfileView: View {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.primary)
                     }
-                    .accessibilityLabel("検索")
-                    .accessibilityHint("投稿やお店を検索")
                 }
             }
             .withSheetRouter(sheet: $sheetDestination)
