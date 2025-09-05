@@ -5,6 +5,7 @@ struct HomeView: View {
     @State private var showToast = false
     @State private var toastMessage = ""
     @State private var toastType: ToastView.ToastType = .info
+    @State private var showPostModal = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.openSidebar) private var openSidebar
     @EnvironmentObject private var userManager: CurrentUserManager
@@ -57,6 +58,20 @@ struct HomeView: View {
                     Spacer()
                 }
                 .zIndex(1)
+                
+                // Floating Action Button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        FloatingActionButton {
+                            showPostModal = true
+                        }
+                        .padding(.trailing, 16)
+                        .padding(.bottom, 16)
+                    }
+                }
+                .zIndex(2)
             }
             .navigationTitle("ホーム")
             .navigationBarTitleDisplayMode(.inline)
@@ -74,6 +89,10 @@ struct HomeView: View {
                 if let error = errorMessage {
                     showToastMessage(error, type: .error)
                 }
+            }
+            .fullScreenCover(isPresented: $showPostModal) {
+                PostView()
+                    .environmentObject(userManager)
             }
             .withAppRouter()
         }
