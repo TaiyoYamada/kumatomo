@@ -144,10 +144,21 @@ enum KumamonAIError: LocalizedError {
 }
 
 // MARK: - AI Service State
-enum AIServiceState {
+enum AIServiceState: Equatable {
     case idle
     case loading
     case typing
     case error(KumamonAIError)
     case success
+    
+    static func == (lhs: AIServiceState, rhs: AIServiceState) -> Bool {
+        switch (lhs, rhs) {
+        case (.idle, .idle), (.loading, .loading), (.typing, .typing), (.success, .success):
+            return true
+        case (.error(let lhsError), .error(let rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        default:
+            return false
+        }
+    }
 }
