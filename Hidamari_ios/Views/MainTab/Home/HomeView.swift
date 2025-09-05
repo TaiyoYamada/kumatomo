@@ -91,8 +91,11 @@ struct HomeView: View {
                 }
             }
             .fullScreenCover(isPresented: $showPostModal) {
-                PostView()
-                    .environmentObject(userManager)
+                PostView(onPostSuccess: {
+                    // Refresh the bulletin board feed after successful posting
+                    viewModel.refreshPosts()
+                })
+                .environmentObject(userManager)
             }
             .withAppRouter()
         }

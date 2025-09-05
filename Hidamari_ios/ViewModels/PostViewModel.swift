@@ -2,6 +2,39 @@ import Foundation
 import SwiftUI
 import Combine
 
+// MARK: - Validation State
+struct ValidationState {
+    let isValid: Bool
+    let errors: [PostError]
+    let canPost: Bool
+    
+    var hasContentError: Bool {
+        errors.contains { error in
+            switch error {
+            case .noContentOrImages, .contentOverLimit:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+    
+    var hasTagError: Bool {
+        errors.contains { error in
+            switch error {
+            case .noTagsSelected:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+    
+    var primaryErrorMessage: String? {
+        errors.first?.errorDescription
+    }
+}
+
 @MainActor
 class PostViewModel: ObservableObject {
     @Published var postContent: String = ""
@@ -49,28 +82,38 @@ class PostViewModel: ObservableObject {
     }
     
     private var hasValidContent: Bool {
-        (!postContent.isEmpty && postContent.count <= 500) || !selectedImages.isEmpty
+        let hasText = !postContent.isEmpty && postContent.count <= 500
+        let hasImages = !selectedImages.isEmpty
+        return hasText || hasImages // Text OR images (not both required)
     }
     
     private var hasValidTags: Bool {
         !selectedTags.isEmpty
     }
     
+    // Enhanced validation for content - requires text OR images
     func validateContent() -> Result<Void, PostError> {
-        if postContent.isEmpty {
-            return .failure(.contentEmpty)
+        let hasText = !postContent.isEmpty
+        let hasImages = !selectedImages.isEmpty
+        
+        // Check if neither text nor images are provided
+        if !hasText && !hasImages {
+            return .failure(.noContentOrImages)
         }
         
-        if postContent.count > 500 {
+        // If text is provided, validate character limit
+        if hasText && postContent.count > 500 {
             return .failure(.contentOverLimit(currentCount: postContent.count, maxCount: 500))
         }
         
         return .success(())
     }
     
+    // Enhanced validation for images - optional but if provided, must be valid
     func validateImages() -> Result<Void, PostError> {
+        // Images are optional, so empty is allowed
         if selectedImages.isEmpty {
-            return .failure(.noImagesSelected) // At least one image is required
+            return .success(())
         }
         
         if selectedImages.count > 5 {
@@ -87,11 +130,21 @@ class PostViewModel: ObservableObject {
         return .success(())
     }
     
+    // Enhanced validation for tags - minimum 1 tag required
+    func validateTags() -> Result<Void, PostError> {
+        if selectedTags.isEmpty {
+            return .failure(.noTagsSelected)
+        }
+        
+        return .success(())
+    }
+    
     func validateForSubmission() -> Result<Void, PostError> {
         if isSubmitting {
             return .failure(.submissionInProgress)
         }
         
+        // Validate content (text OR images)
         switch validateContent() {
         case .failure(let error):
             return .failure(error)
@@ -99,6 +152,7 @@ class PostViewModel: ObservableObject {
             break
         }
         
+        // Validate images if provided
         switch validateImages() {
         case .failure(let error):
             return .failure(error)
@@ -106,7 +160,42 @@ class PostViewModel: ObservableObject {
             break
         }
         
+        // Validate tags (minimum 1 required)
+        switch validateTags() {
+        case .failure(let error):
+            return .failure(error)
+        case .success:
+            break
+        }
+        
         return .success(())
+    }
+    
+    // Get current validation state for UI feedback
+    func getValidationState() -> ValidationState {
+        let contentValidation = validateContent()
+        let imageValidation = validateImages()
+        let tagValidation = validateTags()
+        
+        var errors: [PostError] = []
+        
+        if case .failure(let error) = contentValidation {
+            errors.append(error)
+        }
+        
+        if case .failure(let error) = imageValidation {
+            errors.append(error)
+        }
+        
+        if case .failure(let error) = tagValidation {
+            errors.append(error)
+        }
+        
+        return ValidationState(
+            isValid: errors.isEmpty && !isSubmitting,
+            errors: errors,
+            canPost: canPost
+        )
     }
     
     // MARK: - Tag Management
@@ -306,7 +395,7 @@ class PostViewModel: ObservableObject {
         }
         
         // Validate before submission
-        switch validateContent() {
+        switch validateForSubmission() {
         case .failure(let error):
             await handleValidationError(error)
             return false
@@ -519,16 +608,18 @@ class PostViewModel: ObservableObject {
         posts.insert(newPost, at: 0)
         userPosts.insert(newPost, at: 0)
         
-        // Reset form using new resetForm method
-        resetForm()
-        
-        // Show success modal
+        // Show success modal first
         showSuccessModal = true
         isLoading = false
         isSubmitting = false
         
-        // Auto-hide modal after 2 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        // Reset form after showing success
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.resetForm()
+        }
+        
+        // Auto-hide modal after showing success message
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             self.showSuccessModal = false
         }
     }

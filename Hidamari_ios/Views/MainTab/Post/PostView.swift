@@ -2,9 +2,16 @@ import SwiftUI
 import PhotosUI
 
 struct PostView: View {
+    let onPostSuccess: (() -> Void)?
+    
     @StateObject private var viewModel = PostViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var showingCancelAlert = false
+    
+    init(onPostSuccess: (() -> Void)? = nil) {
+        self.onPostSuccess = onPostSuccess
+    }
     
     var body: some View {
         NavigationStack {
@@ -51,14 +58,25 @@ struct PostView: View {
                     selectedItems: $selectedItems,
                     selectedShop: $viewModel.selectedShop
                 )
+                
+                // Tag selection section
+                TagSelectionView(
+                    selectedTags: $viewModel.selectedTags,
+                    availableTags: viewModel.availableTags
+                )
+                .padding(.top, 8)
+                
+                // Validation feedback section
+                ValidationFeedbackView(validationState: validationState)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
             }
             .background(Color(UIColor.systemBackground))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("キャンセル") {
-                        viewModel.resetForm()
-                        dismiss()
+                        handleCancel()
                     }
                     .foregroundColor(.primary)
                 }
@@ -68,18 +86,44 @@ struct PostView: View {
                         handlePost()
                     }
                     .disabled(!canPost)
-                    .foregroundColor(canPost ? .blue : .secondary)
+                    .foregroundColor(canPost ? .blue : .gray)
                     .fontWeight(.semibold)
+                    .opacity(canPost ? 1.0 : 0.6)
+                    .animation(.easeInOut(duration: 0.2), value: canPost)
                 }
+            }
+            .alert("投稿を破棄しますか？", isPresented: $showingCancelAlert) {
+                Button("破棄", role: .destructive) {
+                    viewModel.resetForm()
+                    dismiss()
+                }
+                Button("キャンセル", role: .cancel) { }
+            } message: {
+                Text("入力した内容は保存されません。")
             }
         }
         .overlay {
             OverlayContent(viewModel: viewModel) {
+                // Call success callback and dismiss modal
+                onPostSuccess?()
                 dismiss()
             }
         }
         .onChange(of: selectedItems) { newItems in
             handleMultipleImageSelection(newItems)
+        }
+        .onAppear {
+            // Ensure form starts in clean state
+            if viewModel.postContent.isEmpty && 
+               viewModel.selectedImages.isEmpty && 
+               viewModel.selectedShop == nil &&
+               viewModel.selectedTags == ["熊本県全体"] {
+                // Form is already clean, no action needed
+            }
+        }
+        .onDisappear {
+            // Clear any error messages when modal is dismissed
+            viewModel.errorMessage = nil
         }
     }
 }
@@ -87,16 +131,46 @@ struct PostView: View {
 // MARK: - Computed Properties
 private extension PostView {
     var canPost: Bool {
-        // Updated validation: require text OR images (not both), and at least one tag
-        let hasContent = (!viewModel.postContent.isEmpty && viewModel.postContent.count <= 500) || !viewModel.selectedImages.isEmpty
-        let hasTags = !viewModel.selectedTags.isEmpty
-        return hasContent && hasTags && !viewModel.isLoading
+        viewModel.canPost
+    }
+    
+    var validationState: ValidationState {
+        viewModel.getValidationState()
+    }
+    
+    var hasUnsavedContent: Bool {
+        !viewModel.postContent.isEmpty || 
+        !viewModel.selectedImages.isEmpty || 
+        viewModel.selectedShop != nil ||
+        viewModel.selectedTags != ["熊本県全体"]
     }
 }
 
 // MARK: - Actions
 private extension PostView {
+    func handleCancel() {
+        // Check if there's any content to discard
+        if hasUnsavedContent {
+            showingCancelAlert = true
+        } else {
+            // No content to lose, dismiss immediately
+            viewModel.resetForm()
+            dismiss()
+        }
+    }
+    
     func handlePost() {
+        // Validate before attempting to post
+        let validation = viewModel.validateForSubmission()
+        
+        switch validation {
+        case .failure(let error):
+            viewModel.errorMessage = error.errorDescription
+            return
+        case .success:
+            break
+        }
+        
         Task {
             if let currentUser = AuthService.shared.currentUser {
                 let success = await viewModel.createPostWithMultipleImages(
@@ -108,6 +182,9 @@ private extension PostView {
                 
                 if success {
                     await MainActor.run {
+                        // Call the success callback to refresh the feed
+                        onPostSuccess?()
+                        // Form is already reset in the success handler
                         dismiss()
                     }
                 }
@@ -163,12 +240,25 @@ private struct TextInputArea: View {
         characterCount > 500
     }
     
+    private var isNearLimit: Bool {
+        characterCount > 450
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             TextEditor(text: $content)
                 .font(.body)
                 .scrollContentBackground(.hidden)
                 .frame(minHeight: 120)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(
+                            isOverLimit ? Color.red : 
+                            isNearLimit ? Color.orange : 
+                            Color.clear, 
+                            lineWidth: isOverLimit || isNearLimit ? 1 : 0
+                        )
+                )
                 .overlay(
                     Group {
                         if content.isEmpty {
@@ -188,12 +278,17 @@ private struct TextInputArea: View {
                     }
                 )
             
-            // Character counter
+            // Character counter with enhanced visual feedback
             HStack {
                 Spacer()
                 Text("\(characterCount)/500")
                     .font(.caption)
-                    .foregroundColor(isOverLimit ? .red : .secondary)
+                    .foregroundColor(
+                        isOverLimit ? .red : 
+                        isNearLimit ? .orange : 
+                        .secondary
+                    )
+                    .fontWeight(isOverLimit || isNearLimit ? .medium : .regular)
             }
         }
     }
@@ -432,8 +527,9 @@ private struct SuccessOverlay: View {
                     checkmarkScale = 1.0
                 }
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                // Automatically dismiss after showing success message
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    withAnimation(.easeOut(duration: 0.3)) {
                         onDismiss()
                     }
                 }
@@ -463,5 +559,64 @@ private struct LoadingOverlay: View {
             }
             .transition(.opacity)
             .animation(.easeInOut(duration: 0.3), value: true)
+    }
+}
+
+// MARK: - Validation Feedback View
+private struct ValidationFeedbackView: View {
+    let validationState: ValidationState
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Show validation errors if any
+            if !validationState.isValid && !validationState.errors.isEmpty {
+                ForEach(Array(validationState.errors.enumerated()), id: \.offset) { index, error in
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                        
+                        Text(error.errorDescription ?? "")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.orange.opacity(0.1))
+                    .cornerRadius(8)
+                }
+                .transition(.asymmetric(
+                    insertion: .scale.combined(with: .opacity),
+                    removal: .opacity
+                ))
+                .animation(.easeInOut(duration: 0.2), value: validationState.errors.count)
+            }
+            
+            // Show helpful hints when form is empty
+            if validationState.errors.isEmpty && validationState.canPost {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundColor(.green)
+                    
+                    Text("投稿準備完了")
+                        .font(.caption)
+                        .foregroundColor(.green)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.green.opacity(0.1))
+                .cornerRadius(8)
+                .transition(.asymmetric(
+                    insertion: .scale.combined(with: .opacity),
+                    removal: .opacity
+                ))
+                .animation(.easeInOut(duration: 0.2), value: validationState.canPost)
+            }
+        }
     }
 }
