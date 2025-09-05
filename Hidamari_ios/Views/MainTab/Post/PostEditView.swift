@@ -77,7 +77,7 @@ struct PostEditView: View {
 private extension PostEditView {
     var canUpdate: Bool {
         !viewModel.postContent.isEmpty &&
-        viewModel.postContent.count <= 500 &&
+        viewModel.postContent.count <= 300 &&
         !viewModel.isUpdating
     }
 }
@@ -100,7 +100,7 @@ private struct ContentEditCard: View {
     let characterCount: Int
     
     private var isOverLimit: Bool {
-        characterCount > 500
+        characterCount > 300
     }
     
     var body: some View {
@@ -141,7 +141,7 @@ private struct ContentEditCard: View {
             
             CharacterCounter(
                 count: characterCount,
-                maxCount: 500,
+                maxCount: 300,
                 isOverLimit: isOverLimit
             )
         }

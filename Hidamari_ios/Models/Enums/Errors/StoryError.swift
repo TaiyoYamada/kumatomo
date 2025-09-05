@@ -15,6 +15,7 @@ enum PostError: LocalizedError {
     case noTextContent
     case noImageContent
     case noTagsSelected
+    case noContent
     
     var errorDescription: String? {
         switch self {
@@ -46,6 +47,8 @@ enum PostError: LocalizedError {
             return "写真を選択してください"
         case .noTagsSelected:
             return "タグを最低1つ選択してください"
+        case .noContent:
+            return "テキストまたは画像を入力してください。"
         }
     }
     
@@ -79,6 +82,8 @@ enum PostError: LocalizedError {
             return "画像が選択されていません"
         case .noTagsSelected:
             return "最低1つのタグが必要です"
+        case .noContent:
+            return "テキストまたは画像のどちらも入力されていません"
         }
     }
     
@@ -112,6 +117,8 @@ enum PostError: LocalizedError {
             return "写真を選択してから投稿してください"
         case .noTagsSelected:
             return "最低1つのタグを選択してください"
+        case .noContent:
+            return "テキストまたは画像を入力してから投稿してください"
         }
     }
 }

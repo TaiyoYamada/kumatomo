@@ -21,17 +21,18 @@ struct PostView: View {
                     TextInputArea(
                         content: $viewModel.postContent,
                         characterCount: viewModel.postContent.count
-                }
-                                
-                                // Image preview if images are selected
+                    )
+                    
+                    
+                    // Image preview if images are selected
                     if !viewModel.selectedImages.isEmpty {
                         ImagePreviewSection(
                             selectedImages: $viewModel.selectedImages,
                             selectedItems: $selectedItems
                         )
                     }
-                                
-                                // Shop selection if shop is selected
+                    
+                    // Shop selection if shop is selected
                     if viewModel.selectedShop != nil {
                         ShopPreviewSection(selectedShop: $viewModel.selectedShop)
                     }
@@ -53,7 +54,7 @@ struct PostView: View {
                 )
                 .padding(.top, 8)
                 
-
+                
             }
             .background(Color(UIColor.systemBackground))
             .navigationBarTitleDisplayMode(.inline)
@@ -114,10 +115,10 @@ struct PostView: View {
         }
         .onAppear {
             // Ensure form starts in clean state
-            if viewModel.postContent.isEmpty && 
-               viewModel.selectedImages.isEmpty && 
-               viewModel.selectedShop == nil &&
-               viewModel.selectedTags == ["熊本県全体"] {
+            if viewModel.postContent.isEmpty &&
+                viewModel.selectedImages.isEmpty &&
+                viewModel.selectedShop == nil &&
+                viewModel.selectedTags == ["熊本県全体"] {
                 // Form is already clean, no action needed
             }
         }
@@ -222,15 +223,15 @@ private struct TextInputArea: View {
     let characterCount: Int
     
     private var isOverLimit: Bool {
-        characterCount > 500
+        characterCount > 300
     }
     
     private var isNearLimit: Bool {
-        characterCount > 450
+        characterCount > 270
     }
     
     private var isWarningLimit: Bool {
-        characterCount > 400
+        characterCount > 220
     }
     
     private var borderColor: Color {
@@ -295,8 +296,8 @@ private struct TextInputArea: View {
             HStack(spacing: 8) {
                 // Character limit progress bar
                 if characterCount > 0 {
-                    ProgressView(value: Double(characterCount), total: 500.0)
-                        .progressViewStyle(LinearProgressViewStyle(tint: 
+                    ProgressView(value: Double(characterCount), total: 300.0)
+                        .progressViewStyle(LinearProgressViewStyle(tint:
                             isOverLimit ? .red : 
                             isNearLimit ? .orange : 
                             isWarningLimit ? .yellow : .blue
@@ -329,7 +330,7 @@ private struct TextInputArea: View {
                             .secondary
                         )
                     
-                    Text("/500")
+                    Text("/300")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -353,7 +354,7 @@ private struct TextInputArea: View {
                         .font(.caption)
                         .foregroundColor(.red)
                     
-                    Text("文字数制限を超えています。\(characterCount - 500)文字削除してください。")
+                    Text("文字数制限を超えています。\(characterCount - 300)文字削除してください。")
                         .font(.caption)
                         .foregroundColor(.red)
                         .fontWeight(.medium)
@@ -373,7 +374,7 @@ private struct TextInputArea: View {
                         .font(.caption)
                         .foregroundColor(.orange)
                     
-                    Text("文字数制限まであと\(500 - characterCount)文字です。")
+                    Text("文字数制限まであと\(300 - characterCount)文字です。")
                         .font(.caption)
                         .foregroundColor(.orange)
                 }

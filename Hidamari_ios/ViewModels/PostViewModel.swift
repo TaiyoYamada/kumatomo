@@ -98,9 +98,9 @@ class PostViewModel: ObservableObject {
     }
     
     private var hasValidContent: Bool {
-        let hasText = !postContent.isEmpty && postContent.count <= 500
+        let hasText = !postContent.isEmpty && postContent.count <= 300
         let hasImages = !selectedImages.isEmpty
-        return hasText && hasImages // Text AND images (both required)
+        return hasText || hasImages
     }
     
     private var hasValidTags: Bool {
@@ -112,20 +112,14 @@ class PostViewModel: ObservableObject {
         let hasText = !postContent.isEmpty
         let hasImages = !selectedImages.isEmpty
         
-        // Check if both text and images are provided
-        if !hasText {
-            return .failure(.noTextContent)
+        
+        if !hasText && !hasImages {
+            return .failure(.noContent)
         }
         
-        if !hasImages {
-            return .failure(.noImageContent)
+        if hasText && postContent.count > 300 {
+            return .failure(.contentOverLimit(currentCount: postContent.count, maxCount: 300))
         }
-        
-        // If text is provided, validate character limit
-        if hasText && postContent.count > 500 {
-            return .failure(.contentOverLimit(currentCount: postContent.count, maxCount: 500))
-        }
-        
         return .success(())
     }
     
@@ -232,11 +226,11 @@ class PostViewModel: ObservableObject {
         if !hasText && !hasImages {
             return .empty
         } else if isOverLimit {
-            return .overLimit(currentCount: postContent.count, maxCount: 500)
-        } else if postContent.count > 450 {
-            return .nearLimit(currentCount: postContent.count, maxCount: 500)
-        } else if postContent.count > 400 {
-            return .warningLimit(currentCount: postContent.count, maxCount: 500)
+            return .overLimit(currentCount: postContent.count, maxCount: 300)
+        } else if postContent.count > 270 {
+            return .nearLimit(currentCount: postContent.count, maxCount: 300)
+        } else if postContent.count > 220 {
+            return .warningLimit(currentCount: postContent.count, maxCount: 300)
         } else {
             return .valid
         }
