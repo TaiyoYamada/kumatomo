@@ -25,26 +25,6 @@ struct TagSelectionView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-//            TagSelectionHeader(
-//                validationState: validationState,
-//                selectedCount: selectedTags.count,
-//                maxSelection: maxSelection
-//            )
-//            .padding(.horizontal, 16)
-//            
-//            TagScrollView(
-//                availableTags: availableTags,
-//                selectedTags: selectedTags,
-//                maxSelection: maxSelection,
-//                onToggleTag: toggleTag
-//            )
-//            
-//            TagValidationFeedback(
-//                validationState: validationState,
-//                selectedCount: selectedTags.count,
-//                maxCount: maxSelection
-//            )
-//            .padding(.horizontal, 16)
         }
         .padding(.vertical, 8)
         .background(
@@ -74,92 +54,6 @@ struct TagSelectionView: View {
             if selectedTags.count < maxSelection {
                 selectedTags.insert(tag)
             }
-        }
-    }
-}
-
-//// MARK: - Tag Selection Header
-//private struct TagSelectionHeader: View {
-//    let validationState: TagSelectionState
-//    let selectedCount: Int
-//    let maxSelection: Int
-//    
-//    var body: some View {
-//        HStack {
-//            HStack(spacing: 6) {
-//                Text("タグを選択")
-//                    .font(.subheadline)
-//                    .fontWeight(.medium)
-//                    .foregroundColor(.primary)
-//                
-//                // Status indicator
-//                Group {
-//                    switch validationState {
-//                    case .noTagsSelected:
-//                        Image(systemName: "exclamationmark.triangle.fill")
-//                            .foregroundColor(.red)
-//                    case .maxTagsReached:
-//                        Image(systemName: "exclamationmark.triangle")
-//                            .foregroundColor(.orange)
-//                    case .valid:
-//                        Image(systemName: "checkmark.circle.fill")
-//                            .foregroundColor(.green)
-//                    }
-//                }
-//                .font(.caption)
-//            }
-//            
-//            Spacer()
-//            
-//            // Selection counter
-//            HStack(spacing: 4) {
-//                Text("\(selectedCount)")
-//                    .font(.caption)
-//                    .fontWeight(.semibold)
-//                    .foregroundColor(
-//                        validationState == .noTagsSelected ? .red :
-//                        validationState == .maxTagsReached ? .orange : .primary
-//                    )
-//                
-//                Text("/\(maxSelection)")
-//                    .font(.caption)
-//                    .foregroundColor(.secondary)
-//            }
-//            .padding(.horizontal, 8)
-//            .padding(.vertical, 2)
-//            .background(
-//                RoundedRectangle(cornerRadius: 4)
-//                    .fill(
-//                        validationState == .noTagsSelected ? Color.red.opacity(0.1) :
-//                        validationState == .maxTagsReached ? Color.orange.opacity(0.1) :
-//                        Color.green.opacity(0.1)
-//                    )
-//            )
-//            .animation(.easeInOut(duration: 0.2), value: selectedCount)
-//        }
-//    }
-//}
-
-// MARK: - Tag Scroll View
-private struct TagScrollView: View {
-    let availableTags: [String]
-    let selectedTags: Set<String>
-    let maxSelection: Int
-    let onToggleTag: (String) -> Void
-    
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 8) {
-                ForEach(availableTags, id: \.self) { tag in
-                    EnhancedTagChip(
-                        text: tag,
-                        isSelected: selectedTags.contains(tag),
-                        isDisabled: !selectedTags.contains(tag) && selectedTags.count >= maxSelection,
-                        onTap: { onToggleTag(tag) }
-                    )
-                }
-            }
-            .padding(.horizontal, 16)
         }
     }
 }
