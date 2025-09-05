@@ -17,10 +17,11 @@ enum RouterDestination: Hashable {
 // MARK: - タブ選択用のenum（ContentViewから移動・統合）
 // 旧: MainTabView.Selection -> TabSelection に統一
 enum TabSelection: Hashable {
-	case home     // ホームタブ
-	case search   // 検索タブ
-	case portal   // ポータルタブ
-	case profile  // プロフィールタブ
+	case home       // ホームタブ
+	case search     // 検索タブ
+	case portal     // ポータルタブ
+	case kumamonAI  // くまモンAIタブ
+	case profile    // プロフィールタブ
 }
 
 extension View {

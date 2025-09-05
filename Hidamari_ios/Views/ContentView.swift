@@ -78,8 +78,15 @@ struct MainTabView: View {
                         }
                         .tag(TabSelection.portal)
                     
-                    
-                    
+                    //  くまモンAIタブ
+                    KumamonAIView()
+                        .environmentObject(userManager)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .tabItem {
+                            Image(systemName: "bubble.left.and.bubble.right")
+                            Text("くまモンAI")
+                        }
+                        .tag(TabSelection.kumamonAI)
                     
                     //  プロフィールタブ
                     MyProfileView()
