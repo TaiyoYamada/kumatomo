@@ -6,7 +6,7 @@ struct LaunchScreenView: View {
             Image("LaunchImage")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 120, height: 120)
+                .frame(width: 150, height: 150)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.white)

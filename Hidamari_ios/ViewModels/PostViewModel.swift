@@ -35,6 +35,22 @@ struct ValidationState {
     }
 }
 
+// MARK: - Content Validation State
+enum ContentValidationState: Equatable {
+    case empty
+    case valid
+    case warningLimit(currentCount: Int, maxCount: Int)
+    case nearLimit(currentCount: Int, maxCount: Int)
+    case overLimit(currentCount: Int, maxCount: Int)
+}
+
+// MARK: - Tag Validation State
+enum TagValidationState: Equatable {
+    case noTagsSelected
+    case valid
+    case maxTagsReached
+}
+
 @MainActor
 class PostViewModel: ObservableObject {
     @Published var postContent: String = ""
@@ -84,21 +100,25 @@ class PostViewModel: ObservableObject {
     private var hasValidContent: Bool {
         let hasText = !postContent.isEmpty && postContent.count <= 500
         let hasImages = !selectedImages.isEmpty
-        return hasText || hasImages // Text OR images (not both required)
+        return hasText && hasImages // Text AND images (both required)
     }
     
     private var hasValidTags: Bool {
         !selectedTags.isEmpty
     }
     
-    // Enhanced validation for content - requires text OR images
+    // Enhanced validation for content - requires text AND images
     func validateContent() -> Result<Void, PostError> {
         let hasText = !postContent.isEmpty
         let hasImages = !selectedImages.isEmpty
         
-        // Check if neither text nor images are provided
-        if !hasText && !hasImages {
-            return .failure(.noContentOrImages)
+        // Check if both text and images are provided
+        if !hasText {
+            return .failure(.noTextContent)
+        }
+        
+        if !hasImages {
+            return .failure(.noImageContent)
         }
         
         // If text is provided, validate character limit
@@ -191,11 +211,45 @@ class PostViewModel: ObservableObject {
             errors.append(error)
         }
         
+        // Add submission in progress error if applicable
+        if isSubmitting {
+            errors.append(.submissionInProgress)
+        }
+        
         return ValidationState(
             isValid: errors.isEmpty && !isSubmitting,
             errors: errors,
             canPost: canPost
         )
+    }
+    
+    // Get detailed validation information for specific aspects
+    func getContentValidationState() -> ContentValidationState {
+        let hasText = !postContent.isEmpty
+        let hasImages = !selectedImages.isEmpty
+        let isOverLimit = postContent.count > 500
+        
+        if !hasText && !hasImages {
+            return .empty
+        } else if isOverLimit {
+            return .overLimit(currentCount: postContent.count, maxCount: 500)
+        } else if postContent.count > 450 {
+            return .nearLimit(currentCount: postContent.count, maxCount: 500)
+        } else if postContent.count > 400 {
+            return .warningLimit(currentCount: postContent.count, maxCount: 500)
+        } else {
+            return .valid
+        }
+    }
+    
+    func getTagValidationState() -> TagValidationState {
+        if selectedTags.isEmpty {
+            return .noTagsSelected
+        } else if selectedTags.count >= 5 {
+            return .maxTagsReached
+        } else {
+            return .valid
+        }
     }
     
     // MARK: - Tag Management

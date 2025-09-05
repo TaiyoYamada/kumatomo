@@ -12,6 +12,8 @@ enum PostError: LocalizedError {
     case noImagesSelected
     case tooManyImages(currentCount: Int, maxCount: Int)
     case noContentOrImages
+    case noTextContent
+    case noImageContent
     case noTagsSelected
     
     var errorDescription: String? {
@@ -38,6 +40,10 @@ enum PostError: LocalizedError {
             return "写真の枚数が上限を超えています (\(currentCount)/\(maxCount)枚)"
         case .noContentOrImages:
             return "投稿するには、テキストまたは写真が必要です"
+        case .noTextContent:
+            return "テキストを入力してください"
+        case .noImageContent:
+            return "写真を選択してください"
         case .noTagsSelected:
             return "タグを最低1つ選択してください"
         }
@@ -67,6 +73,10 @@ enum PostError: LocalizedError {
             return "画像の枚数が上限を超えています"
         case .noContentOrImages:
             return "テキストまたは画像のいずれかが必要です"
+        case .noTextContent:
+            return "テキストが入力されていません"
+        case .noImageContent:
+            return "画像が選択されていません"
         case .noTagsSelected:
             return "最低1つのタグが必要です"
         }
@@ -96,6 +106,10 @@ enum PostError: LocalizedError {
             return "写真の枚数を減らしてから投稿してください"
         case .noContentOrImages:
             return "テキストを入力するか、写真を選択してください"
+        case .noTextContent:
+            return "テキストを入力してから投稿してください"
+        case .noImageContent:
+            return "写真を選択してから投稿してください"
         case .noTagsSelected:
             return "最低1つのタグを選択してください"
         }

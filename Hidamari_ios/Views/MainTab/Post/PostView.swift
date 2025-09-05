@@ -56,7 +56,9 @@ struct PostView: View {
                 ActionButtonsRow(
                     selectedImages: $viewModel.selectedImages,
                     selectedItems: $selectedItems,
-                    selectedShop: $viewModel.selectedShop
+                    selectedShop: $viewModel.selectedShop,
+                    selectedTags: $viewModel.selectedTags,
+                    availableTags: viewModel.availableTags
                 )
                 
                 // Tag selection section
@@ -66,10 +68,7 @@ struct PostView: View {
                 )
                 .padding(.top, 8)
                 
-                // Validation feedback section
-                ValidationFeedbackView(validationState: validationState)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 8)
+
             }
             .background(Color(UIColor.systemBackground))
             .navigationBarTitleDisplayMode(.inline)
@@ -82,14 +81,30 @@ struct PostView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("投稿") {
-                        handlePost()
+                    HStack(spacing: 8) {
+                        // Validation status indicator
+                        if !validationState.errors.isEmpty {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                                .scaleEffect(0.8)
+                        } else if canPost {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                                .scaleEffect(0.8)
+                        }
+                        
+                        Button("投稿") {
+                            handlePost()
+                        }
+                        .disabled(!canPost)
+                        .foregroundColor(canPost ? .blue : .gray)
+                        .fontWeight(.semibold)
+                        .opacity(canPost ? 1.0 : 0.6)
                     }
-                    .disabled(!canPost)
-                    .foregroundColor(canPost ? .blue : .gray)
-                    .fontWeight(.semibold)
-                    .opacity(canPost ? 1.0 : 0.6)
                     .animation(.easeInOut(duration: 0.2), value: canPost)
+                    .animation(.easeInOut(duration: 0.2), value: validationState.errors.count)
                 }
             }
             .alert("投稿を破棄しますか？", isPresented: $showingCancelAlert) {
@@ -165,6 +180,7 @@ private extension PostView {
         
         switch validation {
         case .failure(let error):
+            // Show error in modal dialog
             viewModel.errorMessage = error.errorDescription
             return
         case .success:
@@ -193,6 +209,8 @@ private extension PostView {
             }
         }
     }
+    
+
     
     func handleMultipleImageSelection(_ newItems: [PhotosPickerItem]) {
         Task {
@@ -244,51 +262,163 @@ private struct TextInputArea: View {
         characterCount > 450
     }
     
+    private var isWarningLimit: Bool {
+        characterCount > 400
+    }
+    
+    private var borderColor: Color {
+        if isOverLimit {
+            return .red
+        } else if isNearLimit {
+            return .orange
+        } else if isWarningLimit {
+            return .yellow
+        } else {
+            return Color(UIColor.separator).opacity(0.3)
+        }
+    }
+    
+    private var borderWidth: CGFloat {
+        if isOverLimit || isNearLimit {
+            return 2
+        } else if isWarningLimit {
+            return 1
+        } else {
+            return 0.5
+        }
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            TextEditor(text: $content)
-                .font(.body)
-                .scrollContentBackground(.hidden)
-                .frame(minHeight: 120)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(
-                            isOverLimit ? Color.red : 
-                            isNearLimit ? Color.orange : 
-                            Color.clear, 
-                            lineWidth: isOverLimit || isNearLimit ? 1 : 0
+            ZStack(alignment: .topLeading) {
+                // Background with subtle border
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(UIColor.systemBackground))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(borderColor, lineWidth: borderWidth)
+                    )
+                    .animation(.easeInOut(duration: 0.2), value: characterCount)
+                
+                TextEditor(text: $content)
+                    .font(.body)
+                    .scrollContentBackground(.hidden)
+                    .frame(minHeight: 120)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 8)
+                
+                // Placeholder text
+                if content.isEmpty {
+                    VStack {
+                        HStack {
+                            Text("今何してる？")
+                                .foregroundColor(.secondary)
+                                .font(.body)
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                    .padding(.top, 16)
+                    .padding(.leading, 12)
+                    .allowsHitTesting(false)
+                }
+            }
+            
+            // Enhanced character counter with progress indicator
+            HStack(spacing: 8) {
+                // Character limit progress bar
+                if characterCount > 0 {
+                    ProgressView(value: Double(characterCount), total: 500.0)
+                        .progressViewStyle(LinearProgressViewStyle(tint: 
+                            isOverLimit ? .red : 
+                            isNearLimit ? .orange : 
+                            isWarningLimit ? .yellow : .blue
+                        ))
+                        .frame(height: 2)
+                        .animation(.easeInOut(duration: 0.2), value: characterCount)
+                }
+                
+                Spacer()
+                
+                // Character counter with enhanced styling
+                HStack(spacing: 4) {
+                    if isOverLimit {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.caption2)
+                            .foregroundColor(.red)
+                    } else if isNearLimit {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.caption2)
+                            .foregroundColor(.orange)
+                    }
+                    
+                    Text("\(characterCount)")
+                        .font(.caption)
+                        .fontWeight(isOverLimit || isNearLimit ? .semibold : .regular)
+                        .foregroundColor(
+                            isOverLimit ? .red : 
+                            isNearLimit ? .orange : 
+                            isWarningLimit ? .yellow :
+                            .secondary
+                        )
+                    
+                    Text("/500")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 2)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(
+                            isOverLimit ? Color.red.opacity(0.1) :
+                            isNearLimit ? Color.orange.opacity(0.1) :
+                            Color.clear
                         )
                 )
-                .overlay(
-                    Group {
-                        if content.isEmpty {
-                            VStack {
-                                HStack {
-                                    Text("今何してる？")
-                                        .foregroundColor(.secondary)
-                                        .font(.body)
-                                    Spacer()
-                                }
-                                Spacer()
-                            }
-                            .padding(.top, 8)
-                            .padding(.leading, 4)
-                            .allowsHitTesting(false)
-                        }
-                    }
-                )
+                .animation(.easeInOut(duration: 0.2), value: characterCount)
+            }
             
-            // Character counter with enhanced visual feedback
-            HStack {
-                Spacer()
-                Text("\(characterCount)/500")
-                    .font(.caption)
-                    .foregroundColor(
-                        isOverLimit ? .red : 
-                        isNearLimit ? .orange : 
-                        .secondary
-                    )
-                    .fontWeight(isOverLimit || isNearLimit ? .medium : .regular)
+            // Character limit warning message
+            if isOverLimit {
+                HStack(spacing: 6) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                    
+                    Text("文字数制限を超えています。\(characterCount - 500)文字削除してください。")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .fontWeight(.medium)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.red.opacity(0.1))
+                .cornerRadius(6)
+                .transition(.asymmetric(
+                    insertion: .scale.combined(with: .opacity),
+                    removal: .opacity
+                ))
+                .animation(.easeInOut(duration: 0.2), value: isOverLimit)
+            } else if isNearLimit {
+                HStack(spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                    
+                    Text("文字数制限まであと\(500 - characterCount)文字です。")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.orange.opacity(0.1))
+                .cornerRadius(6)
+                .transition(.asymmetric(
+                    insertion: .scale.combined(with: .opacity),
+                    removal: .opacity
+                ))
+                .animation(.easeInOut(duration: 0.2), value: isNearLimit)
             }
         }
     }
@@ -370,7 +500,10 @@ private struct ActionButtonsRow: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
     @Binding var selectedShop: Shop?
+    @Binding var selectedTags: Set<String>
+    let availableTags: [String]
     @State private var showingShopPicker = false
+    @State private var showingRegionalTagPicker = false
     
     var body: some View {
         HStack(spacing: 20) {
@@ -388,6 +521,13 @@ private struct ActionButtonsRow: View {
             // Shop selection button
             Button(action: { showingShopPicker = true }) {
                 Image(systemName: "location")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+            }
+            
+            // Regional tag selection button
+            Button(action: { showingRegionalTagPicker = true }) {
+                Image(systemName: "mappin.and.ellipse")
                     .font(.title2)
                     .foregroundColor(.blue)
             }
@@ -414,6 +554,12 @@ private struct ActionButtonsRow: View {
         )
         .sheet(isPresented: $showingShopPicker) {
             ShopPickerView(selectedShop: $selectedShop)
+        }
+        .sheet(isPresented: $showingRegionalTagPicker) {
+            RegionalTagSelectionView(
+                selectedTags: $selectedTags,
+                availableTags: availableTags
+            )
         }
     }
 }
@@ -456,26 +602,40 @@ private struct ErrorOverlay: View {
         Color.black.opacity(0.4)
             .ignoresSafeArea()
             .overlay {
-                VStack(spacing: 16) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 32))
-                        .foregroundStyle(Color.red)
+                VStack(spacing: 20) {
+                    // Error icon with animation
+                    ZStack {
+                        Circle()
+                            .fill(Color.orange.opacity(0.1))
+                            .frame(width: 80, height: 80)
+                        
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 32))
+                            .foregroundStyle(Color.orange)
+                    }
                     
-                    Text(message)
-                        .font(.headline.weight(.medium))
-                        .foregroundStyle(.primary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
+                    VStack(spacing: 12) {
+                        Text("投稿できません")
+                            .font(.title3.weight(.semibold))
+                            .foregroundStyle(.primary)
+                        
+                        Text(message)
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(nil)
+                            .padding(.horizontal)
+                    }
                     
-                    Button("閉じる") {
+                    Button("OK") {
                         onClose()
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(Color.red)
+                    .tint(Color.orange)
                 }
                 .padding(30)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
-                .shadow(radius: 20)
+                .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
                 .padding(.horizontal, 40)
             }
             .transition(.asymmetric(
@@ -562,61 +722,6 @@ private struct LoadingOverlay: View {
     }
 }
 
-// MARK: - Validation Feedback View
-private struct ValidationFeedbackView: View {
-    let validationState: ValidationState
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Show validation errors if any
-            if !validationState.isValid && !validationState.errors.isEmpty {
-                ForEach(Array(validationState.errors.enumerated()), id: \.offset) { index, error in
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                        
-                        Text(error.errorDescription ?? "")
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                        
-                        Spacer()
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(8)
-                }
-                .transition(.asymmetric(
-                    insertion: .scale.combined(with: .opacity),
-                    removal: .opacity
-                ))
-                .animation(.easeInOut(duration: 0.2), value: validationState.errors.count)
-            }
-            
-            // Show helpful hints when form is empty
-            if validationState.errors.isEmpty && validationState.canPost {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundColor(.green)
-                    
-                    Text("投稿準備完了")
-                        .font(.caption)
-                        .foregroundColor(.green)
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color.green.opacity(0.1))
-                .cornerRadius(8)
-                .transition(.asymmetric(
-                    insertion: .scale.combined(with: .opacity),
-                    removal: .opacity
-                ))
-                .animation(.easeInOut(duration: 0.2), value: validationState.canPost)
-            }
-        }
-    }
-}
+
+
+

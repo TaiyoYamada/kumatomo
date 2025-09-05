@@ -1,55 +1,66 @@
 import SwiftUI
 
+// MARK: - Tag Selection State
+private enum TagSelectionState: Equatable {
+    case noTagsSelected
+    case maxTagsReached
+    case valid
+}
+
 struct TagSelectionView: View {
     @Binding var selectedTags: Set<String>
     let availableTags: [String]
     let maxSelection: Int = 5
     let minSelection: Int = 1
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Header with selection count
-            HStack {
-                Text("タグを選択")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
-                
-                Text("\(selectedTags.count)/\(maxSelection)")
-                    .font(.caption)
-                    .foregroundColor(selectedTags.count >= maxSelection ? .red : .secondary)
-            }
-            .padding(.horizontal, 16)
-            
-            // Scrollable tag collection
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 8) {
-                    ForEach(availableTags, id: \.self) { tag in
-                        TagChip(
-                            text: tag,
-                            isSelected: selectedTags.contains(tag),
-                            onTap: { toggleTag(tag) }
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-            }
-            
-            // Validation message
-            if selectedTags.isEmpty {
-                Text("最低1つのタグを選択してください")
-                    .font(.caption)
-                    .foregroundColor(.red)
-                    .padding(.horizontal, 16)
-            } else if selectedTags.count >= maxSelection {
-                Text("最大\(maxSelection)つまで選択できます")
-                    .font(.caption)
-                    .foregroundColor(.orange)
-                    .padding(.horizontal, 16)
-            }
+    private var validationState: TagSelectionState {
+        if selectedTags.isEmpty {
+            return .noTagsSelected
+        } else if selectedTags.count >= maxSelection {
+            return .maxTagsReached
+        } else {
+            return .valid
         }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+//            TagSelectionHeader(
+//                validationState: validationState,
+//                selectedCount: selectedTags.count,
+//                maxSelection: maxSelection
+//            )
+//            .padding(.horizontal, 16)
+//            
+//            TagScrollView(
+//                availableTags: availableTags,
+//                selectedTags: selectedTags,
+//                maxSelection: maxSelection,
+//                onToggleTag: toggleTag
+//            )
+//            
+//            TagValidationFeedback(
+//                validationState: validationState,
+//                selectedCount: selectedTags.count,
+//                maxCount: maxSelection
+//            )
+//            .padding(.horizontal, 16)
+        }
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(UIColor.secondarySystemBackground))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(
+                            validationState == .noTagsSelected ? Color.red.opacity(0.3) :
+                            validationState == .maxTagsReached ? Color.orange.opacity(0.3) :
+                            Color.clear,
+                            lineWidth: validationState == .valid ? 0 : 1
+                        )
+                )
+        )
+        .animation(.easeInOut(duration: 0.2), value: validationState)
     }
     
     private func toggleTag(_ tag: String) {
@@ -64,6 +75,226 @@ struct TagSelectionView: View {
                 selectedTags.insert(tag)
             }
         }
+    }
+}
+
+//// MARK: - Tag Selection Header
+//private struct TagSelectionHeader: View {
+//    let validationState: TagSelectionState
+//    let selectedCount: Int
+//    let maxSelection: Int
+//    
+//    var body: some View {
+//        HStack {
+//            HStack(spacing: 6) {
+//                Text("タグを選択")
+//                    .font(.subheadline)
+//                    .fontWeight(.medium)
+//                    .foregroundColor(.primary)
+//                
+//                // Status indicator
+//                Group {
+//                    switch validationState {
+//                    case .noTagsSelected:
+//                        Image(systemName: "exclamationmark.triangle.fill")
+//                            .foregroundColor(.red)
+//                    case .maxTagsReached:
+//                        Image(systemName: "exclamationmark.triangle")
+//                            .foregroundColor(.orange)
+//                    case .valid:
+//                        Image(systemName: "checkmark.circle.fill")
+//                            .foregroundColor(.green)
+//                    }
+//                }
+//                .font(.caption)
+//            }
+//            
+//            Spacer()
+//            
+//            // Selection counter
+//            HStack(spacing: 4) {
+//                Text("\(selectedCount)")
+//                    .font(.caption)
+//                    .fontWeight(.semibold)
+//                    .foregroundColor(
+//                        validationState == .noTagsSelected ? .red :
+//                        validationState == .maxTagsReached ? .orange : .primary
+//                    )
+//                
+//                Text("/\(maxSelection)")
+//                    .font(.caption)
+//                    .foregroundColor(.secondary)
+//            }
+//            .padding(.horizontal, 8)
+//            .padding(.vertical, 2)
+//            .background(
+//                RoundedRectangle(cornerRadius: 4)
+//                    .fill(
+//                        validationState == .noTagsSelected ? Color.red.opacity(0.1) :
+//                        validationState == .maxTagsReached ? Color.orange.opacity(0.1) :
+//                        Color.green.opacity(0.1)
+//                    )
+//            )
+//            .animation(.easeInOut(duration: 0.2), value: selectedCount)
+//        }
+//    }
+//}
+
+// MARK: - Tag Scroll View
+private struct TagScrollView: View {
+    let availableTags: [String]
+    let selectedTags: Set<String>
+    let maxSelection: Int
+    let onToggleTag: (String) -> Void
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 8) {
+                ForEach(availableTags, id: \.self) { tag in
+                    EnhancedTagChip(
+                        text: tag,
+                        isSelected: selectedTags.contains(tag),
+                        isDisabled: !selectedTags.contains(tag) && selectedTags.count >= maxSelection,
+                        onTap: { onToggleTag(tag) }
+                    )
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+}
+
+// MARK: - Enhanced Tag Chip
+private struct EnhancedTagChip: View {
+    let text: String
+    let isSelected: Bool
+    let isDisabled: Bool
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 4) {
+                Text(text)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        isSelected ? Color.blue :
+                        isDisabled ? Color.gray.opacity(0.1) :
+                        Color(UIColor.systemBackground)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(
+                                isSelected ? Color.blue :
+                                isDisabled ? Color.gray.opacity(0.3) :
+                                Color.blue,
+                                lineWidth: 1
+                            )
+                    )
+            )
+            .foregroundColor(
+                isSelected ? .white :
+                isDisabled ? .gray :
+                .blue
+            )
+            .scaleEffect(isSelected ? 1.05 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: isSelected)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.6 : 1.0)
+    }
+}
+
+// MARK: - Tag Validation Feedback
+private struct TagValidationFeedback: View {
+    let validationState: TagSelectionState
+    let selectedCount: Int
+    let maxCount: Int
+    
+    var body: some View {
+        Group {
+            switch validationState {
+            case .noTagsSelected:
+                ValidationMessage(
+                    icon: "exclamationmark.triangle.fill",
+                    message: "最低1つのタグを選択してください",
+                    suggestion: "投稿に関連するタグを選択してください",
+                    color: .red
+                )
+                
+            case .maxTagsReached:
+                ValidationMessage(
+                    icon: "exclamationmark.triangle",
+                    message: "最大\(maxCount)つまで選択できます",
+                    suggestion: "不要なタグを削除してから新しいタグを選択してください",
+                    color: .orange
+                )
+                
+            case .valid:
+                ValidationMessage(
+                    icon: "checkmark.circle.fill",
+                    message: "タグの選択が完了しました",
+                    suggestion: "必要に応じて追加のタグを選択できます（最大\(maxCount)つまで）",
+                    color: .green
+                )
+            }
+        }
+        .transition(.asymmetric(
+            insertion: .scale.combined(with: .opacity),
+            removal: .opacity
+        ))
+        .animation(.easeInOut(duration: 0.2), value: validationState)
+    }
+}
+
+// MARK: - Validation Message
+private struct ValidationMessage: View {
+    let icon: String
+    let message: String
+    let suggestion: String
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundColor(color)
+                .frame(width: 14, height: 14)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(message)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(color)
+                
+                Text(suggestion)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(color.opacity(0.08))
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(color.opacity(0.2), lineWidth: 1)
+        )
+        .cornerRadius(6)
     }
 }
 
