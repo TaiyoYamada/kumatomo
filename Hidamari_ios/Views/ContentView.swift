@@ -33,7 +33,6 @@ struct ContentView: View {
 struct MainTabView: View {
     
     @ObservedObject var viewModel: AuthViewModel
-    @State private var showingPostView = false
     @State private var selection: TabSelection = .portal
     @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
     @StateObject private var userManager = CurrentUserManager.shared
@@ -79,15 +78,7 @@ struct MainTabView: View {
                     }
                     .tag(TabSelection.portal)
                     
-                //  投稿タブ
-                PostView()
-                    .environmentObject(userManager)
-                    .environment(\.openSidebar, sidebarState.open)
-                    .tabItem {
-                        Image(systemName: "plus.circle.fill")
-                        Text("投稿")
-                    }
-                    .tag(TabSelection.post)
+
 
 
                 //  プロフィールタブ

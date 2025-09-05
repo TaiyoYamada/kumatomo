@@ -5,71 +5,71 @@ struct PostView: View {
     @StateObject private var viewModel = PostViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var selectedItems: [PhotosPickerItem] = []
-    @State private var sheetDestination: SheetDestination?
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color(UIColor.systemGroupedBackground).ignoresSafeArea()
-                
+            VStack(spacing: 0) {
+                // Main content area
                 ScrollView {
-                    VStack(spacing: 20) {
-                        // Multiple Image Selection Section
-                        ImageSelectionCard(
-                            selectedImages: $viewModel.selectedImages,
-                            selectedItems: $selectedItems
-                        )
-                        
-                        // Shop Selection Section
-                        ShopSelectionCard(
-                            selectedShop: $viewModel.selectedShop,
-                            onPickShop: {
-                                sheetDestination = .shopPicker(selectedShop: $viewModel.selectedShop)
-                            }
-                        )
-                        
-                        // Content Input Section
-                        ContentInputCard(
-                            content: $viewModel.postContent,
-                            characterCount: viewModel.postContent.count
-                        )
-                        
-                        // Preview Button
-                        PreviewButton(
-                            isEnabled: canPreview,
-                            onPreview: {
-                                sheetDestination = .postPreview(
-                                    content: viewModel.postContent,
-                                    images: viewModel.selectedImages,
-                                    shop: viewModel.selectedShop,
-                                    onPost: {
-                                        sheetDestination = nil
-                                        handlePost()
-                                    }
+                    VStack(spacing: 16) {
+                        // User profile and text input section
+                        HStack(alignment: .top, spacing: 12) {
+                            // User profile icon (top-left)
+                            UserProfileIcon()
+                            
+                            // Text input area (center)
+                            VStack(alignment: .leading, spacing: 12) {
+                                TextInputArea(
+                                    content: $viewModel.postContent,
+                                    characterCount: viewModel.postContent.count
                                 )
+                                
+                                // Image preview if images are selected
+                                if !viewModel.selectedImages.isEmpty {
+                                    ImagePreviewSection(
+                                        selectedImages: $viewModel.selectedImages,
+                                        selectedItems: $selectedItems
+                                    )
+                                }
+                                
+                                // Shop selection if shop is selected
+                                if viewModel.selectedShop != nil {
+                                    ShopPreviewSection(selectedShop: $viewModel.selectedShop)
+                                }
                             }
-                        )
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        
+                        Spacer(minLength: 100) // Space for action buttons
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 20)
                 }
+                
+                // Action buttons row (bottom)
+                ActionButtonsRow(
+                    selectedImages: $viewModel.selectedImages,
+                    selectedItems: $selectedItems,
+                    selectedShop: $viewModel.selectedShop
+                )
             }
-            .navigationTitle("新規投稿")
+            .background(Color(UIColor.systemBackground))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("キャンセル") {
+                        viewModel.resetForm()
                         dismiss()
                     }
+                    .foregroundColor(.primary)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    PostButton(
-                        isEnabled: canPost,
-                        isLoading: viewModel.isLoading
-                    ) {
+                    Button("投稿") {
                         handlePost()
                     }
+                    .disabled(!canPost)
+                    .foregroundColor(canPost ? .blue : .secondary)
+                    .fontWeight(.semibold)
                 }
             }
         }
@@ -78,7 +78,6 @@ struct PostView: View {
                 dismiss()
             }
         }
-        .withSheetRouter(sheet: $sheetDestination)
         .onChange(of: selectedItems) { newItems in
             handleMultipleImageSelection(newItems)
         }
@@ -88,16 +87,10 @@ struct PostView: View {
 // MARK: - Computed Properties
 private extension PostView {
     var canPost: Bool {
-        !viewModel.postContent.isEmpty &&
-        viewModel.postContent.count <= 500 &&
-        !viewModel.selectedImages.isEmpty &&
-        !viewModel.isLoading
-    }
-    
-    var canPreview: Bool {
-        !viewModel.postContent.isEmpty &&
-        viewModel.postContent.count <= 500 &&
-        !viewModel.selectedImages.isEmpty
+        // Updated validation: require text OR images (not both), and at least one tag
+        let hasContent = (!viewModel.postContent.isEmpty && viewModel.postContent.count <= 500) || !viewModel.selectedImages.isEmpty
+        let hasTags = !viewModel.selectedTags.isEmpty
+        return hasContent && hasTags && !viewModel.isLoading
     }
 }
 
@@ -112,6 +105,12 @@ private extension PostView {
                     shopId: viewModel.selectedShop?.id,
                     images: viewModel.selectedImages
                 )
+                
+                if success {
+                    await MainActor.run {
+                        dismiss()
+                    }
+                }
             } else {
                 viewModel.errorMessage = "ユーザー情報が取得できません。再ログインしてください。"
             }
@@ -135,8 +134,28 @@ private extension PostView {
         }
     }
 }
-// MARK: - Content Input Card
-private struct ContentInputCard: View {
+// MARK: - User Profile Icon
+private struct UserProfileIcon: View {
+    var body: some View {
+        AsyncImage(url: URL(string: AuthService.shared.currentUser?.profileImageURL ?? "")) { image in
+            image
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } placeholder: {
+            Image(systemName: "person.circle.fill")
+                .foregroundColor(.gray)
+        }
+        .frame(width: 40, height: 40)
+        .clipShape(Circle())
+        .overlay(
+            Circle()
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+        )
+    }
+}
+
+// MARK: - Text Input Area
+private struct TextInputArea: View {
     @Binding var content: String
     let characterCount: Int
     
@@ -145,179 +164,71 @@ private struct ContentInputCard: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("投稿内容")
-                    .font(.headline.weight(.medium))
-                    .foregroundStyle(.primary)
-                
-                Spacer()
-                
-                Text("必須")
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Color.red)
-                    .cornerRadius(4)
-            }
-            
+        VStack(alignment: .leading, spacing: 8) {
             TextEditor(text: $content)
                 .font(.body)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 16)
                 .scrollContentBackground(.hidden)
-                .background(Color(UIColor.secondarySystemBackground))
                 .frame(minHeight: 120)
-                .cornerRadius(12)
-                .shadow(
-                    color: .black.opacity(0.08),
-                    radius: 1,
-                    y: 1
-                )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(isOverLimit ? Color.red : Color.clear, lineWidth: 1)
+                    Group {
+                        if content.isEmpty {
+                            VStack {
+                                HStack {
+                                    Text("今何してる？")
+                                        .foregroundColor(.secondary)
+                                        .font(.body)
+                                    Spacer()
+                                }
+                                Spacer()
+                            }
+                            .padding(.top, 8)
+                            .padding(.leading, 4)
+                            .allowsHitTesting(false)
+                        }
+                    }
                 )
             
-            CharacterCounter(
-                count: characterCount,
-                maxCount: 500,
-                isOverLimit: isOverLimit
-            )
+            // Character counter
+            HStack {
+                Spacer()
+                Text("\(characterCount)/500")
+                    .font(.caption)
+                    .foregroundColor(isOverLimit ? .red : .secondary)
+            }
         }
-        .padding(16)
-        .background(Color(UIColor.systemBackground))
-        .cornerRadius(12)
-        .shadow(
-            color: .black.opacity(0.05),
-            radius: 2,
-            y: 1
-        )
     }
 }
 
-// MARK: - Image Selection Card
-private struct ImageSelectionCard: View {
+// MARK: - Image Preview Section
+private struct ImagePreviewSection: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("写真")
-                    .font(.headline.weight(.medium))
-                    .foregroundStyle(.primary)
-                
-                Spacer()
-                
-                Text("必須")
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Color.red)
-                    .cornerRadius(4)
-            }
-            
-            if selectedImages.isEmpty {
-                PhotosPickerPlaceholder(selectedItems: $selectedItems)
-            } else {
-                ImagePreviewGrid(
-                    selectedImages: $selectedImages,
-                    selectedItems: $selectedItems
-                )
-            }
-            
-            HStack {
-                Image(systemName: "info.circle")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                
-                Text("最大5枚まで選択できます")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                
-                Spacer()
-                
-                Text("\(selectedImages.count)/5")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(16)
-        .background(Color(UIColor.systemBackground))
-        .cornerRadius(12)
-        .shadow(
-            color: .black.opacity(0.05),
-            radius: 2,
-            y: 1
-        )
-    }
-}
-
-// MARK: - Photos Picker Placeholder
-private struct PhotosPickerPlaceholder: View {
-    @Binding var selectedItems: [PhotosPickerItem]
-    
-    var body: some View {
-        PhotosPicker(
-            selection: $selectedItems,
-            maxSelectionCount: 5,
-            matching: .images
-        ) {
-            VStack(spacing: 12) {
-                Image(systemName: "photo.badge.plus")
-                    .font(.system(size: 32))
-                    .foregroundStyle(.secondary)
-                
-                Text("写真を選択")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.primary)
-                
-                Text("タップして写真を追加してください")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 120)
-            .background(Color(UIColor.secondarySystemBackground))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.secondary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [5]))
-            )
-        }
-    }
-}
-
-// MARK: - Image Preview Grid
-private struct ImagePreviewGrid: View {
-    @Binding var selectedImages: [UIImage]
-    @Binding var selectedItems: [PhotosPickerItem]
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
                 ForEach(Array(selectedImages.enumerated()), id: \.offset) { index, image in
-                    ImagePreviewCell(
-                        image: image,
-                        onRemove: {
+                    ZStack(alignment: .topTrailing) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: 120)
+                            .clipped()
+                            .cornerRadius(12)
+                        
+                        Button(action: {
                             selectedImages.remove(at: index)
                             if selectedItems.indices.contains(index) {
                                 selectedItems.remove(at: index)
                             }
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                                .background(Color.black.opacity(0.6))
+                                .clipShape(Circle())
                         }
-                    )
-                }
-                
-                if selectedImages.count < 5 {
-                    PhotosPicker(
-                        selection: $selectedItems,
-                        maxSelectionCount: 5,
-                        matching: .images
-                    ) {
-                        AddImageCell()
+                        .offset(x: 8, y: -8)
                     }
                 }
             }
@@ -325,223 +236,94 @@ private struct ImagePreviewGrid: View {
     }
 }
 
-// MARK: - Image Preview Cell
-private struct ImagePreviewCell: View {
-    let image: UIImage
-    let onRemove: () -> Void
-    
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            Image(uiImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 100, height: 100)
-                .clipped()
-                .cornerRadius(8)
-            
-            Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 20))
-                    .foregroundStyle(.white)
-                    .background(Color.black.opacity(0.6))
-                    .clipShape(Circle())
-            }
-            .offset(x: 8, y: -8)
-        }
-    }
-}
-
-// MARK: - Add Image Cell
-private struct AddImageCell: View {
-    var body: some View {
-        VStack(spacing: 4) {
-            Image(systemName: "plus")
-                .font(.system(size: 20))
-                .foregroundStyle(.secondary)
-            
-            Text("追加")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .frame(width: 100, height: 100)
-        .background(Color(UIColor.secondarySystemBackground))
-        .cornerRadius(8)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.secondary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [3]))
-        )
-    }
-}
-
-// MARK: - Shop Selection Card
-private struct ShopSelectionCard: View {
+// MARK: - Shop Preview Section
+private struct ShopPreviewSection: View {
     @Binding var selectedShop: Shop?
-    let onPickShop: () -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        if let shop = selectedShop {
             HStack {
-                Text("お店")
-                    .font(.headline.weight(.medium))
-                    .foregroundStyle(.primary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(shop.name)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(.primary)
+                    
+                    if let address = shop.address {
+                        Text(address)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                }
                 
                 Spacer()
                 
-                Text("任意")
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Color.secondary)
-                    .cornerRadius(4)
-            }
-            
-            Button(action: { onPickShop() }) {
-                HStack {
-                    if let shop = selectedShop {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(shop.name)
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.primary)
-                            
-                            if let address = shop.address {
-                                Text(address)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
-                            }
-                            
-                            if let genre = shop.genre {
-                                Text(genre)
-                                    .font(.caption)
-                                    .foregroundStyle(.blue)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.blue.opacity(0.1))
-                                    .cornerRadius(4)
-                            }
-                        }
-                    } else {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundStyle(.secondary)
-                            
-                            Text("お店を検索・選択")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    if selectedShop != nil {
-                        Button(action: { selectedShop = nil }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.secondary)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    } else {
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                Button(action: { selectedShop = nil }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
                 }
-                .padding(12)
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
             }
-            .buttonStyle(PlainButtonStyle())
+            .padding(12)
+            .background(Color(UIColor.secondarySystemBackground))
+            .cornerRadius(8)
+        }
+    }
+}
+
+// MARK: - Action Buttons Row
+private struct ActionButtonsRow: View {
+    @Binding var selectedImages: [UIImage]
+    @Binding var selectedItems: [PhotosPickerItem]
+    @Binding var selectedShop: Shop?
+    @State private var showingShopPicker = false
+    
+    var body: some View {
+        HStack(spacing: 20) {
+            // Image attachment button
+            PhotosPicker(
+                selection: $selectedItems,
+                maxSelectionCount: 5,
+                matching: .images
+            ) {
+                Image(systemName: "photo")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+            }
             
-            HStack {
-                Image(systemName: "info.circle")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                
-                Text("お店を選択すると、そのお店の詳細ページに投稿が表示されます")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            // Shop selection button
+            Button(action: { showingShopPicker = true }) {
+                Image(systemName: "location")
+                    .font(.title2)
+                    .foregroundColor(.blue)
             }
-        }
-        .padding(16)
-        .background(Color(UIColor.systemBackground))
-        .cornerRadius(12)
-        .shadow(
-            color: .black.opacity(0.05),
-            radius: 2,
-            y: 1
-        )
-    }
-}
-
-// MARK: - Preview Button
-private struct PreviewButton: View {
-    let isEnabled: Bool
-    let onPreview: () -> Void
-    
-    var body: some View {
-        Button(action: { onPreview() }) {
-            HStack {
-                Image(systemName: "eye")
-                    .font(.subheadline)
-                
-                Text("プレビュー")
-                    .font(.subheadline.weight(.medium))
+            
+            // Emoji button (placeholder for future implementation)
+            Button(action: {}) {
+                Image(systemName: "face.smiling")
+                    .font(.title2)
+                    .foregroundColor(.blue)
             }
-            .foregroundStyle(isEnabled ? .blue : .secondary)
-            .padding(.vertical, 12)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isEnabled ? Color.blue : Color.secondary.opacity(0.3), lineWidth: 1)
-            )
-        }
-        .disabled(!isEnabled)
-        .padding(.horizontal, 16)
-    }
-}
-
-// MARK: - Character Counter
-private struct CharacterCounter: View {
-    let count: Int
-    let maxCount: Int
-    let isOverLimit: Bool
-    
-    var body: some View {
-        HStack {
-            if isOverLimit {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.caption)
-                    .foregroundStyle(Color.red)
-                
-                Text("文字数制限を超えています")
-                    .font(.caption)
-                    .foregroundStyle(Color.red)
-            }
+            .disabled(true)
+            .opacity(0.5)
             
             Spacer()
-            
-            Text("\(count)/\(maxCount)")
-                .font(.caption)
-                .foregroundStyle(isOverLimit ? Color.red : Color.secondary)
-                .animation(.easeInOut(duration: 0.3), value: isOverLimit)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color(UIColor.systemBackground))
+        .overlay(
+            Rectangle()
+                .frame(height: 0.5)
+                .foregroundColor(Color(UIColor.separator)),
+            alignment: .top
+        )
+        .sheet(isPresented: $showingShopPicker) {
+            ShopPickerView(selectedShop: $selectedShop)
         }
     }
 }
 
-// MARK: - Post Button
-private struct PostButton: View {
-    let isEnabled: Bool
-    let isLoading: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button("投稿", action: action)
-            .disabled(!isEnabled)
-            .foregroundStyle(isEnabled ? Color.blue : Color.secondary)
-            .opacity(isLoading ? 0.6 : 1.0)
-            .animation(.easeInOut(duration: 0.3), value: isEnabled)
-            .animation(.easeInOut(duration: 0.3), value: isLoading)
-    }
-}
+
 
 // MARK: - Overlay Content
 private struct OverlayContent: View {

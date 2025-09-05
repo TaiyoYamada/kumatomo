@@ -9,8 +9,16 @@ class PostViewModel: ObservableObject {
     @Published var selectedImages: [UIImage] = []
     @Published var selectedShop: Shop?
     @Published var imageURL: String?
-    @Published var tags: [String] = []
+    @Published var tags: [String] = [] // Deprecated: use selectedTags instead
     @Published var tagInput: String = ""
+    
+    // New tag functionality
+    @Published var selectedTags: Set<String> = ["熊本県全体"]
+    let availableTags: [String] = [
+        "熊本県全体", "熊本市", "八代市", "人吉市", "荒尾市", 
+        "水俣市", "玉名市", "山鹿市", "菊池市", "宇土市",
+        "上天草市", "宇城市", "阿蘇市", "天草市", "合志市"
+    ]
     
     @Published var posts: [Post] = []
     @Published var userPosts: [Post] = []
@@ -35,6 +43,18 @@ class PostViewModel: ObservableObject {
     private let imageUploadService = ImageUploadService()
     
     // MARK: - Validation
+    
+    var canPost: Bool {
+        hasValidContent && hasValidTags && !isLoading && !isSubmitting
+    }
+    
+    private var hasValidContent: Bool {
+        (!postContent.isEmpty && postContent.count <= 500) || !selectedImages.isEmpty
+    }
+    
+    private var hasValidTags: Bool {
+        !selectedTags.isEmpty
+    }
     
     func validateContent() -> Result<Void, PostError> {
         if postContent.isEmpty {
@@ -119,6 +139,37 @@ class PostViewModel: ObservableObject {
         tags.removeAll { $0 == tag }
     }
     
+    // MARK: - New Tag Management
+    
+    func toggleTag(_ tag: String) {
+        if selectedTags.contains(tag) {
+            // Prevent removing last tag - minimum 1 tag required
+            if selectedTags.count > 1 {
+                selectedTags.remove(tag)
+            }
+        } else {
+            // Prevent selecting more than 5 tags
+            if selectedTags.count < 5 {
+                selectedTags.insert(tag)
+            }
+        }
+    }
+    
+    func resetForm() {
+        postContent = ""
+        selectedImage = nil
+        selectedImages = []
+        selectedShop = nil
+        imageURL = nil
+        tags = []
+        tagInput = ""
+        selectedTags = ["熊本県全体"]
+        errorMessage = nil
+        showSuccessModal = false
+        isEditing = false
+        editingPost = nil
+    }
+    
     // MARK: - API Calls
     
     func fetchAllPosts() async {
@@ -160,7 +211,7 @@ class PostViewModel: ObservableObject {
                 userId: userId,
                 content: content,
                 imageUrl: uploadedImageURL,
-                tags: tags
+                tags: Array(selectedTags)
             )
             
             // Success handling
@@ -209,7 +260,7 @@ class PostViewModel: ObservableObject {
                 content: content,
                 shopId: shopId,
                 imageUrls: uploadedImageURLs,
-                tags: tags
+                tags: Array(selectedTags)
             )
             
             // Success handling
@@ -235,16 +286,17 @@ class PostViewModel: ObservableObject {
         postContent = post.content
         selectedShop = post.shop
         tags = post.tags ?? []
+        // Convert existing tags to selectedTags Set, or use default if empty
+        if let postTags = post.tags, !postTags.isEmpty {
+            selectedTags = Set(postTags)
+        } else {
+            selectedTags = ["熊本県全体"]
+        }
         isEditing = true
     }
     
     func cancelEditing() {
-        editingPost = nil
-        postContent = ""
-        selectedShop = nil
-        tags = []
-        isEditing = false
-        errorMessage = nil
+        resetForm()
     }
     
     func updatePost() async -> Bool {
@@ -276,7 +328,7 @@ class PostViewModel: ObservableObject {
         updatedPost.content = postContent
         updatedPost.shopId = selectedShop?.id
         updatedPost.shop = selectedShop
-        updatedPost.tags = tags.isEmpty ? nil : tags
+        updatedPost.tags = selectedTags.isEmpty ? nil : Array(selectedTags)
         updatedPost.updatedAt = Date()
         
         // Update UI optimistically
@@ -292,7 +344,7 @@ class PostViewModel: ObservableObject {
                 postId: post.id,
                 content: postContent,
                 shopId: selectedShop?.id,
-                tags: tags
+                tags: Array(selectedTags)
             )
             
             // Update with server response
@@ -419,12 +471,8 @@ class PostViewModel: ObservableObject {
     }
     
     private func handleSuccessfulUpdate() async {
-        // Reset editing state
-        editingPost = nil
-        postContent = ""
-        selectedShop = nil
-        tags = []
-        isEditing = false
+        // Reset form using new resetForm method
+        resetForm()
         
         isLoading = false
         isUpdating = false
@@ -471,14 +519,8 @@ class PostViewModel: ObservableObject {
         posts.insert(newPost, at: 0)
         userPosts.insert(newPost, at: 0)
         
-        // Reset form
-        postContent = ""
-        selectedImage = nil
-        selectedImages = []
-        selectedShop = nil
-        imageURL = nil
-        tags = []
-        tagInput = ""
+        // Reset form using new resetForm method
+        resetForm()
         
         // Show success modal
         showSuccessModal = true
