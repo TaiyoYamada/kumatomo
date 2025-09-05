@@ -18,37 +18,22 @@ struct PostView: View {
             VStack(spacing: 0) {
                 // Main content area
                 ScrollView {
-                    VStack(spacing: 16) {
-                        // User profile and text input section
-                        HStack(alignment: .top, spacing: 12) {
-                            // User profile icon (top-left)
-                            UserProfileIcon()
-                            
-                            // Text input area (center)
-                            VStack(alignment: .leading, spacing: 12) {
-                                TextInputArea(
-                                    content: $viewModel.postContent,
-                                    characterCount: viewModel.postContent.count
-                                )
+                    TextInputArea(
+                        content: $viewModel.postContent,
+                        characterCount: viewModel.postContent.count
+                }
                                 
                                 // Image preview if images are selected
-                                if !viewModel.selectedImages.isEmpty {
-                                    ImagePreviewSection(
-                                        selectedImages: $viewModel.selectedImages,
-                                        selectedItems: $selectedItems
-                                    )
-                                }
+                    if !viewModel.selectedImages.isEmpty {
+                        ImagePreviewSection(
+                            selectedImages: $viewModel.selectedImages,
+                            selectedItems: $selectedItems
+                        )
+                    }
                                 
                                 // Shop selection if shop is selected
-                                if viewModel.selectedShop != nil {
-                                    ShopPreviewSection(selectedShop: $viewModel.selectedShop)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                        
-                        Spacer(minLength: 100) // Space for action buttons
+                    if viewModel.selectedShop != nil {
+                        ShopPreviewSection(selectedShop: $viewModel.selectedShop)
                     }
                 }
                 
@@ -229,25 +214,7 @@ private extension PostView {
         }
     }
 }
-// MARK: - User Profile Icon
-private struct UserProfileIcon: View {
-    var body: some View {
-        AsyncImage(url: URL(string: AuthService.shared.currentUser?.profileImageURL ?? "")) { image in
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        } placeholder: {
-            Image(systemName: "person.circle.fill")
-                .foregroundColor(.gray)
-        }
-        .frame(width: 40, height: 40)
-        .clipShape(Circle())
-        .overlay(
-            Circle()
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-        )
-    }
-}
+
 
 // MARK: - Text Input Area
 private struct TextInputArea: View {
