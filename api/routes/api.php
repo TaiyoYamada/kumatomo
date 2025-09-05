@@ -10,6 +10,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AdminShopController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\AIController;
 
 // API動作確認用のテストルート
 Route::get('/', function () {
@@ -66,6 +67,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 統合検索API
     Route::get('/search', [SearchController::class, 'search']);
+
+    // AI Chat API
+    Route::post('/ai/chat', [AIController::class, 'chat']);
 
     Route::get('/shops', [ShopController::class, 'index']);
     Route::get('/shops/search', [ShopController::class, 'search']);

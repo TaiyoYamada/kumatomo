@@ -66,4 +66,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    /**
+     * ユーザーのAIチャットログを取得
+     */
+    public function aiChatLogs()
+    {
+        return $this->hasMany(AIChatLog::class);
+    }
 }
