@@ -102,7 +102,7 @@ class PortalErrorHandler: ObservableObject {
     
     // MARK: - Private Properties
     
-    private let networkMonitor = NetworkMonitor.shared
+    @MainActor private let networkMonitor = NetworkMonitor.shared
     
     private init() {}
     

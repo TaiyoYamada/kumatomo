@@ -24,7 +24,7 @@ return [
 
     'ollama' => [
         'url' => env('OLLAMA_URL', 'http://ollama:11434'),
-        'model' => env('OLLAMA_MODEL', 'llama2'),
+        'model' => env('OLLAMA_MODEL', 'mistral:latest'),
         'timeout' => env('OLLAMA_TIMEOUT', 30), // seconds
     ],
 

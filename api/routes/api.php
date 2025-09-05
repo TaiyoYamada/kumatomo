@@ -27,6 +27,9 @@ Route::post('/register', [AuthController::class, 'register']);
 // ログイン
 Route::post('/login', [AuthController::class, 'login']);
 
+// AI Health Check (認証不要)
+Route::get('/ai/health', [AIController::class, 'health']);
+
 // 認証が必要なAPI
 Route::middleware('auth:sanctum')->group(function () {
 

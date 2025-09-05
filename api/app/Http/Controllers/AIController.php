@@ -18,6 +18,39 @@ class AIController extends Controller
     }
 
     /**
+     * Health check endpoint for AI service
+     *
+     * @return JsonResponse
+     */
+    public function health(): JsonResponse
+    {
+        try {
+            $isAvailable = $this->aiService->isServiceAvailable();
+            
+            if ($isAvailable) {
+                return response()->json([
+                    'status' => 'healthy',
+                    'service' => 'available',
+                    'timestamp' => now()->toISOString()
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => 'unhealthy',
+                    'service' => 'unavailable',
+                    'timestamp' => now()->toISOString()
+                ], 503);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'unhealthy',
+                'service' => 'error',
+                'message' => $e->getMessage(),
+                'timestamp' => now()->toISOString()
+            ], 503);
+        }
+    }
+
+    /**
      * Handle AI chat requests
      *
      * @param Request $request
@@ -47,10 +80,12 @@ class AIController extends Controller
             // Process the chat message
             $response = $this->aiService->chat($validated['message'], $user->id);
 
-            // Return successful response
+            // Return successful response in the format expected by the iOS app
             return response()->json([
-                'success' => true,
-                'data' => $response
+                'message' => $response['message'],
+                'timestamp' => $response['timestamp'],
+                'provider' => $response['provider'],
+                'success' => true
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
