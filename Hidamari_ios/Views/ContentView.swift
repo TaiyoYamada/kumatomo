@@ -46,53 +46,53 @@ struct MainTabView: View {
                 NetworkStatusBanner()
                 
                 TabView(selection: $selection) {
-                //  ホームタブ（掲示板機能を統合）
-                HomeView()
-                    .environmentObject(bulletinBoardViewModel)
-                    .environmentObject(userManager)
-                    .environment(\.openSidebar, sidebarState.open)
-                    .tabItem {
-                        Image(systemName: "house.fill")
-                        Text("ホーム")
-                    }
-                    .tag(TabSelection.home)
-
-                //  検索タブ
-                SearchView()
-                    .environmentObject(userManager)
-                    .environment(\.openSidebar, sidebarState.open)
-                    .tabItem {
-                        Image(systemName: "magnifyingglass")
-                        Text("検索")
-                    }
-                    .tag(TabSelection.search)
-        
-                
-                //  ポータルタブ
-                PortalView()
-                    .environmentObject(userManager)
-                    .environment(\.openSidebar, sidebarState.open)
-                    .tabItem {
-                        Image(systemName: "rectangle.grid.2x2")
-                        Text("ポータル")
-                    }
-                    .tag(TabSelection.portal)
+                    //  ホームタブ（掲示板機能を統合）
+                    HomeView()
+                        .environmentObject(bulletinBoardViewModel)
+                        .environmentObject(userManager)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .tabItem {
+                            Image(systemName: "house.fill")
+                            Text("ホーム")
+                        }
+                        .tag(TabSelection.home)
                     
-
-
-
-                //  プロフィールタブ
-                MyProfileView()
-                    .environmentObject(userManager)
-                    .environment(\.openSidebar, sidebarState.open)
-                    .tabItem {
-                        Image(systemName: "person.crop.circle")
-                        Text("プロフィール")
-                    }
-                    .tag(TabSelection.profile)
-                
+                    //  検索タブ
+                    SearchView()
+                        .environmentObject(userManager)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .tabItem {
+                            Image(systemName: "magnifyingglass")
+                            Text("検索")
+                        }
+                        .tag(TabSelection.search)
+                    
+                    
+                    //  ポータルタブ
+                    PortalView()
+                        .environmentObject(userManager)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .tabItem {
+                            Image(systemName: "rectangle.grid.2x2")
+                            Text("ポータル")
+                        }
+                        .tag(TabSelection.portal)
+                    
+                    
+                    
+                    
+                    //  プロフィールタブ
+                    MyProfileView()
+                        .environmentObject(userManager)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .tabItem {
+                            Image(systemName: "person.crop.circle")
+                            Text("プロフィール")
+                        }
+                        .tag(TabSelection.profile)
+                    
                 }
-                .accentColor(.pink)
+                .accentColor(Color.blue)
             }
         }
         .errorOverlay()
@@ -101,10 +101,3 @@ struct MainTabView: View {
         }
     }
 }
-
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//    }
-//}
-
