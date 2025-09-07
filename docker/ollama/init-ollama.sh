@@ -19,8 +19,8 @@ done
 
 echo "Ollama service is ready!"
 
-# Set default model from environment variable or use llama2 as fallback
-MODEL_NAME=${OLLAMA_MODEL:-llama2}
+# Set default model from environment variable or use gemma:2b as fallback
+MODEL_NAME=${OLLAMA_MODEL:-gemma:2b}
 
 echo "Checking if model '$MODEL_NAME' is already available..."
 

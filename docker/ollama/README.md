@@ -16,14 +16,15 @@ The following environment variables can be configured in your `.env` file:
 
 - `AI_PROVIDER=ollama` - Set the AI provider to use Ollama
 - `OLLAMA_URL=http://ollama:11434` - URL for the Ollama service
-- `OLLAMA_MODEL=llama2` - Default model to download and use
+- `OLLAMA_MODEL=gemma:2b` - Default model to download and use
 - `FORWARD_OLLAMA_PORT=11434` - Port to expose Ollama on the host
 
 ### Default Model
 
-By default, the system uses the `llama2` model. You can change this by setting the `OLLAMA_MODEL` environment variable to any supported Ollama model:
+By default, the system uses the `gemma:2b` model. You can change this by setting the `OLLAMA_MODEL` environment variable to any supported Ollama model:
 
-- `llama2` (default, ~3.8GB)
+- `gemma:2b` (default)
+- `llama2` (~3.8GB)
 - `llama2:7b` (7B parameter model)
 - `llama2:13b` (13B parameter model)
 - `codellama` (Code-focused model)
@@ -64,10 +65,10 @@ docker-compose exec ollama bash
 ollama list
 
 # Pull a specific model
-ollama pull llama2:13b
+ollama pull gemma:2b
 
 # Run a model interactively
-ollama run llama2
+ollama run gemma:2b
 ```
 
 ## Troubleshooting
@@ -80,7 +81,7 @@ If the model download fails:
 2. Verify the model name is correct
 3. Try downloading manually:
    ```bash
-   docker-compose exec ollama ollama pull llama2
+   docker-compose exec ollama ollama pull gemma:2b
    ```
 
 ### Service Not Starting
