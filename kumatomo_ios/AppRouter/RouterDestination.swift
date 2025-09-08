@@ -33,13 +33,13 @@ extension View {
 			case .shopList:
 				ShopListView()
 			case .bookmarks:
-				BookmarkListView()
+				PlaceholderView(title: "ブックマーク")
 			case .likes:
-				LikeListView()
+				PlaceholderView(title: "いいね一覧")
 			case .coupons:
-				CouponsView()
+				PlaceholderView(title: "クーポン")
 			case .settings:
-				SettingsView()
+				PlaceholderView(title: "設定")
 			case .search:
 				SearchView()
 			case .signUp:
@@ -49,6 +49,29 @@ extension View {
 			}
 		}
 	}
+}
+
+// MARK: - Placeholder View for missing implementations
+struct PlaceholderView: View {
+    let title: String
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "wrench.and.screwdriver")
+                .font(.system(size: 48))
+                .foregroundColor(.secondary)
+            
+            Text(title)
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            Text("この機能は開発中です")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+    }
 }
 
 

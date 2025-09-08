@@ -5,7 +5,7 @@ struct MyProfileView: View {
     @StateObject private var postviewModel = PostViewModel()
     @State private var showingNewPost = false
     @State private var selectedTab = 0
-    @State private var sheetDestination: SheetDestination?
+    @State private var sheetDestination: SheetDestination? = nil
     @State private var scrollOffset: CGFloat = 0
     
     var body: some View {
@@ -18,7 +18,12 @@ struct MyProfileView: View {
                             user: viewModel.profile,
                             scrollOffset: scrollOffset,
                             onEditTapped: {
-                                sheetDestination = .profileEdit(viewModel.profile)
+                                sheetDestination = .profileEdit(viewModel.profile, onProfileUpdated: {
+                                    // Refresh profile data after successful update
+                                    let userId = AuthService.shared.currentUser?.id ?? 0
+                                    viewModel.loadProfile(userID: userId)
+                                    viewModel.loadUserPosts(userID: userId)
+                                })
                             }
                         )
                         .background(
@@ -161,7 +166,7 @@ struct FloatingNavigationBar: View {
     }
 }
 
-// モダンなプロフィールヘッダー
+// モダンなプロフィールヘッダー - Twitter/Instagram スタイル
 struct ModernProfileHeaderView: View {
     let user: User
     let scrollOffset: CGFloat
@@ -170,25 +175,60 @@ struct ModernProfileHeaderView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                // カバー画像
+                // カバー画像 - Twitter/Instagram スタイル
                 ZStack {
-                    if let coverImageURL = user.coverImageURL, let url = URL(string: coverImageURL) {
-                        AsyncImage(url: url) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        } placeholder: {
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.blue.opacity(0.7),
-                                    Color.purple.opacity(0.7),
-                                    Color.pink.opacity(0.7)
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
+                    if let coverImageURL = user.coverImageURL, !coverImageURL.isEmpty, let url = URL(string: coverImageURL) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .empty:
+                                // ローディング中のグラデーション
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.blue.opacity(0.7),
+                                        Color.purple.opacity(0.7),
+                                        Color.pink.opacity(0.7)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                                .overlay(
+                                    ProgressView()
+                                        .tint(.white.opacity(0.8))
+                                )
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            case .failure(_):
+                                // エラー時のデフォルトグラデーション
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.blue.opacity(0.7),
+                                        Color.purple.opacity(0.7),
+                                        Color.pink.opacity(0.7)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                                .overlay(
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 32))
+                                        .foregroundColor(.white.opacity(0.7))
+                                )
+                            @unknown default:
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.blue.opacity(0.7),
+                                        Color.purple.opacity(0.7),
+                                        Color.pink.opacity(0.7)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            }
                         }
                     } else {
+                        // デフォルトのカバー画像
                         LinearGradient(
                             gradient: Gradient(colors: [
                                 Color.blue.opacity(0.7),
@@ -198,74 +238,115 @@ struct ModernProfileHeaderView: View {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
+                        .overlay(
+                            VStack(spacing: 8) {
+                                Image(systemName: "photo")
+                                    .font(.system(size: 32))
+                                    .foregroundColor(.white.opacity(0.7))
+                                
+                                Text("カバー画像")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white.opacity(0.8))
+                            }
+                        )
                     }
                 }
                 .frame(height: 220)
                 .clipped()
                 .overlay(
-                    // グラデーションオーバーレイ
+                    // グラデーションオーバーレイ - より洗練された効果
                     LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.clear,
-                            Color.black.opacity(0.3)
+                        gradient: Gradient(stops: [
+                            .init(color: Color.clear, location: 0.0),
+                            .init(color: Color.black.opacity(0.1), location: 0.7),
+                            .init(color: Color.black.opacity(0.3), location: 1.0)
                         ]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
                 
-                // プロフィール画像とボタンエリア
+                // プロフィール画像とボタンエリア - Twitter/Instagram レイアウト
                 ZStack(alignment: .topTrailing) {
-                    HStack {
-                        // プロフィール画像
+                    HStack(alignment: .top) {
+                        // プロフィール画像 - より大きく、より目立つように
                         ZStack {
+                            // 外側の白い境界線
                             Circle()
-                                .fill(.ultraThinMaterial)
-                                .frame(width: 100, height: 100)
-                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                                .fill(Color(.systemBackground))
+                                .frame(width: 108, height: 108)
+                                .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
                             
-                            if let imageURL = user.profileImageURL, let url = URL(string: imageURL) {
-                                AsyncImage(url: url) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                } placeholder: {
-                                    ProgressView()
-                                        .tint(.secondary)
+                            // 内側のプロフィール画像
+                            if let imageURL = user.profileImageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
+                                AsyncImage(url: url) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                            .overlay(
+                                                ProgressView()
+                                                    .tint(.secondary)
+                                            )
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                    case .failure(_):
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                            .overlay(
+                                                Image(systemName: "person.fill")
+                                                    .font(.system(size: 42))
+                                                    .foregroundColor(.secondary)
+                                            )
+                                    @unknown default:
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                            .overlay(
+                                                Image(systemName: "person.fill")
+                                                    .font(.system(size: 42))
+                                                    .foregroundColor(.secondary)
+                                            )
+                                    }
                                 }
-                                .frame(width: 94, height: 94)
+                                .frame(width: 100, height: 100)
                                 .clipShape(Circle())
                             } else {
-                                Image(systemName: "person.circle.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(.secondary)
-                                    .frame(width: 94, height: 94)
+                                Circle()
+                                    .fill(.ultraThinMaterial)
+                                    .overlay(
+                                        Image(systemName: "person.fill")
+                                            .font(.system(size: 42))
+                                            .foregroundColor(.secondary)
+                                    )
+                                    .frame(width: 100, height: 100)
                             }
                         }
-                        .offset(y: -50)
+                        .offset(y: -54)
                         
                         Spacer()
                     }
                     
-                    // 編集ボタン
+                    // 編集ボタン - Twitter/Instagram スタイル
                     Button(action: {
                         onEditTapped()
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "pencil")
                                 .font(.system(size: 14, weight: .medium))
-                            Text("編集")
+                            Text("プロフィールを編集")
                                 .font(.system(size: 15, weight: .semibold))
                         }
                         .foregroundColor(.primary)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
                         .background(
-                            .ultraThinMaterial,
-                            in: Capsule()
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.ultraThinMaterial)
+                                .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
                         )
-                        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                        .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
                     }
                     .padding(.top, 16)
                 }
@@ -277,17 +358,24 @@ struct ModernProfileHeaderView: View {
     }
 }
 
-// モダンなプロフィール情報
+// モダンなプロフィール情報 - Twitter/Instagram スタイル
 struct ModernProfileInfoView: View {
     let user: User
     
+    private func formatJoinDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.locale = Locale(identifier: "ja_JP")
+        return formatter.string(from: date)
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // 名前とユーザーネーム
+            // 名前とユーザーネーム - Twitter/Instagram スタイル
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
-                    Text(user.name ?? "名前")
-                        .font(.title)
+                    Text(user.name ?? "名前未設定")
+                        .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
                     
@@ -302,51 +390,73 @@ struct ModernProfileInfoView: View {
                     Text("@\(username)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                        .fontWeight(.medium)
+                } else {
+                    Text("@username")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary.opacity(0.6))
+                        .fontWeight(.medium)
                 }
             }
             
-            // バイオ
+            // バイオ/自己紹介 - より読みやすく
             if let bio = user.bio, !bio.isEmpty {
                 Text(bio)
                     .font(.body)
                     .foregroundColor(.primary)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
+                    .lineSpacing(2)
             }
             
-            // 詳細情報
-            VStack(alignment: .leading, spacing: 8) {
+            // 詳細情報 - Twitter/Instagram スタイルのアイコン付き情報
+            VStack(alignment: .leading, spacing: 12) {
+                // 場所情報
                 if let location = user.location, !location.isEmpty {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 10) {
                         Image(systemName: "location")
-                            .font(.subheadline)
+                            .font(.system(size: 14))
                             .foregroundColor(.secondary)
+                            .frame(width: 16)
                         Text(location)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
                 }
                 
+                // ウェブサイト
                 if let website = user.website, !website.isEmpty {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 10) {
                         Image(systemName: "link")
-                            .font(.subheadline)
+                            .font(.system(size: 14))
                             .foregroundColor(.secondary)
+                            .frame(width: 16)
                         Text(website)
                             .font(.subheadline)
                             .foregroundColor(.blue)
+                            .underline()
                     }
                 }
                 
-                if let joinedDate = user.joinedDate, !joinedDate.isEmpty {
-                    HStack(spacing: 8) {
-                        Image(systemName: "calendar")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                        Text("参加日: \(joinedDate)")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                // 参加日 - より詳細な表示
+                HStack(spacing: 10) {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                        .frame(width: 16)
+                    
+                    Group {
+                        if let joinedDate = user.joinedDate, !joinedDate.isEmpty {
+                            Text("\(joinedDate)に参加")
+                        } else if let createdAt = user.createdAt {
+                            Text("\(formatJoinDate(createdAt))に参加")
+                        } else {
+                            Text("参加日不明")
+                                .foregroundColor(.secondary.opacity(0.6))
+                        }
                     }
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
                 }
             }
         }
@@ -354,47 +464,77 @@ struct ModernProfileInfoView: View {
     }
 }
 
-// 統計情報ビュー
+// 統計情報ビュー - Twitter/Instagram スタイル
 struct ProfileStatsView: View {
     let user: User
     
     var body: some View {
-        HStack(spacing: 32) {
+        HStack(spacing: 0) {
+            // 投稿数
             StatItemView(
                 count: user.postCount ?? 0,
-                label: "投稿"
+                label: "投稿",
+                isClickable: false
             )
             
+            Spacer()
+            
+            // フォロー中
             StatItemView(
                 count: user.followingCount ?? 0,
-                label: "フォロー中"
+                label: "フォロー中",
+                isClickable: true
             )
             
+            Spacer()
+            
+            // フォロワー
             StatItemView(
                 count: user.followersCount ?? 0,
-                label: "フォロワー"
+                label: "フォロワー",
+                isClickable: true
             )
             
             Spacer()
         }
+        .padding(.vertical, 8)
     }
 }
 
 struct StatItemView: View {
     let count: Int
     let label: String
+    let isClickable: Bool
+    
+    private var formattedCount: String {
+        if count >= 1000000 {
+            return String(format: "%.1fM", Double(count) / 1000000.0)
+        } else if count >= 1000 {
+            return String(format: "%.1fK", Double(count) / 1000.0)
+        } else {
+            return "\(count)"
+        }
+    }
     
     var body: some View {
-        VStack(spacing: 4) {
-            Text("\(count)")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
-            
-            Text(label)
-                .font(.caption)
-                .foregroundColor(.secondary)
+        Button(action: {
+            if isClickable {
+                // TODO: フォロー/フォロワー一覧画面への遷移
+                print("Navigate to \(label) list")
+            }
+        }) {
+            HStack(spacing: 4) {
+                Text(formattedCount)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.primary)
+                
+                Text(label)
+                    .font(.system(size: 15))
+                    .foregroundColor(.secondary)
+            }
         }
+        .disabled(!isClickable)
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -438,7 +578,7 @@ struct StatItemView: View {
 //    }
 //}
 
-// モダンな投稿グリッド
+// モダンな投稿タイムライン - Twitter/Instagram スタイル
 struct ModernPostGridView: View {
     let posts: [Post]
     
@@ -449,37 +589,54 @@ struct ModernPostGridView: View {
             } else {
                 ForEach(posts) { post in
                     ModernPostCardView(post: post)
+                        .padding(.vertical, 2)
                     
                     Divider()
-                        .background(Color.secondary.opacity(0.2))
+                        .background(Color.secondary.opacity(0.15))
+                        .padding(.leading, 20)
                 }
             }
         }
+        .background(Color(.systemBackground))
     }
 }
 
-// 空の状態ビュー
+// 空の状態ビュー - Twitter/Instagram スタイル
 struct EmptyStateView: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "photo.on.rectangle.angled")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
+        VStack(spacing: 20) {
+            // アイコン
+            ZStack {
+                Circle()
+                    .fill(Color.secondary.opacity(0.1))
+                    .frame(width: 80, height: 80)
+                
+                Image(systemName: "photo.on.rectangle.angled")
+                    .font(.system(size: 32))
+                    .foregroundColor(.secondary)
+            }
             
-            Text("まだ投稿がありません")
-                .font(.headline)
-                .foregroundColor(.primary)
-            
-            Text("最初の投稿をしてみましょう")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            // メッセージ
+            VStack(spacing: 8) {
+                Text("まだ投稿がありません")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Text("あなたの最初の投稿を共有して、\nフォロワーとつながりましょう")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(2)
+            }
         }
-        .padding(.vertical, 60)
+        .padding(.vertical, 80)
+        .padding(.horizontal, 40)
         .frame(maxWidth: .infinity)
     }
 }
 
-// 投稿カード
+// 投稿カード - Twitter/Instagram スタイル
 struct ModernPostCardView: View {
     let post: Post
     
@@ -487,16 +644,37 @@ struct ModernPostCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             PostCardHeaderView(post: post)
             PostCardContentView(post: post)
-            PostCardActionsView()
+            PostCardActionsView(post: post)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
+        .background(Color(.systemBackground))
     }
 }
 
-// 投稿カードヘッダー
+// 投稿カードヘッダー - Twitter/Instagram スタイル
 struct PostCardHeaderView: View {
     let post: Post
+    
+    private var timeAgoText: String {
+        guard let createdAt = post.createdAt else { return "不明" }
+        
+        let now = Date()
+        let timeInterval = now.timeIntervalSince(createdAt)
+        
+        if timeInterval < 60 {
+            return "今"
+        } else if timeInterval < 3600 {
+            let minutes = Int(timeInterval / 60)
+            return "\(minutes)分"
+        } else if timeInterval < 86400 {
+            let hours = Int(timeInterval / 3600)
+            return "\(hours)時間"
+        } else {
+            let days = Int(timeInterval / 86400)
+            return "\(days)日"
+        }
+    }
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -504,65 +682,145 @@ struct PostCardHeaderView: View {
                 .frame(width: 44, height: 44)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(post.user?.name ?? "Unknown")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
+                HStack(spacing: 4) {
+                    Text(post.user?.name ?? "Unknown User")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
+                    if post.user?.isVerified == true {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(.blue)
+                            .font(.system(size: 14))
+                    }
+                }
                 
-                Text("@\(post.user?.username ?? "username") · 2時間")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
+                HStack(spacing: 4) {
+                    Text("@\(post.user?.username ?? "username")")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                    
+                    Text("·")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                    
+                    Text(timeAgoText)
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                }
             }
             
             Spacer()
             
-            Button(action: {}) {
+            Button(action: {
+                // TODO: 投稿メニューの表示
+            }) {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 16))
                     .foregroundColor(.secondary)
+                    .padding(8)
             }
+            .buttonStyle(PlainButtonStyle())
         }
     }
 }
 
-// 投稿カードコンテンツ
+// 投稿カードコンテンツ - Twitter/Instagram スタイル
 struct PostCardContentView: View {
     let post: Post
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(post.content)
-                .font(.system(size: 16))
-                .foregroundColor(.primary)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+            // 投稿テキスト
+            if !post.content.isEmpty {
+                Text(post.content)
+                    .font(.system(size: 16))
+                    .foregroundColor(.primary)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .lineSpacing(2)
+            }
             
+            // 画像グリッド
             if let images = post.images, !images.isEmpty {
                 PostImagesGridView(images: images)
+                    .cornerRadius(16)
+            }
+            
+            // タグ表示
+            if let tags = post.tags, !tags.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(tags, id: \.self) { tag in
+                            Text("#\(tag)")
+                                .font(.system(size: 14))
+                                .foregroundColor(.blue)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.blue.opacity(0.1))
+                                )
+                        }
+                    }
+                    .padding(.horizontal, 1)
+                }
             }
         }
         .padding(.leading, 56)
     }
 }
 
-// 投稿カードアクション
+// 投稿カードアクション - Twitter/Instagram スタイル
 struct PostCardActionsView: View {
+    let post: Post
+    
     var body: some View {
         HStack(spacing: 0) {
-            ActionButton(icon: "message", count: 12, color: .secondary)
+            // コメント
+            ActionButton(
+                icon: "message",
+                count: post.commentCount ?? 0,
+                color: .secondary,
+                activeColor: .blue
+            )
+            
             Spacer()
-            ActionButton(icon: "arrow.2.squarepath", count: 5, color: .secondary)
+            
+            // リツイート/シェア
+            ActionButton(
+                icon: "arrow.2.squarepath",
+                count: 0, // TODO: リツイート数を追加
+                color: .secondary,
+                activeColor: .green
+            )
+            
             Spacer()
-            ActionButton(icon: "heart", count: 24, color: .secondary)
+            
+            // いいね
+            ActionButton(
+                icon: post.userReaction == .thumbsUp ? "heart.fill" : "heart",
+                count: post.reactions?.thumbsUp ?? 0,
+                color: post.userReaction == .thumbsUp ? .red : .secondary,
+                activeColor: .red
+            )
+            
             Spacer()
-            Button(action: {}) {
+            
+            // シェア
+            Button(action: {
+                // TODO: シェア機能の実装
+            }) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.system(size: 18))
                     .foregroundColor(.secondary)
+                    .padding(8)
             }
+            .buttonStyle(PlainButtonStyle())
+            
             Spacer()
         }
         .padding(.leading, 56)
-        .padding(.top, 8)
+        .padding(.top, 12)
     }
 }
 
@@ -570,20 +828,42 @@ struct ActionButton: View {
     let icon: String
     let count: Int
     let color: Color
+    let activeColor: Color
+    @State private var isPressed = false
+    
+    private var formattedCount: String {
+        if count >= 1000000 {
+            return String(format: "%.1fM", Double(count) / 1000000.0)
+        } else if count >= 1000 {
+            return String(format: "%.1fK", Double(count) / 1000.0)
+        } else if count > 0 {
+            return "\(count)"
+        } else {
+            return ""
+        }
+    }
     
     var body: some View {
-        Button(action: {}) {
+        Button(action: {
+            // TODO: アクション実装
+            withAnimation(.easeInOut(duration: 0.1)) {
+                isPressed.toggle()
+            }
+        }) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
                     .font(.system(size: 18))
                 
-                if count > 0 {
-                    Text("\(count)")
-                        .font(.system(size: 14))
+                if !formattedCount.isEmpty {
+                    Text(formattedCount)
+                        .font(.system(size: 14, weight: .medium))
                 }
             }
             .foregroundColor(color)
+            .padding(8)
         }
+        .buttonStyle(PlainButtonStyle())
+        .scaleEffect(isPressed ? 0.9 : 1.0)
     }
 }
 
@@ -616,7 +896,7 @@ struct PostUserImageView: View {
         .clipShape(Circle())
     }
 }
-// 投稿画像グリッドコンポーネント
+// 投稿画像グリッドコンポーネント - Instagram スタイル
 struct PostImagesGridView: View {
     let images: [PostImage]
     
@@ -624,38 +904,99 @@ struct PostImagesGridView: View {
         Array(images.prefix(4))
     }
     
-    private var gridColumns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 4), count: min(displayImages.count, 2))
+    private var gridLayout: [GridItem] {
+        switch displayImages.count {
+        case 1:
+            return [GridItem(.flexible())]
+        case 2:
+            return Array(repeating: GridItem(.flexible(), spacing: 2), count: 2)
+        case 3, 4:
+            return Array(repeating: GridItem(.flexible(), spacing: 2), count: 2)
+        default:
+            return [GridItem(.flexible())]
+        }
     }
     
     var body: some View {
-        LazyVGrid(columns: gridColumns, spacing: 4) {
+        LazyVGrid(columns: gridLayout, spacing: 2) {
             ForEach(displayImages.indices, id: \.self) { index in
-                PostImageItemView(imageURL: displayImages[index].imageUrl)
+                PostImageItemView(
+                    imageURL: displayImages[index].imageUrl,
+                    imageCount: displayImages.count,
+                    index: index,
+                    totalImages: images.count
+                )
             }
         }
+        .aspectRatio(displayImages.count == 1 ? nil : 1.0, contentMode: .fit)
     }
 }
 
-// 投稿画像アイテムコンポーネント
+// 投稿画像アイテムコンポーネント - Instagram スタイル
 struct PostImageItemView: View {
     let imageURL: String
+    let imageCount: Int
+    let index: Int
+    let totalImages: Int
+    
+    private var imageHeight: CGFloat {
+        switch imageCount {
+        case 1:
+            return 300
+        case 2:
+            return 200
+        case 3:
+            return index == 0 ? 200 : 100
+        case 4:
+            return 150
+        default:
+            return 200
+        }
+    }
     
     var body: some View {
-        AsyncImage(url: URL(string: imageURL)) { loadedImage in
-            loadedImage
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        } placeholder: {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .overlay(
-                    ProgressView()
-                        .tint(.secondary)
-                )
+        ZStack {
+            AsyncImage(url: URL(string: imageURL)) { phase in
+                switch phase {
+                case .empty:
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            ProgressView()
+                                .tint(.secondary)
+                        )
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                case .failure(_):
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            Image(systemName: "photo")
+                                .font(.system(size: 24))
+                                .foregroundColor(.secondary)
+                        )
+                @unknown default:
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                }
+            }
+            .frame(height: imageHeight)
+            .clipped()
+            
+            // 追加画像数の表示（4枚目で残りがある場合）
+            if index == 3 && totalImages > 4 {
+                Rectangle()
+                    .fill(Color.black.opacity(0.6))
+                    .overlay(
+                        Text("+\(totalImages - 4)")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                    )
+            }
         }
-        .frame(height: 200)
-        .clipped()
-        .cornerRadius(12)
+        .cornerRadius(imageCount == 1 ? 16 : 8)
     }
 }
