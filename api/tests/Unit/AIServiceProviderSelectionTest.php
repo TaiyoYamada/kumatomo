@@ -18,12 +18,12 @@ class AIServiceProviderSelectionTest extends TestCase
         // Arrange
         Config::set('ai.provider', 'gemini');
         Config::set('ai.gemini.api_key', 'test-api-key');
-        Config::set('ai.gemini.model', 'gemini-pro');
+        Config::set('ai.gemini.model', 'gemini-2.0-flash-lite');
         Config::set('ai.gemini.api_url', 'https://test-api.googleapis.com/v1beta');
         Config::set('ai.gemini.timeout', 30);
 
         Http::fake([
-            'https://test-api.googleapis.com/v1beta/models/gemini-pro:generateContent*' => Http::response([
+            'https://test-api.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent*' => Http::response([
                 'candidates' => [
                     [
                         'content' => [

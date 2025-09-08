@@ -24,7 +24,7 @@ return [
 
     'ollama' => [
         'url' => env('OLLAMA_URL', 'http://ollama:11434'),
-        'model' => env('OLLAMA_MODEL', 'gemma:2b'),
+        'model' => env('OLLAMA_MODEL', 'gemma3:4b'),
         'timeout' => env('OLLAMA_TIMEOUT', 30), // seconds
     ],
 
@@ -39,7 +39,7 @@ return [
 
     'gemini' => [
         'api_key' => env('GEMINI_API_KEY'),
-        'model' => env('GEMINI_MODEL', 'gemini-pro'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.0-flash-lite'),
         'api_url' => env('GEMINI_API_URL', 'https://generativelanguage.googleapis.com/v1beta'),
         'timeout' => env('GEMINI_TIMEOUT', 30), // seconds
     ],
@@ -55,4 +55,19 @@ return [
 
     'max_message_length' => env('AI_MAX_MESSAGE_LENGTH', 1000),
     'rate_limit_per_minute' => env('AI_RATE_LIMIT_PER_MINUTE', 10),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Kumamon Character Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Settings specific to Kumamon character behavior
+    |
+    */
+
+    'kumamon' => [
+        'temperature' => env('KUMAMON_TEMPERATURE', 0.6), // Higher for more creative responses
+        'enable_system_prompt' => env('KUMAMON_ENABLE_SYSTEM_PROMPT', true),
+        'personality_strength' => env('KUMAMON_PERSONALITY_STRENGTH', 'high'), // low, medium, high
+    ],
 ];
