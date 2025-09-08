@@ -1,11 +1,11 @@
 services:
     laravel.test:
-        # build:
-        #     context: './Hidamari_api/vendor/laravel/sail/runtimes/8.4'
-        #     dockerfile: Dockerfile
-        #     args:
-        #         WWWGROUP: '${WWWGROUP}'
-        image: 'sail-8.4/app'
+        build:
+            context: './api/vendor/laravel/sail/runtimes/8.4'
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: laravelsail/php84-composer:latest
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         # ports:
@@ -19,7 +19,7 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
             HTTPS: 'on'
         volumes:
-            - './Hidamari_api:/var/www/html'
+            - './api:/var/www/html'
         networks:
             - sail
         depends_on:
@@ -57,7 +57,7 @@ services:
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
             - 'sail-mysql:/var/lib/mysql'
-            - './Hidamari_api/vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+            - './api/vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
         networks:
             - sail
         healthcheck:
@@ -109,6 +109,28 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+    
+    # minio:
+    #     image: 'minio/minio:latest'
+    #     ports:
+    #         - '${FORWARD_MINIO_PORT:-9000}:9000'
+    #         - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
+    #     environment:
+    #         MINIO_ROOT_USER: sail
+    #         MINIO_ROOT_PASSWORD: password
+    #     volumes:
+    #         - 'sail-minio:/data'
+    #     networks:
+    #         - sail
+    #     command: 'minio server /data --console-address ":8900"'
+    #     healthcheck:
+    #         test:
+    #             - CMD
+    #             - mc
+    #             - ready
+    #             - local
+    #         retries: 3
+    #         timeout: 5s
     selenium:
         image: selenium/standalone-chromium
         extra_hosts:
@@ -120,17 +142,56 @@ services:
 
     vue.admin:
         build:
-            context: ./Hidamari_admin
+            context: ./admin
             dockerfile: Dockerfile
-        ports:
-            - '3000:3000'  # ポート3000に統一
+        # ports:
+        #     - '3000:3000'
         volumes:
-            - ./Hidamari_admin:/app
+            - ./admin:/app
             - /app/node_modules
         command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
         working_dir: /app
         networks:
-            - sail 
+            - sail
+
+    ollama:
+        image: 'ollama/ollama:latest'
+        # ports:
+        #     - '${FORWARD_OLLAMA_PORT:-11434}:11434'
+        volumes:
+            - 'sail-ollama:/root/.ollama'
+        networks:
+            - sail
+        environment:
+            - OLLAMA_HOST=0.0.0.0
+            - OLLAMA_ORIGINS=*
+        # healthcheck:
+        #     test:
+        #         - CMD
+        #         - curl
+        #         - '-f'
+        #         - 'http://localhost:11434/api/tags'
+        #     retries: 3
+        #     timeout: 10s
+        #     interval: 30s
+        restart: unless-stopped
+
+    ollama-init:
+        image: 'ollama/ollama:latest'
+        volumes:
+            - 'sail-ollama:/root/.ollama'
+            - './docker/ollama/init-ollama.sh:/init-ollama.sh'
+        networks:
+            - sail
+        environment:
+            - OLLAMA_HOST=ollama:11434
+            - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma:2b}
+        depends_on:
+            ollama:
+                condition: service_started
+                # condition: service_healthy # こっちがいいけど、コンテナ作れなくなるから一旦やめる
+        command: ["/bin/bash", "/init-ollama.sh"]
+        restart: "no" 
 networks:
     sail:
         driver: bridge
@@ -140,4 +201,6 @@ volumes:
     sail-redis:
         driver: local
     sail-meilisearch:
+        driver: local
+    sail-ollama:
         driver: local
