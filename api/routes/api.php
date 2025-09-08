@@ -15,7 +15,7 @@ use App\Http\Controllers\AIController;
 // API動作確認用のテストルート
 Route::get('/', function () {
     return response()->json([
-        'message' => 'Hidamari API is working!',
+        'message' => 'kumatomo API is working!',
         'version' => '1.0.0',
         'timestamp' => now()->toISOString()
     ]);

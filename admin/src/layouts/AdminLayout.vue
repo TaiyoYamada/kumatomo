@@ -27,7 +27,7 @@
         mdi-flower
       </v-icon>
       <v-toolbar-title class="text-h5 font-weight-bold system-title">
-        Hidamari
+        kumatomo
       </v-toolbar-title>
       <v-chip
         v-if="!isMobile"
@@ -137,7 +137,7 @@
       >
         mdi-flower
       </v-icon>
-      <span class="text-h6 font-weight-bold drawer-title">Hidamari</span>
+      <span class="text-h6 font-weight-bold drawer-title">kumatomo</span>
       <v-spacer />
       <v-btn
         icon

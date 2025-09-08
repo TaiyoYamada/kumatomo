@@ -1,6 +1,6 @@
-# Hidamari Admin Panel
+# kumatomo Admin Panel
 
-Vue.js 3で構築されたHidamariアプリの管理画面です。
+Vue.js 3で構築されたkumatomoアプリの管理画面です。
 
 ## 機能
 
