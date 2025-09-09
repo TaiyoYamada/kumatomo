@@ -30,18 +30,34 @@ Route::post('/login', [AuthController::class, 'login']);
 // AI Health Check (認証不要)
 Route::get('/ai/health', [AIController::class, 'health']);
 
+// プロフィール作成（認証不要 - 新規ユーザー登録用）
+Route::post('/users', [UserController::class, 'store']);
+
 // 認証が必要なAPI
 Route::middleware('auth:sanctum')->group(function () {
 
     // 自分のユーザー情報取得
     Route::get('/user', [UserController::class, 'me']);
-    // Route::get('/users/{id}', [UserController::class, 'updateprofile']);
+    
+    // 特定ユーザーのプロフィール取得
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    
+    // プロフィール更新
+    Route::put('/user/update', [UserController::class, 'update']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    
+    // プロフィール削除
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+    
+    // ユーザーネーム利用可能性チェック
+    Route::post('/users/check-username', [UserController::class, 'checkUsernameAvailability']);
+    
+    // プロフィール画像アップロード
+    Route::post('/upload-profile-image', [UserController::class, 'uploadProfileImage']);
+    Route::post('/upload-cover-image', [UserController::class, 'uploadCoverImage']);
 
     Route::post('/upload-image', [ImageUploadController::class, 'store']);
     Route::post('/upload-images', [ImageUploadController::class, 'storeMultiple']);
-
-    // プロフィール更新
-    Route::put('/user/update', [UserController::class, 'update']);
 
     // 投稿の取得
     Route::get('/posts', [PostController::class, 'index']);

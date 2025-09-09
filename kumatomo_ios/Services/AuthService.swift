@@ -110,6 +110,16 @@ class AuthService: ObservableObject {
         self.currentUser = nil
     }
 
+    /// Attempts to refresh authentication state using the existing token
+    @MainActor
+    func refreshToken() async throws {
+        guard AuthTokenManager.shared.token != nil else {
+            throw AuthError.unauthorized
+        }
+        // Minimal implementation: re-fetch current user to validate token
+        try await fetchCurrentUser()
+    }
+
     @MainActor
     func createUser(withEmail email: String, password: String) async throws {
         print("🚀 ユーザー登録開始")

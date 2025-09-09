@@ -138,7 +138,3 @@ extension CreateUserRequest {
         self.email = user.email
     }
 }
-
-struct UserResponse: Codable {
-    let data: User
-}

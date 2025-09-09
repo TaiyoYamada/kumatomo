@@ -173,71 +173,7 @@ struct ProfileSuccessIndicator: View {
     }
 }
 
-// MARK: - Enhanced Network Status Indicator (extends existing NetworkStatusBanner)
-
-extension NetworkStatusBanner {
-    /// Enhanced network status banner with more detailed messaging
-    static func enhanced() -> some View {
-        EnhancedNetworkStatusBanner()
-    }
-}
-
-struct EnhancedNetworkStatusBanner: View {
-    @ObservedObject private var networkMonitor = NetworkMonitor.shared
-    @State private var showBanner = false
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            if showBanner && !networkMonitor.isConnected {
-                HStack(spacing: 12) {
-                    Image(systemName: "wifi.slash")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Text("インターネット接続がありません")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(Color.red)
-                .transition(.move(edge: .top).combined(with: .opacity))
-            } else if showBanner && networkMonitor.shouldLimitDataUsage() {
-                HStack(spacing: 12) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Text(networkMonitor.getNetworkStatusMessage())
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(Color.orange)
-                .transition(.move(edge: .top).combined(with: .opacity))
-            }
-        }
-        .animation(.easeInOut(duration: 0.3), value: showBanner)
-        .onChange(of: networkMonitor.isConnected) { _, isConnected in
-            withAnimation {
-                showBanner = !isConnected || networkMonitor.shouldLimitDataUsage()
-            }
-        }
-        .onChange(of: networkMonitor.isExpensive) { _, _ in
-            withAnimation {
-                showBanner = !networkMonitor.isConnected || networkMonitor.shouldLimitDataUsage()
-            }
-        }
-        .onAppear {
-            showBanner = !networkMonitor.isConnected || networkMonitor.shouldLimitDataUsage()
-        }
-    }
-}
+// MARK: - Enhanced Network Status Indicator (removed duplicate - using NetworkStatusBanner.swift)
 
 // MARK: - Validation Error Display
 

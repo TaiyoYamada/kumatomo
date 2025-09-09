@@ -1,10 +1,7 @@
 import Foundation
 import UIKit
 
-// ImageUploadResponse構造体を定義
-struct ImageUploadResponse: Codable {
-    let url: String
-}
+// ImageUploadResponse is defined in Models/ImageUploadResponse.swift
 
 class ImageUploadService {
     static let shared = ImageUploadService()
@@ -107,6 +104,15 @@ class ImageUploadService {
             print("🚨 画像アップロード失敗: \(error)")
             throw ImageUploadError.uploadFailed(reason: error.localizedDescription)
         }
+    }
+    
+    // Convenience wrappers to match callers in OfflineQueueManager
+    func uploadProfileImage(_ image: UIImage) async throws -> String {
+        try await uploadImage(image, endpoint: "/upload-profile-image")
+    }
+    
+    func uploadCoverImage(_ image: UIImage) async throws -> String {
+        try await uploadImage(image, endpoint: "/upload-cover-image")
     }
 }
 

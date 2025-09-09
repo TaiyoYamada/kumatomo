@@ -59,7 +59,7 @@ struct PlaceholderView: View {
         VStack(spacing: 20) {
             Image(systemName: "wrench.and.screwdriver")
                 .font(.system(size: 48))
-                .foregroundColor(.secondary)
+//                .foregroundColor(.secondary)
             
             Text(title)
                 .font(.title2)

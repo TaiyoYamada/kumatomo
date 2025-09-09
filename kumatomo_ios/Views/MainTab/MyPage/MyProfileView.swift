@@ -251,7 +251,7 @@ struct ModernProfileHeaderView: View {
                         )
                     }
                 }
-                .frame(height: 220)
+                .frame(height: min(220, UIScreen.main.bounds.height * 0.25)) // iPhone 16 最適化
                 .clipped()
                 .overlay(
                     // グラデーションオーバーレイ - より洗練された効果
@@ -742,7 +742,7 @@ struct PostCardContentView: View {
             
             // 画像グリッド
             if let images = post.images, !images.isEmpty {
-                PostImagesGridView(images: images)
+                PostImagesGridView(images: images.map { $0.imageUrl })
                     .cornerRadius(16)
             }
             
@@ -824,179 +824,4 @@ struct PostCardActionsView: View {
     }
 }
 
-struct ActionButton: View {
-    let icon: String
-    let count: Int
-    let color: Color
-    let activeColor: Color
-    @State private var isPressed = false
-    
-    private var formattedCount: String {
-        if count >= 1000000 {
-            return String(format: "%.1fM", Double(count) / 1000000.0)
-        } else if count >= 1000 {
-            return String(format: "%.1fK", Double(count) / 1000.0)
-        } else if count > 0 {
-            return "\(count)"
-        } else {
-            return ""
-        }
-    }
-    
-    var body: some View {
-        Button(action: {
-            // TODO: アクション実装
-            withAnimation(.easeInOut(duration: 0.1)) {
-                isPressed.toggle()
-            }
-        }) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 18))
-                
-                if !formattedCount.isEmpty {
-                    Text(formattedCount)
-                        .font(.system(size: 14, weight: .medium))
-                }
-            }
-            .foregroundColor(color)
-            .padding(8)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .scaleEffect(isPressed ? 0.9 : 1.0)
-    }
-}
 
-// スクロールオフセット用のPreferenceKey
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
-// 投稿ユーザー画像コンポーネント
-struct PostUserImageView: View {
-    let imageURL: String?
-    
-    var body: some View {
-        AsyncImage(url: URL(string: imageURL ?? "")) { image in
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        } placeholder: {
-            Circle()
-                .fill(.ultraThinMaterial)
-                .overlay(
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 18))
-                        .foregroundColor(.secondary)
-                )
-        }
-        .clipShape(Circle())
-    }
-}
-// 投稿画像グリッドコンポーネント - Instagram スタイル
-struct PostImagesGridView: View {
-    let images: [PostImage]
-    
-    private var displayImages: [PostImage] {
-        Array(images.prefix(4))
-    }
-    
-    private var gridLayout: [GridItem] {
-        switch displayImages.count {
-        case 1:
-            return [GridItem(.flexible())]
-        case 2:
-            return Array(repeating: GridItem(.flexible(), spacing: 2), count: 2)
-        case 3, 4:
-            return Array(repeating: GridItem(.flexible(), spacing: 2), count: 2)
-        default:
-            return [GridItem(.flexible())]
-        }
-    }
-    
-    var body: some View {
-        LazyVGrid(columns: gridLayout, spacing: 2) {
-            ForEach(displayImages.indices, id: \.self) { index in
-                PostImageItemView(
-                    imageURL: displayImages[index].imageUrl,
-                    imageCount: displayImages.count,
-                    index: index,
-                    totalImages: images.count
-                )
-            }
-        }
-        .aspectRatio(displayImages.count == 1 ? nil : 1.0, contentMode: .fit)
-    }
-}
-
-// 投稿画像アイテムコンポーネント - Instagram スタイル
-struct PostImageItemView: View {
-    let imageURL: String
-    let imageCount: Int
-    let index: Int
-    let totalImages: Int
-    
-    private var imageHeight: CGFloat {
-        switch imageCount {
-        case 1:
-            return 300
-        case 2:
-            return 200
-        case 3:
-            return index == 0 ? 200 : 100
-        case 4:
-            return 150
-        default:
-            return 200
-        }
-    }
-    
-    var body: some View {
-        ZStack {
-            AsyncImage(url: URL(string: imageURL)) { phase in
-                switch phase {
-                case .empty:
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .overlay(
-                            ProgressView()
-                                .tint(.secondary)
-                        )
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                case .failure(_):
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .font(.system(size: 24))
-                                .foregroundColor(.secondary)
-                        )
-                @unknown default:
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                }
-            }
-            .frame(height: imageHeight)
-            .clipped()
-            
-            // 追加画像数の表示（4枚目で残りがある場合）
-            if index == 3 && totalImages > 4 {
-                Rectangle()
-                    .fill(Color.black.opacity(0.6))
-                    .overlay(
-                        Text("+\(totalImages - 4)")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                    )
-            }
-        }
-        .cornerRadius(imageCount == 1 ? 16 : 8)
-    }
-}

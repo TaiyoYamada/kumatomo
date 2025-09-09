@@ -20,6 +20,7 @@ return new class extends Migration {
 
             // プロフィール情報
             $table->string('name')->nullable();
+            $table->string('username')->nullable()->unique();
             $table->text('bio')->nullable();
             $table->string('website')->nullable();
             $table->string('city')->nullable();

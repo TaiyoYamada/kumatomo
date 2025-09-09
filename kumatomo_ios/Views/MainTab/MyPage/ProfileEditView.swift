@@ -237,14 +237,18 @@ struct ProfileEditView: View {
             }
             .overlay {
                 // Loading overlay with enhanced feedback
-                ProfileLoadingOverlay(
-                    isLoading: viewModel.isProcessing,
-                    message: getLoadingMessage()
-                )
+                if viewModel.isProcessing {
+                    ProfileLoadingOverlay(
+                        isLoading: viewModel.isProcessing,
+                        message: getLoadingMessage()
+                    )
+                }
             }
             .overlay(alignment: .top) {
                 // Network status banner
-                NetworkStatusBanner()
+                if !networkMonitor.isConnected {
+                    NetworkStatusBanner()
+                }
             }
             .overlay {
                 // Validation errors overlay
@@ -504,12 +508,12 @@ struct ProfileImageEditRow: View {
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
-                            .frame(height: 120)
+                            .frame(height: min(120, UIScreen.main.bounds.height * 0.15)) // iPhone 16 最適化
                         case .success(let image):
                             image
                                 .resizable()
                                 .scaledToFill()
-                                .frame(height: 120)
+                                .frame(height: min(120, UIScreen.main.bounds.height * 0.15)) // iPhone 16 最適化
                                 .clipped()
                         case .failure:
                             LinearGradient(
@@ -520,7 +524,7 @@ struct ProfileImageEditRow: View {
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
-                            .frame(height: 120)
+                            .frame(height: min(120, UIScreen.main.bounds.height * 0.15)) // iPhone 16 最適化
                         @unknown default:
                             LinearGradient(
                                 gradient: Gradient(colors: [
@@ -530,7 +534,7 @@ struct ProfileImageEditRow: View {
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
-                            .frame(height: 120)
+                            .frame(height: min(120, UIScreen.main.bounds.height * 0.15)) // iPhone 16 最適化
                         }
                     }
                 } else {
@@ -542,7 +546,7 @@ struct ProfileImageEditRow: View {
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
-                    .frame(height: 120)
+                    .frame(height: min(120, UIScreen.main.bounds.height * 0.15)) // iPhone 16 最適化
                 }
                 
                 // Cover Image Edit Button
