@@ -51,10 +51,10 @@ struct ShopPostsSection: View {
                         onRefresh()
                     }
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.pink)
+                    .foregroundColor(.orange)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.pink.opacity(0.1))
+                    .background(Color.orange.opacity(0.1))
                     .cornerRadius(8)
                 }
                 .padding(.vertical, 20)
@@ -164,10 +164,10 @@ struct PostCard: View {
                         ForEach(tags, id: \.self) { tag in
                             Text("#\(tag)")
                                 .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.pink)
+                                .foregroundColor(.orange)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Color.pink.opacity(0.1))
+                                .background(Color.orange.opacity(0.1))
                                 .cornerRadius(6)
                         }
                     }
@@ -223,7 +223,7 @@ struct PostImageGallery: View {
                 HStack(spacing: 8) {
                     ForEach(0..<images.count, id: \.self) { index in
                         Circle()
-                            .fill(index == selectedImageIndex ? Color.pink : Color.gray.opacity(0.3))
+                            .fill(index == selectedImageIndex ? Color.orange : Color.gray.opacity(0.3))
                             .frame(width: 8, height: 8)
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {

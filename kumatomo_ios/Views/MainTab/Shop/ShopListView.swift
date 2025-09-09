@@ -63,7 +63,7 @@ struct ShopListView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: viewModel.requestLocationPermission) {
                         Image(systemName: "location")
-                            .foregroundColor(.pink)
+                            .foregroundColor(.orange)
                     }
                 }
             }
@@ -111,7 +111,7 @@ struct GenreChip: View {
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(isSelected ? Color.pink : Color(.systemGray6))
+                        .fill(isSelected ? Color.orange : Color(.systemGray6))
                 )
         }
         .buttonStyle(PlainButtonStyle())
@@ -131,12 +131,12 @@ struct ViewToggleButtons: View {
                     Text("リスト")
                 }
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(showingMap ? .secondary : .pink)
+                .foregroundColor(showingMap ? .secondary : .orange)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
                 .background(
                     Rectangle()
-                        .fill(showingMap ? Color.clear : Color.pink.opacity(0.1))
+                        .fill(showingMap ? Color.clear : Color.orange.opacity(0.1))
                 )
             }
             
@@ -146,12 +146,12 @@ struct ViewToggleButtons: View {
                     Text("マップ")
                 }
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(showingMap ? .pink : .secondary)
+                .foregroundColor(showingMap ? .orange : .secondary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
                 .background(
                     Rectangle()
-                        .fill(showingMap ? Color.pink.opacity(0.1) : Color.clear)
+                        .fill(showingMap ? Color.orange.opacity(0.1) : Color.clear)
                 )
             }
         }
@@ -246,10 +246,10 @@ struct ShopCardView: View {
                     if let genre = shop.genre {
                         Text(genre)
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.pink)
+                            .foregroundColor(.orange)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.pink.opacity(0.1))
+                            .background(Color.orange.opacity(0.1))
                             .cornerRadius(6)
                     }
                     
@@ -322,7 +322,7 @@ struct ShopErrorView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
-                .background(Color.pink)
+                .background(Color.orange)
                 .cornerRadius(8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

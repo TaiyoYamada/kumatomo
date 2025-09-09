@@ -63,7 +63,7 @@ struct ErrorView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(Color.blue)
+                        .background(Color.primaryOrange)
                         .foregroundColor(.white)
                         .cornerRadius(8)
                     }
@@ -117,7 +117,7 @@ struct ErrorView: View {
         case .authentication, .authorization:
             return .purple
         case .fileSystem:
-            return .blue
+            return .primaryOrange
         case .unknown:
             return .gray
         }

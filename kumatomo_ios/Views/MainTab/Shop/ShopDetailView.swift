@@ -50,10 +50,10 @@ struct ShopDetailView: View {
                             if let genre = shop.genre {
                                 Text(genre)
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.pink)
+                                    .foregroundColor(.orange)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
-                                    .background(Color.pink.opacity(0.1))
+                                    .background(Color.orange.opacity(0.1))
                                     .cornerRadius(8)
                             }
                         }
@@ -124,10 +124,10 @@ struct ShopDetailView: View {
                                         Text("マップで開く")
                                     }
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.pink)
+                                    .foregroundColor(.orange)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 14)
-                                    .background(Color.pink.opacity(0.1))
+                                    .background(Color.orange.opacity(0.1))
                                     .cornerRadius(12)
                                 }
                             }
@@ -159,7 +159,7 @@ struct ShopDetailView: View {
                     Button("閉じる") {
                         dismiss()
                     }
-                    .foregroundColor(.pink)
+                    .foregroundColor(.orange)
                 }
             }
             .task {
@@ -211,7 +211,7 @@ struct InfoRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(.pink)
+                .foregroundColor(.orange)
                 .font(.system(size: 16))
                 .frame(width: 20)
             

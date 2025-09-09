@@ -52,7 +52,7 @@ struct LoginView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.pink)
+                    .background(Color.orange)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
@@ -72,7 +72,7 @@ struct LoginView: View {
                         Text("新規登録")
                             .font(.footnote)
                             .fontWeight(.semibold)
-                            .foregroundColor(.pink)
+                            .foregroundColor(.orange)
                     }
                     .padding(.bottom, 32)
                 }

@@ -502,7 +502,7 @@ struct ProfileImageEditRow: View {
                         case .empty:
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.blue.opacity(0.6),
+                                    Color.orange.opacity(0.6),
                                     Color.purple.opacity(0.6)
                                 ]),
                                 startPoint: .topLeading,
@@ -518,7 +518,7 @@ struct ProfileImageEditRow: View {
                         case .failure:
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.blue.opacity(0.6),
+                                    Color.orange.opacity(0.6),
                                     Color.purple.opacity(0.6)
                                 ]),
                                 startPoint: .topLeading,
@@ -528,7 +528,7 @@ struct ProfileImageEditRow: View {
                         @unknown default:
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.blue.opacity(0.6),
+                                    Color.orange.opacity(0.6),
                                     Color.purple.opacity(0.6)
                                 ]),
                                 startPoint: .topLeading,
@@ -540,7 +540,7 @@ struct ProfileImageEditRow: View {
                 } else {
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color.blue.opacity(0.6),
+                            Color.orange.opacity(0.6),
                             Color.purple.opacity(0.6)
                         ]),
                         startPoint: .topLeading,

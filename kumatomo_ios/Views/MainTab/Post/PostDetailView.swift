@@ -128,7 +128,7 @@ private struct PostContentCard: View {
             HStack(spacing: 12) {
                 Image(systemName: mockAvatars[post.userId ?? 1] ?? "person.circle")
                     .font(.system(size: 40))
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(mockNames[post.userId ?? 1] ?? "ユーザー")
@@ -298,10 +298,10 @@ private struct ShopInfoCard: View {
                 if let genre = shop.genre {
                     Text(genre)
                         .font(.caption)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.orange)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.1))
+                        .background(Color.orange.opacity(0.1))
                         .cornerRadius(6)
                 }
                 
@@ -338,10 +338,10 @@ private struct TagsSection: View {
                 ForEach(tags, id: \.self) { tag in
                     Text("#\(tag)")
                         .font(.caption)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.orange)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.1))
+                        .background(Color.orange.opacity(0.1))
                         .cornerRadius(6)
                 }
             }

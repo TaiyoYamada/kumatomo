@@ -83,16 +83,16 @@ private struct EnhancedTagChip: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(
-                        isSelected ? Color.blue :
+                        isSelected ? Color.primaryOrange :
                         isDisabled ? Color.gray.opacity(0.1) :
                         Color(UIColor.systemBackground)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(
-                                isSelected ? Color.blue :
+                                isSelected ? Color.primaryOrange :
                                 isDisabled ? Color.gray.opacity(0.3) :
-                                Color.blue,
+                                Color.primaryOrange,
                                 lineWidth: 1
                             )
                     )
@@ -100,7 +100,7 @@ private struct EnhancedTagChip: View {
             .foregroundColor(
                 isSelected ? .white :
                 isDisabled ? .gray :
-                .blue
+                .primaryOrange
             )
             .scaleEffect(isSelected ? 1.05 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isSelected)

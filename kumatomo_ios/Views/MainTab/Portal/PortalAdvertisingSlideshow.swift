@@ -143,7 +143,7 @@ struct PortalAdvertisingSlideshow: View {
             .fill(LinearGradient(
                 gradient: Gradient(colors: isError ? 
                     [.red.opacity(0.2), .orange.opacity(0.2)] :
-                    [.blue.opacity(0.3), .purple.opacity(0.3)]
+                    [.orange.opacity(0.3), .purple.opacity(0.3)]
                 ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing

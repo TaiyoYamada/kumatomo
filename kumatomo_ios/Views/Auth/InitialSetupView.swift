@@ -66,7 +66,7 @@ struct InitialSetupView: View {
                                 PhotosPicker(selection: $selectedImage, matching: .images) {
                                     ZStack {
                                         Circle()
-                                            .fill(Color.blue)
+                                            .fill(Color.orange)
                                             .frame(width: 36, height: 36)
                                         
                                         Image(systemName: "camera.fill")
@@ -98,7 +98,7 @@ struct InitialSetupView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Image(systemName: "mappin.circle.fill")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.orange)
                                         .font(.title3)
                                         .frame(width: 24)
                                     
@@ -136,7 +136,7 @@ struct InitialSetupView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Image(systemName: "calendar")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.orange)
                                         .font(.title3)
                                         .frame(width: 24)
                                     
@@ -167,12 +167,12 @@ struct InitialSetupView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(isFormValid ? Color.blue : Color.gray.opacity(0.5))
+                        .background(isFormValid ? Color.orange : Color.gray.opacity(0.5))
                         .foregroundColor(.white)
                         .cornerRadius(12)
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
-                        .shadow(color: isFormValid ? Color.blue.opacity(0.3) : Color.clear, radius: 5)
+                        .shadow(color: isFormValid ? Color.orange.opacity(0.3) : Color.clear, radius: 5)
                         .disabled(!isFormValid || isSubmitting)
                         
                         Spacer().frame(height: 30)
@@ -270,7 +270,7 @@ struct FormField: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Image(systemName: icon)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
                     .font(.title3)
                     .frame(width: 24)
                 

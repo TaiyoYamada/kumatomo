@@ -184,9 +184,9 @@ struct ModernProfileHeaderView: View {
                                 // ローディング中のグラデーション
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.blue.opacity(0.7),
+                                        Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.pink.opacity(0.7)
+                                        Color.orange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -203,9 +203,9 @@ struct ModernProfileHeaderView: View {
                                 // エラー時のデフォルトグラデーション
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.blue.opacity(0.7),
+                                        Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.pink.opacity(0.7)
+                                        Color.orange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -218,9 +218,9 @@ struct ModernProfileHeaderView: View {
                             @unknown default:
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.blue.opacity(0.7),
+                                        Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.pink.opacity(0.7)
+                                        Color.orange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -231,9 +231,9 @@ struct ModernProfileHeaderView: View {
                         // デフォルトのカバー画像
                         LinearGradient(
                             gradient: Gradient(colors: [
-                                Color.blue.opacity(0.7),
+                                Color.orange.opacity(0.7),
                                 Color.purple.opacity(0.7),
-                                Color.pink.opacity(0.7)
+                                Color.orange.opacity(0.7)
                             ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -381,7 +381,7 @@ struct ModernProfileInfoView: View {
                     
                     if user.isVerified == true {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.blue)
+                            .foregroundColor(.orange)
                             .font(.title3)
                     }
                 }
@@ -433,7 +433,7 @@ struct ModernProfileInfoView: View {
                             .frame(width: 16)
                         Text(website)
                             .font(.subheadline)
-                            .foregroundColor(.blue)
+                            .foregroundColor(.orange)
                             .underline()
                     }
                 }
@@ -689,7 +689,7 @@ struct PostCardHeaderView: View {
                     
                     if post.user?.isVerified == true {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.blue)
+                            .foregroundColor(.orange)
                             .font(.system(size: 14))
                     }
                 }
@@ -753,12 +753,12 @@ struct PostCardContentView: View {
                         ForEach(tags, id: \.self) { tag in
                             Text("#\(tag)")
                                 .font(.system(size: 14))
-                                .foregroundColor(.blue)
+                                .foregroundColor(.orange)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.blue.opacity(0.1))
+                                        .fill(Color.orange.opacity(0.1))
                                 )
                         }
                     }
@@ -781,7 +781,7 @@ struct PostCardActionsView: View {
                 icon: "message",
                 count: post.commentCount ?? 0,
                 color: .secondary,
-                activeColor: .blue
+                activeColor: .orange
             )
             
             Spacer()

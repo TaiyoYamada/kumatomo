@@ -136,7 +136,7 @@ struct KumamonAIView: View {
                 Button(action: sendMessage) {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.title2)
-                        .foregroundColor(viewModel.canSendMessage ? .blue : .gray)
+                        .foregroundColor(viewModel.canSendMessage ? .orange : .gray)
                 }
                 .disabled(!viewModel.canSendMessage)
             }
@@ -222,12 +222,12 @@ struct MessageBubbleView: View {
             Text(message.content)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(Color.blue)
+                .background(Color.orange)
                 .foregroundColor(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 18))
                 .overlay(
                     RoundedRectangle(cornerRadius: 18)
-                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                        .stroke(Color.orange.opacity(0.3), lineWidth: 1)
                 )
                 .accessibilityLabel("あなたのメッセージ: \(message.content)")
             
@@ -349,7 +349,7 @@ struct ErrorMessageView: View {
             
             Button("再試行", action: onRetry)
                 .font(.caption)
-                .foregroundColor(.blue)
+                .foregroundColor(.orange)
             
             Button(action: onDismiss) {
                 Image(systemName: "xmark.circle.fill")
@@ -386,7 +386,7 @@ struct ServiceUnavailableView: View {
             
             Button("再接続", action: onRefresh)
                 .font(.caption)
-                .foregroundColor(.blue)
+                .foregroundColor(.orange)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)

@@ -99,7 +99,7 @@ struct MainTabView: View {
                         .tag(TabSelection.profile)
                     
                 }
-                .accentColor(Color.blue)
+                .accentColor(Color.primaryOrange)
             }
         }
         .errorOverlay()

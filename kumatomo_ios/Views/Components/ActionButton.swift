@@ -12,7 +12,7 @@ struct ActionButton: View {
         icon: String,
         count: Int = 0,
         color: Color = .secondary,
-        activeColor: Color = .blue,
+        activeColor: Color = .orange,
         isActive: Bool = false,
         action: (() -> Void)? = nil
     ) {
@@ -88,7 +88,7 @@ struct CommentButton: View {
             icon: "message",
             count: count,
             color: .secondary,
-            activeColor: .blue,
+            activeColor: .orange,
             action: onTap
         )
     }

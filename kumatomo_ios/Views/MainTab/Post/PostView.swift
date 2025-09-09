@@ -85,7 +85,7 @@ struct PostView: View {
                             handlePost()
                         }
                         .disabled(!canPost)
-                        .foregroundColor(canPost ? .blue : .gray)
+                        .foregroundColor(canPost ? .orange : .gray)
                         .fontWeight(.semibold)
                         .opacity(canPost ? 1.0 : 0.6)
                     }
@@ -300,7 +300,7 @@ private struct TextInputArea: View {
                         .progressViewStyle(LinearProgressViewStyle(tint:
                             isOverLimit ? .red : 
                             isNearLimit ? .orange : 
-                            isWarningLimit ? .yellow : .blue
+                            isWarningLimit ? .yellow : .orange
                         ))
                         .frame(height: 2)
                         .animation(.easeInOut(duration: 0.2), value: characterCount)
@@ -483,28 +483,28 @@ private struct ActionButtonsRow: View {
             ) {
                 Image(systemName: "photo")
                     .font(.title2)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
             }
             
             // Shop selection button
             Button(action: { showingShopPicker = true }) {
                 Image(systemName: "location")
                     .font(.title2)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
             }
             
             // Regional tag selection button
             Button(action: { showingRegionalTagPicker = true }) {
                 Image(systemName: "mappin.and.ellipse")
                     .font(.title2)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
             }
             
             // Emoji button (placeholder for future implementation)
             Button(action: {}) {
                 Image(systemName: "face.smiling")
                     .font(.title2)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
             }
             .disabled(true)
             .opacity(0.5)

@@ -20,7 +20,7 @@ struct ProfileProgressIndicator: View {
                     .trim(from: 0, to: progress)
                     .stroke(
                         LinearGradient(
-                            colors: [.blue, .purple],
+                            colors: [.orange, .purple],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
