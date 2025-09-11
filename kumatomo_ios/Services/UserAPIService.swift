@@ -24,6 +24,7 @@ class UserAPIService {
 
     private var jsonDecoder: JSONDecoder {
         let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }
@@ -55,12 +56,14 @@ class UserAPIService {
                 // デバッグ用にレスポンスの詳細を出力
                 if let httpResponse = response as? HTTPURLResponse {
                     print("📡 ステータスコード: \(httpResponse.statusCode)")
+
+                    // レスポンスボディを文字列として出力
+                    if let responseBody = String(data: data, encoding: .utf8) {
+                        print("📄 レスポンスボディ: \(responseBody)")
+                    }
                     
                     if httpResponse.statusCode >= 400 {
                         print("⚠️ ユーザー取得失敗（ステータス: \(httpResponse.statusCode)）")
-                        if let responseBody = String(data: data, encoding: .utf8) {
-                            print("📄 エラーレスポンス: \(responseBody)")
-                        }
                     }
                 }
                 try self.validateResponse(response)

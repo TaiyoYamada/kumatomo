@@ -57,14 +57,6 @@ struct MyProfileView: View {
                 .background(Color(.systemBackground))
             }
             .navigationBarHidden(true)
-            .overlay(alignment: .top) {
-                // フローティングナビゲーションバー
-                FloatingNavigationBar(
-                    profileName: viewModel.profile.name ?? "プロフィール",
-                    showingNewPost: $showingNewPost,
-                    scrollOffset: scrollOffset
-                )
-            }
             .navigationTitle("プロフィール")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -100,73 +92,7 @@ struct MyProfileView: View {
         }
     }
 }
-// フローティングナビゲーションバー
-struct FloatingNavigationBar: View {
-    let profileName: String
-    @Binding var showingNewPost: Bool
-    let scrollOffset: CGFloat
-    
-    private var isVisible: Bool {
-        scrollOffset > 100
-    }
-    
-    var body: some View {
-        HStack {
-            Button(action: {
-                // 戻る
-            }) {
-                Image(systemName: "arrow.left")
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .foregroundColor(.primary)
-            }
-            
-            if isVisible {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(profileName)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                }
-                .transition(.opacity.combined(with: .move(edge: .leading)))
-            }
-            
-            Spacer()
-            
-            HStack(spacing: 16) {
-                Button(action: {
-                    showingNewPost = true
-                }) {
-                    Image(systemName: "plus")
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
-                }
-                
-                Button(action: {
-                    // メニュー
-                }) {
-                    Image(systemName: "ellipsis")
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
-                }
-            }
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(
-            .ultraThinMaterial,
-            in: RoundedRectangle(cornerRadius: 16)
-        )
-        .opacity(isVisible ? 1 : 0.9)
-        .animation(.easeInOut(duration: 0.3), value: isVisible)
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-    }
-}
 
-// モダンなプロフィールヘッダー - Twitter/Instagram スタイル
 struct ModernProfileHeaderView: View {
     let user: User
     let scrollOffset: CGFloat
@@ -175,13 +101,11 @@ struct ModernProfileHeaderView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                // カバー画像 - Twitter/Instagram スタイル
                 ZStack {
                     if let coverImageURL = user.coverImageURL, !coverImageURL.isEmpty, let url = URL(string: coverImageURL) {
                         AsyncImage(url: url) { phase in
                             switch phase {
                             case .empty:
-                                // ローディング中のグラデーション
                                 LinearGradient(
                                     gradient: Gradient(colors: [
                                         Color.orange.opacity(0.7),
@@ -371,13 +295,12 @@ struct ModernProfileInfoView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // 名前とユーザーネーム - Twitter/Instagram スタイル
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(user.name ?? "名前未設定")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.black)
                     
                     if user.isVerified == true {
                         Image(systemName: "checkmark.seal.fill")
@@ -399,7 +322,7 @@ struct ModernProfileInfoView: View {
                 }
             }
             
-            // バイオ/自己紹介 - より読みやすく
+            // バイオ/自己紹介
             if let bio = user.bio, !bio.isEmpty {
                 Text(bio)
                     .font(.body)
@@ -421,20 +344,6 @@ struct ModernProfileInfoView: View {
                         Text(location)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                    }
-                }
-                
-                // ウェブサイト
-                if let website = user.website, !website.isEmpty {
-                    HStack(spacing: 10) {
-                        Image(systemName: "link")
-                            .font(.system(size: 14))
-                            .foregroundColor(.secondary)
-                            .frame(width: 16)
-                        Text(website)
-                            .font(.subheadline)
-                            .foregroundColor(.orange)
-                            .underline()
                     }
                 }
                 
