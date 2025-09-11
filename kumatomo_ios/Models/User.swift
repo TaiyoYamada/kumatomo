@@ -28,7 +28,6 @@ struct User: Codable, Identifiable, Equatable {
 // MARK: - User Profile Validation Extension
 extension User {
     
-    /// Validates the user's email field
     func validateEmail() -> ValidationResult {
         guard let email = self.email else {
             return .invalid(message: "メールアドレスが設定されていません")
@@ -36,7 +35,6 @@ extension User {
         return ProfileFormValidation.validateEmail(email)
     }
     
-    /// Validates the user's name field
     func validateName() -> ValidationResult {
         guard let name = self.name else {
             return .invalid(message: "名前が設定されていません")
@@ -92,14 +90,13 @@ extension User {
         )
     }
     
-    /// Checks if the user profile has all required fields filled
+    
     var isProfileComplete: Bool {
         return email != nil && !email!.isEmpty &&
                name != nil && !name!.isEmpty &&
                username != nil && !username!.isEmpty
     }
     
-    /// Creates an updated copy of the user with new profile data
     func updatedProfile(
         email: String? = nil,
         name: String? = nil,

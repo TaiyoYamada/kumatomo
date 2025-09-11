@@ -55,19 +55,19 @@ struct ProfileFormValidation {
             return .invalid(message: "ユーザーネームを入力してください")
         }
         
-        if trimmedUsername.count < 3 {
-            return .invalid(message: "ユーザーネームは3文字以上で入力してください")
+        if trimmedUsername.count < 6 {
+            return .invalid(message: "ユーザーネームは6文字以上で入力してください")
         }
         
-        if trimmedUsername.count > 30 {
-            return .invalid(message: "ユーザーネームは30文字以内で入力してください")
+        if trimmedUsername.count > 15 {
+            return .invalid(message: "ユーザーネームは15文字以内で入力してください")
         }
         
-        // Username format validation (alphanumeric and underscore only)
-        let usernameRegex = "^[a-zA-Z0-9_]+$"
+        // Username format validation (alphanumeric only)
+        let usernameRegex = "^[a-zA-Z0-9]+$"
         let usernamePredicate = NSPredicate(format: "SELF MATCHES %@", usernameRegex)
         if !usernamePredicate.evaluate(with: trimmedUsername) {
-            return .invalid(message: "ユーザーネームは英数字とアンダースコアのみ使用できます")
+            return .invalid(message: "ユーザーネームは英数字のみ使用できます")
         }
         
         return .valid

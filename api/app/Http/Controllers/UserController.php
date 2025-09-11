@@ -29,6 +29,21 @@ class UserController extends Controller
             // Remove password confirmation as it's not needed for creation
             unset($validated['password_confirmation']);
 
+            // Generate username if not provided
+            if (empty($validated['username'])) {
+                $usernameGenerator = new \App\Services\UsernameGeneratorService();
+                $randomUsername = $usernameGenerator->generateUniqueUsername();
+                
+                if (!$randomUsername) {
+                    return response()->json([
+                        'message' => 'ユーザーネームの生成に失敗しました。しばらく時間をおいて再試行してください。'
+                    ], 500);
+                }
+                
+                $validated['username'] = $randomUsername;
+                \Log::info("プロフィール作成時にusername自動生成: {$randomUsername}");
+            }
+
             // Map location to city if provided (for backward compatibility)
             if (isset($validated['location'])) {
                 $validated['city'] = $validated['location'];
@@ -175,7 +190,20 @@ class UserController extends Controller
     public function checkUsernameAvailability(Request $request): JsonResponse
     {
         $request->validate([
-            'username' => ['required', 'string', 'max:255', 'alpha_dash']
+            'username' => [
+                'required', 
+                'string', 
+                'min:6', 
+                'max:15', 
+                'regex:/^[a-zA-Z0-9]+$/',
+                'not_regex:/^[0-9]+$/'
+            ]
+        ], [
+            'username.required' => 'ユーザーネームは必須です。',
+            'username.min' => 'ユーザーネームは6文字以上で入力してください。',
+            'username.max' => 'ユーザーネームは15文字以内で入力してください。',
+            'username.regex' => 'ユーザーネームは英数字のみ使用できます。',
+            'username.not_regex' => 'ユーザーネームは数字のみにはできません。'
         ]);
 
         $username = $request->input('username');
@@ -190,6 +218,61 @@ class UserController extends Controller
             'available' => !$exists,
             'message' => $exists ? 'このユーザーネームは既に使用されています' : 'このユーザーネームは利用可能です'
         ]);
+    }
+
+    /**
+     * ユーザーネームのみを更新する
+     */
+    public function updateUsername(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+
+            // Validate username
+            $validated = $request->validate([
+                'username' => [
+                    'required', 
+                    'string', 
+                    'min:6', 
+                    'max:15', 
+                    'regex:/^[a-zA-Z0-9]+$/',
+                    'not_regex:/^[0-9]+$/',
+                    Rule::unique('users')->ignore($user->id),
+                    'not_in:admin,root,api,www,mail,support,help,info,contact,about,terms,privacy,login,register,logout,profile,settings,dashboard,home,index'
+                ]
+            ], [
+                'username.required' => 'ユーザーネームは必須です。',
+                'username.min' => 'ユーザーネームは6文字以上で入力してください。',
+                'username.max' => 'ユーザーネームは15文字以内で入力してください。',
+                'username.regex' => 'ユーザーネームは英数字のみ使用できます。',
+                'username.not_regex' => 'ユーザーネームは数字のみにはできません。',
+                'username.unique' => 'このユーザーネームは既に使用されています。',
+                'username.not_in' => 'このユーザーネームは予約されているため使用できません。'
+            ]);
+
+            // Update only the username
+            $user->update(['username' => $validated['username']]);
+
+            \Log::info("ユーザーネーム更新: user_id={$user->id}, new_username={$validated['username']}");
+
+            return response()->json([
+                'message' => 'ユーザーネームが正常に更新されました。',
+                'data' => new UserResource($user->fresh())
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'バリデーションエラーが発生しました。',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error("ユーザーネーム更新エラー: " . $e->getMessage());
+            
+            return response()->json([
+                'message' => 'ユーザーネームの更新中にエラーが発生しました。',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

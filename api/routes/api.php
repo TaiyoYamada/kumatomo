@@ -52,6 +52,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // ユーザーネーム利用可能性チェック
     Route::post('/users/check-username', [UserController::class, 'checkUsernameAvailability']);
     
+    // ユーザーネーム更新
+    Route::put('/users/update-username', [UserController::class, 'updateUsername']);
+    
     // プロフィール画像アップロード
     Route::post('/upload-profile-image', [UserController::class, 'uploadProfileImage']);
     Route::post('/upload-cover-image', [UserController::class, 'uploadCoverImage']);

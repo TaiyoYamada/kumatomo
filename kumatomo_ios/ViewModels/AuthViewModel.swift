@@ -99,16 +99,11 @@ final class AuthViewModel: ObservableObject {
         errorMessage = ""
         
         do {
-            // Auth サービスでユーザー作成
+            // Auth サービスでユーザー作成（サーバー側で自動的にランダムなusernameが生成される）
             try await authService.createUser(
                 withEmail: email,
                 password: password,
             )
-            
-            // プロフィール画像が選択されていればアップロード
-//            if let image = profileImage {
-//                await uploadProfileImage(image)
-//            }
             
             resetForm()
         } catch {

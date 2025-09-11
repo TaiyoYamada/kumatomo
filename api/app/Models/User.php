@@ -98,15 +98,12 @@ class User extends Authenticatable
                 Rule::unique('users')->ignore($userId)
             ],
             'username' => [
-                'required', 
+                $context === 'create' ? 'sometimes' : 'required', 
                 'string', 
-                'min:3', 
-                'max:30', 
-                'regex:/^[a-zA-Z0-9_\-\.]+$/',
+                'min:6', 
+                'max:15', 
+                'regex:/^[a-zA-Z0-9]+$/',
                 'not_regex:/^[0-9]+$/',
-                'not_regex:/^[_\-\.]/',
-                'not_regex:/[_\-\.]$/',
-                'not_regex:/[_\-\.]{2,}/',
                 Rule::unique('users')->ignore($userId),
                 'not_in:admin,root,api,www,mail,support,help,info,contact,about,terms,privacy,login,register,logout,profile,settings,dashboard,home,index'
             ],
@@ -205,9 +202,9 @@ class User extends Authenticatable
             'email.max' => 'メールアドレスは255文字以内で入力してください。',
             
             'username.required' => 'ユーザーネームは必須です。',
-            'username.min' => 'ユーザーネームは3文字以上で入力してください。',
-            'username.max' => 'ユーザーネームは30文字以内で入力してください。',
-            'username.regex' => 'ユーザーネームは英数字、アンダースコア、ハイフン、ピリオドのみ使用できます。',
+            'username.min' => 'ユーザーネームは6文字以上で入力してください。',
+            'username.max' => 'ユーザーネームは15文字以内で入力してください。',
+            'username.regex' => 'ユーザーネームは英数字のみ使用できます。',
             'username.unique' => 'このユーザーネームは既に使用されています。',
             'username.not_in' => 'このユーザーネームは予約されているため使用できません。',
             

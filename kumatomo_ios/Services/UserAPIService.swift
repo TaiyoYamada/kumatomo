@@ -181,6 +181,55 @@ class UserAPIService {
             .eraseToAnyPublisher()
     }
     
+    /// Updates user's username
+    func updateUsername(_ username: String) -> AnyPublisher<User, Error> {
+        let url = baseURL.appendingPathComponent("users/update-username")
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        // Add authentication token
+        if let token = AuthTokenManager.shared.token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let requestBody = ["username": username]
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        } catch {
+            return Fail(error: ProfileError.profileUpdateFailed(error)).eraseToAnyPublisher()
+        }
+        
+        print("📡 ユーザーネーム更新: \(username)")
+        
+        return APISession.shared.session.dataTaskPublisher(for: request)
+            .tryMap { data, response in
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("📡 ユーザーネーム更新ステータス: \(httpResponse.statusCode)")
+                    
+                    if httpResponse.statusCode == 401 {
+                        throw ProfileError.unauthorized
+                    } else if httpResponse.statusCode >= 400 {
+                        let message = String(data: data, encoding: .utf8) ?? "Unknown error"
+                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
+                    }
+                }
+                
+                try self.validateResponse(response)
+                let userResponse = try self.jsonDecoder.decode(UserResponse.self, from: data)
+                return userResponse.data
+            }
+            .mapError { error in
+                if error is ProfileError {
+                    return error
+                }
+                return ProfileError.profileUpdateFailed(error)
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+    
     /// Checks if a username is available
     func checkUsernameAvailability(_ username: String) -> AnyPublisher<Bool, Error> {
         let url = baseURL.appendingPathComponent("users/check-username")
