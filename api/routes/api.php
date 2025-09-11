@@ -55,10 +55,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // ユーザーネーム更新
     Route::put('/users/update-username', [UserController::class, 'updateUsername']);
     
-    // プロフィール画像アップロード
+    // 統合画像アップロードAPI
+    Route::post('/images/upload', [App\Http\Controllers\UnifiedImageUploadController::class, 'upload']);
+    Route::post('/images/upload-multiple', [App\Http\Controllers\UnifiedImageUploadController::class, 'uploadMultiple']);
+    
+    // 後方互換性のための既存エンドポイント
     Route::post('/upload-profile-image', [UserController::class, 'uploadProfileImage']);
     Route::post('/upload-cover-image', [UserController::class, 'uploadCoverImage']);
-
     Route::post('/upload-image', [ImageUploadController::class, 'store']);
     Route::post('/upload-images', [ImageUploadController::class, 'storeMultiple']);
 

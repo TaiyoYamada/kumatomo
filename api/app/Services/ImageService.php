@@ -5,9 +5,13 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Log;
 
 class ImageService
 {
+    protected $validationService;
+    protected $errorHandler;
+
     // 画像サイズ設定
     const THUMBNAIL_SIZE = 300;
     const MEDIUM_SIZE = 800;
@@ -17,6 +21,30 @@ class ImageService
     const HIGH_QUALITY = 90;
     const MEDIUM_QUALITY = 80;
     const LOW_QUALITY = 70;
+
+    // コンテキスト別設定
+    const CONTEXT_SETTINGS = [
+        'profile' => [
+            'sizes' => ['thumbnail' => 150, 'medium' => 400, 'large' => 800],
+            'quality' => self::HIGH_QUALITY,
+            'directory' => 'profile_images'
+        ],
+        'cover' => [
+            'sizes' => ['thumbnail' => 300, 'medium' => 800, 'large' => 1200],
+            'quality' => self::HIGH_QUALITY,
+            'directory' => 'cover_images'
+        ],
+        'post' => [
+            'sizes' => ['thumbnail' => 300, 'medium' => 800, 'large' => 1200],
+            'quality' => self::MEDIUM_QUALITY,
+            'directory' => 'uploads'
+        ]
+    ];
+
+    public function __construct()
+    {
+        // 依存関係は必要に応じて後で注入
+    }
 
     /**
      * 複数の画像をアップロードして処理する
@@ -39,7 +67,74 @@ class ImageService
     }
 
     /**
-     * 単一の画像をアップロードして処理する
+     * 統合された画像処理メソッド
+     */
+    public function processImage(UploadedFile $image, string $context = 'post'): array
+    {
+        // 簡単なバリデーション
+        if (!$this->isValidImage($image)) {
+            throw new \InvalidArgumentException('無効な画像ファイルです');
+        }
+
+        $settings = self::CONTEXT_SETTINGS[$context] ?? self::CONTEXT_SETTINGS['post'];
+        $filename = $this->generateUniqueFilename($image);
+        $directory = $settings['directory'];
+        
+        $result = [
+            'original' => null,
+            'medium' => null,
+            'thumbnail' => null,
+            'metadata' => $this->getImageMetadata($image),
+            'context' => $context
+        ];
+
+        try {
+            // 各サイズの画像を生成
+            foreach ($settings['sizes'] as $size => $dimension) {
+                $processedImage = $this->resizeAndOptimizeImage(
+                    $image, 
+                    $dimension, 
+                    $dimension, 
+                    $settings['quality']
+                );
+                
+                $path = "{$size}_{$directory}/{$filename}";
+                Storage::disk('public')->put($path, $processedImage);
+                $result[$size] = url("storage/{$path}");
+                
+                Log::info("Generated {$size} image", [
+                    'path' => $path,
+                    'url' => $result[$size]
+                ]);
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            Log::error('Image processing failed', [
+                'error' => $e->getMessage(),
+                'context' => $context,
+                'filename' => $filename
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * 簡単な画像バリデーション
+     */
+    private function isValidImage(UploadedFile $image): bool
+    {
+        $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        
+        $mimeType = $image->getMimeType();
+        $extension = strtolower($image->getClientOriginalExtension());
+        
+        return in_array($mimeType, $allowedMimes) && in_array($extension, $allowedExtensions);
+    }
+
+    /**
+     * 単一の画像をアップロードして処理する（後方互換性）
      *
      * @param UploadedFile $image
      * @param string $directory
@@ -48,38 +143,7 @@ class ImageService
      */
     public function uploadAndProcessImage(UploadedFile $image, string $directory = 'uploads', bool $generateThumbnails = true): array
     {
-        // ファイル名とパスの生成
-        $filename = $this->generateUniqueFilename($image);
-        $basePath = $directory . '/' . $filename;
-        
-        $result = [
-            'original' => null,
-            'medium' => null,
-            'thumbnail' => null,
-            'metadata' => $this->getImageMetadata($image)
-        ];
-
-        // オリジナル画像の処理と保存
-        $originalImage = $this->processImage($image, self::LARGE_SIZE, self::LARGE_SIZE, self::HIGH_QUALITY);
-        $originalPath = 'original_' . $basePath;
-        Storage::disk('public')->put($originalPath, $originalImage);
-        $result['original'] = url("storage/{$originalPath}");
-
-        // 中サイズ画像の生成
-        $mediumImage = $this->processImage($image, self::MEDIUM_SIZE, self::MEDIUM_SIZE, self::MEDIUM_QUALITY);
-        $mediumPath = 'medium_' . $basePath;
-        Storage::disk('public')->put($mediumPath, $mediumImage);
-        $result['medium'] = url("storage/{$mediumPath}");
-
-        // サムネイル画像の生成
-        if ($generateThumbnails) {
-            $thumbnailImage = $this->processImage($image, self::THUMBNAIL_SIZE, self::THUMBNAIL_SIZE, self::LOW_QUALITY);
-            $thumbnailPath = 'thumb_' . $basePath;
-            Storage::disk('public')->put($thumbnailPath, $thumbnailImage);
-            $result['thumbnail'] = url("storage/{$thumbnailPath}");
-        }
-
-        return $result;
+        return $this->processImage($image, 'post');
     }
 
     /**
@@ -91,7 +155,7 @@ class ImageService
      * @param int $quality 品質 (1-100)
      * @return string 処理された画像データ
      */
-    private function processImage(UploadedFile $image, int $maxWidth = 1200, int $maxHeight = 1200, int $quality = 85): string
+    private function resizeAndOptimizeImage(UploadedFile $image, int $maxWidth = 1200, int $maxHeight = 1200, int $quality = 85): string
     {
         // Intervention/Imageが利用可能な場合はリサイズ処理を行う
         if (class_exists('Intervention\Image\Facades\Image')) {
