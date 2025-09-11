@@ -5,7 +5,7 @@ import UIKit
 
 class ImageUploadService {
     static let shared = ImageUploadService()
-    private let baseURL: String = "https://localhost/api"
+    private let baseURL: String = "http://localhost:8000/api"
     
     func uploadImage(_ image: UIImage, endpoint: String = "/upload-image") async throws -> String {
         guard let url = URL(string: baseURL + endpoint) else {

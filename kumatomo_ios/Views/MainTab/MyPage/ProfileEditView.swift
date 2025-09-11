@@ -695,9 +695,16 @@ struct ProfileImageEditRow: View {
             ImageEditSheet(
                 imageType: .profile,
                 onPhotoSelection: {
-                    showProfilePhotoPicker = true
+                    // Ensure the edit sheet is dismissed before opening the picker
+                    showProfileEditModal = false
+                    // Present the PhotosPicker after the sheet dismiss animation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showProfilePhotoPicker = true
+                    }
                 },
                 onDelete: {
+                    // Dismiss the edit sheet and perform delete
+                    showProfileEditModal = false
                     viewModel.deleteProfileImage()
                 }
             )
@@ -708,9 +715,16 @@ struct ProfileImageEditRow: View {
             ImageEditSheet(
                 imageType: .cover,
                 onPhotoSelection: {
-                    showCoverPhotoPicker = true
+                    // Ensure the edit sheet is dismissed before opening the picker
+                    showCoverEditModal = false
+                    // Present the PhotosPicker after the sheet dismiss animation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showCoverPhotoPicker = true
+                    }
                 },
                 onDelete: {
+                    // Dismiss the edit sheet and perform delete
+                    showCoverEditModal = false
                     viewModel.deleteCoverImage()
                 }
             )
@@ -857,5 +871,4 @@ struct ProfileImageEditRow: View {
         return true
     }
 }
-
 

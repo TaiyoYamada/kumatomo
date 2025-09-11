@@ -8,16 +8,16 @@ services:
         image: laravelsail/php84-composer:latest
         extra_hosts:
             - 'host.docker.internal:host-gateway'
-        # ports:
-        #     - '${APP_PORT:-8000}:80'
-        #     - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+        ports:
+            - '${APP_PORT:-8000}:80'
+            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
-            HTTPS: 'on'
+            # HTTPS: 'on'  # HTTPに戻すためコメントアウト
         volumes:
             - './api:/var/www/html'
         networks:
@@ -29,20 +29,20 @@ services:
             - mailpit
             - selenium
     
-    nginx:
-        image: nginx:alpine
-        ports:
-            # - '${APP_PORT:-80}:80'
-            - '443:443'
-        volumes:
-            # - '.:/var/www/html:ro'
-            - './docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro'
-            - './docker/nginx/ssl:/etc/nginx/ssl:ro'
-        networks:
-            - sail
-        depends_on:
-            - laravel.test
-        restart: unless-stopped
+    # nginx:  # HTTPに戻すためコメントアウト（SSL証明書設定は保持）
+    #     image: nginx:alpine
+    #     ports:
+    #         # - '${APP_PORT:-80}:80'
+    #         - '443:443'
+    #     volumes:
+    #         # - '.:/var/www/html:ro'
+    #         - './docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro'
+    #         - './docker/nginx/ssl:/etc/nginx/ssl:ro'
+    #     networks:
+    #         - sail
+    #     depends_on:
+    #         - laravel.test
+    #     restart: unless-stopped
             
     mysql:
         image: 'mysql/mysql-server:8.0'
