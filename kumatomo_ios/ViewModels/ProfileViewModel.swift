@@ -50,6 +50,12 @@ class ProfileViewModel: ObservableObject {
     @Published var profileImageUploadError: ProfileError?
     @Published var coverImageUploadError: ProfileError?
     
+    // MARK: - Enhanced Image State Properties
+    @Published var hasUnsavedProfileImage: Bool = false
+    @Published var hasUnsavedCoverImage: Bool = false
+    @Published var selectedProfileItem: PhotosPickerItem?
+    @Published var selectedCoverItem: PhotosPickerItem?
+    
     // MARK: - Enhanced Error Handling Properties
     @Published var networkStatus: NetworkMonitor.ConnectionType = .unknown
     @Published var isOffline = false
@@ -795,6 +801,12 @@ class ProfileViewModel: ObservableObject {
         profileImage = nil
         coverImage = nil
         
+        // Reset image state
+        hasUnsavedProfileImage = false
+        hasUnsavedCoverImage = false
+        selectedProfileItem = nil
+        selectedCoverItem = nil
+        
         // Reset validation states
         emailValidation = .valid
         nameValidation = .valid
@@ -980,6 +992,12 @@ class ProfileViewModel: ObservableObject {
         
         // Clear posts
         posts.removeAll()
+        
+        // Clear image state
+        hasUnsavedProfileImage = false
+        hasUnsavedCoverImage = false
+        selectedProfileItem = nil
+        selectedCoverItem = nil
         
         // Clear any cached data
         ProfileCache.shared.removeUser(id: String(profile.id))
@@ -1179,7 +1197,11 @@ class ProfileViewModel: ObservableObject {
             birthday: birthday,
             profileImage: profileImage,
             coverImage: coverImage,
-            hasUnsavedChanges: hasUnsavedChanges
+            hasUnsavedChanges: hasUnsavedChanges,
+            hasUnsavedProfileImage: hasUnsavedProfileImage,
+            hasUnsavedCoverImage: hasUnsavedCoverImage,
+            selectedProfileItem: selectedProfileItem,
+            selectedCoverItem: selectedCoverItem
         )
     }
     
@@ -1202,6 +1224,10 @@ class ProfileViewModel: ObservableObject {
         self.profileImage = originalFormState.profileImage
         self.coverImage = originalFormState.coverImage
         self.hasUnsavedChanges = originalFormState.hasUnsavedChanges
+        self.hasUnsavedProfileImage = originalFormState.hasUnsavedProfileImage
+        self.hasUnsavedCoverImage = originalFormState.hasUnsavedCoverImage
+        self.selectedProfileItem = originalFormState.selectedProfileItem
+        self.selectedCoverItem = originalFormState.selectedCoverItem
         
         isProcessing = false
         
@@ -1232,6 +1258,10 @@ class ProfileViewModel: ObservableObject {
         updateFormFields(with: profile)
         profileImage = nil
         coverImage = nil
+        hasUnsavedProfileImage = false
+        hasUnsavedCoverImage = false
+        selectedProfileItem = nil
+        selectedCoverItem = nil
         hasUnsavedChanges = false
         clearAllErrors()
         print("🗑️ 未保存の変更を破棄しました")
@@ -1258,9 +1288,9 @@ class ProfileViewModel: ObservableObject {
             let currentBirthdayString = formatter.string(from: birthday)
             return currentBirthdayString != (profile.birthday ?? "")
         case .profileImage:
-            return profileImage != nil
+            return hasUnsavedProfileImage
         case .coverImage:
-            return coverImage != nil
+            return hasUnsavedCoverImage
         }
     }
     
@@ -1355,19 +1385,24 @@ class ProfileViewModel: ObservableObject {
     
     /// Handles profile image selection from PhotosPicker
     func handleProfileImageSelection(_ item: PhotosPickerItem?) {
-        guard let item = item else { return }
+        guard let item = item else { 
+            selectedProfileItem = nil
+            return 
+        }
+        
+        selectedProfileItem = item
         
         Task {
             do {
                 if let data = try await item.loadTransferable(type: Data.self),
                    let image = UIImage(data: data) {
                     await MainActor.run {
-                        self.profileImage = image
-                        self.checkForUnsavedChanges()
+                        self.updateProfileImage(image)
                     }
                 }
             } catch {
                 await MainActor.run {
+                    self.selectedProfileItem = nil
                     self.handleError(ProfileError.imageUploadFailed(error))
                 }
             }
@@ -1376,19 +1411,24 @@ class ProfileViewModel: ObservableObject {
     
     /// Handles cover image selection from PhotosPicker
     func handleCoverImageSelection(_ item: PhotosPickerItem?) {
-        guard let item = item else { return }
+        guard let item = item else { 
+            selectedCoverItem = nil
+            return 
+        }
+        
+        selectedCoverItem = item
         
         Task {
             do {
                 if let data = try await item.loadTransferable(type: Data.self),
                    let image = UIImage(data: data) {
                     await MainActor.run {
-                        self.coverImage = image
-                        self.checkForUnsavedChanges()
+                        self.updateCoverImage(image)
                     }
                 }
             } catch {
                 await MainActor.run {
+                    self.selectedCoverItem = nil
                     self.handleError(ProfileError.imageUploadFailed(error))
                 }
             }
@@ -1592,6 +1632,139 @@ class ProfileViewModel: ObservableObject {
     func removeCoverImage() {
         coverImage = nil
         checkForUnsavedChanges()
+    }
+    
+    // MARK: - Enhanced Separate Image Handling Methods
+    
+    /// Updates profile image with local preview and state tracking
+    func updateProfileImage(_ image: UIImage) {
+        profileImage = image
+        hasUnsavedProfileImage = true
+        checkForUnsavedChanges()
+        print("📸 プロフィール画像を更新しました")
+    }
+    
+    /// Updates cover image with local preview and state tracking
+    func updateCoverImage(_ image: UIImage) {
+        coverImage = image
+        hasUnsavedCoverImage = true
+        checkForUnsavedChanges()
+        print("🖼️ カバー画像を更新しました")
+    }
+    
+    /// Deletes profile image and resets to default state
+    func deleteProfileImage() {
+        profileImage = nil
+        hasUnsavedProfileImage = true
+        selectedProfileItem = nil
+        checkForUnsavedChanges()
+        print("🗑️ プロフィール画像を削除しました")
+    }
+    
+    /// Deletes cover image and resets to default state
+    func deleteCoverImage() {
+        coverImage = nil
+        hasUnsavedCoverImage = true
+        selectedCoverItem = nil
+        checkForUnsavedChanges()
+        print("🗑️ カバー画像を削除しました")
+    }
+    
+    /// Saves all images (profile and cover) in a batch operation
+    @MainActor
+    func saveAllImages() async -> Bool {
+        guard hasUnsavedProfileImage || hasUnsavedCoverImage else {
+            print("💾 保存する画像の変更がありません")
+            return true
+        }
+        
+        // Check network connectivity first
+        guard canPerformNetworkOperation() else {
+            return false
+        }
+        
+        var profileImageUrl: String? = nil
+        var coverImageUrl: String? = nil
+        var uploadSuccess = true
+        
+        clearAllErrors()
+        
+        do {
+            // Upload profile image if changed
+            if hasUnsavedProfileImage {
+                if let image = profileImage {
+                    print("📤 プロフィール画像の一括アップロード開始")
+                    profileImageUrl = await uploadProfileImageWithProgress(image)
+                    if profileImageUrl == nil {
+                        print("❌ プロフィール画像のアップロードに失敗しました")
+                        uploadSuccess = false
+                    } else {
+                        print("✅ プロフィール画像のアップロード成功: \(profileImageUrl!)")
+                    }
+                } else {
+                    // Image was deleted, we'll handle this in the profile update
+                    print("🗑️ プロフィール画像が削除されました")
+                }
+            }
+            
+            // Upload cover image if changed
+            if hasUnsavedCoverImage && uploadSuccess {
+                if let image = coverImage {
+                    print("📤 カバー画像の一括アップロード開始")
+                    coverImageUrl = await uploadCoverImageWithProgress(image)
+                    if coverImageUrl == nil {
+                        print("❌ カバー画像のアップロードに失敗しました")
+                        uploadSuccess = false
+                    } else {
+                        print("✅ カバー画像のアップロード成功: \(coverImageUrl!)")
+                    }
+                } else {
+                    // Image was deleted, we'll handle this in the profile update
+                    print("🗑️ カバー画像が削除されました")
+                }
+            }
+            
+            if uploadSuccess {
+                // Update profile with new image URLs
+                var updatedProfile = profile
+                
+                if hasUnsavedProfileImage {
+                    updatedProfile.profileImageURL = profileImageUrl
+                }
+                
+                if hasUnsavedCoverImage {
+                    updatedProfile.coverImageURL = coverImageUrl
+                }
+                
+                // Save profile with updated image URLs
+                print("📤 画像URL付きプロフィール更新開始")
+                let savedProfile = try await updateProfileAsync(updatedProfile)
+                
+                // Success - update local state
+                self.profile = savedProfile
+                
+                // Clear unsaved image state
+                hasUnsavedProfileImage = false
+                hasUnsavedCoverImage = false
+                selectedProfileItem = nil
+                selectedCoverItem = nil
+                
+                checkForUnsavedChanges()
+                
+                print("✅ 全画像の一括保存完了")
+                showSuccessMessage("画像が正常に保存されました")
+                
+                return true
+            } else {
+                handleError(ProfileError.imageUploadFailed(NSError(domain: "BatchImageUpload", code: 0, userInfo: [NSLocalizedDescriptionKey: "画像のアップロードに失敗しました"])), context: "batch_image_save")
+                return false
+            }
+            
+        } catch {
+            handleError(error, context: "batch_image_save")
+            print("❌ 画像の一括保存エラー: \(error.localizedDescription)")
+            return false
+        }
     }
     
     func uploadProfileImage(_ image: UIImage, completion: @escaping (Result<URL, Error>) -> Void) {
@@ -1959,6 +2132,10 @@ struct FormState {
     let profileImage: UIImage?
     let coverImage: UIImage?
     let hasUnsavedChanges: Bool
+    let hasUnsavedProfileImage: Bool
+    let hasUnsavedCoverImage: Bool
+    let selectedProfileItem: PhotosPickerItem?
+    let selectedCoverItem: PhotosPickerItem?
 }
 
 /// Enum representing profile fields for change tracking
