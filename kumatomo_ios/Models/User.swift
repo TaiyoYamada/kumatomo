@@ -6,7 +6,6 @@ struct User: Codable, Identifiable, Equatable {
     var name: String?
     var username: String?
     var profileImageURL: String?
-    var profileIconImageURL: String?
     var coverImageURL: String?
     var bio: String?
     var city: String?

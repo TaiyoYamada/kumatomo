@@ -60,7 +60,7 @@ extension User {
         
         // デフォルト値を設定
         self.username = nil
-        self.profileIconImageURL = nil
+        self.profileImageURL = nil
         self.city = nil
         self.location = nil
         self.postCount = nil

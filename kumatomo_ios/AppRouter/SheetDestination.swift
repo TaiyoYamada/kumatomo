@@ -1,13 +1,11 @@
 import SwiftUI
-import UIKit
 
 // MARK: - モーダル表示用のDestination enum
 // 統合済み: 全てのシート・モーダル表示はこのenumで管理
 enum SheetDestination: Identifiable {
 	case postDetail(Post)                                                           // 投稿詳細モーダル
 	case shopDetail(Shop)                                                          // お店詳細モーダル
-	case shopPicker(selectedShop: Binding<Shop?>)                                  // お店選択モーダル
-	case postPreview(content: String, images: [UIImage], shop: Shop?, onPost: () -> Void)  // 投稿プレビューモーダル
+	case shopPicker(selectedShop: Binding<Shop?>)                                  // // 投稿プレビューモーダル
 	case profileEdit(User, onProfileUpdated: (() -> Void)? = nil)              // プロフィール編集モーダル
 	case municipalityPicker(selected: String?, onSelect: (String) -> Void)         // 市区町村選択モーダル
 	case postEdit(viewModel: PostViewModel)                                        // 投稿編集モーダル
@@ -20,8 +18,6 @@ enum SheetDestination: Identifiable {
 			return "shopDetail_\(shop.id)"
 		case .shopPicker:
 			return "shopPicker"
-		case .postPreview:
-			return "postPreview"
 		case .profileEdit(let user, _):
 			return "profileEdit_\(user.id)"
 		case .municipalityPicker:
@@ -43,8 +39,6 @@ extension View {
 				ShopDetailView(shop: shop)
 			case .shopPicker(let selectedShop):
 				ShopPickerView(selectedShop: selectedShop)
-			case .postPreview(let content, let images, let shop, let onPost):
-				PostPreviewView(content: content, images: images, shop: shop, onPost: onPost)
 			case .profileEdit(let user, let onProfileUpdated):
 				ModernProfileEditView(user: user, onProfileUpdated: onProfileUpdated)
 			case .municipalityPicker(let selected, let onSelect):
