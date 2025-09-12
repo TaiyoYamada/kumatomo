@@ -3,7 +3,7 @@ import Foundation
 struct User: Codable, Identifiable, Equatable {
     var id: Int
     var email: String?
-    var name: String?
+    var name: String? 
     var username: String?
     var profileImageURL: String?
     var coverImageURL: String?

@@ -52,7 +52,7 @@ class UserController extends Controller
                 $validated['cover_image_url'] = $request->input('coverImageURL');
             }
             if ($request->has('hasCompletedSetup')) {
-                $validated['has_completed_setup'] = (bool)$request->input('hasCompletedSetup');
+                $validated['has_completed_setup'] = (bool) $request->input('hasCompletedSetup');
             }
 
             // Create the user
@@ -139,9 +139,15 @@ class UserController extends Controller
             if ($request->has('coverImageURL')) {
                 $validated['cover_image_url'] = $request->input('coverImageURL');
             }
+            if ($request->has('hasCompletedSetup')) {
+                $validated['has_completed_setup'] = (bool) $request->input('hasCompletedSetup');
+                \Log::info("hasCompletedSetup更新: user_id={$user->id}, value=" . ($validated['has_completed_setup'] ? 'true' : 'false'));
+            }
 
             // Update the user
             $user->update($validated);
+            
+            \Log::info("ユーザー更新完了: user_id={$user->id}, has_completed_setup=" . ($user->has_completed_setup ? 'true' : 'false'));
 
             // Refresh the model to get updated timestamps
             $user->refresh();

@@ -231,8 +231,10 @@ class AuthService: ObservableObject {
         if let hasCompletedSetup = hasCompletedSetup {
             // Use camelCase to align with API
             updateData["hasCompletedSetup"] = hasCompletedSetup
+            print("🔄 hasCompletedSetup送信: \(hasCompletedSetup)")
         }
         
+        print("🔄 送信データ: \(updateData)")
         request.httpBody = try JSONSerialization.data(withJSONObject: updateData)
         
         let (data, response) = try await APISession.shared.session.data(for: request)
@@ -258,6 +260,7 @@ class AuthService: ObservableObject {
         
         // 成功したら最新のユーザー情報を取得
         try await fetchCurrentUser()
+        print("🔄 ユーザー更新後のhasCompletedSetup: \(self.currentUser?.hasCompletedSetup ?? false)")
     }
         
 

@@ -243,10 +243,10 @@ struct InitialSetupView: View {
                 
                 if success {
                     // 成功したらMainTabViewに遷移するよう状態を更新
+                    print("✅ 初期設定保存成功")
                     viewModel.hasCompletedSetup = true
                     viewModel.isAuthenticated = true
                     dismiss()
-                    print("笑笑笑笑笑笑笑笑笑笑笑笑笑")
                 } else if let error = viewModel.errorMessage {
                     alertMessage = error
                     showAlert = true
