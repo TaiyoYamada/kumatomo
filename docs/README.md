@@ -1,19 +1,19 @@
 # くまトモ（KumaTomo）
 
-くまトモは、熊本の「好き」をつなげるコミュニティアプリです。お店やスポット、日常の小さな発見を写真や文章でシェアして、地域の魅力をみんなで広げていきます。本リポジトリはオープンソースとして公開しており、バックエンド API（Laravel）と iOS クライアント（SwiftUI）を同一リポジトリで管理しています。
+くまトモは、熊本の「好き」をつなげるコミュニティアプリです。お店やスポット、日常の小さな発見を写真や文章でシェアして、地域の魅力をみんなで広げていきます。バックエンド API（Laravel）と iOS クライアント（SwiftUI）を同一リポジトリで管理しています。
 
 ## 特長
 
 - 投稿の作成・閲覧・検索ができるシンプルな体験
 - プロフィール（アイコン/カバー/自己紹介/ロケーション）の簡単編集
-- 画像アップロードを含むモダンな REST API
-- iOS クライアントは SwiftUI + Combine ベースで軽量・拡張しやすい構成
+
 
 ## リポジトリ構成
 
+- `admin` - 管理者画面（Vue+Vuetify+Typescript）
 - `api/` — Laravel 製の REST API
 - `kumatomo_ios/` — iOS クライアント（SwiftUI）
-- `docs/` — 本 README や図などのドキュメント
+- `docs/` — README や図などのドキュメント
 - `docker/`, `docker-compose.yml` — ローカル開発用コンテナ
 
 ## 動作環境
@@ -27,10 +27,9 @@
 ### 1) 開発環境の起動（Docker）
 
 ```
+docker compose build
 docker compose up -d
 ```
-
-初回は依存関係のインストールやマイグレーションを実行してください。
 
 ```
 # API 用（コンテナ内で）
@@ -40,12 +39,6 @@ docker compose exec api bash -lc "composer install && cp .env.example .env && ph
 docker compose exec api bash -lc "php artisan db:seed"
 ```
 
-API の疎通確認:
-
-```
-curl http://localhost:8000/api
-```
-
 ### 2) 環境変数（iOS → API 連携）
 
 iOS 実行時に API のベース URL を指定します。
@@ -53,39 +46,6 @@ iOS 実行時に API のベース URL を指定します。
 - Xcode の Scheme 環境変数に `API_BASE_URL` を設定（例: `http://localhost:8000/api`）
 - 認証・プロフィール・画像アップロードなど全 API 呼び出しでこの値を利用します
 
-### 3) iOS クライアントの起動
-
-`kumatomo.xcodeproj` を Xcode で開いてビルド・実行してください。初回ログインやプロフィールの初期設定はアプリ上で行えます。
-
-### 4) 管理者画面（Admin, Vue + Vuetify + TypeScript）
-
-管理者向けの Web コンソールは `admin/` にあります。Vite を用いた Vue 3 + Vuetify 3 + TypeScript 構成です。
-
-依存関係のインストール:
-
-```
-cd admin
-npm install  # または yarn
-```
-
-開発サーバの起動（デフォルト: http://localhost:5173）:
-
-```
-npm run dev  # -- --host 0.0.0.0 で LAN 公開も可
-```
-
-ビルド/プレビュー:
-
-```
-npm run build
-npm run preview
-```
-
-API との接続設定:
-
-- `.env` または Vite の環境変数を使って API のベース URL を指定してください。
-- 例: `VITE_API_BASE_URL=http://localhost:8000/api`
-- 管理機能（店舗管理など）でこの URL が利用されます。
 
 ## API 概要
 
@@ -125,30 +85,11 @@ curl -X PUT \
   http://localhost:8000/api/user/update
 ```
 
-## コントリビューション
-
-歓迎します！以下を目安に PR をお願いします。
-
-1. Issue を立てて背景・目的・影響範囲を共有
-2. ブランチを作成（例: `feat/...`, `fix/...`）
-3. テストや動作確認手順を含む PR を作成
-4. レビューのフィードバックを反映
-
-指針（重要な契約）
-
-- リクエスト/レスポンスは基本 camelCase
-- 画像プロパティは `profileImageURL`（アイコン）/ `coverImageURL`（カバー）の2本
-- 位置情報は `location` のみ（`city` は使いません）
-- 画像アップロード API は絶対 URL を返します
-
-## セキュリティ
-
-脆弱性を発見した場合は、Issue ではなく直接メンテナへご連絡ください。調査の上、必要に応じてアドバイザリを公開します。
 
 ## ライセンス
 
-本プロジェクトは `docs/LICENSE` の内容に従います。
 
-## 謝辞
+本プロジェクトは `MITLICENSE` の内容に従います。
 
-コミュニティの皆さま、OSS の作者の皆さまに感謝します。くまトモが皆さんの毎日を少し楽しくできますように！
+
+
