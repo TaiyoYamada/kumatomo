@@ -13,6 +13,7 @@ enum APIError: LocalizedError {
     case notFound
     case rateLimitExceeded
     case invalidResponse
+    case userNotFound
     
     var errorDescription: String? {
         switch self {
@@ -40,6 +41,8 @@ enum APIError: LocalizedError {
             return "リクエスト制限を超えています"
         case .invalidResponse:
             return "無効なレスポンスです"
+        case .userNotFound:
+            return "ユーザーが見つかりません"
         }
     }
     
@@ -69,6 +72,8 @@ enum APIError: LocalizedError {
             return "しばらく時間をおいてから再試行してください"
         case .invalidResponse:
             return "サーバーの応答内容を確認してください"
+        case .userNotFound:
+            return "ユーザーIDを確認してください"
         }
     }
     
@@ -94,6 +99,8 @@ enum APIError: LocalizedError {
             return "短時間に多くのリクエストが送信されました"
         case .invalidResponse:
             return "レスポンスの形式が想定と異なります"
+        case .userNotFound:
+            return "指定されたユーザーが存在しません"
         default:
             return nil
         }

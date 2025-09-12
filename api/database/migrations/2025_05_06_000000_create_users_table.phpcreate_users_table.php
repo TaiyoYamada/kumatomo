@@ -20,13 +20,14 @@ return new class extends Migration {
 
             // プロフィール情報
             $table->string('name')->nullable();
+            $table->string('username')->nullable()->unique();
             $table->text('bio')->nullable();
-            $table->string('website')->nullable();
-            $table->string('city')->nullable();
+            // Location (city is deprecated; use location only)
+            $table->string('location')->nullable();
             $table->date('birthday')->nullable();
             $table->unsignedInteger('post_count')->default(0);
-            $table->string('profile_icon_image_url')->nullable();
-            $table->string('profile_image_url')->nullable();
+            $table->string('profile_image_url')->nullable(); // profile icon image URL
+            $table->string('cover_image_url')->nullable();   // cover image URL
 
             // フォロー関連（初期値0）
             $table->unsignedInteger('followers_count')->default(0);

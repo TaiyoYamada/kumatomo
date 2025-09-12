@@ -38,7 +38,6 @@ struct MainTabView: View {
     @StateObject private var userManager = CurrentUserManager.shared
     @StateObject private var sidebarState = SidebarState()
     
-    // TabSelectionはAppRouter/RouterDestination.swiftに移動
     
     var body: some View {
         SidebarContainer(isPresented: $sidebarState.isPresented, user: userManager.currentUser) {
@@ -99,7 +98,7 @@ struct MainTabView: View {
                         .tag(TabSelection.profile)
                     
                 }
-                .accentColor(Color.blue)
+                .accentColor(Color.primaryOrange)
             }
         }
         .errorOverlay()

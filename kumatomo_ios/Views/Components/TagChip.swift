@@ -16,13 +16,13 @@ struct TagChip: View {
                 .padding(.vertical, 6)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(isSelected ? Color.blue : Color.clear)
+                        .fill(isSelected ? Color.primaryOrange : Color.clear)
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.blue, lineWidth: 1)
+                                .stroke(Color.primaryOrange, lineWidth: 1)
                         )
                 )
-                .foregroundColor(isSelected ? .white : .blue)
+                .foregroundColor(isSelected ? .white : .primaryOrange)
                 .scaleEffect(isPressed ? 0.95 : 1.0)
         }
         .buttonStyle(PlainButtonStyle())

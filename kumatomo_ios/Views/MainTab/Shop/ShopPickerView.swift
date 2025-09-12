@@ -218,10 +218,10 @@ private struct ShopPickerRow: View {
                         if let genre = shop.genre {
                             Text(genre)
                                 .font(.caption)
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(.orange)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color.blue.opacity(0.1))
+                                .background(Color.orange.opacity(0.1))
                                 .cornerRadius(4)
                         }
                         
@@ -235,7 +235,7 @@ private struct ShopPickerRow: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.title2)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.orange)
                 }
             }
             .padding(12)
@@ -248,7 +248,7 @@ private struct ShopPickerRow: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? Color.orange : Color.clear, lineWidth: 2)
             )
         }
         .buttonStyle(PlainButtonStyle())

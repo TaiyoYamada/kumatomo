@@ -63,7 +63,7 @@ struct ErrorView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(Color.blue)
+                        .background(Color.primaryOrange)
                         .foregroundColor(.white)
                         .cornerRadius(8)
                     }
@@ -117,7 +117,7 @@ struct ErrorView: View {
         case .authentication, .authorization:
             return .purple
         case .fileSystem:
-            return .blue
+            return .primaryOrange
         case .unknown:
             return .gray
         }
@@ -137,42 +137,7 @@ struct ErrorView: View {
     }
 }
 
-// MARK: - Network Status Banner
-
-struct NetworkStatusBanner: View {
-    @ObservedObject private var networkMonitor = NetworkMonitor.shared
-    @State private var showBanner = false
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            if showBanner && !networkMonitor.isConnected {
-                HStack {
-                    Image(systemName: "wifi.slash")
-                        .foregroundColor(.white)
-                    
-                    Text("インターネット接続がありません")
-                        .font(.caption)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.red)
-                .transition(.move(edge: .top))
-            }
-        }
-        .animation(.easeInOut(duration: 0.3), value: showBanner)
-        .onChange(of: networkMonitor.isConnected) { isConnected in
-            withAnimation {
-                showBanner = !isConnected
-            }
-        }
-        .onAppear {
-            showBanner = !networkMonitor.isConnected
-        }
-    }
-}
+// MARK: - Network Status Banner (removed duplicate - using NetworkStatusBanner.swift)
 
 // MARK: - Error Toast
 

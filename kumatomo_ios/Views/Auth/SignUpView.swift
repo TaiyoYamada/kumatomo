@@ -119,8 +119,8 @@ struct SignUpView: View {
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.pink)
-                    .shadow(color: Color.pink.opacity(0.3), radius: 5, x: 0, y: 3)
+                    .fill(Color.orange)
+                    .shadow(color: Color.orange.opacity(0.3), radius: 5, x: 0, y: 3)
             )
             .foregroundColor(.white)
         }

@@ -17,7 +17,7 @@ final class AuthViewModel: ObservableObject {
     @Published var bio = ""
     @Published var birthDate: Date =
         Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
-    @Published var city = ""
+    @Published var location = ""
     @Published var birthday = Date()
     @Published var profileImage: UIImage?
     @Published var selectedImage: PhotosPickerItem?
@@ -99,16 +99,11 @@ final class AuthViewModel: ObservableObject {
         errorMessage = ""
         
         do {
-            // Auth サービスでユーザー作成
+            // Auth サービスでユーザー作成（サーバー側で自動的にランダムなusernameが生成される）
             try await authService.createUser(
                 withEmail: email,
                 password: password,
             )
-            
-            // プロフィール画像が選択されていればアップロード
-//            if let image = profileImage {
-//                await uploadProfileImage(image)
-//            }
             
             resetForm()
         } catch {
@@ -186,7 +181,7 @@ final class AuthViewModel: ObservableObject {
                     withName: name,
                     profileImageURL: profileImageURL,
                     bio: bio,
-                    city: city,
+                    location: location,
                     birthday: birthDate,
                     hasCompletedSetup: true
                 )
@@ -265,7 +260,7 @@ final class AuthViewModel: ObservableObject {
                 withName: name,
                 profileImageURL: profileImageURL,
                 bio: bio,
-                city: city,
+                location: location,
                 birthday: birthDate,
                 hasCompletedSetup: true
             )
