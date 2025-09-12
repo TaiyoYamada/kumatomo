@@ -4,5 +4,7 @@
 
 .kiro
 .vscode
+.git
+.docker/nginx
 
 .DS_Store
