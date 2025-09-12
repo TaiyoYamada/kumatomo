@@ -57,6 +57,36 @@ iOS 実行時に API のベース URL を指定します。
 
 `kumatomo.xcodeproj` を Xcode で開いてビルド・実行してください。初回ログインやプロフィールの初期設定はアプリ上で行えます。
 
+### 4) 管理者画面（Admin, Vue + Vuetify + TypeScript）
+
+管理者向けの Web コンソールは `admin/` にあります。Vite を用いた Vue 3 + Vuetify 3 + TypeScript 構成です。
+
+依存関係のインストール:
+
+```
+cd admin
+npm install  # または yarn
+```
+
+開発サーバの起動（デフォルト: http://localhost:5173）:
+
+```
+npm run dev  # -- --host 0.0.0.0 で LAN 公開も可
+```
+
+ビルド/プレビュー:
+
+```
+npm run build
+npm run preview
+```
+
+API との接続設定:
+
+- `.env` または Vite の環境変数を使って API のベース URL を指定してください。
+- 例: `VITE_API_BASE_URL=http://localhost:8000/api`
+- 管理機能（店舗管理など）でこの URL が利用されます。
+
 ## API 概要
 
 ベース URL は `http://localhost:8000/api`（開発例）です。代表的なエンドポイントは以下の通りです。
@@ -122,4 +152,3 @@ curl -X PUT \
 ## 謝辞
 
 コミュニティの皆さま、OSS の作者の皆さまに感謝します。くまトモが皆さんの毎日を少し楽しくできますように！
-
