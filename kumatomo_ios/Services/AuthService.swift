@@ -8,7 +8,7 @@ class AuthService: ObservableObject {
     static let shared = AuthService()
     
     private var cancellables = Set<AnyCancellable>()
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
 
     init() {
         print("🚀 AuthService init called")
@@ -110,6 +110,16 @@ class AuthService: ObservableObject {
         self.currentUser = nil
     }
 
+    /// Attempts to refresh authentication state using the existing token
+    @MainActor
+    func refreshToken() async throws {
+        guard AuthTokenManager.shared.token != nil else {
+            throw AuthError.unauthorized
+        }
+        // Minimal implementation: re-fetch current user to validate token
+        try await fetchCurrentUser()
+    }
+
     @MainActor
     func createUser(withEmail email: String, password: String) async throws {
         print("🚀 ユーザー登録開始")
@@ -179,7 +189,7 @@ class AuthService: ObservableObject {
     }
     
     @MainActor
-    func updateUser(withName name: String?, profileImageURL: String?, bio: String?, city: String?, birthday: Date?, hasCompletedSetup: Bool?) async throws {
+    func updateUser(withName name: String?, profileImageURL: String?, bio: String?, location: String?, birthday: Date?, hasCompletedSetup: Bool?) async throws {
         guard AuthTokenManager.shared.token != nil else {
             throw AuthError.unauthorized
         }
@@ -200,15 +210,16 @@ class AuthService: ObservableObject {
         }
         
         if let profileImageURL = profileImageURL {
-            updateData["profile_image_url"] = profileImageURL
+            // Use camelCase to align with API
+            updateData["profileImageURL"] = profileImageURL
         }
         
         if let bio = bio {
             updateData["bio"] = bio
         }
         
-        if let city = city {
-            updateData["city"] = city
+        if let location = location {
+            updateData["location"] = location
         }
         
         if let birthday = birthday {
@@ -218,9 +229,12 @@ class AuthService: ObservableObject {
         }
         
         if let hasCompletedSetup = hasCompletedSetup {
-            updateData["has_completed_setup"] = hasCompletedSetup
+            // Use camelCase to align with API
+            updateData["hasCompletedSetup"] = hasCompletedSetup
+            print("🔄 hasCompletedSetup送信: \(hasCompletedSetup)")
         }
         
+        print("🔄 送信データ: \(updateData)")
         request.httpBody = try JSONSerialization.data(withJSONObject: updateData)
         
         let (data, response) = try await APISession.shared.session.data(for: request)
@@ -246,6 +260,7 @@ class AuthService: ObservableObject {
         
         // 成功したら最新のユーザー情報を取得
         try await fetchCurrentUser()
+        print("🔄 ユーザー更新後のhasCompletedSetup: \(self.currentUser?.hasCompletedSetup ?? false)")
     }
         
 
@@ -347,8 +362,8 @@ class AuthService: ObservableObject {
         // 認証トークンをヘッダーに追加
         AuthTokenManager.shared.authorizedRequest(&request)
         
-        // プロフィール更新データ
-        let profileData = ["profile_image_url": url]
+        // プロフィール更新データ（camelCase）
+        let profileData = ["profileImageURL": url]
         request.httpBody = try JSONEncoder().encode(profileData)
         
         let (data, response) = try await APISession.shared.session.data(for: request)

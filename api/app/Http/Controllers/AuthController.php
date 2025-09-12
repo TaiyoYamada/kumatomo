@@ -7,32 +7,56 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
+use App\Services\UsernameGeneratorService;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
         // バリデーション（メールとパスワードのチェック）
-        $validatedData = $request->validate([ // nameが必須の場合、ここを有効にする
+        $validatedData = $request->validate([
             'email' => 'required|email|unique:users,email', // メールアドレスがユニークであること
             'password' => 'required|min:6', // パスワードは6文字以上
         ]);
 
-        // ユーザーの作成
-        $user = User::create([ // $validatedDataを直接渡す
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']), // パスワードをハッシュ化して保存
-        ]);
+        try {
+            // ランダムなusernameを生成
+            $usernameGenerator = new UsernameGeneratorService();
+            $randomUsername = $usernameGenerator->generateUniqueUsername();
+            
+            if (!$randomUsername) {
+                return response()->json([
+                    'message' => 'ユーザーネームの生成に失敗しました。しばらく時間をおいて再試行してください。'
+                ], 500);
+            }
 
-        // 作成したユーザーのトークンを生成
-        $token = $user->createToken('auth_token')->plainTextToken;
+            // ユーザーの作成
+            $user = User::create([
+                'email' => $validatedData['email'],
+                'password' => Hash::make($validatedData['password']), // パスワードをハッシュ化して保存
+                'username' => $randomUsername, // ランダムなusernameを設定
+            ]);
 
-        // トークンを返す
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => new UserResource($user)
-        ]);
+            // 作成したユーザーのトークンを生成
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            \Log::info("新規ユーザー登録完了: email={$user->email}, username={$user->username}");
+
+            // トークンを返す
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => new UserResource($user)
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error("ユーザー登録エラー: " . $e->getMessage());
+            
+            return response()->json([
+                'message' => 'ユーザー登録中にエラーが発生しました。',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function login(Request $request)

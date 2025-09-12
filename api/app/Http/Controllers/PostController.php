@@ -42,8 +42,9 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'content' => 'required|string|max:500',
+        // カスタムバリデーション: contentまたは画像のいずれかが必要
+        $request->validate([
+            'content' => 'nullable|string|max:500',
             'shop_id' => 'nullable|integer|exists:shops,id',
             'images' => 'nullable|array|max:5',
             'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:5120', // 画像ファイルの場合
@@ -55,12 +56,30 @@ class PostController extends Controller
             'image_url' => 'nullable|url|max:2048',
         ]);
 
+        // contentまたは画像のいずれかが必要
+        $hasContent = !empty($request->input('content'));
+        $hasImages = !empty($request->file('images')) || !empty($request->input('image_urls')) || !empty($request->input('image_url'));
+        
+        if (!$hasContent && !$hasImages) {
+            return response()->json([
+                'error' => [
+                    'code' => 'VALIDATION_FAILED',
+                    'message' => '投稿内容または画像のいずれかが必要です',
+                    'details' => [
+                        'content_or_images' => ['投稿内容または画像のいずれかを入力してください']
+                    ]
+                ]
+            ], 422);
+        }
+
+        $validated = $request->all();
+
         DB::beginTransaction();
         try {
             // 投稿を作成
             $postData = [
                 'user_id' => $request->user()->id,
-                'content' => $validated['content'],
+                'content' => $validated['content'] ?? '', // 空の場合は空文字列
                 'shop_id' => $validated['shop_id'] ?? null,
                 'tags' => $validated['tags'] ?? null,
             ];
@@ -76,14 +95,34 @@ class PostController extends Controller
             // 複数画像の処理
             if (isset($validated['images']) && !empty($validated['images'])) {
                 // 画像ファイルがアップロードされた場合
-                $imageUrls = $this->imageService->uploadMultipleImages($validated['images']);
+                \Log::info('画像ファイル処理開始', ['post_id' => $post->id, 'images_count' => count($validated['images'])]);
                 
-                foreach ($imageUrls as $index => $imageUrl) {
-                    PostImage::create([
-                        'post_id' => $post->id,
-                        'image_url' => $imageUrl,
-                        'display_order' => $index + 1,
+                try {
+                    $imageResults = $this->imageService->uploadMultipleImages($validated['images']);
+                    
+                    foreach ($imageResults as $index => $imageResult) {
+                        $imageUrl = $imageResult['medium'] ?? $imageResult; // 新しい形式と古い形式の両方に対応
+                        
+                        $postImageData = [
+                            'post_id' => $post->id,
+                            'image_url' => $imageUrl,
+                            'display_order' => $index + 1,
+                        ];
+                        
+                        $postImage = PostImage::create($postImageData);
+                        \Log::info('PostImage作成成功（ファイルアップロード）', [
+                            'post_image_id' => $postImage->id,
+                            'image_url' => $imageUrl
+                        ]);
+                    }
+                    
+                    \Log::info('画像ファイル処理完了', ['images_processed' => count($imageResults)]);
+                } catch (\Exception $e) {
+                    \Log::error('画像ファイル処理失敗', [
+                        'error' => $e->getMessage(),
+                        'post_id' => $post->id
                     ]);
+                    throw $e;
                 }
             } elseif (isset($validated['image_urls']) && !empty($validated['image_urls'])) {
                 // 画像URLが送信された場合（事前にアップロード済み）
@@ -100,7 +139,7 @@ class PostController extends Controller
                     
                     try {
                         $postImage = PostImage::create($postImageData);
-                        \Log::info('PostImage作成成功', ['post_image_id' => $postImage->id]);
+                        \Log::info('PostImage作成成功（URL）', ['post_image_id' => $postImage->id]);
                     } catch (\Exception $e) {
                         \Log::error('PostImage作成失敗', [
                             'error' => $e->getMessage(),

@@ -44,7 +44,7 @@ struct PostPreviewView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.blue)
+                    .background(Color.orange)
                     .cornerRadius(20)
                 }
             }
@@ -58,7 +58,7 @@ private struct PostPreviewHeader: View {
         VStack(spacing: 8) {
             Image(systemName: "eye.fill")
                 .font(.title2)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.orange)
             
             Text("投稿プレビュー")
                 .font(.headline.weight(.medium))
@@ -70,7 +70,7 @@ private struct PostPreviewHeader: View {
         }
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity)
-        .background(Color.blue.opacity(0.05))
+        .background(Color.orange.opacity(0.05))
         .cornerRadius(12)
     }
 }
@@ -208,11 +208,11 @@ private struct PostPreviewShopInfo: View {
             HStack {
                 Image(systemName: "location.fill")
                     .font(.caption)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.orange)
                 
                 Text("投稿先のお店")
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.orange)
             }
             
             HStack(spacing: 12) {

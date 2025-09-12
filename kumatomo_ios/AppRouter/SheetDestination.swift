@@ -1,16 +1,18 @@
 import SwiftUI
-import UIKit
+import PhotosUI
 
 // MARK: - モーダル表示用のDestination enum
 // 統合済み: 全てのシート・モーダル表示はこのenumで管理
 enum SheetDestination: Identifiable {
 	case postDetail(Post)                                                           // 投稿詳細モーダル
 	case shopDetail(Shop)                                                          // お店詳細モーダル
-	case shopPicker(selectedShop: Binding<Shop?>)                                  // お店選択モーダル
-	case postPreview(content: String, images: [UIImage], shop: Shop?, onPost: () -> Void)  // 投稿プレビューモーダル
-	case profileEdit(User)                                                         // プロフィール編集モーダル
+	case shopPicker(selectedShop: Binding<Shop?>)                                  // // 投稿プレビューモーダル
+	case profileEdit(User, onProfileUpdated: (() -> Void)? = nil)              // プロフィール編集モーダル
 	case municipalityPicker(selected: String?, onSelect: (String) -> Void)         // 市区町村選択モーダル
 	case postEdit(viewModel: PostViewModel)                                        // 投稿編集モーダル
+    case profileImageEdit(selectedItem: Binding<PhotosPickerItem?>, onDelete: () -> Void)  // プロフィールアイコン画像編集モーダル
+    case coverImageEdit(selectedItem: Binding<PhotosPickerItem?>, onDelete: () -> Void)   // プロフィール背景画像編集モーダル
+    
 
 	var id: String {
 		switch self {
@@ -20,15 +22,17 @@ enum SheetDestination: Identifiable {
 			return "shopDetail_\(shop.id)"
 		case .shopPicker:
 			return "shopPicker"
-		case .postPreview:
-			return "postPreview"
-		case .profileEdit(let user):
+		case .profileEdit(let user, _):
 			return "profileEdit_\(user.id)"
 		case .municipalityPicker:
 			return "municipalityPicker"
 		case .postEdit(let viewModel):
 			// Avoid touching MainActor-isolated properties here
 			return "postEdit"
+		case .profileImageEdit:
+			return "profileImageEdit"
+		case .coverImageEdit:
+			return "coverImageEdit"
 		}
 	}
 }
@@ -43,16 +47,26 @@ extension View {
 				ShopDetailView(shop: shop)
 			case .shopPicker(let selectedShop):
 				ShopPickerView(selectedShop: selectedShop)
-			case .postPreview(let content, let images, let shop, let onPost):
-				PostPreviewView(content: content, images: images, shop: shop, onPost: onPost)
-			case .profileEdit(let user):
-				ModernProfileEditView(user: user)
+			case .profileEdit(let user, let onProfileUpdated):
+				ModernProfileEditView(user: user, onProfileUpdated: onProfileUpdated)
 			case .municipalityPicker(let selected, let onSelect):
 				MunicipalityPickerView(selectedMunicipality: selected, onSelection: { value in
 					onSelect(value)
 				})
 			case .postEdit(let viewModel):
 				PostEditView(viewModel: viewModel)
+            case .profileImageEdit(let selectedItem, let onDelete):
+                ImageEditSheet(
+                    imageType: .profile,
+                    selectedItem: selectedItem,
+                    onDelete: onDelete
+                )
+            case .coverImageEdit(let selectedItem, let onDelete):
+                ImageEditSheet(
+                    imageType: .cover,
+                    selectedItem: selectedItem,
+                    onDelete: onDelete
+                )
 			}
 		}
 	}

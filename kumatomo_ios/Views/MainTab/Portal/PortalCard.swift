@@ -44,37 +44,69 @@ struct PortalCardView: View {
     // MARK: - Body
     var body: some View {
         Button(action: handleCardTap) {
-            if PortalErrorHandler.shared.validateImageAsset(cardData.imageName) {
-                // Valid image with effects and network status overlay
-                Image(cardData.imageName)
-                    .resizable()
-                    .cornerRadius(8)
-                    .shadow(radius: 5)
-                    .scaleEffect(isPressed ? 0.95 : 1.0)
-                    .animation(.easeInOut(duration: 0.1), value: isPressed)
-                    .overlay(alignment: .topTrailing) {
-                        if !networkMonitor.isConnected {
-                            Image(systemName: "wifi.slash")
-                                .font(.caption2)
-                                .foregroundColor(.red)
-                                .padding(4)
-                        }
-                    }
-            } else {
-                // Placeholder for missing image assets
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.1))
-                    .overlay {
-                        Image(systemName: "photo")
-                            .font(.title3)
-                            .foregroundColor(.gray)
-                    }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+//            if PortalErrorHandler.shared.validateImageAsset(cardData.imageName,) {
+//
+//            Image(cardData.imageName)
+//                    .resizable()
+//                    .cornerRadius(8)
+//                    .shadow(radius: 5)
+//                    .scaleEffect(isPressed ? 0.95 : 1.0)
+//                    .animation(.easeInOut(duration: 0.1), value: isPressed)
+//                    .overlay(alignment: .topTrailing) {
+//                        if !networkMonitor.isConnected {
+//                            Image(systemName: "wifi.slash")
+//                                .font(.caption2)
+//                                .foregroundColor(.red)
+//                                .padding(4)
+//                        }
+//                    }
+                
+            VStack(spacing: 12) {      // ← spacingを少し広げる
+                Image(systemName: cardData.iconName)
+                    .font(.system(size: 32))                   // ← アイコンを大きめに
+                    .foregroundColor(.accentColor)
+                    .padding(16)                               // ← 余白を広めに
+                    .background(
+                        Circle()
+                            .fill(Color.accentColor.opacity(0.15))
                     )
+                
+                Text(cardData.title)
+                    .font(.footnote)                           // ← コンパクトに
+                    .fontWeight(.semibold)                     // ← 太字で見やすく
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)                              // ← タイトル長すぎても崩れない
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)   // ← 中央揃え
+
+                
+                
+                
+//            } else {
+//                // Placeholder for missing image assets
+//                RoundedRectangle(cornerRadius: 8)
+//                    .fill(Color.gray.opacity(0.1))
+//                    .overlay {
+//                        Image(systemName: "photo")
+//                            .font(.title3)
+//                            .foregroundColor(.gray)
+//                    }
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 8)
+//                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+//                    )
+//            }
         }
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.accentColor.opacity(0.3), lineWidth: 1)
+                )
+        )
+
         .buttonStyle(PlainButtonStyle())
         .disabled(!networkMonitor.isConnected && !isValidURL)
         .onLongPressGesture(

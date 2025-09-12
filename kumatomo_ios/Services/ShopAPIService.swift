@@ -3,7 +3,7 @@ import Foundation
 class ShopAPIService {
     static let shared = ShopAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
     private var networkMonitor: NetworkMonitor {
         NetworkMonitor.shared
     }

@@ -10,9 +10,15 @@ class NetworkMonitor: ObservableObject {
     @Published var connectionType: ConnectionType = .unknown
     @Published var isExpensive = false
     @Published var isConstrained = false
+    @Published var connectionQuality: ConnectionQuality = .good
+    @Published var lastConnectedAt: Date?
+    @Published var connectionHistory: [ConnectionEvent] = []
     
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")
+    private var connectionStartTime: Date?
+    private var cancellables = Set<AnyCancellable>()
+    private let maxHistoryEntries = 100
     
     enum ConnectionType {
         case wifi
@@ -32,10 +38,69 @@ class NetworkMonitor: ObservableObject {
                 return "不明"
             }
         }
+        
+        var isReliable: Bool {
+            switch self {
+            case .wifi, .ethernet:
+                return true
+            case .cellular, .unknown:
+                return false
+            }
+        }
+    }
+    
+    enum ConnectionQuality {
+        case excellent
+        case good
+        case poor
+        case unavailable
+        
+        var displayName: String {
+            switch self {
+            case .excellent:
+                return "優秀"
+            case .good:
+                return "良好"
+            case .poor:
+                return "不安定"
+            case .unavailable:
+                return "利用不可"
+            }
+        }
+        
+        var color: String {
+            switch self {
+            case .excellent:
+                return "green"
+            case .good:
+                return "blue"
+            case .poor:
+                return "orange"
+            case .unavailable:
+                return "red"
+            }
+        }
+    }
+    
+    struct ConnectionEvent {
+        let id = UUID()
+        let timestamp: Date
+        let type: ConnectionEventType
+        let connectionType: ConnectionType
+        let quality: ConnectionQuality
+        let duration: TimeInterval?
+        
+        enum ConnectionEventType {
+            case connected
+            case disconnected
+            case qualityChanged
+            case typeChanged
+        }
     }
     
     private init() {
         startMonitoring()
+        setupQualityMonitoring()
     }
     
     deinit {
@@ -56,23 +121,121 @@ class NetworkMonitor: ObservableObject {
     }
     
     private func updateConnectionStatus(_ path: NWPath) {
+        let wasConnected = isConnected
+        let previousType = connectionType
+        let previousQuality = connectionQuality
+        
         isConnected = path.status == .satisfied
         isExpensive = path.isExpensive
         isConstrained = path.isConstrained
         
         // Determine connection type
+        let newConnectionType: ConnectionType
         if path.usesInterfaceType(.wifi) {
-            connectionType = .wifi
+            newConnectionType = .wifi
         } else if path.usesInterfaceType(.cellular) {
-            connectionType = .cellular
+            newConnectionType = .cellular
         } else if path.usesInterfaceType(.wiredEthernet) {
-            connectionType = .ethernet
+            newConnectionType = .ethernet
         } else {
-            connectionType = .unknown
+            newConnectionType = .unknown
         }
         
+        // Update connection quality
+        let newQuality = calculateConnectionQuality(path: path)
+        
+        // Record connection events
+        if !wasConnected && isConnected {
+            // Connection established
+            connectionStartTime = Date()
+            lastConnectedAt = Date()
+            addConnectionEvent(.connected, type: newConnectionType, quality: newQuality)
+        } else if wasConnected && !isConnected {
+            // Connection lost
+            let duration = connectionStartTime.map { Date().timeIntervalSince($0) }
+            addConnectionEvent(.disconnected, type: previousType, quality: .unavailable, duration: duration)
+            connectionStartTime = nil
+        } else if isConnected {
+            // Connection type or quality changed
+            if previousType != newConnectionType {
+                addConnectionEvent(.typeChanged, type: newConnectionType, quality: newQuality)
+            } else if previousQuality != newQuality {
+                addConnectionEvent(.qualityChanged, type: newConnectionType, quality: newQuality)
+            }
+        }
+        
+        connectionType = newConnectionType
+        connectionQuality = newQuality
+        
         // Log connection changes
-        print("Network status changed: Connected=\(isConnected), Type=\(connectionType.displayName), Expensive=\(isExpensive), Constrained=\(isConstrained)")
+        print("Network status changed: Connected=\(isConnected), Type=\(connectionType.displayName), Quality=\(connectionQuality.displayName), Expensive=\(isExpensive), Constrained=\(isConstrained)")
+    }
+    
+    private func calculateConnectionQuality(path: NWPath) -> ConnectionQuality {
+        if path.status != .satisfied {
+            return .unavailable
+        }
+        
+        // Base quality on connection type and constraints
+        var quality: ConnectionQuality
+        
+        switch connectionType {
+        case .wifi, .ethernet:
+            quality = isConstrained ? .good : .excellent
+        case .cellular:
+            quality = isExpensive || isConstrained ? .poor : .good
+        case .unknown:
+            quality = .poor
+        }
+        
+        return quality
+    }
+    
+    private func addConnectionEvent(
+        _ eventType: ConnectionEvent.ConnectionEventType,
+        type: ConnectionType,
+        quality: ConnectionQuality,
+        duration: TimeInterval? = nil
+    ) {
+        let event = ConnectionEvent(
+            timestamp: Date(),
+            type: eventType,
+            connectionType: type,
+            quality: quality,
+            duration: duration
+        )
+        
+        connectionHistory.insert(event, at: 0)
+        
+        if connectionHistory.count > maxHistoryEntries {
+            connectionHistory = Array(connectionHistory.prefix(maxHistoryEntries))
+        }
+    }
+    
+    private func setupQualityMonitoring() {
+        // Monitor connection quality changes over time
+        Timer.publish(every: 30, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                self?.performQualityCheck()
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func performQualityCheck() {
+        guard isConnected else { return }
+        
+        // In a real implementation, this could perform network speed tests
+        // or ping tests to determine actual connection quality
+        
+        // For now, we'll update quality based on current constraints
+        let currentPath = monitor.currentPath
+        let newQuality = calculateConnectionQuality(path: currentPath)
+        
+        if newQuality != connectionQuality {
+            connectionQuality = newQuality
+            addConnectionEvent(.qualityChanged, type: connectionType, quality: newQuality)
+        }
     }
     
     // MARK: - Public Methods

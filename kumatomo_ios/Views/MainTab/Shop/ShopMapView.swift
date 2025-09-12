@@ -94,7 +94,7 @@ struct ShopMapPin: View {
                 // ピンのアイコン
                 ZStack {
                     Circle()
-                        .fill(Color.pink)
+                        .fill(Color.orange)
                         .frame(width: 32, height: 32)
                         .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
                     

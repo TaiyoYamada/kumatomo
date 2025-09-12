@@ -91,7 +91,7 @@ struct SearchView: View {
                 Button("検索") {
                     viewModel.performSearch()
                 }
-                .foregroundColor(.pink)
+                .foregroundColor(.orange)
             }
         }
         .padding(.horizontal)
@@ -139,7 +139,7 @@ struct SearchView: View {
                             viewModel.clearSearchHistory()
                         }
                         .font(.caption)
-                        .foregroundColor(.pink)
+                        .foregroundColor(.orange)
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 8)
@@ -304,10 +304,10 @@ struct PostSearchResultCard: View {
                 if let shop = post.shop {
                     Text(shop.name)
                         .font(.caption)
-                        .foregroundColor(.pink)
+                        .foregroundColor(.orange)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.pink.opacity(0.1))
+                        .background(Color.orange.opacity(0.1))
                         .cornerRadius(8)
                 }
             }
@@ -399,10 +399,10 @@ struct ShopSearchResultCard: View {
                 if let genre = shop.genre {
                     Text(genre)
                         .font(.caption)
-                        .foregroundColor(.pink)
+                        .foregroundColor(.orange)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
-                        .background(Color.pink.opacity(0.1))
+                        .background(Color.orange.opacity(0.1))
                         .cornerRadius(6)
                 }
                 

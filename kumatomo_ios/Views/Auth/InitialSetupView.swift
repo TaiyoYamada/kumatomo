@@ -6,7 +6,7 @@ struct InitialSetupView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var username: String = ""
-    @State private var selectedCity: String = ""
+    @State private var selectedLocation: String = ""
     @State private var birthday: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date()) ?? Date()
     @State private var selectedImage: PhotosPickerItem? = nil
     @State private var displayImage: UIImage? = nil
@@ -14,11 +14,11 @@ struct InitialSetupView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
 
-    let cities = ["熊本市", "八代市", "天草市", "玉名市", "人吉市", "菊池市", "宇城市", "宇土市", "山鹿市", "上天草市", "合志市", "水俣市", "阿蘇市", "荒尾市"]
+    let locations = ["熊本市", "八代市", "天草市", "玉名市", "人吉市", "菊池市", "宇城市", "宇土市", "山鹿市", "上天草市", "合志市", "水俣市", "阿蘇市", "荒尾市"]
     
     // フォームが有効かチェック
     var isFormValid: Bool {
-        !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !selectedCity.isEmpty
+        !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !selectedLocation.isEmpty
     }
 
     var body: some View {
@@ -34,10 +34,10 @@ struct InitialSetupView: View {
                             .fontWeight(.bold)
                             .padding(.top, 20)
                         
-                        Text("基本情報を設定して、アプリを始めましょう")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.bottom, 10)
+//                        Text("基本情報を設定して、アプリを始めましょう")
+//                            .font(.subheadline)
+//                            .foregroundColor(.secondary)
+//                            .padding(.bottom, 10)
                         
                         // プロフィール画像セクション
                         VStack(spacing: 16) {
@@ -66,7 +66,7 @@ struct InitialSetupView: View {
                                 PhotosPicker(selection: $selectedImage, matching: .images) {
                                     ZStack {
                                         Circle()
-                                            .fill(Color.blue)
+                                            .fill(Color.orange)
                                             .frame(width: 36, height: 36)
                                         
                                         Image(systemName: "camera.fill")
@@ -75,7 +75,7 @@ struct InitialSetupView: View {
                                     }
                                 }
                                 .buttonStyle(.plain)
-                                .position(x: 100, y: 100)
+                                .offset(x: 55, y: 40)
                             }
                             .padding(.top, 10)
                             
@@ -98,7 +98,7 @@ struct InitialSetupView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Image(systemName: "mappin.circle.fill")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.orange)
                                         .font(.title3)
                                         .frame(width: 24)
                                     
@@ -107,17 +107,17 @@ struct InitialSetupView: View {
                                 }
                                 
                                 Menu {
-                                    ForEach(cities, id: \.self) { city in
+                                    ForEach(locations, id: \.self) { location in
                                         Button(action: {
-                                            selectedCity = city
+                                            selectedLocation = location
                                         }) {
-                                            Text(city)
+                                            Text(location)
                                         }
                                     }
                                 } label: {
                                     HStack {
-                                        Text(selectedCity.isEmpty ? "市町村を選択" : selectedCity)
-                                            .foregroundColor(selectedCity.isEmpty ? .gray : .primary)
+                                        Text(selectedLocation.isEmpty ? "市町村を選択" : selectedLocation)
+                                            .foregroundColor(selectedLocation.isEmpty ? .gray : .primary)
                                         
                                         Spacer()
                                         
@@ -136,7 +136,7 @@ struct InitialSetupView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Image(systemName: "calendar")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.orange)
                                         .font(.title3)
                                         .frame(width: 24)
                                     
@@ -167,12 +167,12 @@ struct InitialSetupView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(isFormValid ? Color.blue : Color.gray.opacity(0.5))
+                        .background(isFormValid ? Color.orange : Color.gray.opacity(0.5))
                         .foregroundColor(.white)
                         .cornerRadius(12)
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
-                        .shadow(color: isFormValid ? Color.blue.opacity(0.3) : Color.clear, radius: 5)
+                        .shadow(color: isFormValid ? Color.orange.opacity(0.3) : Color.clear, radius: 5)
                         .disabled(!isFormValid || isSubmitting)
                         
                         Spacer().frame(height: 30)
@@ -231,7 +231,7 @@ struct InitialSetupView: View {
         
         // AuthViewModelに値を設定
         viewModel.name = username
-        viewModel.city = selectedCity
+        viewModel.location = selectedLocation
         viewModel.birthDate = birthday
         // プロフィール画像はloadSelectedImageメソッドで既にセット済み
         
@@ -243,10 +243,10 @@ struct InitialSetupView: View {
                 
                 if success {
                     // 成功したらMainTabViewに遷移するよう状態を更新
+                    print("✅ 初期設定保存成功")
                     viewModel.hasCompletedSetup = true
                     viewModel.isAuthenticated = true
                     dismiss()
-                    print("笑笑笑笑笑笑笑笑笑笑笑笑笑")
                 } else if let error = viewModel.errorMessage {
                     alertMessage = error
                     showAlert = true
@@ -270,7 +270,7 @@ struct FormField: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Image(systemName: icon)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
                     .font(.title3)
                     .frame(width: 24)
                 

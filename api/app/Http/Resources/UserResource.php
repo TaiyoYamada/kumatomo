@@ -11,21 +11,35 @@ class UserResource extends JsonResource
      */
     public function toArray($request): array
     {
+        // Build absolute URLs for images if paths are relative
+        $makeAbsolute = function ($path) {
+            if (!$path) return null;
+            // If already absolute (http/https), return as-is
+            if (preg_match('/^https?:\/\//i', $path)) {
+                return $path;
+            }
+            // Assume storage path; use url() helper to make absolute
+            return url($path);
+        };
+
         return [
             'id' => $this->id,
             'email' => $this->email,
             'name' => $this->name,
+            'username' => $this->username,
             'bio' => $this->bio,
-            'city' => $this->city,
+            'location' => $this->location,
             'birthday' => $this->birthday,
             'website' => $this->website,
-            'profile_icon_image_url' => $this->profile_icon_image_url,
-            'profile_image_url' => $this->profile_image_url,
-            'post_count' => $this->stories_count ?? 0, // ストーリーの投稿数
-            'following_count' => $this->following_count ?? 0,
-            'followers_count' => $this->followers_count ?? 0,
-            'has_completed_setup' => $this->has_completed_setup ?? false,
-            'created_at' => $this->created_at?->toIso8601String(),
+            'profileImageURL' => $makeAbsolute($this->profile_image_url),
+            'coverImageURL' => $makeAbsolute($this->cover_image_url),
+            'postCount' => $this->post_count ?? 0,
+            'followingCount' => $this->following_count ?? 0,
+            'followersCount' => $this->followers_count ?? 0,
+            'hasCompletedSetup' => $this->has_completed_setup ?? false,
+            'isVerified' => false,
+            'joinedDate' => $this->created_at?->format('Y年m月d日'),
+            'createdAt' => $this->created_at?->toIso8601String(),
         ];
     }
 }

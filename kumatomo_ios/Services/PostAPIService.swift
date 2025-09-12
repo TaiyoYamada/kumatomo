@@ -3,7 +3,7 @@ import Foundation
 class PostAPIService {
     static let shared = PostAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "https://localhost/api"
+    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
     
     // 認証トークンの取得
     private func getAuthToken() -> String {
@@ -52,6 +52,7 @@ class PostAPIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         // 認証トークンを設定
         let token = getAuthToken()
@@ -107,12 +108,24 @@ class PostAPIService {
                     print("🚨 デコードエラー: \(error)")
                     throw PostAPIError.decodingError(error)
                 }
+            } else if httpResponse.statusCode == 422 {
+                // バリデーションエラーをパース
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    let message = (json["message"] as? String) ?? "バリデーションエラー"
+                    if let errors = json["errors"] as? [String: [String]] {
+                        let detail = errors.values.flatMap { $0 }.joined(separator: "\n")
+                        throw PostAPIError.apiError(422, message + (detail.isEmpty ? "" : "\n" + detail))
+                    }
+                    throw PostAPIError.apiError(422, message)
+                }
+                throw PostAPIError.apiError(422, String(data: data, encoding: .utf8) ?? "Validation error")
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 // エラーレスポンスの詳細を確認
                 print("🚨 エラーレスポンス: \(jsonString)")
                 throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
             } else {
-                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+                // return文追加
+                throw PostAPIError.serverError("予期しないエラー")
             }
         } catch let error as PostAPIError {
             print("🚨 PostAPIError: \(error)")
@@ -134,6 +147,7 @@ class PostAPIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         // 認証トークンを設定
         let token = getAuthToken()
@@ -188,12 +202,24 @@ class PostAPIService {
                     print("🚨 デコードエラー: \(error)")
                     throw PostAPIError.decodingError(error)
                 }
+            } else if httpResponse.statusCode == 422 {
+                // バリデーションエラーをパース
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    let message = (json["message"] as? String) ?? "バリデーションエラー"
+                    if let errors = json["errors"] as? [String: [String]] {
+                        let detail = errors.values.flatMap { $0 }.joined(separator: "\n")
+                        throw PostAPIError.apiError(422, message + (detail.isEmpty ? "" : "\n" + detail))
+                    }
+                    throw PostAPIError.apiError(422, message)
+                }
+                throw PostAPIError.apiError(422, String(data: data, encoding: .utf8) ?? "Validation error")
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 // エラーレスポンスの詳細を確認
                 print("🚨 エラーレスポンス: \(jsonString)")
                 throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
             } else {
-                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
+                // return文追加
+                throw PostAPIError.serverError("予期しないエラー")
             }
         } catch let error as PostAPIError {
             print("🚨 PostAPIError: \(error)")

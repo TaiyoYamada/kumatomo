@@ -37,7 +37,7 @@ struct RegionalTagSelectionView: View {
                     Button("完了") {
                         dismiss()
                     }
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
                     .fontWeight(.semibold)
                 }
                 .padding(.horizontal, 16)
@@ -126,14 +126,14 @@ private struct RegionalTagRow: View {
                 ZStack {
                     Circle()
                         .stroke(
-                            isSelected ? Color.blue : Color.gray.opacity(0.3),
+                            isSelected ? Color.orange : Color.gray.opacity(0.3),
                             lineWidth: 2
                         )
                         .frame(width: 20, height: 20)
                     
                     if isSelected {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(Color.orange)
                             .frame(width: 12, height: 12)
                     }
                 }
