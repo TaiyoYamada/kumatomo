@@ -9,6 +9,8 @@ enum SheetDestination: Identifiable {
 	case profileEdit(User, onProfileUpdated: (() -> Void)? = nil)              // プロフィール編集モーダル
 	case municipalityPicker(selected: String?, onSelect: (String) -> Void)         // 市区町村選択モーダル
 	case postEdit(viewModel: PostViewModel)                                        // 投稿編集モーダル
+	case profileImageEdit(onPhotoSelection: () -> Void, onDelete: () -> Void)      // プロフィール画像編集モーダル
+	case coverImageEdit(onPhotoSelection: () -> Void, onDelete: () -> Void)        // カバー画像編集モーダル
 
 	var id: String {
 		switch self {
@@ -25,6 +27,10 @@ enum SheetDestination: Identifiable {
 		case .postEdit(let viewModel):
 			// Avoid touching MainActor-isolated properties here
 			return "postEdit"
+		case .profileImageEdit:
+			return "profileImageEdit"
+		case .coverImageEdit:
+			return "coverImageEdit"
 		}
 	}
 }
@@ -47,6 +53,18 @@ extension View {
 				})
 			case .postEdit(let viewModel):
 				PostEditView(viewModel: viewModel)
+			case .profileImageEdit(let onPhotoSelection, let onDelete):
+				ImageEditSheet(
+					imageType: .profile,
+					onPhotoSelection: onPhotoSelection,
+					onDelete: onDelete
+				)
+			case .coverImageEdit(let onPhotoSelection, let onDelete):
+				ImageEditSheet(
+					imageType: .cover,
+					onPhotoSelection: onPhotoSelection,
+					onDelete: onDelete
+				)
 			}
 		}
 	}

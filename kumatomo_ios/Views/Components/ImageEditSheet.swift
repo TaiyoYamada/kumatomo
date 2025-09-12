@@ -32,11 +32,13 @@ struct ImageEditSheet: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header with title
                 HStack {
                     Text(imageType.displayName)
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.primary)
+                        .onAppear {
+                            print("🎭 ImageEditSheet appeared with type: \(imageType)")
+                        }
                     
                     Spacer()
                     
@@ -113,35 +115,5 @@ struct ImageEditSheet: View {
             }
             .background(Color(.systemGroupedBackground))
         }
-    }
-}
-
-// MARK: - Preview
-struct ImageEditSheet_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack(spacing: 20) {
-            // Profile image sheet preview
-            ImageEditSheet(
-                imageType: .profile,
-                onPhotoSelection: {
-                    print("Profile photo selection tapped")
-                },
-                onDelete: {
-                    print("Profile delete tapped")
-                }
-            )
-            
-            // Cover image sheet preview
-            ImageEditSheet(
-                imageType: .cover,
-                onPhotoSelection: {
-                    print("Cover photo selection tapped")
-                },
-                onDelete: {
-                    print("Cover delete tapped")
-                }
-            )
-        }
-        .previewLayout(.sizeThatFits)
     }
 }

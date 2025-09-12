@@ -19,7 +19,8 @@ struct ProfileEditView: View {
     @StateObject private var errorHandler = ProfileErrorHandler.shared
     @StateObject private var networkMonitor = NetworkMonitor.shared
     
-
+    // Modal state management for image editing using AppRouter
+    @State private var sheetDestination: SheetDestination?
     
     // Callback for data refresh after successful update
     var onProfileUpdated: (() -> Void)?
@@ -37,7 +38,8 @@ struct ProfileEditView: View {
                     ProfileImageEditRow(
                         selectedProfileItem: $selectedProfileItem,
                         selectedCoverItem: $selectedCoverItem,
-                        viewModel: viewModel
+                        viewModel: viewModel,
+                        sheetDestination: $sheetDestination
                     )
                 }
                 .listRowInsets(EdgeInsets())
@@ -296,6 +298,7 @@ struct ProfileEditView: View {
                 }
             }
         }
+        .withSheetRouter(sheet: $sheetDestination)
     }
     
     // Form validation computed property
@@ -486,10 +489,7 @@ struct ProfileImageEditRow: View {
     @Binding var selectedProfileItem: PhotosPickerItem?
     @Binding var selectedCoverItem: PhotosPickerItem?
     @ObservedObject var viewModel: ProfileViewModel
-    
-    // Modal state management for image editing
-    @State private var showProfileEditModal = false
-    @State private var showCoverEditModal = false
+    @Binding var sheetDestination: SheetDestination?
     
     // PhotosPicker trigger states for independent image selection
     @State private var showProfilePhotoPicker = false
@@ -497,9 +497,7 @@ struct ProfileImageEditRow: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Cover Image Section
             ZStack {
-                // Cover Image Display with Local Preview Logic
                 Group {
                     if let coverImage = viewModel.coverImage {
                         // Local preview for unsaved changes
@@ -531,6 +529,7 @@ struct ProfileImageEditRow: View {
                         defaultCoverImageGradient
                     }
                 }
+                .allowsHitTesting(false)
                 
                 // Cover Image Edit Button (Popover Trigger)
                 VStack {
@@ -539,7 +538,19 @@ struct ProfileImageEditRow: View {
                         Spacer()
                         
                         Button(action: {
-                            showCoverEditModal = true
+                            print("🖼️ Cover image edit button tapped")
+                            print("これは背景画像")
+                            sheetDestination = .coverImageEdit(
+                                onPhotoSelection: {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        showCoverPhotoPicker = true
+                                    }
+                                },
+                                onDelete: {
+                                    print("🗑️ Cover image delete triggered")
+                                    viewModel.deleteCoverImage()
+                                }
+                            )
                         }) {
                             HStack(spacing: 4) {
                                 Image(systemName: "camera.fill")
@@ -552,6 +563,7 @@ struct ProfileImageEditRow: View {
                             .padding(.vertical, 6)
                             .background(.ultraThinMaterial, in: Capsule())
                         }
+                        .buttonStyle(PlainButtonStyle()) // ボタンスタイルを明示
                         .padding(12)
                     }
                 }
@@ -598,13 +610,27 @@ struct ProfileImageEditRow: View {
                             defaultProfileIcon
                         }
                     }
+                    .allowsHitTesting(false)
                     
                     // Profile Image Edit Button (Modal Trigger)
                     Button(action: {
-                        showProfileEditModal = true
+                        print("👤 Profile image edit button tapped")
+                        sheetDestination = .profileImageEdit(
+                            onPhotoSelection: {
+                                print("📸 Profile image photo selection triggered")
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    showProfilePhotoPicker = true
+                                }
+                            },
+                            onDelete: {
+                                print("🗑️ Profile image delete triggered")
+                                viewModel.deleteProfileImage()
+                            }
+                        )
                     }) {
+                        
                         Circle()
-                            .fill(Color.accentColor)
+                            .fill(Color.orange)
                             .frame(width: 28, height: 28)
                             .overlay(
                                 Image(systemName: "camera.fill")
@@ -612,8 +638,8 @@ struct ProfileImageEditRow: View {
                                     .font(.system(size: 12, weight: .medium))
                             )
                     }
+                    .buttonStyle(PlainButtonStyle())
                     .offset(x: 4, y: 4)
-                    .background(Color.white)
                 }
                 
                 Spacer()
@@ -690,47 +716,7 @@ struct ProfileImageEditRow: View {
         .onChange(of: selectedCoverItem) { newItem in
             handleCoverImageSelection(newItem)
         }
-        // Sheet modals for image editing
-        .sheet(isPresented: $showProfileEditModal) {
-            ImageEditSheet(
-                imageType: .profile,
-                onPhotoSelection: {
-                    // Ensure the edit sheet is dismissed before opening the picker
-                    showProfileEditModal = false
-                    // Present the PhotosPicker after the sheet dismiss animation
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        showProfilePhotoPicker = true
-                    }
-                },
-                onDelete: {
-                    // Dismiss the edit sheet and perform delete
-                    showProfileEditModal = false
-                    viewModel.deleteProfileImage()
-                }
-            )
-            .presentationDetents([.height(200)])
-            .presentationDragIndicator(.visible)
-        }
-        .sheet(isPresented: $showCoverEditModal) {
-            ImageEditSheet(
-                imageType: .cover,
-                onPhotoSelection: {
-                    // Ensure the edit sheet is dismissed before opening the picker
-                    showCoverEditModal = false
-                    // Present the PhotosPicker after the sheet dismiss animation
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        showCoverPhotoPicker = true
-                    }
-                },
-                onDelete: {
-                    // Dismiss the edit sheet and perform delete
-                    showCoverEditModal = false
-                    viewModel.deleteCoverImage()
-                }
-            )
-            .presentationDetents([.height(200)])
-            .presentationDragIndicator(.visible)
-        }
+        // Image editing modals are now handled by AppRouter system
     }
     
     // MARK: - Helper Views
