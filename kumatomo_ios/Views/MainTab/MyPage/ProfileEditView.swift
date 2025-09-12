@@ -1,7 +1,6 @@
 import SwiftUI
 import PhotosUI
 
-// Type alias for backward compatibility
 typealias ModernProfileEditView = ProfileEditView
 
 struct ProfileEditView: View {
@@ -15,14 +14,11 @@ struct ProfileEditView: View {
     @State private var showValidationErrors = false
     @State private var showNetworkError = false
     
-    // Error handling
     @StateObject private var errorHandler = ProfileErrorHandler.shared
     @StateObject private var networkMonitor = NetworkMonitor.shared
     
-    // Modal state management for image editing using AppRouter
     @State private var sheetDestination: SheetDestination?
     
-    // Callback for data refresh after successful update
     var onProfileUpdated: (() -> Void)?
     
     init(user: User, onProfileUpdated: (() -> Void)? = nil) {
@@ -33,7 +29,6 @@ struct ProfileEditView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Profile and Cover Image Section
                 Section {
                     ProfileImageEditRow(
                         selectedProfileItem: $selectedProfileItem,
@@ -45,9 +40,7 @@ struct ProfileEditView: View {
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.clear)
                 
-                // Basic Information Section
                 Section("基本情報") {
-                    // Email Field
                     ProfileFormRow(
                         title: "メールアドレス",
                         text: $viewModel.email,
@@ -56,7 +49,6 @@ struct ProfileEditView: View {
                         keyboardType: .emailAddress
                     )
                     
-                    // Name Field
                     ProfileFormRow(
                         title: "名前",
                         text: $viewModel.name,
@@ -64,7 +56,6 @@ struct ProfileEditView: View {
                         validation: viewModel.nameValidation
                     )
                     
-                    // Username Field with availability checking
                     VStack(alignment: .leading, spacing: 8) {
                         ProfileFormRow(
                             title: "ユーザーネーム",
@@ -74,7 +65,6 @@ struct ProfileEditView: View {
                             prefix: "@"
                         )
                         
-                        // Username availability status
                         if viewModel.isValidatingUsername {
                             HStack(spacing: 8) {
                                 ProgressView()
@@ -97,39 +87,25 @@ struct ProfileEditView: View {
                     }
                 }
                 
-                // Additional Information Section
                 Section("追加情報") {
-                    // Bio Field (Multi-line)
                     ProfileBioRow(
                         text: $viewModel.bio,
                         validation: viewModel.bioValidation
                     )
                     
-                    // Location Field
                     ProfileFormRow(
-                        title: "場所",
+                        title: "出身地",
                         text: $viewModel.location,
-                        placeholder: "場所を入力してください",
+                        placeholder: "出身地を入力してください",
                         validation: viewModel.locationValidation
                     )
                     
-                    // Website Field
-                    ProfileFormRow(
-                        title: "ウェブサイト",
-                        text: $viewModel.website,
-                        placeholder: "https://example.com",
-                        validation: viewModel.websiteValidation,
-                        keyboardType: .URL
-                    )
-                    
-                    // Birthday Field
                     ProfileDatePickerRow(
                         title: "生年月日",
                         date: $viewModel.birthday
                     )
                 }
                 
-                // Error Message Section
                 if let errorMessage = viewModel.errorMessage {
                     Section {
                         Text(errorMessage)
@@ -160,7 +136,6 @@ struct ProfileEditView: View {
                     .foregroundColor(viewModel.canSaveProfile ? .accentColor : .secondary)
                     .fontWeight(.semibold)
                     .overlay(
-                        // Show loading indicator on save button when processing
                         Group {
                             if viewModel.isProcessing {
                                 ProgressView()
@@ -217,9 +192,7 @@ struct ProfileEditView: View {
                     )
                 }
             }
-
             .overlay {
-                // Loading overlay with enhanced feedback
                 if viewModel.isProcessing {
                     ProfileLoadingOverlay(
                         isLoading: viewModel.isProcessing,
@@ -228,13 +201,11 @@ struct ProfileEditView: View {
                 }
             }
             .overlay(alignment: .top) {
-                // Network status banner
                 if !networkMonitor.isConnected {
                     NetworkStatusBanner()
                 }
             }
             .overlay {
-                // Validation errors overlay
                 if showValidationErrors && !viewModel.validationErrorMessages.isEmpty {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
@@ -251,7 +222,6 @@ struct ProfileEditView: View {
                 }
             }
             .overlay {
-                // Success feedback overlay
                 if showSuccessAlert {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
@@ -270,7 +240,6 @@ struct ProfileEditView: View {
                 }
             }
             .overlay {
-                // Image upload progress indicators
                 VStack {
                     if viewModel.isProfileImageUploading {
                         ProfileProgressIndicator(
@@ -301,12 +270,9 @@ struct ProfileEditView: View {
         .withSheetRouter(sheet: $sheetDestination)
     }
     
-    // Form validation computed property
     private var isFormValid: Bool {
         return viewModel.isFormValid && networkMonitor.isConnected
     }
-    
-    // MARK: - Helper Methods
     
     private func handleCancelTapped() {
         if viewModel.hasUnsavedChanges {
@@ -317,32 +283,21 @@ struct ProfileEditView: View {
     }
     
     private func handleSaveProfile() async {
-        // Check network connectivity before saving
         guard networkMonitor.isConnected else {
             errorHandler.handleError(ProfileError.offlineError)
             return
         }
         
-        // Check if there are any changes to save (includes both form fields and images)
         guard viewModel.hasUnsavedChanges else {
             viewModel.showSuccessMessage("変更がありません")
             return
         }
         
-        // Complete workflow: updateProfile() now handles both image uploads and profile data updates
-        // The ViewModel's updateProfile method internally:
-        // 1. Validates all form fields and images
-        // 2. Uploads profile image if changed (with progress tracking)
-        // 3. Uploads cover image if changed (with progress tracking)  
-        // 4. Updates profile data with new image URLs and form data
-        // 5. Provides success/error feedback through UI state
         let success = await viewModel.updateProfile()
         
         if success {
-            // Success feedback and UI updates are handled by the ViewModel
             print("✅ Profile save completed successfully - images and data updated")
         } else {
-            // Error handling and user feedback are managed by the ViewModel
             print("❌ Profile save failed - check ViewModel error state")
         }
     }
@@ -491,23 +446,17 @@ struct ProfileImageEditRow: View {
     @ObservedObject var viewModel: ProfileViewModel
     @Binding var sheetDestination: SheetDestination?
     
-    // PhotosPicker trigger states for independent image selection
-    @State private var showProfilePhotoPicker = false
-    @State private var showCoverPhotoPicker = false
-    
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
                 Group {
                     if let coverImage = viewModel.coverImage {
-                        // Local preview for unsaved changes
                         Image(uiImage: coverImage)
                             .resizable()
                             .scaledToFill()
                             .frame(height: min(120, UIScreen.main.bounds.height * 0.15))
                             .clipped()
                     } else if let coverImageURL = viewModel.profile.coverImageURL, !coverImageURL.isEmpty {
-                        // Existing cover image from server
                         AsyncImage(url: URL(string: coverImageURL)) { phase in
                             switch phase {
                             case .empty:
@@ -525,29 +474,20 @@ struct ProfileImageEditRow: View {
                             }
                         }
                     } else {
-                        // Default gradient when no cover image
                         defaultCoverImageGradient
                     }
                 }
                 .allowsHitTesting(false)
                 
-                // Cover Image Edit Button (Popover Trigger)
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
                         
                         Button(action: {
-                            print("🖼️ Cover image edit button tapped")
-                            print("これは背景画像")
                             sheetDestination = .coverImageEdit(
-                                onPhotoSelection: {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        showCoverPhotoPicker = true
-                                    }
-                                },
+                                selectedItem: $selectedCoverItem,
                                 onDelete: {
-                                    print("🗑️ Cover image delete triggered")
                                     viewModel.deleteCoverImage()
                                 }
                             )
@@ -563,16 +503,14 @@ struct ProfileImageEditRow: View {
                             .padding(.vertical, 6)
                             .background(.ultraThinMaterial, in: Capsule())
                         }
-                        .buttonStyle(PlainButtonStyle()) // ボタンスタイルを明示
+                        .buttonStyle(PlainButtonStyle())
                         .padding(12)
                     }
                 }
             }
             
-            // Profile Image Section
             HStack {
                 ZStack(alignment: .bottomTrailing) {
-                    // Profile Image Display with Local Preview Logic
                     ZStack {
                         Circle()
                             .fill(.ultraThinMaterial)
@@ -580,14 +518,12 @@ struct ProfileImageEditRow: View {
                             .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
                         
                         if let profileImage = viewModel.profileImage {
-                            // Local preview for unsaved changes
                             Image(uiImage: profileImage)
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 74, height: 74)
                                 .clipShape(Circle())
                         } else if let profileImageURL = viewModel.profile.profileImageURL, !profileImageURL.isEmpty {
-                            // Existing profile image from server
                             AsyncImage(url: URL(string: profileImageURL)) { phase in
                                 switch phase {
                                 case .empty:
@@ -606,24 +542,15 @@ struct ProfileImageEditRow: View {
                                 }
                             }
                         } else {
-                            // Default profile icon when no profile image
                             defaultProfileIcon
                         }
                     }
                     .allowsHitTesting(false)
                     
-                    // Profile Image Edit Button (Modal Trigger)
                     Button(action: {
-                        print("👤 Profile image edit button tapped")
                         sheetDestination = .profileImageEdit(
-                            onPhotoSelection: {
-                                print("📸 Profile image photo selection triggered")
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    showProfilePhotoPicker = true
-                                }
-                            },
+                            selectedItem: $selectedProfileItem,
                             onDelete: {
-                                print("🗑️ Profile image delete triggered")
                                 viewModel.deleteProfileImage()
                             }
                         )
@@ -648,78 +575,13 @@ struct ProfileImageEditRow: View {
             .padding(.top, -40)
             .padding(.bottom, 16)
         }
-        // Independent PhotosPickers with proper state management and dismissal
-        .sheet(isPresented: $showProfilePhotoPicker) {
-            NavigationView {
-                PhotosPicker(selection: $selectedProfileItem, matching: .images) {
-                    VStack(spacing: 16) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.accentColor)
-                        
-                        Text("プロフィール画像を選択")
-                            .font(.headline)
-                        
-                        Text("写真ライブラリから画像を選択してください")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding()
-                }
-                .navigationTitle("プロフィール画像")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("キャンセル") {
-                            showProfilePhotoPicker = false
-                        }
-                    }
-                }
-            }
-            .presentationDetents([.medium])
-        }
-        .sheet(isPresented: $showCoverPhotoPicker) {
-            NavigationView {
-                PhotosPicker(selection: $selectedCoverItem, matching: .images) {
-                    VStack(spacing: 16) {
-                        Image(systemName: "photo.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.accentColor)
-                        
-                        Text("カバー画像を選択")
-                            .font(.headline)
-                        
-                        Text("写真ライブラリから画像を選択してください")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding()
-                }
-                .navigationTitle("カバー画像")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("キャンセル") {
-                            showCoverPhotoPicker = false
-                        }
-                    }
-                }
-            }
-            .presentationDetents([.medium])
-        }
-        // Separate onChange handlers for profile and cover image selection
         .onChange(of: selectedProfileItem) { newItem in
             handleProfileImageSelection(newItem)
         }
         .onChange(of: selectedCoverItem) { newItem in
             handleCoverImageSelection(newItem)
         }
-        // Image editing modals are now handled by AppRouter system
     }
-    
-    // MARK: - Helper Views
     
     private var defaultCoverImageGradient: some View {
         LinearGradient(
@@ -739,108 +601,77 @@ struct ProfileImageEditRow: View {
             .foregroundColor(.secondary)
     }
     
-    // MARK: - Image Selection Handlers with Enhanced Error Handling
-    
     private func handleProfileImageSelection(_ newItem: PhotosPickerItem?) {
-        guard let newItem = newItem else { 
-            print("📷 Profile image selection cancelled")
-            return 
+        guard let newItem = newItem else {
+            return
         }
-        
-        print("📷 Processing profile image selection...")
         
         Task {
             do {
                 if let data = try await newItem.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
                     
-                    // Validate image size and format
                     guard validateImageForProfile(uiImage, type: .profile) else {
                         await MainActor.run {
                             selectedProfileItem = nil
-                            showProfilePhotoPicker = false
                         }
                         return
                     }
                     
                     await MainActor.run {
                         viewModel.updateProfileImage(uiImage)
-                        // Clear the selection to allow reselection of the same image
                         selectedProfileItem = nil
-                        // Close the photo picker
-                        showProfilePhotoPicker = false
-                        print("✅ Profile image updated successfully")
                     }
                 }
             } catch {
                 print("❌ Error loading profile image: \(error.localizedDescription)")
                 await MainActor.run {
                     selectedProfileItem = nil
-                    showProfilePhotoPicker = false
-                    // Could show error alert here if needed
                 }
             }
         }
     }
     
     private func handleCoverImageSelection(_ newItem: PhotosPickerItem?) {
-        guard let newItem = newItem else { 
-            print("📷 Cover image selection cancelled")
-            return 
+        guard let newItem = newItem else {
+            return
         }
-        
-        print("📷 Processing cover image selection...")
         
         Task {
             do {
                 if let data = try await newItem.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
                     
-                    // Validate image size and format
                     guard validateImageForProfile(uiImage, type: .cover) else {
                         await MainActor.run {
                             selectedCoverItem = nil
-                            showCoverPhotoPicker = false
                         }
                         return
                     }
                     
                     await MainActor.run {
                         viewModel.updateCoverImage(uiImage)
-                        // Clear the selection to allow reselection of the same image
                         selectedCoverItem = nil
-                        // Close the photo picker
-                        showCoverPhotoPicker = false
-                        print("✅ Cover image updated successfully")
                     }
                 }
             } catch {
                 print("❌ Error loading cover image: \(error.localizedDescription)")
                 await MainActor.run {
                     selectedCoverItem = nil
-                    showCoverPhotoPicker = false
-                    // Could show error alert here if needed
                 }
             }
         }
     }
     
-    // MARK: - Image Validation Helper
-    
     private func validateImageForProfile(_ image: UIImage, type: ImageEditSheet.ImageType) -> Bool {
-        // Check image dimensions
         let maxDimension: CGFloat = type == .profile ? 1024 : 2048
         let imageSize = max(image.size.width, image.size.height)
         
         if imageSize > maxDimension {
-            print("⚠️ Image too large: \(imageSize) > \(maxDimension)")
-            // Could show alert or auto-resize here
-            return true // For now, allow large images (they'll be resized on upload)
+            return true
         }
         
-        // Check file size (approximate)
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            print("❌ Failed to convert image to JPEG data")
             return false
         }
         
@@ -848,13 +679,9 @@ struct ProfileImageEditRow: View {
         let maxFileSizeMB: Double = 10.0
         
         if fileSizeMB > maxFileSizeMB {
-            print("⚠️ Image file size too large: \(fileSizeMB)MB > \(maxFileSizeMB)MB")
-            // Could show alert or compress here
-            return true // For now, allow large files (they'll be compressed on upload)
+            return true
         }
         
-        print("✅ Image validation passed: \(imageSize)px, \(String(format: "%.2f", fileSizeMB))MB")
         return true
     }
 }
-

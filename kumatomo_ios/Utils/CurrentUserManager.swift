@@ -61,10 +61,8 @@ extension User {
         // デフォルト値を設定
         self.username = nil
         self.profileImageURL = nil
-        self.city = nil
         self.location = nil
-        self.postCount = nil
-        self.website = nil
+        self.postCount = nil        
         self.followingCount = nil
         self.followersCount = nil
         self.hasCompletedSetup = nil

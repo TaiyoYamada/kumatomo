@@ -21,7 +21,6 @@ class ProfileViewModel: ObservableObject {
     @Published var name: String = ""
     @Published var username: String = ""
     @Published var bio: String = ""
-    @Published var website: String = ""
     @Published var location: String = ""
     @Published var birthday: Date = Date()
     @Published var profileImage: UIImage?
@@ -33,7 +32,6 @@ class ProfileViewModel: ObservableObject {
     @Published var nameValidation: ValidationResult = .valid
     @Published var usernameValidation: ValidationResult = .valid
     @Published var bioValidation: ValidationResult = .valid
-    @Published var websiteValidation: ValidationResult = .valid
     @Published var locationValidation: ValidationResult = .valid
     @Published var birthdayValidation: ValidationResult = .valid
     
@@ -102,11 +100,9 @@ class ProfileViewModel: ObservableObject {
             profileImageURL: nil,
             coverImageURL: nil,
             bio: "",
-            city: "",
             location: "",
             birthday: "",
             postCount: 0,
-            website: "",
             followingCount: 0,
             followersCount: 0,
             hasCompletedSetup: false,
@@ -125,7 +121,6 @@ class ProfileViewModel: ObservableObject {
         self.name = profile.name ?? ""
         self.username = profile.username ?? ""
         self.bio = profile.bio ?? ""
-        self.website = profile.website ?? ""
         self.location = profile.location ?? ""
         
         // 誕生日の初期化
@@ -218,13 +213,6 @@ class ProfileViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Real-time validation for website with URL checking
-        $website
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .sink { [weak self] website in
-                self?.validateWebsiteField(website)
-            }
-            .store(in: &cancellables)
         
         // Real-time validation for location
         $location
@@ -255,7 +243,7 @@ class ProfileViewModel: ObservableObject {
     /// Sets up form state tracking for unsaved changes
     private func setupFormStateTracking() {
         Publishers.CombineLatest4($email, $name, $username, $bio)
-            .combineLatest(Publishers.CombineLatest3($website, $location, $birthday))
+            .combineLatest(Publishers.CombineLatest($location, $birthday))
             .debounce(for: .milliseconds(100), scheduler: RunLoop.main)
             .sink { [weak self] _, _ in
                 self?.checkForUnsavedChanges()
@@ -266,7 +254,7 @@ class ProfileViewModel: ObservableObject {
     /// Sets up validation result tracking for overall form validity
     private func setupValidationResultTracking() {
         Publishers.CombineLatest4($emailValidation, $nameValidation, $usernameValidation, $bioValidation)
-            .combineLatest(Publishers.CombineLatest3($websiteValidation, $locationValidation, $birthdayValidation))
+            .combineLatest(Publishers.CombineLatest($locationValidation, $birthdayValidation))
             .combineLatest($isUsernameAvailable, $isValidatingUsername)
             .sink { [weak self] _ in
                 self?.updateFormValidityState()
@@ -313,14 +301,6 @@ class ProfileViewModel: ObservableObject {
         
         updateFormValidityState()
         logValidationResult(field: "bio", result: bioValidation)
-    }
-    
-    /// Enhanced website validation with URL format checking
-    private func validateWebsiteField(_ website: String) {
-        let trimmedWebsite = website.trimmingCharacters(in: .whitespacesAndNewlines)
-        websiteValidation = ProfileFormValidation.validateWebsite(trimmedWebsite)
-        updateFormValidityState()
-        logValidationResult(field: "website", result: websiteValidation)
     }
     
     /// Enhanced location validation
@@ -448,12 +428,11 @@ class ProfileViewModel: ObservableObject {
     /// Enhanced form validity state management
     private func updateFormValidityState() {
         let fieldValidationsValid = emailValidation.isValid &&
-                                   nameValidation.isValid &&
-                                   usernameValidation.isValid &&
-                                   bioValidation.isValid &&
-                                   websiteValidation.isValid &&
-                                   locationValidation.isValid &&
-                                   birthdayValidation.isValid
+                                    nameValidation.isValid &&
+                                    usernameValidation.isValid &&
+                                    bioValidation.isValid &&
+                                    locationValidation.isValid &&
+                                    birthdayValidation.isValid
         
         let usernameAvailabilityValid = isUsernameAvailable ?? false
         let notValidatingUsername = !isValidatingUsername
@@ -486,9 +465,6 @@ class ProfileViewModel: ObservableObject {
         if !bioValidation.isValid, let error = bioValidation.errorMessage {
             issues.append("Bio: \(error)")
         }
-        if !websiteValidation.isValid, let error = websiteValidation.errorMessage {
-            issues.append("Website: \(error)")
-        }
         if !locationValidation.isValid, let error = locationValidation.errorMessage {
             issues.append("Location: \(error)")
         }
@@ -514,7 +490,6 @@ class ProfileViewModel: ObservableObject {
             nameValidation: nameValidation,
             usernameValidation: usernameValidation,
             bioValidation: bioValidation,
-            websiteValidation: websiteValidation,
             locationValidation: locationValidation,
             birthdayValidation: birthdayValidation,
             isUsernameAvailable: isUsernameAvailable,
@@ -531,7 +506,7 @@ class ProfileViewModel: ObservableObject {
         validateEmailField(email)
         validateNameField(name)
         validateBioField(bio)
-        validateWebsiteField(website)
+        
         validateLocationField(location)
         validateBirthdayField(birthday)
         
@@ -549,11 +524,9 @@ class ProfileViewModel: ObservableObject {
         print("📋 Validation summary: \(summary.isFormValid ? "✅ Valid" : "❌ Invalid")")
     }
     
-
     
-
     
-
+    
     
     private func checkForUnsavedChanges() {
         enhancedCheckForUnsavedChanges()
@@ -564,7 +537,6 @@ class ProfileViewModel: ObservableObject {
         name = profile.name ?? ""
         username = profile.username ?? ""
         bio = profile.bio ?? ""
-        website = profile.website ?? ""
         location = profile.location ?? ""
         
         // 誕生日の更新
@@ -582,7 +554,6 @@ class ProfileViewModel: ObservableObject {
         updatedProfile.name = name
         updatedProfile.username = username
         updatedProfile.bio = bio
-        updatedProfile.website = website
         updatedProfile.location = location
         
         // 誕生日の保存
@@ -605,7 +576,7 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Profile Creation Logic (Task 3.1)
+    // MARK: - Profile Creation Logic
     
     /// Creates a new user profile with comprehensive validation and error handling
     @MainActor
@@ -637,11 +608,9 @@ class ProfileViewModel: ObservableObject {
                 profileImageURL: nil,
                 coverImageURL: nil,
                 bio: bio.trimmingCharacters(in: .whitespacesAndNewlines),
-                city: nil,
                 location: location.trimmingCharacters(in: .whitespacesAndNewlines),
                 birthday: nil,
                 postCount: 0,
-                website: website.trimmingCharacters(in: .whitespacesAndNewlines),
                 followingCount: 0,
                 followersCount: 0,
                 hasCompletedSetup: false,
@@ -756,8 +725,8 @@ class ProfileViewModel: ObservableObject {
         
         // Additional validation for profile creation
         let requiredFieldsValid = !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-                                 !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-                                 !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                    !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+                                    !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         
         if !requiredFieldsValid {
             let missingFields = getMissingRequiredFields()
@@ -795,7 +764,6 @@ class ProfileViewModel: ObservableObject {
         name = ""
         username = ""
         bio = ""
-        website = ""
         location = ""
         birthday = Date()
         profileImage = nil
@@ -812,7 +780,6 @@ class ProfileViewModel: ObservableObject {
         nameValidation = .valid
         usernameValidation = .valid
         bioValidation = .valid
-        websiteValidation = .valid
         locationValidation = .valid
         birthdayValidation = .valid
         
@@ -833,14 +800,14 @@ class ProfileViewModel: ObservableObject {
     
     /// Checks if profile creation is allowed (all validations pass)
     var canCreateProfile: Bool {
-        return isFormValid && 
-               !isProcessing && 
-               !isValidatingUsername && 
-               !isOffline &&
-               !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-               !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-               !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-               (isUsernameAvailable ?? false)
+        return isFormValid &&
+                !isProcessing &&
+                !isValidatingUsername &&
+                !isOffline &&
+                !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+                !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+                !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+                (isUsernameAvailable ?? false)
     }
     
     // MARK: - Profile Deletion Logic (Task 3.3)
@@ -974,11 +941,9 @@ class ProfileViewModel: ObservableObject {
             profileImageURL: nil,
             coverImageURL: nil,
             bio: "",
-            city: "",
             location: "",
             birthday: "",
             postCount: 0,
-            website: "",
             followingCount: 0,
             followersCount: 0,
             hasCompletedSetup: false,
@@ -1020,11 +985,11 @@ class ProfileViewModel: ObservableObject {
     
     /// Checks if profile deletion is allowed
     var canDeleteProfile: Bool {
-        return !isProcessing && 
-               !isDeletingProfile && 
-               !isOffline && 
-               profile.id > 0 &&
-               profile.canBeDeleted()
+        return !isProcessing &&
+                !isDeletingProfile &&
+                !isOffline &&
+                profile.id > 0 &&
+                profile.canBeDeleted()
     }
     
     /// Gets deletion warning message based on profile data
@@ -1099,7 +1064,6 @@ class ProfileViewModel: ObservableObject {
             updatedProfile.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
             updatedProfile.username = username.trimmingCharacters(in: .whitespacesAndNewlines)
             updatedProfile.bio = bio.trimmingCharacters(in: .whitespacesAndNewlines)
-            updatedProfile.website = website.trimmingCharacters(in: .whitespacesAndNewlines)
             updatedProfile.location = location.trimmingCharacters(in: .whitespacesAndNewlines)
             
             // 誕生日の保存
@@ -1142,14 +1106,19 @@ class ProfileViewModel: ObservableObject {
             
             // プロフィール情報を更新
             print("📤 プロフィール更新開始")
-            let savedProfile = try await updateProfileAsync(updatedProfile)
+            var savedProfile = try await updateProfileAsync(updatedProfile)
+            
+            // 画像が更新された場合、URLにユニークなタイムスタンプを追加してキャッシュを無効化する
+            if hasUnsavedProfileImage {
+                savedProfile.profileImageURL = self.bustCache(for: savedProfile.profileImageURL)
+            }
+            if hasUnsavedCoverImage {
+                savedProfile.coverImageURL = self.bustCache(for: savedProfile.coverImageURL)
+            }
             
             // 成功したらプロフィール情報を最終更新
             self.profile = savedProfile
             
-            // Clear selected images after successful upload
-            self.profileImage = nil
-            self.coverImage = nil
             self.hasUnsavedChanges = false
             
             // Reset retry attempts on success
@@ -1185,6 +1154,24 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
+    /// URL文字列にキャッシュ無効化のためのタイムスタンプを追加する
+    private func bustCache(for urlString: String?) -> String? {
+        guard var urlString = urlString, !urlString.isEmpty else { return nil }
+        
+        // 既存のクエリパラメータを削除して、新しいタイムスタンプだけを追加する
+        if let url = URL(string: urlString), var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
+            components.query = nil
+            urlString = components.url?.absoluteString ?? urlString
+        }
+        
+        let timestamp = Date().timeIntervalSince1970
+        if urlString.contains("?") {
+            return "\(urlString)&t=\(timestamp)"
+        } else {
+            return "\(urlString)?t=\(timestamp)"
+        }
+    }
+    
     /// Captures current form state for rollback purposes
     private func captureCurrentFormState() -> FormState {
         return FormState(
@@ -1192,7 +1179,6 @@ class ProfileViewModel: ObservableObject {
             name: name,
             username: username,
             bio: bio,
-            website: website,
             location: location,
             birthday: birthday,
             profileImage: profileImage,
@@ -1218,7 +1204,6 @@ class ProfileViewModel: ObservableObject {
         self.name = originalFormState.name
         self.username = originalFormState.username
         self.bio = originalFormState.bio
-        self.website = originalFormState.website
         self.location = originalFormState.location
         self.birthday = originalFormState.birthday
         self.profileImage = originalFormState.profileImage
@@ -1278,8 +1263,6 @@ class ProfileViewModel: ObservableObject {
             return username.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.username?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         case .bio:
             return bio.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.bio?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
-        case .website:
-            return website.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.website?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         case .location:
             return location.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.location?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         case .birthday:
@@ -1323,9 +1306,6 @@ class ProfileViewModel: ObservableObject {
             errors.append(error)
         }
         if !bioValidation.isValid, let error = bioValidation.errorMessage {
-            errors.append(error)
-        }
-        if !websiteValidation.isValid, let error = websiteValidation.errorMessage {
             errors.append(error)
         }
         if !locationValidation.isValid, let error = locationValidation.errorMessage {
@@ -1385,9 +1365,9 @@ class ProfileViewModel: ObservableObject {
     
     /// Handles profile image selection from PhotosPicker
     func handleProfileImageSelection(_ item: PhotosPickerItem?) {
-        guard let item = item else { 
+        guard let item = item else {
             selectedProfileItem = nil
-            return 
+            return
         }
         
         selectedProfileItem = item
@@ -1411,9 +1391,9 @@ class ProfileViewModel: ObservableObject {
     
     /// Handles cover image selection from PhotosPicker
     func handleCoverImageSelection(_ item: PhotosPickerItem?) {
-        guard let item = item else { 
+        guard let item = item else {
             selectedCoverItem = nil
-            return 
+            return
         }
         
         selectedCoverItem = item
@@ -1906,7 +1886,6 @@ class ProfileViewModel: ObservableObject {
         name = profile.name ?? ""
         username = profile.username ?? ""
         bio = profile.bio ?? ""
-        website = profile.website ?? ""
         location = profile.location ?? ""
         
         // 誕生日のリセット
@@ -1924,7 +1903,6 @@ class ProfileViewModel: ObservableObject {
         nameValidation = .valid
         usernameValidation = .valid
         bioValidation = .valid
-        websiteValidation = .valid
         locationValidation = .valid
         birthdayValidation = .valid
         
@@ -1941,9 +1919,8 @@ class ProfileViewModel: ObservableObject {
         clearErrors()
     }
     
-
     
-
+    
     
     // MARK: - Network Monitoring Setup
     
@@ -1958,8 +1935,8 @@ class ProfileViewModel: ObservableObject {
                 } else {
                     self?.showNetworkError = false
                     // Clear network-related errors when connection is restored
-                    if self?.errorMessage?.contains("ネットワーク") == true || 
-                       self?.errorMessage?.contains("インターネット") == true {
+                    if self?.errorMessage?.contains("ネットワーク") == true ||
+                        self?.errorMessage?.contains("インターネット") == true {
                         self?.clearErrors()
                     }
                 }
@@ -2012,8 +1989,8 @@ class ProfileViewModel: ObservableObject {
     
     func clearNetworkErrors() {
         showNetworkError = false
-        if errorMessage?.contains("ネットワーク") == true || 
-           errorMessage?.contains("インターネット") == true {
+        if errorMessage?.contains("ネットワーク") == true ||
+            errorMessage?.contains("インターネット") == true {
             clearErrors()
         }
     }
@@ -2126,7 +2103,6 @@ struct FormState {
     let name: String
     let username: String
     let bio: String
-    let website: String
     let location: String
     let birthday: Date
     let profileImage: UIImage?
@@ -2144,7 +2120,6 @@ enum ProfileField: CaseIterable {
     case name
     case username
     case bio
-    case website
     case location
     case birthday
     case profileImage
@@ -2160,10 +2135,9 @@ enum ProfileField: CaseIterable {
             return "ユーザーネーム"
         case .bio:
             return "自己紹介"
-        case .website:
-            return "ウェブサイト"
+
         case .location:
-            return "場所"
+            return "出身地"
         case .birthday:
             return "誕生日"
         case .profileImage:
@@ -2180,7 +2154,6 @@ struct ValidationSummary {
     let nameValidation: ValidationResult
     let usernameValidation: ValidationResult
     let bioValidation: ValidationResult
-    let websiteValidation: ValidationResult
     let locationValidation: ValidationResult
     let birthdayValidation: ValidationResult
     let isUsernameAvailable: Bool?
@@ -2204,9 +2177,6 @@ struct ValidationSummary {
         if !bioValidation.isValid, let error = bioValidation.errorMessage {
             errors.append(error)
         }
-        if !websiteValidation.isValid, let error = websiteValidation.errorMessage {
-            errors.append(error)
-        }
         if !locationValidation.isValid, let error = locationValidation.errorMessage {
             errors.append(error)
         }
@@ -2228,7 +2198,6 @@ struct ValidationSummary {
         if nameValidation.isValid { count += 1 }
         if usernameValidation.isValid { count += 1 }
         if bioValidation.isValid { count += 1 }
-        if websiteValidation.isValid { count += 1 }
         if locationValidation.isValid { count += 1 }
         if birthdayValidation.isValid { count += 1 }
         return count

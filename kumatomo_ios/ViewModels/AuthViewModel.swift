@@ -17,7 +17,7 @@ final class AuthViewModel: ObservableObject {
     @Published var bio = ""
     @Published var birthDate: Date =
         Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
-    @Published var city = ""
+    @Published var location = ""
     @Published var birthday = Date()
     @Published var profileImage: UIImage?
     @Published var selectedImage: PhotosPickerItem?
@@ -181,7 +181,7 @@ final class AuthViewModel: ObservableObject {
                     withName: name,
                     profileImageURL: profileImageURL,
                     bio: bio,
-                    city: city,
+                    location: location,
                     birthday: birthDate,
                     hasCompletedSetup: true
                 )
@@ -260,7 +260,7 @@ final class AuthViewModel: ObservableObject {
                 withName: name,
                 profileImageURL: profileImageURL,
                 bio: bio,
-                city: city,
+                location: location,
                 birthday: birthDate,
                 hasCompletedSetup: true
             )

@@ -8,11 +8,9 @@ struct User: Codable, Identifiable, Equatable {
     var profileImageURL: String?
     var coverImageURL: String?
     var bio: String?
-    var city: String?
     var location: String?
     var birthday: String?
     var postCount: Int?
-    var website: String?
     var followingCount: Int?
     var followersCount: Int?
     var hasCompletedSetup: Bool?
@@ -54,11 +52,6 @@ extension User {
         return ProfileFormValidation.validateBio(bio ?? "")
     }
     
-    /// Validates the user's website field
-    func validateWebsite() -> ValidationResult {
-        return ProfileFormValidation.validateWebsite(website ?? "")
-    }
-    
     /// Validates the user's location field
     func validateLocation() -> ValidationResult {
         return ProfileFormValidation.validateLocation(location ?? "")
@@ -83,7 +76,6 @@ extension User {
             username: username ?? "",
             email: email ?? "",
             bio: bio ?? "",
-            website: website ?? "",
             location: location ?? "",
             birthday: nil // Convert birthday string to Date if needed
         )
@@ -102,7 +94,6 @@ extension User {
         username: String? = nil,
         bio: String? = nil,
         location: String? = nil,
-        website: String? = nil,
         birthday: String? = nil,
         profileImageURL: String? = nil,
         coverImageURL: String? = nil
@@ -114,7 +105,6 @@ extension User {
         if let username = username { updatedUser.username = username }
         if let bio = bio { updatedUser.bio = bio }
         if let location = location { updatedUser.location = location }
-        if let website = website { updatedUser.website = website }
         if let birthday = birthday { updatedUser.birthday = birthday }
         if let profileImageURL = profileImageURL { updatedUser.profileImageURL = profileImageURL }
         if let coverImageURL = coverImageURL { updatedUser.coverImageURL = coverImageURL }

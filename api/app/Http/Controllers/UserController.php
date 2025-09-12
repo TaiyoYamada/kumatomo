@@ -44,16 +44,15 @@ class UserController extends Controller
                 \Log::info("プロフィール作成時にusername自動生成: {$randomUsername}");
             }
 
-            // Map location to city if provided (for backward compatibility)
-            if (isset($validated['location'])) {
-                $validated['city'] = $validated['location'];
-                unset($validated['location']);
+            // Accept camelCase keys and map to DB fields
+            if ($request->has('profileImageURL')) {
+                $validated['profile_image_url'] = $request->input('profileImageURL');
             }
-
-            // Map cover_image_url to profile_image_url if provided
-            if (isset($validated['cover_image_url'])) {
-                $validated['profile_image_url'] = $validated['cover_image_url'];
-                unset($validated['cover_image_url']);
+            if ($request->has('coverImageURL')) {
+                $validated['cover_image_url'] = $request->input('coverImageURL');
+            }
+            if ($request->has('hasCompletedSetup')) {
+                $validated['has_completed_setup'] = (bool)$request->input('hasCompletedSetup');
             }
 
             // Create the user
@@ -133,16 +132,12 @@ class UserController extends Controller
             // Remove updated_at from validated data if present
             unset($validated['updated_at']);
 
-            // Map location to city if provided (for backward compatibility)
-            if (isset($validated['location'])) {
-                $validated['city'] = $validated['location'];
-                unset($validated['location']);
+            // Accept camelCase keys and map to DB fields
+            if ($request->has('profileImageURL')) {
+                $validated['profile_image_url'] = $request->input('profileImageURL');
             }
-
-            // Map cover_image_url to profile_image_url if provided
-            if (isset($validated['cover_image_url'])) {
-                $validated['profile_image_url'] = $validated['cover_image_url'];
-                unset($validated['cover_image_url']);
+            if ($request->has('coverImageURL')) {
+                $validated['cover_image_url'] = $request->input('coverImageURL');
             }
 
             // Update the user
@@ -290,7 +285,7 @@ class UserController extends Controller
             
             // Store in public disk
             $path = $image->storeAs('profile_images', $filename, 'public');
-            $url = Storage::url($path);
+            $url = url(Storage::url($path));
 
             return response()->json([
                 'url' => $url,
@@ -319,7 +314,7 @@ class UserController extends Controller
             
             // Store in public disk
             $path = $image->storeAs('cover_images', $filename, 'public');
-            $url = Storage::url($path);
+            $url = url(Storage::url($path));
 
             return response()->json([
                 'url' => $url,

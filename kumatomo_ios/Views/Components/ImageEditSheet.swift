@@ -1,9 +1,12 @@
 import SwiftUI
+import PhotosUI
 
 struct ImageEditSheet: View {
     let imageType: ImageType
-    let onPhotoSelection: () -> Void
+    
+    @Binding var selectedItem: PhotosPickerItem?
     let onDelete: () -> Void
+    
     @Environment(\.dismiss) private var dismiss
     
     enum ImageType {
@@ -30,15 +33,12 @@ struct ImageEditSheet: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 HStack {
                     Text(imageType.displayName)
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.primary)
-                        .onAppear {
-                            print("🎭 ImageEditSheet appeared with type: \(imageType)")
-                        }
                     
                     Spacer()
                     
@@ -54,11 +54,9 @@ struct ImageEditSheet: View {
                 
                 // Action buttons
                 VStack(spacing: 0) {
-                    // Photo selection button
-                    Button(action: {
-                        onPhotoSelection()
-                        dismiss()
-                    }) {
+
+                    PhotosPicker(selection: $selectedItem, matching: .images) {
+
                         HStack(spacing: 16) {
                             Image(systemName: "camera.fill")
                                 .font(.system(size: 20, weight: .medium))
@@ -86,7 +84,7 @@ struct ImageEditSheet: View {
                     Divider()
                         .padding(.leading, 60)
                     
-                    // Delete button
+                    // Delete button (ここは変更なし)
                     Button(action: {
                         onDelete()
                         dismiss()
@@ -114,6 +112,10 @@ struct ImageEditSheet: View {
                 Spacer()
             }
             .background(Color(.systemGroupedBackground))
+            .onChange(of: selectedItem) { _ in
+                dismiss()
+            }
         }
+        .presentationDetents([.height(200)])
     }
 }

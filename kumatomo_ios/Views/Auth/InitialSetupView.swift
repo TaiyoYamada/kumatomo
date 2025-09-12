@@ -6,7 +6,7 @@ struct InitialSetupView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var username: String = ""
-    @State private var selectedCity: String = ""
+    @State private var selectedLocation: String = ""
     @State private var birthday: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date()) ?? Date()
     @State private var selectedImage: PhotosPickerItem? = nil
     @State private var displayImage: UIImage? = nil
@@ -14,11 +14,11 @@ struct InitialSetupView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
 
-    let cities = ["熊本市", "八代市", "天草市", "玉名市", "人吉市", "菊池市", "宇城市", "宇土市", "山鹿市", "上天草市", "合志市", "水俣市", "阿蘇市", "荒尾市"]
+    let locations = ["熊本市", "八代市", "天草市", "玉名市", "人吉市", "菊池市", "宇城市", "宇土市", "山鹿市", "上天草市", "合志市", "水俣市", "阿蘇市", "荒尾市"]
     
     // フォームが有効かチェック
     var isFormValid: Bool {
-        !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !selectedCity.isEmpty
+        !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !selectedLocation.isEmpty
     }
 
     var body: some View {
@@ -107,17 +107,17 @@ struct InitialSetupView: View {
                                 }
                                 
                                 Menu {
-                                    ForEach(cities, id: \.self) { city in
+                                    ForEach(locations, id: \.self) { location in
                                         Button(action: {
-                                            selectedCity = city
+                                            selectedLocation = location
                                         }) {
-                                            Text(city)
+                                            Text(location)
                                         }
                                     }
                                 } label: {
                                     HStack {
-                                        Text(selectedCity.isEmpty ? "市町村を選択" : selectedCity)
-                                            .foregroundColor(selectedCity.isEmpty ? .gray : .primary)
+                                        Text(selectedLocation.isEmpty ? "市町村を選択" : selectedLocation)
+                                            .foregroundColor(selectedLocation.isEmpty ? .gray : .primary)
                                         
                                         Spacer()
                                         
@@ -231,7 +231,7 @@ struct InitialSetupView: View {
         
         // AuthViewModelに値を設定
         viewModel.name = username
-        viewModel.city = selectedCity
+        viewModel.location = selectedLocation
         viewModel.birthDate = birthday
         // プロフィール画像はloadSelectedImageメソッドで既にセット済み
         

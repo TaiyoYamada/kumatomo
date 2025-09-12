@@ -106,28 +106,12 @@ struct ProfileFormValidation {
         return .valid
     }
     
-    // MARK: - Website Validation
-    static func validateWebsite(_ website: String) -> ValidationResult {
-        let trimmedWebsite = website.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        if trimmedWebsite.isEmpty {
-            return .valid // Website is optional
-        }
-        
-        // URL format validation
-        if let url = URL(string: trimmedWebsite), UIApplication.shared.canOpenURL(url) {
-            return .valid
-        } else {
-            return .invalid(message: "有効なURLを入力してください（例: https://example.com）")
-        }
-    }
-    
     // MARK: - Location Validation
     static func validateLocation(_ location: String) -> ValidationResult {
         let trimmedLocation = location.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if trimmedLocation.count > 100 {
-            return .invalid(message: "場所は100文字以内で入力してください")
+            return .invalid(message: "出身地は100文字以内で入力してください")
         }
         
         return .valid
@@ -162,7 +146,6 @@ struct ProfileFormValidation {
         username: String,
         email: String,
         bio: String,
-        website: String,
         location: String,
         birthday: Date?
     ) -> [String] {
@@ -185,11 +168,6 @@ struct ProfileFormValidation {
         
         let bioResult = validateBio(bio)
         if !bioResult.isValid, let error = bioResult.errorMessage {
-            errors.append(error)
-        }
-        
-        let websiteResult = validateWebsite(website)
-        if !websiteResult.isValid, let error = websiteResult.errorMessage {
             errors.append(error)
         }
         

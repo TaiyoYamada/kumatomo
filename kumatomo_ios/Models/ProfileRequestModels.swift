@@ -9,10 +9,9 @@ struct CreateProfileRequest: Codable {
     let bio: String?
     let location: String?
     let birthday: String?
-    let website: String?
     
     enum CodingKeys: String, CodingKey {
-        case name, email, username, bio, location, birthday, website
+        case name, email, username, bio, location, birthday
     }
 }
 
@@ -23,15 +22,10 @@ struct UpdateProfileRequest: Codable {
     let bio: String?
     let location: String?
     let birthday: String?
-    let website: String?
     let profileImageURL: String?
     let coverImageURL: String?
     
-    enum CodingKeys: String, CodingKey {
-        case name, email, username, bio, location, birthday, website
-        case profileImageURL = "profile_image_url"
-        case coverImageURL = "cover_image_url"
-    }
+    // Use default camelCase keys to align with API
 }
 
 struct ProfileValidationResponse: Codable {
@@ -56,7 +50,6 @@ extension User {
             bio: bio,
             location: location,
             birthday: birthday,
-            website: website
         )
     }
     
@@ -68,7 +61,6 @@ extension User {
             bio: bio,
             location: location,
             birthday: birthday,
-            website: website,
             profileImageURL: profileImageURL,
             coverImageURL: coverImageURL
         )

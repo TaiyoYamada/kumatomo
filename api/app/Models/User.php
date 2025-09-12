@@ -23,16 +23,14 @@ class User extends Authenticatable
         'name',
         'username',
         'bio',
-        'city',
-        'location', // Alias for city
+        'location',
         'birthday',
         'website',
         'post_count',
         'followers_count',
         'following_count',
-        'profile_image_url', // カバー画像のURL
-        'profile_icon_image_url', // プロフィールアイコンのURL
-        'cover_image_url', // カバー画像のURL (alias for profile_image_url)
+        'profile_image_url', // プロフィールアイコンのURL
+        'cover_image_url', // カバー画像のURL
         'has_completed_setup',
         'created_at',
     ];
@@ -108,7 +106,6 @@ class User extends Authenticatable
                 'not_in:admin,root,api,www,mail,support,help,info,contact,about,terms,privacy,login,register,logout,profile,settings,dashboard,home,index'
             ],
             'bio' => ['nullable', 'string', 'max:500'],
-            'city' => ['nullable', 'string', 'max:255', 'regex:/^[\p{L}\p{M}\p{N}\s\-\'\.]+$/u'],
             'location' => ['nullable', 'string', 'max:255', 'regex:/^[\p{L}\p{M}\p{N}\s\-\'\.]+$/u'],
             'birthday' => [
                 'nullable', 
@@ -118,7 +115,6 @@ class User extends Authenticatable
             ],
             'website' => ['nullable', 'url', 'max:255', 'regex:/^https?:\/\/.+/'],
             'profile_image_url' => ['nullable', 'string', 'max:500'],
-            'profile_icon_image_url' => ['nullable', 'string', 'max:500'],
             'cover_image_url' => ['nullable', 'string', 'max:500'],
             'has_completed_setup' => ['sometimes', 'boolean'],
         ];
@@ -210,9 +206,6 @@ class User extends Authenticatable
             
             'bio.max' => '自己紹介は500文字以内で入力してください。',
             
-            'city.max' => '都市名は255文字以内で入力してください。',
-            'city.regex' => '都市名に使用できない文字が含まれています。',
-            
             'location.max' => '場所は255文字以内で入力してください。',
             'location.regex' => '場所に使用できない文字が含まれています。',
             
@@ -231,7 +224,6 @@ class User extends Authenticatable
             'password_confirmation.same' => 'パスワードが一致しません。',
             
             'profile_image_url.max' => 'プロフィール画像URLは500文字以内で入力してください。',
-            'profile_icon_image_url.max' => 'プロフィールアイコン画像URLは500文字以内で入力してください。',
             'cover_image_url.max' => 'カバー画像URLは500文字以内で入力してください。',
         ];
     }
@@ -297,7 +289,7 @@ class User extends Authenticatable
      */
     public function getProfileCompletionPercentage(): int
     {
-        $fields = ['name', 'email', 'username', 'bio', 'city', 'birthday', 'website', 'profile_image_url'];
+        $fields = ['name', 'email', 'username', 'bio', 'location', 'birthday', 'website', 'profile_image_url'];
         $completedFields = 0;
         
         foreach ($fields as $field) {

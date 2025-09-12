@@ -189,7 +189,7 @@ class AuthService: ObservableObject {
     }
     
     @MainActor
-    func updateUser(withName name: String?, profileImageURL: String?, bio: String?, city: String?, birthday: Date?, hasCompletedSetup: Bool?) async throws {
+    func updateUser(withName name: String?, profileImageURL: String?, bio: String?, location: String?, birthday: Date?, hasCompletedSetup: Bool?) async throws {
         guard AuthTokenManager.shared.token != nil else {
             throw AuthError.unauthorized
         }
@@ -210,15 +210,16 @@ class AuthService: ObservableObject {
         }
         
         if let profileImageURL = profileImageURL {
-            updateData["profile_image_url"] = profileImageURL
+            // Use camelCase to align with API
+            updateData["profileImageURL"] = profileImageURL
         }
         
         if let bio = bio {
             updateData["bio"] = bio
         }
         
-        if let city = city {
-            updateData["city"] = city
+        if let location = location {
+            updateData["location"] = location
         }
         
         if let birthday = birthday {
@@ -228,7 +229,8 @@ class AuthService: ObservableObject {
         }
         
         if let hasCompletedSetup = hasCompletedSetup {
-            updateData["has_completed_setup"] = hasCompletedSetup
+            // Use camelCase to align with API
+            updateData["hasCompletedSetup"] = hasCompletedSetup
         }
         
         request.httpBody = try JSONSerialization.data(withJSONObject: updateData)
@@ -357,8 +359,8 @@ class AuthService: ObservableObject {
         // 認証トークンをヘッダーに追加
         AuthTokenManager.shared.authorizedRequest(&request)
         
-        // プロフィール更新データ
-        let profileData = ["profile_image_url": url]
+        // プロフィール更新データ（camelCase）
+        let profileData = ["profileImageURL": url]
         request.httpBody = try JSONEncoder().encode(profileData)
         
         let (data, response) = try await APISession.shared.session.data(for: request)

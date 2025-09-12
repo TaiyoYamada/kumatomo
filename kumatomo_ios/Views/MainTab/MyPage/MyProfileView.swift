@@ -334,7 +334,7 @@ struct ModernProfileInfoView: View {
             
             // 詳細情報 - Twitter/Instagram スタイルのアイコン付き情報
             VStack(alignment: .leading, spacing: 12) {
-                // 場所情報
+                // 出身地情報
                 if let location = user.location, !location.isEmpty {
                     HStack(spacing: 10) {
                         Image(systemName: "location")
