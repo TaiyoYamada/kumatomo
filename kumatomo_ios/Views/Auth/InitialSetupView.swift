@@ -34,10 +34,10 @@ struct InitialSetupView: View {
                             .fontWeight(.bold)
                             .padding(.top, 20)
                         
-                        Text("基本情報を設定して、アプリを始めましょう")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.bottom, 10)
+//                        Text("基本情報を設定して、アプリを始めましょう")
+//                            .font(.subheadline)
+//                            .foregroundColor(.secondary)
+//                            .padding(.bottom, 10)
                         
                         // プロフィール画像セクション
                         VStack(spacing: 16) {
@@ -75,7 +75,7 @@ struct InitialSetupView: View {
                                     }
                                 }
                                 .buttonStyle(.plain)
-                                .position(x: 100, y: 100)
+                                .offset(x: 55, y: 40)
                             }
                             .padding(.top, 10)
                             
