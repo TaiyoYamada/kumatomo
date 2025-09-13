@@ -19,6 +19,13 @@ struct Post: Identifiable, Codable, Equatable {
     var isBookmarked: Bool?
     var municipality: String?
     
+    // 新しいエンゲージメント機能用プロパティ
+    var likeCount: Int?
+    var bookmarkCount: Int?
+    var isLikedByCurrentUser: Bool?
+    var isBookmarkedByCurrentUser: Bool?
+    var comments: [Comment]?
+    
     // 関連データ
     var user: User?
     var shop: Shop?
@@ -40,6 +47,12 @@ struct Post: Identifiable, Codable, Equatable {
         case commentCount = "comment_count"
         case isBookmarked = "is_bookmarked"
         case municipality
+        // 新しいエンゲージメント機能用CodingKeys
+        case likeCount = "like_count"
+        case bookmarkCount = "bookmark_count"
+        case isLikedByCurrentUser = "is_liked_by_current_user"
+        case isBookmarkedByCurrentUser = "is_bookmarked_by_current_user"
+        case comments
         case user
         case shop
         case images
@@ -70,6 +83,13 @@ struct Post: Identifiable, Codable, Equatable {
         isBookmarked = try container.decodeIfPresent(Bool.self, forKey: .isBookmarked)
         municipality = try container.decodeIfPresent(String.self, forKey: .municipality)
         
+        // 新しいエンゲージメント機能用プロパティ
+        likeCount = try container.decodeIfPresent(Int.self, forKey: .likeCount)
+        bookmarkCount = try container.decodeIfPresent(Int.self, forKey: .bookmarkCount)
+        isLikedByCurrentUser = try container.decodeIfPresent(Bool.self, forKey: .isLikedByCurrentUser)
+        isBookmarkedByCurrentUser = try container.decodeIfPresent(Bool.self, forKey: .isBookmarkedByCurrentUser)
+        comments = try container.decodeIfPresent([Comment].self, forKey: .comments)
+        
         user = try container.decodeIfPresent(User.self, forKey: .user)
         shop = try container.decodeIfPresent(Shop.self, forKey: .shop)
         images = try container.decodeIfPresent([PostImage].self, forKey: .images)
@@ -97,6 +117,13 @@ struct Post: Identifiable, Codable, Equatable {
         try container.encodeIfPresent(commentCount, forKey: .commentCount)
         try container.encodeIfPresent(isBookmarked, forKey: .isBookmarked)
         try container.encodeIfPresent(municipality, forKey: .municipality)
+        
+        // 新しいエンゲージメント機能用プロパティ
+        try container.encodeIfPresent(likeCount, forKey: .likeCount)
+        try container.encodeIfPresent(bookmarkCount, forKey: .bookmarkCount)
+        try container.encodeIfPresent(isLikedByCurrentUser, forKey: .isLikedByCurrentUser)
+        try container.encodeIfPresent(isBookmarkedByCurrentUser, forKey: .isBookmarkedByCurrentUser)
+        try container.encodeIfPresent(comments, forKey: .comments)
         
         try container.encodeIfPresent(user, forKey: .user)
         try container.encodeIfPresent(shop, forKey: .shop)
@@ -134,6 +161,68 @@ extension Post {
     mutating func updateTags(_ newTags: [String]?) {
         self.tags = newTags
         self.updatedAt = Date()
+    }
+    
+    // MARK: - Engagement Methods
+    
+    /// Updates the like status and count optimistically
+    mutating func updateLikeStatus(isLiked: Bool, likeCount: Int) {
+        self.isLikedByCurrentUser = isLiked
+        self.likeCount = likeCount
+        self.updatedAt = Date()
+    }
+    
+    /// Updates the bookmark status and count optimistically
+    mutating func updateBookmarkStatus(isBookmarked: Bool, bookmarkCount: Int) {
+        self.isBookmarkedByCurrentUser = isBookmarked
+        self.bookmarkCount = bookmarkCount
+        self.updatedAt = Date()
+    }
+    
+    /// Adds a new comment to the post
+    mutating func addComment(_ comment: Comment) {
+        if comments == nil {
+            comments = []
+        }
+        comments?.append(comment)
+        commentCount = (commentCount ?? 0) + 1
+        self.updatedAt = Date()
+    }
+    
+    /// Removes a comment from the post
+    mutating func removeComment(withId commentId: Int) {
+        comments?.removeAll { $0.id == commentId }
+        commentCount = max(0, (commentCount ?? 0) - 1)
+        self.updatedAt = Date()
+    }
+    
+    /// Returns the total engagement count (likes + bookmarks + comments)
+    var totalEngagementCount: Int {
+        return (likeCount ?? 0) + (bookmarkCount ?? 0) + (commentCount ?? 0)
+    }
+    
+    /// Returns true if the current user has engaged with this post in any way
+    var isEngagedByCurrentUser: Bool {
+        return (isLikedByCurrentUser == true) || (isBookmarkedByCurrentUser == true)
+    }
+    
+    /// Returns a formatted engagement summary string
+    var engagementSummary: String {
+        var parts: [String] = []
+        
+        if let likes = likeCount, likes > 0 {
+            parts.append("\(likes)いいね")
+        }
+        
+        if let comments = commentCount, comments > 0 {
+            parts.append("\(comments)コメント")
+        }
+        
+        if let bookmarks = bookmarkCount, bookmarks > 0 {
+            parts.append("\(bookmarks)ブックマーク")
+        }
+        
+        return parts.joined(separator: " • ")
     }
 }
 

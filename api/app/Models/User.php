@@ -79,6 +79,46 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the comments made by the user.
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Get the likes made by the user.
+     */
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    /**
+     * Get the bookmarks made by the user.
+     */
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    /**
+     * Get posts liked by the user.
+     */
+    public function likedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'likes')->withTimestamps();
+    }
+
+    /**
+     * Get posts bookmarked by the user.
+     */
+    public function bookmarkedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'bookmarks')->withTimestamps();
+    }
+
+    /**
      * Get comprehensive validation rules for user profile
      * 
      * @param int|null $userId User ID to ignore for unique validation (for updates)
