@@ -300,7 +300,3 @@ private struct ShopPickerErrorOverlay: View {
             }
     }
 }
-
-#Preview {
-    ShopPickerView(selectedShop: .constant(nil))
-}

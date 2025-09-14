@@ -75,13 +75,7 @@ struct HomeView: View {
             }
             .navigationTitle("ホーム")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    ProfileIconButton(user: userManager.currentUser) {
-                        openSidebar()
-                    }
-                }
-            }
+            .sidebarButton()
             .onAppear {
                 viewModel.loadInitialPosts()
             }

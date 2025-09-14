@@ -12,6 +12,10 @@ enum RouterDestination: Hashable {
 	case search         // 検索画面
 	case signUp         // サインアップ画面
 	case initialSetup   // 初期設定画面
+	case postDetail(postId: Int)  // 投稿詳細画面
+	case likedPosts     // いいねした投稿一覧画面
+	case bookmarkedPosts // ブックマークした投稿一覧画面
+	case userProfile(userId: Int) // ユーザープロフィール画面
 }
 
 // MARK: - タブ選択用のenum（ContentViewから移動・統合）
@@ -46,9 +50,23 @@ extension View {
 				SignUpView()
 			case .initialSetup:
 				InitialSetupView()
+			case .postDetail(let postId):
+				PostDetailView(postId: postId)
+					.environmentObject(CurrentUserManager.shared)
+			case .likedPosts:
+				LikedPostsView()
+					.environmentObject(CurrentUserManager.shared)
+			case .bookmarkedPosts:
+				BookmarkedPostsView()
+					.environmentObject(CurrentUserManager.shared)
+			case .userProfile(let userId):
+				UserProfileView(userId: userId)
+					.environmentObject(CurrentUserManager.shared)
 			}
 		}
 	}
+	
+
 }
 
 // MARK: - Placeholder View for missing implementations
@@ -73,5 +91,7 @@ struct PlaceholderView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
+
 
 

@@ -85,11 +85,11 @@ class BulletinBoardViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Reaction Management
+    // MARK: - Engagement Management
     
-    func toggleReaction(_ reactionType: ReactionType, for post: Post) {
+    func toggleLike(for post: Post) {
         Task {
-            await handleReactionToggle(reactionType, for: post)
+            await handleLikeToggle(for: post)
         }
     }
     
@@ -100,8 +100,15 @@ class BulletinBoardViewModel: ObservableObject {
     }
     
     func navigateToComments(for post: Post) {
-        // TODO: Implement navigation to comment view
+        // Navigation is handled by the parent view
         print("Navigate to comments for post \(post.id)")
+    }
+    
+    // Legacy reaction support
+    func toggleReaction(_ reactionType: ReactionType, for post: Post) {
+        Task {
+            await handleReactionToggle(reactionType, for: post)
+        }
     }
     
     // MARK: - Cache Management
@@ -244,6 +251,51 @@ class BulletinBoardViewModel: ObservableObject {
         }
     }
     
+    private func handleLikeToggle(for post: Post) async {
+        let postId = post.id
+        
+        // Store original values for rollback
+        let originalIsLiked = post.isLikedByCurrentUser ?? false
+        let originalLikeCount = post.likeCount ?? 0
+        
+        // Optimistic update
+        let newIsLiked = !originalIsLiked
+        let newLikeCount = originalIsLiked ? max(0, originalLikeCount - 1) : originalLikeCount + 1
+        
+        updatePostInList(postId: postId) { post in
+            post.updateLikeStatus(isLiked: newIsLiked, likeCount: newLikeCount)
+        }
+        
+        print("🔄 いいね最適化更新: \(newIsLiked ? "いいね" : "いいね解除") (カウント: \(newLikeCount))")
+        
+        do {
+            // Send to server if online
+            if NetworkMonitor.shared.isConnected {
+                let engagementAPIService = EngagementAPIService.shared
+                let response = try await engagementAPIService.toggleLike(postId: postId)
+                
+                // Update with server response
+                updatePostInList(postId: postId) { post in
+                    post.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
+                }
+                
+                print("✅ いいね更新成功: \(response.isLiked ? "いいね" : "いいね解除") (サーバーカウント: \(response.likeCount))")
+            } else {
+                print("📱 オフライン: いいねをローカルに保存")
+                // TODO: Queue for sync when online
+            }
+            
+        } catch {
+            // Rollback optimistic update
+            updatePostInList(postId: postId) { post in
+                post.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
+            }
+            
+            await handleError(error, context: "いいね切り替え")
+            print("❌ いいね更新失敗 - ロールバック実行")
+        }
+    }
+    
     private func handleReactionToggle(_ reactionType: ReactionType, for post: Post) async {
         let postId = post.id
         let currentUserReaction = userReactions[postId]
@@ -317,40 +369,53 @@ class BulletinBoardViewModel: ObservableObject {
     
     private func handleBookmarkToggle(for post: Post) async {
         let postId = post.id
-        let wasBookmarked = bookmarkedPosts.contains(postId)
+        
+        // Store original values for rollback
+        let originalIsBookmarked = post.isBookmarkedByCurrentUser ?? false
+        let originalBookmarkCount = post.bookmarkCount ?? 0
         
         // Optimistic update
-        if wasBookmarked {
-            bookmarkedPosts.remove(postId)
-        } else {
-            bookmarkedPosts.insert(postId)
-        }
+        let newIsBookmarked = !originalIsBookmarked
+        let newBookmarkCount = originalIsBookmarked ? max(0, originalBookmarkCount - 1) : originalBookmarkCount + 1
         
         updatePostInList(postId: postId) { post in
-            post.isBookmarked = !wasBookmarked
+            post.updateBookmarkStatus(isBookmarked: newIsBookmarked, bookmarkCount: newBookmarkCount)
+        }
+        
+        // Update legacy bookmark tracking
+        if newIsBookmarked {
+            bookmarkedPosts.insert(postId)
+        } else {
+            bookmarkedPosts.remove(postId)
         }
         
         // Save to cache immediately for offline support
         PostCacheManager.shared.cacheBookmarks(bookmarkedPosts)
         
+        print("🔄 ブックマーク最適化更新: \(newIsBookmarked ? "ブックマーク" : "ブックマーク解除") (カウント: \(newBookmarkCount))")
+        
         do {
             // Send to server if online
             if NetworkMonitor.shared.isConnected {
-                let isBookmarked = try await postAPIService.toggleBookmark(postId: postId)
+                let engagementAPIService = EngagementAPIService.shared
+                let response = try await engagementAPIService.toggleBookmark(postId: postId)
                 
                 // Update with server response
-                if isBookmarked {
+                updatePostInList(postId: postId) { post in
+                    post.updateBookmarkStatus(isBookmarked: response.isBookmarked, bookmarkCount: response.bookmarkCount)
+                }
+                
+                // Update legacy bookmark tracking
+                if response.isBookmarked {
                     bookmarkedPosts.insert(postId)
                 } else {
                     bookmarkedPosts.remove(postId)
                 }
                 
-                updatePostInList(postId: postId) { post in
-                    post.isBookmarked = isBookmarked
-                }
-                
                 // Update cache with server data
                 PostCacheManager.shared.cacheBookmarks(bookmarkedPosts)
+                
+                print("✅ ブックマーク更新成功: \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))")
             } else {
                 print("📱 オフライン: ブックマークをローカルに保存")
                 // TODO: Queue for sync when online
@@ -358,20 +423,22 @@ class BulletinBoardViewModel: ObservableObject {
             
         } catch {
             // Rollback optimistic update
-            if wasBookmarked {
+            updatePostInList(postId: postId) { post in
+                post.updateBookmarkStatus(isBookmarked: originalIsBookmarked, bookmarkCount: originalBookmarkCount)
+            }
+            
+            // Rollback legacy bookmark tracking
+            if originalIsBookmarked {
                 bookmarkedPosts.insert(postId)
             } else {
                 bookmarkedPosts.remove(postId)
-            }
-            
-            updatePostInList(postId: postId) { post in
-                post.isBookmarked = wasBookmarked
             }
             
             // Restore cache
             PostCacheManager.shared.cacheBookmarks(bookmarkedPosts)
             
             await handleError(error, context: "ブックマークの更新")
+            print("❌ ブックマーク更新失敗 - ロールバック実行")
         }
     }
     

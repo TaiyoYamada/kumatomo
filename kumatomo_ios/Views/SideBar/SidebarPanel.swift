@@ -62,9 +62,9 @@ struct SidebarPanel: View {
         case .shops:
             return .shopList
         case .bookmarks:
-            return .bookmarks
+            return .bookmarkedPosts  // Updated to use new bookmarked posts route
         case .likes:
-            return .likes
+            return .likedPosts       // Updated to use new liked posts route
         case .coupons:
             return .coupons
         case .settings:

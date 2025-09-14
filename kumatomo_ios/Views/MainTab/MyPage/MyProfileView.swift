@@ -7,6 +7,8 @@ struct MyProfileView: View {
     @State private var selectedTab = 0
     @State private var sheetDestination: SheetDestination? = nil
     @State private var scrollOffset: CGFloat = 0
+    @Environment(\.openSidebar) private var openSidebar
+    @EnvironmentObject private var userManager: CurrentUserManager
     
     var body: some View {
         NavigationStack {
@@ -56,9 +58,9 @@ struct MyProfileView: View {
                 }
                 .background(Color(.systemBackground))
             }
-            .navigationBarHidden(true)
             .navigationTitle("プロフィール")
             .navigationBarTitleDisplayMode(.inline)
+            .sidebarButton()
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: SearchView()) {
@@ -650,10 +652,16 @@ struct PostCardContentView: View {
             }
             
             // 画像グリッド
+//            if let images = post.images, !images.isEmpty {
+//                PostImagesGridView(images: images.map { $0.imageUrl })
+//                    .cornerRadius(16)
+//            }
+            
             if let images = post.images, !images.isEmpty {
-                PostImagesGridView(images: images.map { $0.imageUrl })
+                PostImagesGridView(imageUrls: images.map { $0.imageUrl })
                     .cornerRadius(16)
             }
+
             
             // タグ表示
             if let tags = post.tags, !tags.isEmpty {
@@ -732,5 +740,3 @@ struct PostCardActionsView: View {
         .padding(.top, 12)
     }
 }
-
-
