@@ -58,17 +58,16 @@ struct MyProfileView: View {
                 }
                 .background(Color(.systemBackground))
             }
-            .navigationTitle("プロフィール")
             .navigationBarTitleDisplayMode(.inline)
-            .sidebarButton()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: SearchView()) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
+////            .sidebarButton()
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    NavigationLink(destination: SearchView()) {
+//                        Image(systemName: "magnifyingglass")
+//                            .foregroundColor(.primary)
+//                    }
+//                }
+//            }
             .withSheetRouter(sheet: $sheetDestination)
             .overlay {
                 if viewModel.isLoading {
