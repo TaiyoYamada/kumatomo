@@ -285,24 +285,35 @@ private struct LikedPostCardView: View {
                 
                 // Content Area (Right side)
                 VStack(alignment: .leading, spacing: 8) {
-                    // User Info Header
-                    HStack(spacing: 8) {
+                    // User Info Header (Twitter-like: Name, @username · time)
+                    HStack(spacing: 6) {
                         Text(post.user?.name ?? "ユーザー")
                             .font(.system(size: adaptiveUserNameSize, weight: .semibold))
                             .foregroundColor(.primary)
                             .minimumScaleFactor(0.8)
                             .lineLimit(1)
-                        
+
+                        if let username = post.user?.username, !username.isEmpty {
+                            Text("@\(username)")
+                                .font(.system(size: adaptiveTimestampSize))
+                                .foregroundColor(.secondary)
+                                .minimumScaleFactor(0.8)
+                                .lineLimit(1)
+                        }
+
+                        Text("・")
+                            .foregroundColor(.secondary)
+
                         Text(formattedDate)
                             .font(.system(size: adaptiveTimestampSize))
                             .foregroundColor(.secondary)
                             .minimumScaleFactor(0.8)
                             .lineLimit(1)
-                        
+
                         Spacer()
                     }
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(post.user?.name ?? "ユーザー")、\(formattedDate)")
+                    .accessibilityLabel("\(post.user?.name ?? "ユーザー")、@\(post.user?.username ?? "user")、\(formattedDate)")
                     
                     // Post Content with hashtags
                     PostContentView(content: post.content)
