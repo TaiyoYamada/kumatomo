@@ -37,9 +37,11 @@ extension View {
 			case .shopList:
 				ShopListView()
 			case .bookmarks:
-				PlaceholderView(title: "ブックマーク")
+				BookmarkedPostsView()
+					.environmentObject(CurrentUserManager.shared)
 			case .likes:
-				PlaceholderView(title: "いいね一覧")
+				LikedPostsView()
+					.environmentObject(CurrentUserManager.shared)
 			case .coupons:
 				PlaceholderView(title: "クーポン")
 			case .settings:
