@@ -46,7 +46,7 @@ class CommentController extends Controller
             $commentData = [
                 'post_id' => $post->id,
                 'user_id' => $request->user()->id,
-                'content' => trim($validated['content']),
+                'content' => trim($validated['content'] ?? ''),
             ];
 
             // Handle image upload if present

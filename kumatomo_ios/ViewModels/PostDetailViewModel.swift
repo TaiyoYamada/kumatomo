@@ -225,7 +225,7 @@ class PostDetailViewModel: ObservableObject {
         // Validate input
         let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedText.isEmpty || image != nil else {
-            errorMessage = "コメント内容を入力してください"
+            errorMessage = "コメント内容または画像を入力してください"
             return
         }
         

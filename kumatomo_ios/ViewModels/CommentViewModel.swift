@@ -37,8 +37,9 @@ class CommentViewModel: ObservableObject {
         let hasImage = selectedImage != nil
         let isNotSubmitting = !isSubmitting
         let hasNoValidationError = validationError == nil
+        let hasContent = hasValidText || hasImage
         
-        return (hasValidText || hasImage) && isNotSubmitting && hasNoValidationError
+        return hasContent && isNotSubmitting && hasNoValidationError
     }
     
     /// Get current character count
@@ -98,8 +99,8 @@ class CommentViewModel: ObservableObject {
         
         let trimmedText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        // Check if completely empty
-        if trimmedText.isEmpty && selectedImage == nil {
+        // Check if completely empty (only show error if user has started typing)
+        if trimmedText.isEmpty && selectedImage == nil && !commentText.isEmpty {
             validationError = "コメント内容を入力するか、画像を選択してください"
             isValidating = false
             return

@@ -117,7 +117,9 @@ class CommentAPIService {
     func createComment(postId: Int, content: String, image: UIImage? = nil) async throws -> Comment {
         // Validate content
         let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedContent.isEmpty else {
+        
+        // Check if we have either content or image
+        guard !trimmedContent.isEmpty || image != nil else {
             throw CommentError.emptyContent
         }
         
@@ -288,7 +290,7 @@ class CommentAPIService {
     /// - Returns: The created Comment object
     /// - Throws: CommentError for various failure scenarios
     func createImageComment(postId: Int, image: UIImage) async throws -> Comment {
-        return try await createComment(postId: postId, content: "", image: image)
+        return try await createComment(postId: postId, content: " ", image: image)
     }
     
     /// Validate comment content before submission

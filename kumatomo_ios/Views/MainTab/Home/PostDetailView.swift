@@ -60,9 +60,6 @@ struct PostDetailView: View {
                                     },
                                     onComment: {
                                         isCommentFocused = true
-                                        withAnimation(.easeInOut(duration: 0.3)) {
-                                            proxy.scrollTo("comment-compose", anchor: .bottom)
-                                        }
                                     }
                                 )
                                 
@@ -77,48 +74,20 @@ struct PostDetailView: View {
                                         Task {
                                             await viewModel.refreshComments()
                                         }
-                                    }
-                                )
-                                
-                                // Comment compose section
-                                CommentComposeSection(
-                                    viewModel: commentViewModel,
-                                    currentUser: userManager.currentUser,
-                                    isSubmitting: viewModel.isAddingComment,
-                                    onSubmit: {
-                                        Task {
-                                            let success = await commentViewModel.submitComment(postId: postId)
-                                            if success {
-                                                // Refresh comments after successful submission
-                                                await viewModel.refreshComments()
-                                                isCommentFocused = false
-                                                
-                                                // Scroll to show the new comment
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                                        proxy.scrollTo("comments-end", anchor: .bottom)
-                                                    }
-                                                }
-                                            }
-                                        }
                                     },
-                                    onImagePicker: {
-                                        showImagePicker = true
+                                    onUserTap: { userId in
+                                        AppRouter.shared.navigateToUserProfile(userId: userId)
+                                    },
+                                    onImageTap: { imageUrl in
+                                        // TODO: Implement image viewer
+                                        print("Image tapped: \(imageUrl)")
                                     }
                                 )
-                                .id("comment-compose")
-                                .focused($isCommentFocused)
                                 
-                                // Invisible anchor for scrolling to end of comments
+                                // Bottom spacer so last comment isn't hidden by composer
                                 Rectangle()
                                     .fill(Color.clear)
-                                    .frame(height: 1)
-                                    .id("comments-end")
-                                
-                                // Bottom padding for keyboard
-                                Rectangle()
-                                    .fill(Color.clear)
-                                    .frame(height: max(keyboardHeight, 20))
+                                    .frame(height: 100)
                             }
                         }
                         .refreshable {
@@ -203,6 +172,27 @@ struct PostDetailView: View {
             }
             .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
                 handleKeyboardHide()
+            }
+            .safeAreaInset(edge: .bottom) {
+                CommentComposeSection(
+                    viewModel: commentViewModel,
+                    currentUser: userManager.currentUser,
+                    isSubmitting: viewModel.isAddingComment,
+                    onSubmit: {
+                        Task {
+                            let success = await commentViewModel.submitComment(postId: postId)
+                            if success {
+                                await viewModel.refreshComments()
+                                isCommentFocused = false
+                            }
+                        }
+                    },
+                    onImagePicker: {
+                        showImagePicker = true
+                    }
+                )
+                .id("comment-compose")
+                .focused($isCommentFocused)
             }
             .sheet(isPresented: $showImagePicker) {
                 ImagePicker(selectedImage: $commentViewModel.selectedImage)

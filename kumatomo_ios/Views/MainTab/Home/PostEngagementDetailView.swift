@@ -209,20 +209,21 @@ struct PostContentSection: View {
     
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
-    private var formattedDate: String {
+    private var formattedDateLine: String {
         guard let createdAt = post.createdAt else { return "" }
-        
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "ja_JP")
-        return formatter.string(from: createdAt)
+        let timeFormatter = DateFormatter()
+        timeFormatter.locale = Locale(identifier: "ja_JP")
+        timeFormatter.dateFormat = "H:mm"
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ja_JP")
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+        return "\(timeFormatter.string(from: createdAt)) ・ \(dateFormatter.string(from: createdAt))"
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // User info header
-            HStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header (avatar, name, username)
+            HStack(alignment: .top, spacing: 12) {
                 Button(action: onProfileTap) {
                     AsyncImage(url: URL(string: post.user?.profileImageURL ?? "")) { image in
                         image
@@ -236,27 +237,33 @@ struct PostContentSection: View {
                                     .foregroundColor(.white)
                             }
                     }
-                    .frame(width: 50, height: 50)
+                    .frame(width: 48, height: 48)
                     .clipShape(Circle())
                 }
                 .buttonStyle(PlainButtonStyle())
-                
+
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(post.user?.name ?? "ユーザー")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Text(formattedDate)
-                        .font(.caption)
+                    HStack(spacing: 6) {
+                        Text(post.user?.name ?? "ユーザー")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(.primary)
+                        if post.user?.isVerified == true {
+                            Image(systemName: "checkmark.seal.fill")
+                                .foregroundColor(.blue)
+                                .font(.system(size: 14))
+                        }
+                    }
+                    Text("@\(post.user?.username ?? "user")")
+                        .font(.system(size: 14))
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
             }
-            
-            // Post content
+
+            // Content text
             Text(post.content)
-                .font(.body)
+                .font(.system(size: 18))
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
             
@@ -278,17 +285,12 @@ struct PostContentSection: View {
                 .frame(maxHeight: 400)
                 .cornerRadius(12)
             }
-            
-            // Tags
-            if let tags = post.tags, !tags.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(tags, id: \.self) { tag in
-                            TagChip(text: tag)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                }
+
+            // Timestamp line
+            if !formattedDateLine.isEmpty {
+                Text(formattedDateLine)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
             }
         }
         .padding(.horizontal, 16)
@@ -307,29 +309,50 @@ struct EngagementSection: View {
     let onComment: () -> Void
     
     var body: some View {
-        VStack(spacing: 12) {
-            // Engagement stats
-            if post.totalEngagementCount > 0 {
-                EngagementStatsView(post: post)
+        VStack(spacing: 0) {
+            // Counts row like Twitter
+            if (post.likeCount ?? 0) > 0 || (post.bookmarkCount ?? 0) > 0 {
+                HStack(spacing: 16) {
+                    if let likeCount = post.likeCount, likeCount > 0 {
+                        HStack(spacing: 4) {
+                            Text("\(likeCount)")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.primary)
+                            Text("いいね")
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    if let bookmarkCount = post.bookmarkCount, bookmarkCount > 0 {
+                        HStack(spacing: 4) {
+                            Text("\(bookmarkCount)")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.primary)
+                            Text("ブックマーク")
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
             }
-            
-            // Engagement buttons
+
+//            Divider()
+
+            // Action buttons row
             EngagementButtonsView.detail(
                 post: post,
                 onLike: {
-                    if !isTogglingLike {
-                        onLike()
-                    }
+                    if !isTogglingLike { onLike() }
                 },
                 onComment: onComment,
                 onBookmark: {
-                    if !isTogglingBookmark {
-                        onBookmark()
-                    }
+                    if !isTogglingBookmark { onBookmark() }
                 }
             )
         }
-        .padding(.vertical, 8)
     }
 }
 
@@ -463,25 +486,24 @@ struct CommentsSection: View {
     
     private var emptyStateView: some View {
         VStack(spacing: 16) {
-            Image(systemName: "bubble.left")
-                .font(.system(size: 48, weight: .light))
-                .foregroundColor(.secondary)
-            
-            VStack(spacing: 8) {
-                Text("まだコメントがありません")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.primary)
-                
-                Text("最初にコメントしてみませんか？")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
+//            Image(systemName: "bubble.left")
+//                .font(.system(size: 48, weight: .light))
+//                .foregroundColor(.secondary)
+//            
+//            VStack(spacing: 8) {
+//                Text("まだコメントがありません")
+//                    .font(.system(size: 16, weight: .medium))
+//                    .foregroundColor(.primary)
+//                
+//                Text("最初にコメントしてみませんか？")
+//                    .font(.system(size: 14))
+//                    .foregroundColor(.secondary)
+//                    .multilineTextAlignment(.center)
+//            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("コメントがありません。最初にコメントしてみませんか？")
+
     }
     
     // MARK: - Comments List View

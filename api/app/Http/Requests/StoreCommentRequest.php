@@ -24,14 +24,9 @@ class StoreCommentRequest extends FormRequest
     {
         return [
             'content' => [
-                'required',
+                'nullable',
                 'string',
                 'max:1000',
-                function ($attribute, $value, $fail) {
-                    if (empty(trim($value))) {
-                        $fail('コメント内容を入力してください。');
-                    }
-                },
             ],
             'image' => [
                 'nullable',
@@ -86,7 +81,7 @@ class StoreCommentRequest extends FormRequest
             $hasImage = $this->hasFile('image') || !empty($this->input('image_url'));
             
             if (empty($content) && !$hasImage) {
-                $validator->errors()->add('content', 'コメント内容または画像のいずれかを入力してください。');
+                $validator->errors()->add('general', 'コメント内容または画像のいずれかを入力してください。');
             }
         });
     }

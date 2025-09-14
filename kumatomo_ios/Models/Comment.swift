@@ -20,6 +20,15 @@ struct Comment: Identifiable, Codable, Equatable {
         case updatedAt = "updated_at"
         case user
     }
+
+    // Alternative keys to be resilient against different API shapes
+    private enum AltKeys: String, CodingKey {
+        case postId
+        case userId
+        case imageUrl
+        case createdAt
+        case updatedAt
+    }
     
     // Custom initializer for creating new comments
     init(
@@ -43,42 +52,51 @@ struct Comment: Identifiable, Codable, Equatable {
     // Custom decoder to handle date parsing
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+        let alt = try? decoder.container(keyedBy: AltKeys.self)
+
+        // Required fields with fallbacks
         id = try container.decode(Int.self, forKey: .id)
-        postId = try container.decode(Int.self, forKey: .postId)
-        userId = try container.decode(Int.self, forKey: .userId)
-        content = try container.decode(String.self, forKey: .content)
-        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        if let value = try? container.decode(Int.self, forKey: .postId) {
+            postId = value
+        } else if let value = try alt?.decode(Int.self, forKey: .postId) {
+            postId = value
+        } else {
+            throw DecodingError.keyNotFound(CodingKeys.postId, .init(codingPath: decoder.codingPath, debugDescription: "postId missing"))
+        }
+        if let value = try? container.decode(Int.self, forKey: .userId) {
+            userId = value
+        } else if let value = try alt?.decode(Int.self, forKey: .userId) {
+            userId = value
+        } else {
+            throw DecodingError.keyNotFound(CodingKeys.userId, .init(codingPath: decoder.codingPath, debugDescription: "userId missing"))
+        }
+        content = (try? container.decode(String.self, forKey: .content)) ?? ""
+        imageUrl = (try? container.decodeIfPresent(String.self, forKey: .imageUrl)) ?? (try? alt?.decodeIfPresent(String.self, forKey: .imageUrl)) ?? nil
         user = try container.decodeIfPresent(User.self, forKey: .user)
-        
-        // Handle date parsing with multiple formats
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
-        
-        if let createdAtString = try? container.decode(String.self, forKey: .createdAt) {
-            if let date = dateFormatter.date(from: createdAtString) {
-                createdAt = date
-            } else {
-                // Try alternative format without microseconds
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                createdAt = dateFormatter.date(from: createdAtString) ?? Date()
-            }
-        } else {
-            createdAt = Date()
+
+        // Dates: support multiple formats and keys
+        let df = DateFormatter()
+        df.locale = Locale(identifier: "en_US_POSIX")
+        df.timeZone = TimeZone(secondsFromGMT: 0)
+
+        func parseDate(_ s: String) -> Date? {
+            // With microseconds and 'Z'
+            df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+            if let d = df.date(from: s) { return d }
+            // Without microseconds
+            df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+            if let d = df.date(from: s) { return d }
+            // With timezone offset e.g. +00:00
+            df.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+            if let d = df.date(from: s) { return d }
+            // Fallback
+            return nil
         }
-        
-        if let updatedAtString = try? container.decode(String.self, forKey: .updatedAt) {
-            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
-            if let date = dateFormatter.date(from: updatedAtString) {
-                updatedAt = date
-            } else {
-                // Try alternative format without microseconds
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                updatedAt = dateFormatter.date(from: updatedAtString) ?? Date()
-            }
-        } else {
-            updatedAt = Date()
-        }
+
+        let createdString = (try? container.decode(String.self, forKey: .createdAt)) ?? (try? alt?.decode(String.self, forKey: .createdAt))
+        createdAt = createdString.flatMap(parseDate) ?? Date()
+        let updatedString = (try? container.decode(String.self, forKey: .updatedAt)) ?? (try? alt?.decode(String.self, forKey: .updatedAt))
+        updatedAt = updatedString.flatMap(parseDate) ?? Date()
     }
     
     // Custom encoder to handle date formatting
