@@ -73,10 +73,10 @@ class AppRouter: ObservableObject {
     func navigateToMyProfile() {
         append(.myProfile)
     }
-    
-    func navigateToShopList() {
-        append(.shopList)
-    }
+//    
+//    func navigateToShopList() {
+//        append(.shopList)
+//    }
     
     func navigateToSettings() {
         append(.settings)
@@ -125,8 +125,8 @@ class AppRouter: ObservableObject {
             navigateToBookmarkedPosts()
         case "profile":
             navigateToMyProfile()
-        case "shops":
-            navigateToShopList()
+//        case "shops":
+//            navigateToShopList()
         case "settings":
             navigateToSettings()
         default:

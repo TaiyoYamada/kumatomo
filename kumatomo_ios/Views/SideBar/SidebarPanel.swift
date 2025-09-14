@@ -59,8 +59,8 @@ struct SidebarPanel: View {
     // 各メニュー項目に対応するRouterDestinationを返す
     private func routerDestination(for item: SidebarMenuItemType) -> RouterDestination {
         switch item {
-        case .shops:
-            return .shopList
+//        case .shops:
+//            return .shopList
         case .bookmarks:
             return .bookmarkedPosts
         case .likes:

@@ -4,8 +4,8 @@ struct PortalCardData: Identifiable {
     let id = UUID()
     let title: String
     let iconName: String
-    let imageName: String    // Asset name for the card image (e.g., "portal_card_1")
-    let externalURL: String  // URL to open when card is tapped
+    let imageName: String
+    let externalURL: String
 }
 
 let samplePortalCards: [PortalCardData] = [

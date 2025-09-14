@@ -4,7 +4,7 @@ import SwiftUI
 // 統合済み: 全ての画面遷移はこのenumで管理
 enum RouterDestination: Hashable {
 	case myProfile      // マイプロフィール画面
-	case shopList       // お店一覧画面
+//	case shopList       // お店一覧画面
 	case bookmarks      // ブックマーク画面
 	case likes          // いいね一覧画面
 	case coupons        // クーポン画面
@@ -34,8 +34,8 @@ extension View {
 			switch destination {
 			case .myProfile:
 				MyProfileView()
-			case .shopList:
-				ShopListView()
+//			case .shopList:
+//				ShopListView()
 			case .bookmarks:
 				BookmarkedPostsView()
 					.environmentObject(CurrentUserManager.shared)

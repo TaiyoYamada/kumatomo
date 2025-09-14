@@ -34,7 +34,18 @@ struct PortalView: View {
                         PortalCardGrid(cards: samplePortalCards)
                     }
                     
-                    // Bottom spacing for better scroll experience
+                    VStack {
+                        HStack {
+                            Text("おすすめのお店")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 15)
+                        
+                        RecommendedShopCarouselView(shops: sampleShops)
+                    }
                     Spacer(minLength: 20)
                 }
                 .padding(.bottom, 16)
