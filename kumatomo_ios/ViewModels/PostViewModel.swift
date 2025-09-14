@@ -730,6 +730,19 @@ class PostViewModel: ObservableObject {
             apiError = .unknownError(err)
         case .timeout:
             apiError = .timeout
+        case .engagementDataError(let message):
+            // Handle engagement-specific errors gracefully
+            apiError = .serverError(message: "エンゲージメントデータエラー: \(message)")
+            print("📊 エンゲージメントデータエラー: \(message)")
+        case .authenticationRequired:
+            apiError = .unauthorized
+            print("🔐 認証が必要です")
+        case .postNotFound:
+            apiError = .notFound
+            print("📝 投稿が見つかりません")
+        case .insufficientPermissions:
+            apiError = .forbidden
+            print("🚫 権限が不足しています")
         }
 
         await handleAPIError(apiError)

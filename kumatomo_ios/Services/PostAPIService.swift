@@ -41,7 +41,7 @@ class PostAPIService {
         }
     }
     
-    // 投稿を作成する（複数画像対応）
+    // 投稿を作成する（複数画像対応、エンゲージメントデータ付きレスポンス）
     func createPostWithMultipleImages(userId: Int, content: String, shopId: Int? = nil, imageUrls: [String], tags: [String] = []) async throws -> Post {
         let endpoint = "\(baseURL)/posts"
         guard let url = URL(string: endpoint) else {
@@ -59,7 +59,8 @@ class PostAPIService {
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else {
-            print("⚠️ 認証トークンがありません")
+            print("🚨 認証トークンが必要です")
+            throw PostAPIError.apiError(401, "認証が必要です")
         }
         
         // リクエストボディの作成
@@ -81,7 +82,7 @@ class PostAPIService {
         
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         
-        print("📡 POST リクエスト: \(endpoint)")
+        print("📡 POST リクエスト (投稿作成+エンゲージメント): \(endpoint)")
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         print("📡 ボディ: \(body)")
         
@@ -103,11 +104,16 @@ class PostAPIService {
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode(Post.self, from: data)
+                    let post = try decoder.decode(Post.self, from: data)
+                    print("✅ 投稿作成成功: ID=\(post.id)")
+                    print("📊 初期エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    return post
                 } catch {
                     print("🚨 デコードエラー: \(error)")
                     throw PostAPIError.decodingError(error)
                 }
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
             } else if httpResponse.statusCode == 422 {
                 // バリデーションエラーをパース
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
@@ -122,9 +128,12 @@ class PostAPIService {
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 // エラーレスポンスの詳細を確認
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                if httpResponse.statusCode >= 500 {
+                    throw PostAPIError.serverError("投稿作成またはエンゲージメントデータの初期化に失敗しました: \(jsonString)")
+                } else {
+                    throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                }
             } else {
-                // return文追加
                 throw PostAPIError.serverError("予期しないエラー")
             }
         } catch let error as PostAPIError {
@@ -136,7 +145,7 @@ class PostAPIService {
         }
     }
     
-    // ストーリーを投稿する（画像URL、タイトル、タグに対応）
+    // ストーリーを投稿する（画像URL、タイトル、タグに対応、エンゲージメントデータ付きレスポンス）
     func createPost(userId: Int, content: String, imageUrl: String? = nil, tags: [String] = []) async throws -> Post {
         let endpoint = "\(baseURL)/posts"
         guard let url = URL(string: endpoint) else {
@@ -154,7 +163,8 @@ class PostAPIService {
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else {
-            print("⚠️ 認証トークンがありません")
+            print("🚨 認証トークンが必要です")
+            throw PostAPIError.apiError(401, "認証が必要です")
         }
         
         // リクエストボディの作成
@@ -175,7 +185,7 @@ class PostAPIService {
         
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         
-        print("📡 POST リクエスト: \(endpoint)")
+        print("📡 POST リクエスト (投稿作成+エンゲージメント): \(endpoint)")
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         print("📡 ボディ: \(body)")
         
@@ -197,11 +207,16 @@ class PostAPIService {
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode(Post.self, from: data)
+                    let post = try decoder.decode(Post.self, from: data)
+                    print("✅ 投稿作成成功: ID=\(post.id)")
+                    print("📊 初期エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    return post
                 } catch {
                     print("🚨 デコードエラー: \(error)")
                     throw PostAPIError.decodingError(error)
                 }
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
             } else if httpResponse.statusCode == 422 {
                 // バリデーションエラーをパース
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
@@ -216,9 +231,12 @@ class PostAPIService {
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 // エラーレスポンスの詳細を確認
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                if httpResponse.statusCode >= 500 {
+                    throw PostAPIError.serverError("投稿作成またはエンゲージメントデータの初期化に失敗しました: \(jsonString)")
+                } else {
+                    throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                }
             } else {
-                // return文追加
                 throw PostAPIError.serverError("予期しないエラー")
             }
         } catch let error as PostAPIError {
@@ -230,7 +248,7 @@ class PostAPIService {
         }
     }
     
-    // 全ユーザーのストーリーを取得する
+    // 全ユーザーのストーリーを取得する（エンゲージメントデータ付き）
     func fetchAllPosts() async throws -> [Post] {
         let endpoint = "\(baseURL)/posts"
         guard let url = URL(string: endpoint) else {
@@ -239,16 +257,17 @@ class PostAPIService {
         }
         
         var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         // 認証トークンを設定
         let token = getAuthToken()
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else {
-            print("⚠️ 認証トークンがありません")
+            print("⚠️ 認証トークンがありません - エンゲージメントデータは含まれません")
         }
         
-        print("📡 GET リクエスト: \(endpoint)")
+        print("📡 GET リクエスト (エンゲージメント付き): \(endpoint)")
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
@@ -275,8 +294,9 @@ class PostAPIService {
                     let posts = try decoder.decode([Post].self, from: data)
                     print("✅ デコード成功: \(posts.count)件の投稿")
                     
-                    // 画像データの確認
+                    // エンゲージメントデータの確認
                     for (index, post) in posts.enumerated() {
+                        print("📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
                         if let images = post.images, !images.isEmpty {
                             print("📸 投稿\(index + 1): \(images.count)枚の画像")
                             for (imageIndex, image) in images.enumerated() {
@@ -306,9 +326,18 @@ class PostAPIService {
                     }
                     throw PostAPIError.decodingError(error)
                 }
+            } else if httpResponse.statusCode == 401 {
+                // 認証エラーの場合、エンゲージメントデータなしで再試行
+                print("⚠️ 認証エラー - エンゲージメントデータなしで再試行")
+                throw PostAPIError.apiError(401, "認証が必要です")
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                // エンゲージメント関連のエラーを特別に処理
+                if httpResponse.statusCode >= 500 {
+                    throw PostAPIError.serverError("エンゲージメントデータの取得に失敗しました: \(jsonString)")
+                } else {
+                    throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                }
             } else {
                 throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
             }
@@ -321,7 +350,7 @@ class PostAPIService {
         }
     }
     
-    // 特定ユーザーのストーリーを取得する
+    // 特定ユーザーのストーリーを取得する（エンゲージメントデータ付き）
     func fetchUserPosts(userId: Int) async throws -> [Post] {
         let endpoint = "\(baseURL)/users/\(userId)/posts"
         guard let url = URL(string: endpoint) else {
@@ -330,16 +359,17 @@ class PostAPIService {
         }
         
         var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         // 認証トークンを設定
         let token = getAuthToken()
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else {
-            print("⚠️ 認証トークンがありません")
+            print("⚠️ 認証トークンがありません - エンゲージメントデータは含まれません")
         }
         
-        print("📡 GET リクエスト: \(endpoint)")
+        print("📡 GET リクエスト (ユーザー投稿+エンゲージメント): \(endpoint)")
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
@@ -360,7 +390,15 @@ class PostAPIService {
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode([Post].self, from: data)
+                    let posts = try decoder.decode([Post].self, from: data)
+                    print("✅ ユーザー投稿取得成功: \(posts.count)件の投稿 (ユーザーID: \(userId))")
+                    
+                    // エンゲージメントデータの確認
+                    for (index, post) in posts.enumerated() {
+                        print("📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    }
+                    
+                    return posts
                 } catch {
                     print("🚨 デコードエラー: \(error)")
                     if let decodingError = error as? DecodingError {
@@ -379,9 +417,18 @@ class PostAPIService {
                     }
                     throw PostAPIError.decodingError(error)
                 }
+            } else if httpResponse.statusCode == 404 {
+                throw PostAPIError.apiError(404, "ユーザーまたは投稿が見つかりません")
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                // エンゲージメント関連のエラーを特別に処理
+                if httpResponse.statusCode >= 500 {
+                    throw PostAPIError.serverError("ユーザー投稿またはエンゲージメントデータの取得に失敗しました: \(jsonString)")
+                } else {
+                    throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                }
             } else {
                 throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
             }
@@ -394,7 +441,7 @@ class PostAPIService {
         }
     }
     
-    // 投稿を更新する
+    // 投稿を更新する（エンゲージメントデータ保持）
     func updatePost(postId: Int, content: String, shopId: Int? = nil, tags: [String] = []) async throws -> Post {
         let endpoint = "\(baseURL)/posts/\(postId)"
         guard let url = URL(string: endpoint) else {
@@ -405,13 +452,15 @@ class PostAPIService {
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         // 認証トークンを設定
         let token = getAuthToken()
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else {
-            print("⚠️ 認証トークンがありません")
+            print("🚨 認証トークンが必要です")
+            throw PostAPIError.apiError(401, "認証が必要です")
         }
         
         // リクエストボディの作成
@@ -431,7 +480,7 @@ class PostAPIService {
         
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         
-        print("📡 PUT リクエスト: \(endpoint)")
+        print("📡 PUT リクエスト (投稿更新+エンゲージメント保持): \(endpoint)")
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         print("📡 ボディ: \(body)")
         
@@ -453,19 +502,39 @@ class PostAPIService {
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode(Post.self, from: data)
+                    let post = try decoder.decode(Post.self, from: data)
+                    print("✅ 投稿更新成功: ID=\(post.id)")
+                    print("📊 エンゲージメント保持: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    return post
                 } catch {
                     print("🚨 デコードエラー: \(error)")
                     throw PostAPIError.decodingError(error)
                 }
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
             } else if httpResponse.statusCode == 403 {
                 throw PostAPIError.apiError(403, "この投稿を編集する権限がありません")
             } else if httpResponse.statusCode == 404 {
                 throw PostAPIError.apiError(404, "投稿が見つかりません")
+            } else if httpResponse.statusCode == 422 {
+                // バリデーションエラーをパース
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    let message = (json["message"] as? String) ?? "バリデーションエラー"
+                    if let errors = json["errors"] as? [String: [String]] {
+                        let detail = errors.values.flatMap { $0 }.joined(separator: "\n")
+                        throw PostAPIError.apiError(422, message + (detail.isEmpty ? "" : "\n" + detail))
+                    }
+                    throw PostAPIError.apiError(422, message)
+                }
+                throw PostAPIError.apiError(422, String(data: data, encoding: .utf8) ?? "Validation error")
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 // エラーレスポンスの詳細を確認
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                if httpResponse.statusCode >= 500 {
+                    throw PostAPIError.serverError("投稿更新またはエンゲージメントデータの取得に失敗しました: \(jsonString)")
+                } else {
+                    throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                }
             } else {
                 throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
             }
@@ -535,7 +604,7 @@ class PostAPIService {
         }
     }
     
-    // 投稿詳細を取得する
+    // 投稿詳細を取得する（エンゲージメントデータとコメント付き）
     func fetchPost(postId: Int) async throws -> Post {
         let endpoint = "\(baseURL)/posts/\(postId)"
         guard let url = URL(string: endpoint) else {
@@ -544,16 +613,17 @@ class PostAPIService {
         }
         
         var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         // 認証トークンを設定
         let token = getAuthToken()
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else {
-            print("⚠️ 認証トークンがありません")
+            print("⚠️ 認証トークンがありません - エンゲージメントデータは含まれません")
         }
         
-        print("📡 GET リクエスト: \(endpoint)")
+        print("📡 GET リクエスト (投稿詳細+エンゲージメント): \(endpoint)")
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
@@ -574,16 +644,44 @@ class PostAPIService {
                 let decoder = APIHelper.makeDecoder()
                 
                 do {
-                    return try decoder.decode(Post.self, from: data)
+                    let post = try decoder.decode(Post.self, from: data)
+                    print("✅ 投稿詳細取得成功: ID=\(post.id)")
+                    print("📊 エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    print("👤 ユーザー状態: いいね済み=\(post.isLikedByCurrentUser ?? false), ブックマーク済み=\(post.isBookmarkedByCurrentUser ?? false)")
+                    if let comments = post.comments {
+                        print("💬 コメント数: \(comments.count)件")
+                    }
+                    return post
                 } catch {
                     print("🚨 デコードエラー: \(error)")
+                    if let decodingError = error as? DecodingError {
+                        switch decodingError {
+                        case .keyNotFound(let key, let context):
+                            print("🔑 キーが見つかりません: \(key.stringValue) at \(context.codingPath)")
+                        case .typeMismatch(let type, let context):
+                            print("📊 型の不一致: \(type) at \(context.codingPath)")
+                        case .valueNotFound(let type, let context):
+                            print("⚠️ 値が見つかりません: \(type) at \(context.codingPath)")
+                        case .dataCorrupted(let context):
+                            print("🔄 データ破損: \(context.debugDescription) at \(context.codingPath)")
+                        @unknown default:
+                            print("🧩 その他のデコードエラー")
+                        }
+                    }
                     throw PostAPIError.decodingError(error)
                 }
             } else if httpResponse.statusCode == 404 {
                 throw PostAPIError.apiError(404, "投稿が見つかりません")
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 print("🚨 エラーレスポンス: \(jsonString)")
-                throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                // エンゲージメント関連のエラーを特別に処理
+                if httpResponse.statusCode >= 500 {
+                    throw PostAPIError.serverError("投稿詳細またはエンゲージメントデータの取得に失敗しました: \(jsonString)")
+                } else {
+                    throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode), レスポンス: \(jsonString)")
+                }
             } else {
                 throw PostAPIError.serverError("ステータスコード: \(httpResponse.statusCode)")
             }
@@ -598,7 +696,7 @@ class PostAPIService {
     
     // MARK: - Bulletin Board API Methods
     
-    // ページネーション付きで全投稿を取得する
+    // ページネーション付きで全投稿を取得する（エンゲージメントデータ付き）
     func fetchAllPosts(page: Int = 1, limit: Int = 20) async throws -> [Post] {
         let endpoint = "\(baseURL)/posts?page=\(page)&limit=\(limit)"
         guard let url = URL(string: endpoint) else {
@@ -607,16 +705,17 @@ class PostAPIService {
         }
         
         var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         // 認証トークンを設定
         let token = getAuthToken()
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else {
-            print("⚠️ 認証トークンがありません")
+            print("⚠️ 認証トークンがありません - エンゲージメントデータは含まれません")
         }
         
-        print("📡 GET リクエスト (ページネーション): \(endpoint)")
+        print("📡 GET リクエスト (ページネーション+エンゲージメント): \(endpoint)")
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
         
         do {
@@ -633,11 +732,19 @@ class PostAPIService {
                 do {
                     let posts = try decoder.decode([Post].self, from: data)
                     print("✅ ページネーション取得成功: \(posts.count)件の投稿 (ページ: \(page))")
+                    
+                    // エンゲージメントデータの確認
+                    for (index, post) in posts.enumerated() {
+                        print("📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    }
+                    
                     return posts
                 } catch {
                     print("🚨 デコードエラー: \(error)")
                     throw PostAPIError.decodingError(error)
                 }
+            } else if httpResponse.statusCode == 401 {
+                throw PostAPIError.apiError(401, "認証が必要です")
             } else {
                 // ページネーションでエラーが発生した場合は、従来のAPIにフォールバック
                 print("⚠️ ページネーションAPIエラー、従来のAPIにフォールバック")
