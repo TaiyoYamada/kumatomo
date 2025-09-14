@@ -10,37 +10,31 @@ struct PortalCardData: Identifiable {
 
 let samplePortalCards: [PortalCardData] = [
     PortalCardData(
-        title: "防災情報くまもと",
+        title: "防災",
         iconName: "exclamationmark.triangle.fill",
         imageName: "portal_card_1",
         externalURL: "https://portal.bousai.pref.kumamoto.jp/"
     ),
     PortalCardData(
-        title: "もっと、もーっと、くまもっと",
-        iconName: "airplane.departure",
+        title: "観光",
+        iconName: "airplane",
         imageName: "portal_card_2",
         externalURL: "https://kumamoto.guide/"
     ),
     PortalCardData(
-        title: "hapiモン",
+        title: "結婚・子育て",
         iconName: "face.smiling",
         imageName: "portal_card_3",
         externalURL: "https://www.hapimon.jp/"
     ),
     PortalCardData(
-        title: "熊本県公式サイト",
+        title: "熊本県公式",
         iconName: "building.columns",
         imageName: "portal_card_4",
         externalURL: "https://www.pref.kumamoto.jp/"
     ),
     PortalCardData(
-        title: "KUMAMOTO LIFE",
-        iconName: "house.fill",
-        imageName: "portal_card_5",
-        externalURL: "https://www.kumamoto-life.jp/"
-    ),
-    PortalCardData(
-        title: "医療情報ネット ナビィ　熊本",
+        title: "医療",
         iconName: "cross.case.fill",
         imageName: "portal_card_6",
         externalURL: "https://www.iryou.teikyouseido.mhlw.go.jp/znk-web/juminkanja/S2310/initialize?pref=43"

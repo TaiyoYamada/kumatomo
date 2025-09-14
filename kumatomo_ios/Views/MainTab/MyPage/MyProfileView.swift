@@ -45,8 +45,8 @@ struct MyProfileView: View {
                             .padding(.horizontal, 20)
                             .padding(.bottom, 24)
                         
-                        // タブセクション
-//                        ModernTabSectionView(selectedTab: $selectedTab)
+                        
+                        Divider()
                         
                         // 投稿グリッド
                         ModernPostGridView(posts: viewModel.posts)

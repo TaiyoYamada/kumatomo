@@ -3,38 +3,27 @@ import SwiftUI
 struct PortalCardGrid: View {
     // MARK: - Properties
     let cards: [PortalCardData]
-    
-    // MARK: - State
     @StateObject private var networkMonitor = NetworkMonitor.shared
     
-    // MARK: - Grid Configuration
-    // 3-column grid layout with flexible sizing and consistent spacing
-    private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
     
     // MARK: - Body
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(cards) { card in
-                PortalCardView(cardData: card)
-                    .frame(maxWidth: .infinity)
-                    .aspectRatio(0.8, contentMode: .fill)
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 0) {
+                ForEach(cards) { card in
+                    PortalCardView(cardData: card)
+                        .frame(width: 100, height: 120)
+                }
             }
         }
-        .padding(.horizontal, 15)
     }
 }
 
-// MARK: - Portal Card View
 
 struct PortalCardView: View {
     // MARK: - Properties
     let cardData: PortalCardData
     
-    // MARK: - State
     @State private var isPressed = false
     @State private var showingError = false
     @State private var errorMessage = ""
@@ -44,81 +33,34 @@ struct PortalCardView: View {
     // MARK: - Body
     var body: some View {
         Button(action: handleCardTap) {
-//            if PortalErrorHandler.shared.validateImageAsset(cardData.imageName,) {
-//
-//            Image(cardData.imageName)
-//                    .resizable()
-//                    .cornerRadius(8)
-//                    .shadow(radius: 5)
-//                    .scaleEffect(isPressed ? 0.95 : 1.0)
-//                    .animation(.easeInOut(duration: 0.1), value: isPressed)
-//                    .overlay(alignment: .topTrailing) {
-//                        if !networkMonitor.isConnected {
-//                            Image(systemName: "wifi.slash")
-//                                .font(.caption2)
-//                                .foregroundColor(.red)
-//                                .padding(4)
-//                        }
-//                    }
                 
-            VStack(spacing: 12) {      // ← spacingを少し広げる
-                Image(systemName: cardData.iconName)
-                    .font(.system(size: 32))                   // ← アイコンを大きめに
-                    .foregroundColor(.accentColor)
-                    .padding(16)                               // ← 余白を広めに
-                    .background(
-                        Circle()
-                            .fill(Color.accentColor.opacity(0.15))
-                    )
-                
-                Text(cardData.title)
-                    .font(.footnote)                           // ← コンパクトに
-                    .fontWeight(.semibold)                     // ← 太字で見やすく
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)                              // ← タイトル長すぎても崩れない
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)   // ← 中央揃え
+            VStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(Color.accentColor.opacity(0.12))
+                        .frame(width: 56, height: 56)
+                    Image(systemName: cardData.iconName)
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundColor(.accentColor)
+                }
 
-                
-                
-                
-//            } else {
-//                // Placeholder for missing image assets
-//                RoundedRectangle(cornerRadius: 8)
-//                    .fill(Color.gray.opacity(0.1))
-//                    .overlay {
-//                        Image(systemName: "photo")
-//                            .font(.title3)
-//                            .foregroundColor(.gray)
-//                    }
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: 8)
-//                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-//                    )
-//            }
+                Text(cardData.title)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.9)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.vertical, 12)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.accentColor.opacity(0.3), lineWidth: 1)
-                )
-        )
 
         .buttonStyle(PlainButtonStyle())
         .disabled(!networkMonitor.isConnected && !isValidURL)
-        .onLongPressGesture(
-            minimumDuration: 0,
-            maximumDistance: .infinity,
-            pressing: { pressing in
-                withAnimation(.easeInOut(duration: 0.1)) {
-                    isPressed = pressing
-                }
-            },
-            perform: {}
-        )
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            withAnimation(.easeInOut(duration: 0.08)) { isPressed = pressing }
+        }, perform: {})
         .alert("エラー", isPresented: $showingError) {
             Button("OK") { }
         } message: {
@@ -130,6 +72,9 @@ struct PortalCardView: View {
     
     /// Handles card tap action and URL opening
     private func handleCardTap() {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.prepare()
+        generator.impactOccurred()
         PortalErrorHandler.shared.openURL(cardData.externalURL) { result in
             DispatchQueue.main.async {
                 switch result {

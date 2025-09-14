@@ -432,7 +432,6 @@ struct CategoryTagsView: View {
             }
             Spacer()
         }
-        .accessibilityElement(children: .contain)
     }
     
     private func categoryColor(for tag: String) -> Color {
@@ -440,11 +439,11 @@ struct CategoryTagsView: View {
         case "グルメ":
             return .green
         case "イベント":
-            return .orange
+            return .purple
         case "緊急":
             return .red
         default:
-            return .purple
+            return .orange
         }
     }
 }
