@@ -716,7 +716,7 @@ struct PostCardActionsView: View {
             ActionButton(
                 icon: post.userReaction == .thumbsUp ? "heart.fill" : "heart",
                 count: post.reactions?.thumbsUp ?? 0,
-                color: post.userReaction == .thumbsUp ? .red : .secondary,
+//                color: post.userReaction == .thumbsUp ? .red : .secondary,
                 activeColor: .red
             )
             

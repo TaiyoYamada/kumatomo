@@ -138,8 +138,6 @@ extension EngagementButton {
             count: count,
             isActive: isLiked,
             activeColor: .red,
-            accessibilityLabel: isLiked ? "いいねを取り消す" : "いいね",
-            accessibilityHint: isLiked ? "この投稿のいいねを取り消します" : "この投稿にいいねします",
             action: action
         )
     }

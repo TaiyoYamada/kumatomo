@@ -79,6 +79,14 @@ class EngagementAPIService {
                     print("✅ いいね切り替え成功: \(likeResponse.isLiked ? "いいね" : "いいね解除") (合計: \(likeResponse.likeCount))")
                     return likeResponse
                 } catch {
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        let root = (json["data"] as? [String: Any]) ?? json
+                        let isLiked = (root["is_liked"] as? Bool) ?? (root["isLiked"] as? Bool) ?? false
+                        let likeCount = (root["like_count"] as? Int) ?? (root["likeCount"] as? Int) ?? 0
+                        let fallback = LikeResponse(isLiked: isLiked, likeCount: likeCount)
+//                        print("✅ いいね切り替え成功(フォールバック): \(fallback.isLiked ? \"いいね\" : \"いいね解除\") (合計: \(fallback.likeCount))")
+                        return fallback
+                    }
                     print("🚨 デコードエラー: \(error)")
                     throw EngagementError.decodingError(error)
                 }
@@ -145,6 +153,14 @@ class EngagementAPIService {
                     print("✅ いいね解除成功 (合計: \(likeResponse.likeCount))")
                     return likeResponse
                 } catch {
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        let root = (json["data"] as? [String: Any]) ?? json
+                        let isLiked = (root["is_liked"] as? Bool) ?? (root["isLiked"] as? Bool) ?? false
+                        let likeCount = (root["like_count"] as? Int) ?? (root["likeCount"] as? Int) ?? 0
+                        let fallback = LikeResponse(isLiked: isLiked, likeCount: likeCount)
+                        print("✅ いいね解除成功(フォールバック): (合計: \(fallback.likeCount))")
+                        return fallback
+                    }
                     print("🚨 デコードエラー: \(error)")
                     throw EngagementError.decodingError(error)
                 }
@@ -203,6 +219,14 @@ class EngagementAPIService {
                     print("✅ いいねした投稿取得成功: \(posts.count)件")
                     return posts
                 } catch {
+//                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+//                        let root = (json["data"] as? [String: Any]) ?? json
+//                        let isBookmarked = (root["is_bookmarked"] as? Bool) ?? (root["isBookmarked"] as? Bool) ?? false
+//                        let bookmarkCount = (root["bookmark_count"] as? Int) ?? (root["bookmarkCount"] as? Int) ?? 0
+//                        let fallback = BookmarkResponse(isBookmarked: isBookmarked, bookmarkCount: bookmarkCount)
+//                        print("✅ ブックマーク切り替え成功(フォールバック): (合計: \(fallback.bookmarkCount))")
+//                        return fallback
+//                    }
                     print("🚨 デコードエラー: \(error)")
                     throw EngagementError.decodingError(error)
                 }
@@ -324,6 +348,14 @@ class EngagementAPIService {
                     print("✅ ブックマーク解除成功 (合計: \(bookmarkResponse.bookmarkCount))")
                     return bookmarkResponse
                 } catch {
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        let root = (json["data"] as? [String: Any]) ?? json
+                        let isBookmarked = (root["is_bookmarked"] as? Bool) ?? (root["isBookmarked"] as? Bool) ?? false
+                        let bookmarkCount = (root["bookmark_count"] as? Int) ?? (root["bookmarkCount"] as? Int) ?? 0
+                        let fallback = BookmarkResponse(isBookmarked: isBookmarked, bookmarkCount: bookmarkCount)
+                        print("✅ ブックマーク解除成功(フォールバック): (合計: \(fallback.bookmarkCount))")
+                        return fallback
+                    }
                     print("🚨 デコードエラー: \(error)")
                     throw EngagementError.decodingError(error)
                 }
