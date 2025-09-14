@@ -10,7 +10,6 @@ import SwiftUI
 
 struct MainTabView: View {
     @ObservedObject var viewModel: AuthViewModel
-    @State private var selection: TabSelection = .home
     @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
     @StateObject private var userManager = CurrentUserManager.shared
     @StateObject private var sidebarState = SidebarState()
@@ -18,8 +17,8 @@ struct MainTabView: View {
 
     var body: some View {
         SidebarContainer(isPresented: $sidebarState.isPresented, user: userManager.currentUser) {
-            TabView(selection: $selection) {
-                NavigationStack(path: $appRouter.navigationPath) {
+            TabView(selection: $appRouter.selectedTab) {
+                NavigationStack(path: appRouter.pathBinding(for: .home)) {
                     HomeView()
                         .environmentObject(bulletinBoardViewModel)
                         .environmentObject(userManager)
@@ -34,7 +33,7 @@ struct MainTabView: View {
                 }
                 .tag(TabSelection.home)
 
-                NavigationStack(path: $appRouter.navigationPath) {
+                NavigationStack(path: appRouter.pathBinding(for: .search)) {
                     SearchView()
                         .environmentObject(userManager)
                         .environmentObject(sidebarState)
@@ -48,7 +47,7 @@ struct MainTabView: View {
                 }
                 .tag(TabSelection.search)
                 
-                NavigationStack(path: $appRouter.navigationPath) {
+                NavigationStack(path: appRouter.pathBinding(for: .portal)) {
                     PortalView()
                         .environmentObject(userManager)
                         .environmentObject(sidebarState)

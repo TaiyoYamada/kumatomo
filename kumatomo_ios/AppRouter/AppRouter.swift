@@ -3,60 +3,101 @@ import SwiftUI
 // MARK: - AppRouter for programmatic navigation
 @MainActor
 class AppRouter: ObservableObject {
-    @Published var navigationPath = NavigationPath()
+    // 現在選択中のタブ
+    @Published var selectedTab: TabSelection = .home
+
+    // タブごとのNavigationPathを保持
+    @Published private(set) var navigationPaths: [TabSelection: NavigationPath] = [
+        .home: NavigationPath(),
+        .search: NavigationPath(),
+        .portal: NavigationPath(),
+        .kumamonAI: NavigationPath(),
+        .profile: NavigationPath()
+    ]
     
     static let shared = AppRouter()
     
     private init() {}
     
+    // MARK: - Path Binding per Tab
+    func pathBinding(for tab: TabSelection) -> Binding<NavigationPath> {
+        Binding(
+            get: { [weak self] in
+                guard let self else { return NavigationPath() }
+                return self.navigationPaths[tab] ?? NavigationPath()
+            },
+            set: { [weak self] newValue in
+                self?.navigationPaths[tab] = newValue
+            }
+        )
+    }
+    
+    // MARK: - Helpers
+    private func append(_ destination: RouterDestination, to tab: TabSelection? = nil) {
+        let targetTab = tab ?? selectedTab
+        var path = navigationPaths[targetTab] ?? NavigationPath()
+        path.append(destination)
+        navigationPaths[targetTab] = path
+    }
+    
+    private func removeLast(from tab: TabSelection? = nil) {
+        let targetTab = tab ?? selectedTab
+        var path = navigationPaths[targetTab] ?? NavigationPath()
+        if !path.isEmpty { path.removeLast() }
+        navigationPaths[targetTab] = path
+    }
+    
+    private func resetPath(for tab: TabSelection? = nil) {
+        let targetTab = tab ?? selectedTab
+        navigationPaths[targetTab] = NavigationPath()
+    }
+    
     // MARK: - Navigation Methods
     
     func navigateToPostDetail(postId: Int) {
-        navigationPath.append(RouterDestination.postDetail(postId: postId))
+        append(.postDetail(postId: postId))
     }
     
     func navigateToLikedPosts() {
-        navigationPath.append(RouterDestination.likedPosts)
+        append(.likedPosts)
     }
     
     func navigateToBookmarkedPosts() {
-        navigationPath.append(RouterDestination.bookmarkedPosts)
+        append(.bookmarkedPosts)
     }
     
     func navigateToUserProfile(userId: Int) {
-        navigationPath.append(RouterDestination.userProfile(userId: userId))
+        append(.userProfile(userId: userId))
     }
     
     func navigateToMyProfile() {
-        navigationPath.append(RouterDestination.myProfile)
+        append(.myProfile)
     }
     
     func navigateToShopList() {
-        navigationPath.append(RouterDestination.shopList)
+        append(.shopList)
     }
     
     func navigateToSettings() {
-        navigationPath.append(RouterDestination.settings)
+        append(.settings)
     }
     
     func navigateToSearch() {
-        navigationPath.append(RouterDestination.search)
+        append(.search)
     }
     
     // MARK: - Navigation Control
     
     func goBack() {
-        if !navigationPath.isEmpty {
-            navigationPath.removeLast()
-        }
+        removeLast()
     }
     
     func popToRoot() {
-        navigationPath = NavigationPath()
+        resetPath()
     }
     
     func navigate(to destination: RouterDestination) {
-        navigationPath.append(destination)
+        append(destination)
     }
     
     // MARK: - Deep Linking Support
