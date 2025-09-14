@@ -55,7 +55,7 @@ private struct PostCell: View {
         VStack(spacing: 0) {
             TimelinePostCardView(post: post)
                 .onTapGesture {
-                    print("こんにちはタップしたよ")
+                    print("投稿をタップしたよ")
                     onTap()
                 }
                 .contentShape(Rectangle())

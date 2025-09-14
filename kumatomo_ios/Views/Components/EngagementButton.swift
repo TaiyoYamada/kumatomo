@@ -13,25 +13,18 @@ struct EngagementButton: View {
     @State private var isAnimating = false
     @State private var scale: CGFloat = 1.0
     
-    // Accessibility
-    let accessibilityLabel: String
-    let accessibilityHint: String
     
     init(
         icon: String,
         count: Int,
         isActive: Bool = false,
         activeColor: Color = .primaryOrange,
-        accessibilityLabel: String,
-        accessibilityHint: String,
         action: @escaping () async -> Void
     ) {
         self.icon = icon
         self.count = count
         self.isActive = isActive
         self.activeColor = activeColor
-        self.accessibilityLabel = accessibilityLabel
-        self.accessibilityHint = accessibilityHint
         self.action = action
     }
     
@@ -56,11 +49,11 @@ struct EngagementButton: View {
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(backgroundColor)
-                    .opacity(isPressed ? 0.8 : 1.0)
-            )
+//            .background(
+//                RoundedRectangle(cornerRadius: 16)
+//                    .fill(backgroundColor)
+//                    .opacity(isPressed ? 0.8 : 1.0)
+//            )
             .scaleEffect(isPressed ? 0.95 : 1.0)
             .animation(.easeInOut(duration: 0.1), value: isPressed)
         }
@@ -70,10 +63,6 @@ struct EngagementButton: View {
                 isPressed = pressing
             }
         }, perform: {})
-        .accessibilityLabel(accessibilityLabel)
-        .accessibilityHint(accessibilityHint)
-        .accessibilityValue(count > 0 ? "\(count.formatCount())" : "")
-        .accessibilityAddTraits(isActive ? .isSelected : [])
     }
     
     // MARK: - Private Methods
@@ -152,8 +141,6 @@ extension EngagementButton {
             count: count,
             isActive: false,
             activeColor: .blue,
-            accessibilityLabel: "コメント",
-            accessibilityHint: "この投稿にコメントします",
             action: action
         )
     }
@@ -169,8 +156,6 @@ extension EngagementButton {
             count: count,
             isActive: isBookmarked,
             activeColor: .primaryOrange,
-            accessibilityLabel: isBookmarked ? "ブックマークを取り消す" : "ブックマーク",
-            accessibilityHint: isBookmarked ? "この投稿のブックマークを取り消します" : "この投稿をブックマークします",
             action: action
         )
     }
@@ -219,8 +204,6 @@ extension EngagementButton {
             count: 999,
             isActive: true,
             activeColor: .yellow,
-            accessibilityLabel: "お気に入り",
-            accessibilityHint: "この投稿をお気に入りに追加します"
         ) {
             print("Custom action")
         }

@@ -127,8 +127,6 @@ struct TimelinePostCardView: View {
                     .clipShape(Circle())
                 }
                 .buttonStyle(PlainButtonStyle())
-                .accessibilityLabel("\(post.user?.name ?? "ユーザー")のプロフィール画像")
-                .accessibilityIdentifier("post_profile_image_\(post.id)")
                 
                 // Content Area (Right side)
                 VStack(alignment: .leading, spacing: 8) {
@@ -159,8 +157,6 @@ struct TimelinePostCardView: View {
 
                         Spacer()
                     }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(post.user?.name ?? "ユーザー")、@\(post.user?.username ?? "user")、\(formattedDate)")
                     
                     // Post Content with hashtags
                     PostContentView(content: post.content)
