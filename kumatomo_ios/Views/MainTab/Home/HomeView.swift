@@ -11,7 +11,7 @@ struct HomeView: View {
     @EnvironmentObject private var userManager: CurrentUserManager
     
     var body: some View {
-        NavigationStack {
+//        NavigationStack { // AppRouterで管理するため削除
             ZStack {
                 VStack(spacing: 0) {
                     TabNavigationHeader(
@@ -92,7 +92,7 @@ struct HomeView: View {
                 .environmentObject(userManager)
             }
             .withAppRouter()
-        }
+//        }
     }
     
     private func showToastMessage(_ message: String, type: ToastView.ToastType) {

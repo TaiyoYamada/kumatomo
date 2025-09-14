@@ -14,8 +14,7 @@ struct PostTimeline: View {
                 ForEach(posts) { post in
                     PostCell(
                         post: post,
-                        onTap: { 
-                            // Navigate to post detail using AppRouter
+                        onTap: {
                             AppRouter.shared.navigateToPostDetail(postId: post.id)
                         },
                         onAppear: {
@@ -44,9 +43,6 @@ struct PostTimeline: View {
         .refreshable {
             onRefresh()
         }
-        .accessibilityLabel("投稿タイムライン")
-        .accessibilityHint("上にスワイプして更新")
-        .accessibilityIdentifier("post_timeline")
     }
 }
 
@@ -57,8 +53,12 @@ private struct PostCell: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            TimelinePostCardView(post: post, onPostTap: onTap)
-                .contentShape(Rectangle()) // タップ範囲を四角に設定
+            TimelinePostCardView(post: post)
+                .onTapGesture {
+                    print("こんにちはタップしたよ")
+                    onTap()
+                }
+                .contentShape(Rectangle())
                 .onAppear(perform: onAppear)
 
             // 投稿ごとの区切り線
@@ -129,9 +129,6 @@ struct BulletinEmptyStateView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 32)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("まだ投稿がありません。最初の投稿をしてみませんか？")
-        .accessibilityIdentifier("bulletin_empty_state")
     }
 }
 
