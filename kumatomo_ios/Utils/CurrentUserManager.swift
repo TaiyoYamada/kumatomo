@@ -1,30 +1,35 @@
 import Foundation
 import SwiftUI
+import Combine
 
 @MainActor
 class CurrentUserManager: ObservableObject {
     static let shared = CurrentUserManager()
     
     @Published var currentUser: User?
+    private var cancellables = Set<AnyCancellable>()
     
     private init() {
+        // 初期ロード
         loadCurrentUser()
+        // AuthService の変更を監視して即時反映
+        AuthService.shared.$currentUser
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] user in
+                self?.currentUser = user
+            }
+            .store(in: &cancellables)
+        AuthService.shared.$isAuthenticated
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isAuthed in
+                if !isAuthed { self?.currentUser = nil }
+            }
+            .store(in: &cancellables)
     }
     
     func loadCurrentUser() {
-        // AuthServiceから現在のユーザー情報を取得
-        if let authUser = AuthService.shared.currentUser {
-            currentUser = User(
-                id: authUser.id,
-                email: authUser.email,
-                name: authUser.name,
-                bio: authUser.bio,
-                profileImageURL: authUser.profileImageURL,
-                coverImageURL: authUser.coverImageURL,
-                birthday: authUser.birthday,
-                createdAt: authUser.createdAt
-            )
-        }
+        // AuthServiceから現在のユーザー情報をスナップショット
+        currentUser = AuthService.shared.currentUser
     }
     
     func updateUser(_ user: User) {
