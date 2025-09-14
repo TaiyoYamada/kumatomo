@@ -55,6 +55,40 @@ class User extends Authenticatable
     ];
 
     /**
+     * Append camelCase image keys for clients expecting profileImageURL/coverImageURL
+     */
+    protected $appends = [
+        'profileImageURL',
+        'coverImageURL',
+    ];
+
+    /**
+     * Accessor: profileImageURL (absolute URL)
+     */
+    public function getProfileImageURLAttribute(): ?string
+    {
+        $path = $this->attributes['profile_image_url'] ?? null;
+        if (!$path) { return null; }
+        if (preg_match('/^https?:\/\//i', $path)) {
+            return $path;
+        }
+        return url($path);
+    }
+
+    /**
+     * Accessor: coverImageURL (absolute URL)
+     */
+    public function getCoverImageURLAttribute(): ?string
+    {
+        $path = $this->attributes['cover_image_url'] ?? null;
+        if (!$path) { return null; }
+        if (preg_match('/^https?:\/\//i', $path)) {
+            return $path;
+        }
+        return url($path);
+    }
+
+    /**
      * ユーザーが投稿したストーリーを取得
      */
     public function stories()
