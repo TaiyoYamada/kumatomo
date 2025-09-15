@@ -13,11 +13,11 @@
 
 ## リポジトリ構成
 
-- `admin` - 管理者画面（Vue+Vuetify+Typescript）
+- `admin/` - 管理者画面（Vue+Vuetify+Typescript）
 - `api/` — Laravel 製の REST API
 - `kumatomo_ios/` — iOS クライアント（SwiftUI）
 - `docs/` — README や図などのドキュメント
-- `docker/`, `docker-compose.yml` — ローカル開発用コンテナ
+- `docker/` - ローカル開発用コンテナ
 
 ## 動作環境
 
