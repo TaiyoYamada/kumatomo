@@ -6,8 +6,14 @@ struct RegionalTagSelectionView: View {
     @Environment(\.dismiss) private var dismiss
     
     // Regional tags (Kumamoto) using shared City enum
+    // Exclude the prefecture-wide tag from selection options
     private var regionalTags: [String] {
-        ["熊本県全体"] + City.allCases.map { $0.displayName }
+        City.allCases.map { $0.displayName }
+    }
+
+    // Count only visible (non-prefecture-wide) selected tags for UI display
+    private var visibleSelectedCount: Int {
+        selectedTags.filter { $0 != "熊本県全体" }.count
     }
     
     var body: some View {
@@ -44,15 +50,15 @@ struct RegionalTagSelectionView: View {
                     alignment: .bottom
                 )
                 
-                // Selected tags count
+                // Selected tags count (exclude prefecture-wide default)
                 HStack {
-                    Text("選択中: \(selectedTags.count)個")
+                    Text("選択中: \(visibleSelectedCount)個")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
                     Spacer()
                     
-                    if selectedTags.count >= 5 {
+                    if visibleSelectedCount >= 5 {
                         Text("最大5個まで選択可能")
                             .font(.caption)
                             .foregroundColor(.orange)
@@ -68,7 +74,7 @@ struct RegionalTagSelectionView: View {
                             RegionalTagRow(
                                 tag: tag,
                                 isSelected: selectedTags.contains(tag),
-                                canSelect: selectedTags.count < 5 || selectedTags.contains(tag),
+                                canSelect: visibleSelectedCount < 5 || selectedTags.contains(tag),
                                 canDeselect: selectedTags.count > 1 || !selectedTags.contains(tag)
                             ) {
                                 toggleTag(tag)
@@ -92,7 +98,7 @@ struct RegionalTagSelectionView: View {
             }
         } else {
             // Prevent selecting more than 5 tags
-            if selectedTags.count < 5 {
+            if selectedTags.filter({ $0 != "熊本県全体" }).count < 5 {
                 selectedTags.insert(tag)
             }
         }
