@@ -5,9 +5,9 @@ struct RegionalTagSelectionView: View {
     let availableTags: [String]
     @Environment(\.dismiss) private var dismiss
     
-    // Regional tags (Kumamoto) using shared Municipality enum
+    // Regional tags (Kumamoto) using shared City enum
     private var regionalTags: [String] {
-        ["熊本県全体"] + Municipality.allCases.map { $0.displayName }
+        ["熊本県全体"] + City.allCases.map { $0.displayName }
     }
     
     var body: some View {

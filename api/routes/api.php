@@ -81,6 +81,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // 投稿の詳細取得
     Route::get('/posts/{post}', [PostController::class, 'show']);
 
+    // 市町村別の投稿一覧
+    Route::get('/posts/municipality/{name}', [PostController::class, 'indexByMunicipality']);
+
     // 投稿の更新
     Route::put('/posts/{post}', [PostController::class, 'update']);
 

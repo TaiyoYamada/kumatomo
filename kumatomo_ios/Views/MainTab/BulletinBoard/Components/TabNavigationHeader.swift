@@ -142,26 +142,20 @@ struct TabButton: View {
 struct MunicipalityPickerView: View {
     let selectedMunicipality: String?
     let onSelection: (String) -> Void
-    
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var searchText = ""
-    @State private var selectedRegion: Region? = nil
-    
-    private var filteredMunicipalities: [Municipality] {
-        let allMunicipalities = Municipality.allCases
-        
-        if !searchText.isEmpty {
-            return allMunicipalities.filter { $0.displayName.contains(searchText) }
-        }
-        
-        if let region = selectedRegion {
-            return region.municipalities
-        }
-        
-        return allMunicipalities
+
+    private var allCities: [String] {
+        City.allCases.map { $0.displayName }
     }
-    
+
+    private var filteredCities: [String] {
+        if searchText.isEmpty { return allCities }
+        return allCities.filter { $0.contains(searchText) }
+    }
+
     private var adaptiveFontSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -204,52 +198,21 @@ struct MunicipalityPickerView: View {
                 .padding(.horizontal)
                 .padding(.top)
                 
-                // Region filter (if no search text)
-                if searchText.isEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
-                            RegionFilterButton(
-                                title: "すべて",
-                                isSelected: selectedRegion == nil,
-                                action: { selectedRegion = nil }
-                            )
-                            
-                            ForEach(Region.allCases, id: \.self) { region in
-                                RegionFilterButton(
-                                    title: region.rawValue,
-                                    isSelected: selectedRegion == region,
-                                    action: { selectedRegion = region }
-                                )
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-                    .padding(.vertical, 8)
-                    .accessibilityLabel("地域フィルター")
-                    .accessibilityIdentifier("region_filter_scroll")
-                }
-                
-                // Municipality list
-                List(filteredMunicipalities, id: \.self) { municipality in
+                // City list only
+                List(filteredCities, id: \.self) { city in
                     Button(action: {
-                        onSelection(municipality.displayName)
+                        onSelection(city)
                     }) {
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(municipality.displayName)
+                                Text(city)
                                     .foregroundColor(.primary)
                                     .font(.system(size: adaptiveFontSize))
-                                
-                                if searchText.isEmpty && selectedRegion == nil {
-                                    Text(municipality.region.rawValue)
-                                        .foregroundColor(.secondary)
-                                        .font(.system(size: adaptiveFontSize - 4))
-                                }
                             }
                             
                             Spacer()
                             
-                            if selectedMunicipality == municipality.displayName {
+                            if selectedMunicipality == city {
                                 Image(systemName: "checkmark")
                                     .foregroundColor(Color(hex: "1DA1F2"))
                                     .accessibilityLabel("選択中")

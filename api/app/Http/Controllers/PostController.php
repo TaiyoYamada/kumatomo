@@ -276,6 +276,49 @@ class PostController extends Controller
     }
 
     /**
+     * 市町村（市）ごとの投稿一覧を取得
+     */
+    public function indexByMunicipality(Request $request, string $name)
+    {
+        $validated = $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        $page = (int)($validated['page'] ?? 1);
+        $limit = (int)($validated['limit'] ?? 20);
+
+        // JSON配列のtags内に、指定の市名で始まるタグが1つでも含まれている投稿を検索
+        // 例: "熊本市" -> "熊本市", "熊本市中央区" など
+        $escaped = addcslashes($name, "%_\\");
+        $pattern = $escaped . '%';
+
+        $query = Post::query()
+            ->whereRaw("JSON_SEARCH(tags, 'one', ?) IS NOT NULL", [$pattern])
+            ->with(['user', 'shop', 'images'])
+            ->latest();
+
+        // ページネーション（簡易）
+        $posts = $query->forPage($page, $limit)->get();
+
+        // Add engagement data for authenticated users
+        if ($request->user()) {
+            $userId = $request->user()->id;
+            $posts->transform(function ($post) use ($userId) {
+                $engagementData = $post->getEngagementDataForUser($userId);
+                $post->like_count = $engagementData['like_count'];
+                $post->bookmark_count = $engagementData['bookmark_count'];
+                $post->comment_count = $engagementData['comment_count'];
+                $post->is_liked_by_current_user = $engagementData['is_liked_by_current_user'];
+                $post->is_bookmarked_by_current_user = $engagementData['is_bookmarked_by_current_user'];
+                return $post;
+            });
+        }
+
+        return response()->json($posts);
+    }
+
+    /**
      * 特定のユーザーのストーリーを一覧取得
      *
      * @param  \Illuminate\Http\Request $request

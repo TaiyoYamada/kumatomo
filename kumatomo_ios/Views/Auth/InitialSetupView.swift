@@ -14,7 +14,7 @@ struct InitialSetupView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
 
-    let locations: [String] = Municipality.allCases.map { $0.displayName }
+    let locations: [String] = City.allCases.map { $0.displayName }
     
     // フォームが有効かチェック
     var isFormValid: Bool {
