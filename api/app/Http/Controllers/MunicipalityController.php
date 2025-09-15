@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use App\Enums\City;
+use App\Enums\Municipality;
 
 class MunicipalityController extends Controller
 {
@@ -14,8 +14,7 @@ class MunicipalityController extends Controller
     {
         return response()->json([
             'prefecture' => '熊本県',
-            'cities' => City::names(),
+            'municipalities' => Municipality::names(),
         ]);
     }
 }
-

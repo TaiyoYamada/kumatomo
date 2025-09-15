@@ -63,7 +63,7 @@ class PostViewModel: ObservableObject {
     
     // New tag functionality
     @Published var selectedTags: Set<String> = ["熊本県全体"]
-    var availableTags: [String] { ["熊本県全体"] + City.allCases.map { $0.displayName } }
+    var availableTags: [String] { ["熊本県全体"] + Municipality.allCases.map { $0.displayName } }
     
     @Published var posts: [Post] = []
     @Published var userPosts: [Post] = []

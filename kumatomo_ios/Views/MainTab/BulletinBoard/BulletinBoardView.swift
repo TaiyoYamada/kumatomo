@@ -78,6 +78,12 @@ struct BulletinBoardView: View {
             .sidebarButton()
             .onAppear {
                 viewModel.loadInitialPosts()
+                // 初回登録後は出身地の市町村タブを優先表示
+                let preferMunicipality = UserDefaults.standard.bool(forKey: "preferMunicipalityTabOnFirstOpen")
+                if preferMunicipality, let muni = viewModel.selectedMunicipality, !muni.isEmpty {
+                    viewModel.changeTab(.municipality)
+                    UserDefaults.standard.set(false, forKey: "preferMunicipalityTabOnFirstOpen")
+                }
             }
             .onChange(of: viewModel.errorMessage) { errorMessage in
                 if let error = errorMessage {
