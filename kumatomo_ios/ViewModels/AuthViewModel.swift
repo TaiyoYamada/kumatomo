@@ -10,7 +10,7 @@ final class AuthViewModel: ObservableObject {
     @Published var accounts: [User] = []
     @Published var selectedAccount: User?
     
-    @Published var hasCompletedSetup = false
+    @Published var hasCompletedSetup: Bool? = nil
     @Published var email = ""
     @Published var password = ""
     @Published var name = ""
@@ -38,10 +38,10 @@ final class AuthViewModel: ObservableObject {
         self.currentUser = authService.currentUser
         
         if let currentUser = currentUser {
-            self.hasCompletedSetup = currentUser.hasCompletedSetup ?? false
+            self.hasCompletedSetup = currentUser.hasCompletedSetup
+        } else {
+            self.hasCompletedSetup = nil
         }
-        
-        print("\(hasCompletedSetup)あああああああああああああああああ")
         
         addSubscribers()
     }
@@ -66,9 +66,9 @@ final class AuthViewModel: ObservableObject {
                 // ユーザー情報が更新されたらhasCompletedSetupも更新
                 if let user = user {
                     print("DEBUG: ユーザー情報更新 - hasCompletedSetup: \(user.hasCompletedSetup ?? false)")
-                    self.hasCompletedSetup = user.hasCompletedSetup ?? false
+                    self.hasCompletedSetup = user.hasCompletedSetup
                 } else {
-                    self.hasCompletedSetup = false
+                    self.hasCompletedSetup = nil
                 }
             }
             .store(in: &cancellables)
