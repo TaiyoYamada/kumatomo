@@ -4,6 +4,9 @@ import SwiftUI
 struct TimelinePostCardView: View {
     let post: Post
     let onPostTap: (() -> Void)?
+    // Optional custom engagement handler for like. When nil, fallback to
+    // BulletinBoardViewModel's default like toggle.
+    let customOnLike: ((Post) async -> Void)?
     
     @State private var showingPostDetail = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -19,9 +22,10 @@ struct TimelinePostCardView: View {
     
     // MARK: - Initializers
     
-    init(post: Post, onPostTap: (() -> Void)? = nil) {
+    init(post: Post, onPostTap: (() -> Void)? = nil, customOnLike: ((Post) async -> Void)? = nil) {
         self.post = post
         self.onPostTap = onPostTap
+        self.customOnLike = customOnLike
     }
     
     // Date formatter
@@ -176,8 +180,13 @@ struct TimelinePostCardView: View {
                     // Engagement Buttons (Timeline version - no bookmark count)
                     EngagementButtonsView.timeline(
                         post: post,
-                        onLike: {
-                            bulletinBoardViewModel.toggleLike(for: post)
+                        onLike: { @MainActor in
+                            if let handler = customOnLike {
+                                await handler(post)
+                            } else {
+                                // Fallback to default view model handler
+                                bulletinBoardViewModel.toggleLike(for: post)
+                            }
                         },
                         onComment: {
                             onPostTap?()

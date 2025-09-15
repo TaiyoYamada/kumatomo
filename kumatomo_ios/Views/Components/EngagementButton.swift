@@ -9,7 +9,6 @@ struct EngagementButton: View {
     let action: () async -> Void
     
     // Animation and interaction state
-    @State private var isPressed = false
     @State private var isAnimating = false
     @State private var scale: CGFloat = 1.0
     
@@ -49,20 +48,10 @@ struct EngagementButton: View {
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
-//            .background(
-//                RoundedRectangle(cornerRadius: 16)
-//                    .fill(backgroundColor)
-//                    .opacity(isPressed ? 0.8 : 1.0)
-//            )
-            .scaleEffect(isPressed ? 0.95 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: isPressed)
         }
-        .buttonStyle(PlainButtonStyle())
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(.easeInOut(duration: 0.1)) {
-                isPressed = pressing
-            }
-        }, perform: {})
+        // Use a custom button style to provide pressed feedback without
+        // interfering with tap recognition on iOS (no gesture hacks).
+        .buttonStyle(PressEffectButtonStyle())
     }
     
     // MARK: - Private Methods
@@ -110,6 +99,19 @@ struct EngagementButton: View {
         } else {
             return Color.clear
         }
+    }
+}
+
+// MARK: - Button Style
+
+/// A button style that provides subtle press feedback using configuration.isPressed
+/// This avoids gesture conflicts on iOS that can swallow taps when combined
+/// with ScrollViews or other recognizers.
+struct PressEffectButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.easeInOut(duration: 0.08), value: configuration.isPressed)
     }
 }
 

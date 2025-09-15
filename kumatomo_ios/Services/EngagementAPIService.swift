@@ -282,6 +282,19 @@ class EngagementAPIService {
                     print("✅ ブックマーク切り替え成功: \(bookmarkResponse.isBookmarked ? "ブックマーク" : "ブックマーク解除") (合計: \(bookmarkResponse.bookmarkCount))")
                     return bookmarkResponse
                 } catch {
+                    // Fallback for APIs that wrap payload or use camelCase keys
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        let root = (json["data"] as? [String: Any]) ?? json
+                        let isBookmarked = (root["is_bookmarked"] as? Bool)
+                            ?? (root["isBookmarked"] as? Bool)
+                            ?? false
+                        let bookmarkCount = (root["bookmark_count"] as? Int)
+                            ?? (root["bookmarkCount"] as? Int)
+                            ?? 0
+                        let fallback = BookmarkResponse(isBookmarked: isBookmarked, bookmarkCount: bookmarkCount)
+                        print("✅ ブックマーク切り替え成功(フォールバック): \(fallback.isBookmarked ? "ブックマーク" : "ブックマーク解除") (合計: \(fallback.bookmarkCount))")
+                        return fallback
+                    }
                     print("🚨 デコードエラー: \(error)")
                     throw EngagementError.decodingError(error)
                 }
