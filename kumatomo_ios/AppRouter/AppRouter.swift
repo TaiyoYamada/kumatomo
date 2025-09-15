@@ -4,11 +4,11 @@ import SwiftUI
 @MainActor
 class AppRouter: ObservableObject {
     // 現在選択中のタブ
-    @Published var selectedTab: TabSelection = .home
+    @Published var selectedTab: TabSelection = .portal
 
     // タブごとのNavigationPathを保持
     @Published private(set) var navigationPaths: [TabSelection: NavigationPath] = [
-        .home: NavigationPath(),
+        .bulletinboard: NavigationPath(),
         .search: NavigationPath(),
         .portal: NavigationPath(),
         .kumamonAI: NavigationPath(),

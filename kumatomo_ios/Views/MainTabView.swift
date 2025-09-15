@@ -10,8 +10,8 @@ struct MainTabView: View {
     var body: some View {
         SidebarContainer(isPresented: $sidebarState.isPresented, user: userManager.currentUser) {
             TabView(selection: $appRouter.selectedTab) {
-                NavigationStack(path: appRouter.pathBinding(for: .home)) {
-                    HomeView()
+                NavigationStack(path: appRouter.pathBinding(for: .bulletinboard)) {
+                    BulletinBoardView()
                         .environmentObject(bulletinBoardViewModel)
                         .environmentObject(userManager)
                         .environmentObject(sidebarState)
@@ -23,7 +23,7 @@ struct MainTabView: View {
                     Image(systemName: "house.fill")
                     Text("ホーム")
                 }
-                .tag(TabSelection.home)
+                .tag(TabSelection.bulletinboard)
                 
                 NavigationStack(path: appRouter.pathBinding(for: .search)) {
                     SearchView()

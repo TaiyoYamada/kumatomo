@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct HomeView: View {
+struct BulletinBoardView: View {
     @EnvironmentObject private var viewModel: BulletinBoardViewModel
     @State private var showToast = false
     @State private var toastMessage = ""

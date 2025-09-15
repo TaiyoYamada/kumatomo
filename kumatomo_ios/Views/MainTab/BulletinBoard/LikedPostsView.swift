@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// A view that displays the user's bookmarked posts using the existing post list components
-struct BookmarkedPostsView: View {
+/// A view that displays the user's liked posts using the existing post list components
+struct LikedPostsView: View {
     @StateObject private var engagementViewModel = EngagementViewModel()
     @EnvironmentObject private var userManager: CurrentUserManager
     @State private var showToast = false
@@ -12,40 +12,40 @@ struct BookmarkedPostsView: View {
         NavigationStack {
             ZStack {
                 // Main content
-                if engagementViewModel.isLoadingBookmarkedPosts && engagementViewModel.bookmarkedPosts.isEmpty {
+                if engagementViewModel.isLoadingLikedPosts && engagementViewModel.likedPosts.isEmpty {
                     // Loading state for initial load
                     SkeletonLoadingView()
-                } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.bookmarkedPosts.isEmpty {
+                } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.likedPosts.isEmpty {
                     // Error state when no posts are loaded
                     if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
                         NetworkErrorView {
                             Task {
-                                await engagementViewModel.refreshBookmarkedPosts()
+                                await engagementViewModel.refreshLikedPosts()
                             }
                         }
                     } else {
                         ErrorStateView(error: errorMessage) {
                             Task {
-                                await engagementViewModel.refreshBookmarkedPosts()
+                                await engagementViewModel.refreshLikedPosts()
                             }
                         }
                     }
-                } else if engagementViewModel.bookmarkedPosts.isEmpty {
+                } else if engagementViewModel.likedPosts.isEmpty {
                     // Empty state
-                    BookmarkedPostsEmptyStateView()
+                    LikedPostsEmptyStateView()
                 } else {
                     // Posts list
-                    BookmarkedPostsTimeline(
-                        posts: engagementViewModel.bookmarkedPosts,
-                        loading: engagementViewModel.isLoadingBookmarkedPosts,
+                    LikedPostsTimeline(
+                        posts: engagementViewModel.likedPosts,
+                        loading: engagementViewModel.isLoadingLikedPosts,
                         onRefresh: {
                             Task {
-                                await engagementViewModel.refreshBookmarkedPosts()
+                                await engagementViewModel.refreshLikedPosts()
                             }
                         },
                         onLoadMore: {
                             Task {
-                                await engagementViewModel.loadMoreBookmarkedPosts()
+                                await engagementViewModel.loadMoreLikedPosts()
                             }
                         },
                         engagementViewModel: engagementViewModel
@@ -64,12 +64,12 @@ struct BookmarkedPostsView: View {
                 }
                 .zIndex(1)
             }
-            .navigationTitle("ブックマークした投稿")
+            .navigationTitle("いいねした投稿")
             .navigationBarTitleDisplayMode(.inline)
             .task {
-                // Load bookmarked posts when view appears
-                if engagementViewModel.bookmarkedPosts.isEmpty {
-                    await engagementViewModel.loadBookmarkedPosts()
+                // Load liked posts when view appears
+                if engagementViewModel.likedPosts.isEmpty {
+                    await engagementViewModel.loadLikedPosts()
                 }
             }
             .onChange(of: engagementViewModel.errorMessage) { errorMessage in
@@ -95,9 +95,9 @@ struct BookmarkedPostsView: View {
     }
 }
 
-// MARK: - Bookmarked Posts Timeline
+// MARK: - Liked Posts Timeline
 
-private struct BookmarkedPostsTimeline: View {
+private struct LikedPostsTimeline: View {
     let posts: [Post]
     let loading: Bool
     let onRefresh: () -> Void
@@ -108,7 +108,7 @@ private struct BookmarkedPostsTimeline: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(posts) { post in
-                    BookmarkedPostCell(
+                    LikedPostCell(
                         post: post,
                         engagementViewModel: engagementViewModel,
                         onTap: { 
@@ -134,15 +134,15 @@ private struct BookmarkedPostsTimeline: View {
         .refreshable {
             onRefresh()
         }
-        .accessibilityLabel("ブックマークした投稿一覧")
+        .accessibilityLabel("いいねした投稿一覧")
         .accessibilityHint("上にスワイプして更新")
-        .accessibilityIdentifier("bookmarked_posts_timeline")
+        .accessibilityIdentifier("liked_posts_timeline")
     }
 }
 
-// MARK: - Bookmarked Post Cell
+// MARK: - Liked Post Cell
 
-private struct BookmarkedPostCell: View {
+private struct LikedPostCell: View {
     let post: Post
     let engagementViewModel: EngagementViewModel
     let onTap: () -> Void
@@ -150,7 +150,7 @@ private struct BookmarkedPostCell: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            BookmarkedPostCardView(
+            LikedPostCardView(
                 post: post,
                 engagementViewModel: engagementViewModel,
                 onPostTap: onTap
@@ -167,9 +167,9 @@ private struct BookmarkedPostCell: View {
     }
 }
 
-// MARK: - Bookmarked Post Card View
+// MARK: - Liked Post Card View
 
-private struct BookmarkedPostCardView: View {
+private struct LikedPostCardView: View {
     let post: Post
     let engagementViewModel: EngagementViewModel
     let onPostTap: (() -> Void)?
@@ -281,7 +281,7 @@ private struct BookmarkedPostCardView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .accessibilityLabel("\(post.user?.name ?? "ユーザー")のプロフィール画像")
-                .accessibilityIdentifier("bookmarked_post_profile_image_\(post.id)")
+                .accessibilityIdentifier("liked_post_profile_image_\(post.id)")
                 
                 // Content Area (Right side)
                 VStack(alignment: .leading, spacing: 8) {
@@ -330,8 +330,8 @@ private struct BookmarkedPostCardView: View {
                         CategoryTagsView(tags: tags)
                     }
                     
-                    // Engagement Buttons (Show all buttons including bookmark for bookmarked posts)
-                    EngagementButtonsView.detail(
+                    // Engagement Buttons (Timeline version - no bookmark count)
+                    EngagementButtonsView.timeline(
                         post: post,
                         onLike: {
                             Task {
@@ -340,11 +340,6 @@ private struct BookmarkedPostCardView: View {
                         },
                         onComment: {
                             onPostTap?()
-                        },
-                        onBookmark: {
-                            Task {
-                                await engagementViewModel.toggleBookmark(for: post)
-                            }
                         }
                     )
                 }
@@ -356,15 +351,15 @@ private struct BookmarkedPostCardView: View {
         }
         .background(Color(.systemBackground))
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("ブックマークした投稿: \(post.user?.name ?? "ユーザー")、\(formattedDate)、\(post.content)")
+        .accessibilityLabel("いいねした投稿: \(post.user?.name ?? "ユーザー")、\(formattedDate)、\(post.content)")
         .accessibilityHint("タップして投稿詳細を表示")
-        .accessibilityIdentifier("bookmarked_post_item_\(post.id)")
+        .accessibilityIdentifier("liked_post_item_\(post.id)")
     }
 }
 
 // MARK: - Empty State View
 
-private struct BookmarkedPostsEmptyStateView: View {
+private struct LikedPostsEmptyStateView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
     private var adaptiveTitleSize: CGFloat {
@@ -407,26 +402,26 @@ private struct BookmarkedPostsEmptyStateView: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            Image(systemName: "bookmark")
+            Image(systemName: "heart")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "6B7280"))
                 .accessibilityHidden(true)
             
             VStack(spacing: 8) {
-                Text("ブックマークした投稿がありません")
+                Text("いいねした投稿がありません")
                     .font(.system(size: adaptiveTitleSize, weight: .medium))
                     .foregroundColor(Color(hex: "1A1A1A"))
                     .multilineTextAlignment(.center)
                 
-                Text("後で読みたい投稿をブックマークしてみましょう")
+                Text("気に入った投稿にいいねしてみましょう")
                     .font(.system(size: adaptiveSubtitleSize))
                     .foregroundColor(Color(hex: "6B7280"))
                     .multilineTextAlignment(.center)
             }
             
-            // Navigate to home button
+            
             Button(action: {
-                // Navigate back to home/timeline
+            
                 AppRouter.shared.popToRoot()
             }) {
                 Text("投稿を見に行く")
@@ -442,14 +437,14 @@ private struct BookmarkedPostsEmptyStateView: View {
         .padding(.horizontal, 32)
         .padding(.top, 100)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("ブックマークした投稿がありません。後で読みたい投稿をブックマークしてみましょう。投稿を見に行くボタン")
-        .accessibilityIdentifier("bookmarked_posts_empty_state")
+        .accessibilityLabel("いいねした投稿がありません。気に入った投稿にいいねしてみましょう。投稿を見に行くボタン")
+        .accessibilityIdentifier("liked_posts_empty_state")
     }
 }
 
 // MARK: - Preview
 
 #Preview {
-    BookmarkedPostsView()
+    LikedPostsView()
         .environmentObject(CurrentUserManager.shared)
 }

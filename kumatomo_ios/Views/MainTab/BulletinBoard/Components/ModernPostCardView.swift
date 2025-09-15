@@ -375,6 +375,9 @@ struct PostMediaView: View {
 
 struct CategoryTagsView: View {
     let tags: [String]
+    let columns = [
+        GridItem(.adaptive(minimum: 80), spacing: 8)
+    ]
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
     private var adaptiveTagSize: CGFloat {
@@ -416,21 +419,20 @@ struct CategoryTagsView: View {
     }
     
     var body: some View {
-        HStack(spacing: 8) {
+        LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
             ForEach(tags, id: \.self) { tag in
                 Text(tag)
-                    .font(.system(size: adaptiveTagSize, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
-                    .padding(.vertical, adaptivePadding)
+                    .padding(.vertical, 6)
                     .background(categoryColor(for: tag))
                     .cornerRadius(16)
-                    .minimumScaleFactor(0.8)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                     .accessibilityLabel("カテゴリー: \(tag)")
                     .accessibilityIdentifier("category_tag_\(tag)")
             }
-            Spacer()
         }
     }
     
