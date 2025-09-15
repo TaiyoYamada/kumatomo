@@ -350,9 +350,9 @@ class PostAPIService {
         }
     }
     
-    // 特定ユーザーのストーリーを取得する（エンゲージメントデータ付き）
-    func fetchUserPosts(userId: Int) async throws -> [Post] {
-        let endpoint = "\(baseURL)/users/\(userId)/posts"
+    // 特定ユーザーのストーリーを取得する（エンゲージメントデータ付き、ページネーション対応）
+    func fetchUserPosts(userId: Int, page: Int = 1, limit: Int = 20) async throws -> [Post] {
+        let endpoint = "\(baseURL)/users/\(userId)/posts?page=\(page)&limit=\(limit)"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
             throw PostAPIError.invalidURL
@@ -391,7 +391,7 @@ class PostAPIService {
                 
                 do {
                     let posts = try decoder.decode([Post].self, from: data)
-                    print("✅ ユーザー投稿取得成功: \(posts.count)件の投稿 (ユーザーID: \(userId))")
+                    print("✅ ユーザー投稿取得成功: \(posts.count)件の投稿 (ユーザーID: \(userId), ページ: \(page))")
                     
                     // エンゲージメントデータの確認
                     for (index, post) in posts.enumerated() {

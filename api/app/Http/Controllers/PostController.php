@@ -106,6 +106,13 @@ class PostController extends Controller
             
             \Log::info('投稿作成成功', ['post_id' => $post->id, 'user_id' => $post->user_id]);
 
+            // Increment user's post count
+            try {
+                $post->user()->increment('post_count');
+            } catch (\Exception $e) {
+                \Log::warning('post_countインクリメント失敗', ['user_id' => $post->user_id, 'error' => $e->getMessage()]);
+            }
+
             // 複数画像の処理
             if (isset($validated['images']) && !empty($validated['images'])) {
                 // 画像ファイルがアップロードされた場合
@@ -260,6 +267,16 @@ class PostController extends Controller
             // 投稿を削除（PostImageは外部キー制約でカスケード削除される）
             $post->delete();
 
+            // Decrement user's post count safely
+            try {
+                $user = $request->user();
+                if ($user && $user->post_count > 0) {
+                    $user->decrement('post_count');
+                }
+            } catch (\Exception $e) {
+                \Log::warning('post_countデクリメント失敗', ['user_id' => $request->user()->id ?? null, 'error' => $e->getMessage()]);
+            }
+
             DB::commit();
 
             return response()->json(['message' => '投稿が削除されました']);
@@ -327,7 +344,19 @@ class PostController extends Controller
      */
     public function indexByUser(Request $request, User $user)
     {
-        $posts = $user->stories()->with(['user', 'shop', 'images'])->latest()->get();
+        $validated = $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        $page = (int)($validated['page'] ?? 1);
+        $limit = (int)($validated['limit'] ?? 20);
+
+        $posts = $user->stories()
+            ->with(['user', 'shop', 'images'])
+            ->latest()
+            ->forPage($page, $limit)
+            ->get();
         
         // Add engagement data for authenticated users
         if ($request->user()) {

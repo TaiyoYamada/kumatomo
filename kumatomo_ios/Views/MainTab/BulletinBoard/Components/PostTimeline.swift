@@ -5,44 +5,53 @@ struct PostTimeline: View {
     let loading: Bool
     let onRefresh: () -> Void
     let onLoadMore: () -> Void
+    var embedInScrollView: Bool = true
     
     @EnvironmentObject private var bulletinBoardViewModel: BulletinBoardViewModel
 
-    var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                ForEach(posts) { post in
-                    PostCell(
-                        post: post,
-                        onTap: {
-                            AppRouter.shared.navigateToPostDetail(postId: post.id)
-                        },
-                        onAppear: {
-                            // 最後の投稿が表示されたら、新しい投稿を読み込みます
-                            if post.id == posts.last?.id {
-                                onLoadMore()
-                            }
+    @ViewBuilder
+    private var timelineContent: some View {
+        LazyVStack(spacing: 0) {
+            ForEach(posts) { post in
+                PostCell(
+                    post: post,
+                    onTap: {
+                        AppRouter.shared.navigateToPostDetail(postId: post.id)
+                    },
+                    onAppear: {
+                        // 最後の投稿が表示されたら、新しい投稿を読み込みます
+                        if post.id == posts.last?.id {
+                            onLoadMore()
                         }
-                    )
-                }
+                    }
+                )
+            }
 
-                // 次のページを読み込んでいる時のインジケーター
-                if loading && !posts.isEmpty {
-                    // PaginationLoadingViewはアプリの他の場所で定義されていると仮定します
-                    PaginationLoadingView()
-                }
+            // 次のページを読み込んでいる時のインジケーター
+            if loading && !posts.isEmpty {
+                PaginationLoadingView()
+            }
 
-                // 投稿がまだない時の表示
-                if posts.isEmpty && !loading {
-                    BulletinEmptyStateView()
-                        .padding(.top, 100)
+            // 投稿がまだない時の表示
+            if posts.isEmpty && !loading {
+                BulletinEmptyStateView()
+                    .padding(.top, 100)
+            }
+        }
+    }
+
+    var body: some View {
+        Group {
+            if embedInScrollView {
+                ScrollView {
+                    timelineContent
                 }
+                .refreshable { onRefresh() }
+            } else {
+                timelineContent
             }
         }
         .background(Color.white)
-        .refreshable {
-            onRefresh()
-        }
     }
 }
 
@@ -131,7 +140,6 @@ struct BulletinEmptyStateView: View {
         .padding(.horizontal, 32)
     }
 }
-
 
 
 
