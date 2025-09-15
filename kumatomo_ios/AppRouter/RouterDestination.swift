@@ -4,7 +4,7 @@ import SwiftUI
 // 統合済み: 全ての画面遷移はこのenumで管理
 enum RouterDestination: Hashable {
 	case myProfile      // マイプロフィール画面
-	case shopList       // お店一覧画面
+//	case shopList       // お店一覧画面
 	case bookmarks      // ブックマーク画面
 	case likes          // いいね一覧画面
 	case coupons        // クーポン画面
@@ -12,12 +12,16 @@ enum RouterDestination: Hashable {
 	case search         // 検索画面
 	case signUp         // サインアップ画面
 	case initialSetup   // 初期設定画面
+	case postDetail(postId: Int)  // 投稿詳細画面
+	case likedPosts     // いいねした投稿一覧画面
+	case bookmarkedPosts // ブックマークした投稿一覧画面
+	case userProfile(userId: Int) // ユーザープロフィール画面
 }
 
 // MARK: - タブ選択用のenum（ContentViewから移動・統合）
 // 旧: MainTabView.Selection -> TabSelection に統一
 enum TabSelection: Hashable {
-	case home       // ホームタブ
+	case bulletinboard       // 掲示板タブ
 	case search     // 検索タブ
 	case portal     // ポータルタブ
 	case kumamonAI  // くまモンAIタブ
@@ -30,12 +34,14 @@ extension View {
 			switch destination {
 			case .myProfile:
 				MyProfileView()
-			case .shopList:
-				ShopListView()
+//			case .shopList:
+//				ShopListView()
 			case .bookmarks:
-				PlaceholderView(title: "ブックマーク")
+				BookmarkedPostsView()
+					.environmentObject(CurrentUserManager.shared)
 			case .likes:
-				PlaceholderView(title: "いいね一覧")
+				LikedPostsView()
+					.environmentObject(CurrentUserManager.shared)
 			case .coupons:
 				PlaceholderView(title: "クーポン")
 			case .settings:
@@ -46,9 +52,23 @@ extension View {
 				SignUpView()
 			case .initialSetup:
 				InitialSetupView()
+			case .postDetail(let postId):
+				PostDetailView(postId: postId)
+					.environmentObject(CurrentUserManager.shared)
+			case .likedPosts:
+				LikedPostsView()
+					.environmentObject(CurrentUserManager.shared)
+			case .bookmarkedPosts:
+				BookmarkedPostsView()
+					.environmentObject(CurrentUserManager.shared)
+			case .userProfile(let userId):
+				UserProfileView(userId: userId)
+					.environmentObject(CurrentUserManager.shared)
 			}
 		}
 	}
+	
+
 }
 
 // MARK: - Placeholder View for missing implementations
@@ -73,5 +93,7 @@ struct PlaceholderView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
+
 
 

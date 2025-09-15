@@ -15,6 +15,7 @@ struct KumamonAIView: View {
             }
             .navigationTitle("くまモンAI")
             .navigationBarTitleDisplayMode(.inline)
+            .sidebarButton()
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     clearButton

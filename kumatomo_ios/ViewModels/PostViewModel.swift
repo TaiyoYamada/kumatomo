@@ -63,11 +63,7 @@ class PostViewModel: ObservableObject {
     
     // New tag functionality
     @Published var selectedTags: Set<String> = ["熊本県全体"]
-    let availableTags: [String] = [
-        "熊本県全体", "熊本市", "八代市", "人吉市", "荒尾市", 
-        "水俣市", "玉名市", "山鹿市", "菊池市", "宇土市",
-        "上天草市", "宇城市", "阿蘇市", "天草市", "合志市"
-    ]
+    var availableTags: [String] { ["熊本県全体"] + City.allCases.map { $0.displayName } }
     
     @Published var posts: [Post] = []
     @Published var userPosts: [Post] = []
@@ -730,6 +726,19 @@ class PostViewModel: ObservableObject {
             apiError = .unknownError(err)
         case .timeout:
             apiError = .timeout
+        case .engagementDataError(let message):
+            // Handle engagement-specific errors gracefully
+            apiError = .serverError(message: "エンゲージメントデータエラー: \(message)")
+            print("📊 エンゲージメントデータエラー: \(message)")
+        case .authenticationRequired:
+            apiError = .unauthorized
+            print("🔐 認証が必要です")
+        case .postNotFound:
+            apiError = .notFound
+            print("📝 投稿が見つかりません")
+        case .insufficientPermissions:
+            apiError = .forbidden
+            print("🚫 権限が不足しています")
         }
 
         await handleAPIError(apiError)

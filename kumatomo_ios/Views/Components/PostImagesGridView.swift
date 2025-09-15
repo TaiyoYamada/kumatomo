@@ -1,21 +1,36 @@
 import SwiftUI
 
 struct PostImagesGridView: View {
-    let images: [String]
+    let images: [PostImage]
+    
+    // Convenience initializer for string URLs
+    init(imageUrls: [String]) {
+        self.images = imageUrls.enumerated().map { index, url in
+            PostImage(id: index, postId: 0, imageUrl: url, displayOrder: index + 1)
+        }
+    }
+    
+    init(images: [PostImage]) {
+        self.images = images
+    }
+    
+    private var imageUrls: [String] {
+        return images.map { $0.imageUrl }
+    }
     
     var body: some View {
         Group {
             switch images.count {
             case 1:
-                SingleImageView(imageURL: images[0])
+                SingleImageView(imageURL: imageUrls[0])
             case 2:
-                TwoImagesView(images: images)
+                TwoImagesView(images: imageUrls)
             case 3:
-                ThreeImagesView(images: images)
+                ThreeImagesView(images: imageUrls)
             case 4:
-                FourImagesView(images: images)
+                FourImagesView(images: imageUrls)
             default:
-                MultipleImagesView(images: Array(images.prefix(4)))
+                MultipleImagesView(images: Array(imageUrls.prefix(4)))
             }
         }
     }
@@ -309,10 +324,10 @@ struct MultipleImagesView: View {
 struct PostImagesGridView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
-            PostImagesGridView(images: ["https://example.com/image1.jpg"])
-            PostImagesGridView(images: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"])
-            PostImagesGridView(images: ["https://example.com/image1.jpg", "https://example.com/image2.jpg", "https://example.com/image3.jpg"])
-            PostImagesGridView(images: ["https://example.com/image1.jpg", "https://example.com/image2.jpg", "https://example.com/image3.jpg", "https://example.com/image4.jpg"])
+            PostImagesGridView(imageUrls: ["https://example.com/image1.jpg"])
+            PostImagesGridView(imageUrls: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"])
+            PostImagesGridView(imageUrls: ["https://example.com/image1.jpg", "https://example.com/image2.jpg", "https://example.com/image3.jpg"])
+            PostImagesGridView(imageUrls: ["https://example.com/image1.jpg", "https://example.com/image2.jpg", "https://example.com/image3.jpg", "https://example.com/image4.jpg"])
         }
         .padding()
     }

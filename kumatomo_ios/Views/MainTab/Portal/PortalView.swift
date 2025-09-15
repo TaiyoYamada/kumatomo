@@ -20,7 +20,7 @@ struct PortalView: View {
                     }
                     .padding(.top, 8)
                     
-                    VStack(spacing: 16) {
+                    VStack(spacing: 10) {
                         // Section header
                         HStack {
                             Text("サービス一覧")
@@ -29,14 +29,23 @@ struct PortalView: View {
                                 .foregroundColor(.primary)
                             Spacer()
                         }
-                        .padding(.horizontal, 16)
-                        
+                        .padding(.horizontal, 15)
                         // Cards grid component
                         PortalCardGrid(cards: samplePortalCards)
                     }
-                    .padding(.top, 8)
                     
-                    // Bottom spacing for better scroll experience
+                    VStack {
+                        HStack {
+                            Text("おすすめのお店")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 15)
+                        
+                        RecommendedShopCarouselView(shops: sampleShops)
+                    }
                     Spacer(minLength: 20)
                 }
                 .padding(.bottom, 16)

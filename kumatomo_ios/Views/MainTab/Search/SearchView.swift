@@ -2,59 +2,48 @@ import SwiftUI
 
 struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
-    @StateObject private var userManager = CurrentUserManager.shared
+    @EnvironmentObject private var userManager: CurrentUserManager
     @State private var sheetDestination: SheetDestination?
-    @State private var showingSidebar = false
     
     var body: some View {
-        SidebarContainer(isPresented: $showingSidebar, user: userManager.currentUser) {
-            NavigationStack {
-                VStack(spacing: 0) {
-                    // 検索バー
-                    searchBar
-                    
-                    // フィルターセグメント
-                    filterSegment
-                    
-                    // コンテンツ
-                    if viewModel.isLoading {
-                        loadingView
-                    } else if viewModel.showingSearchHistory {
-                        searchHistoryView
-                    } else if viewModel.hasSearchResults {
-                        searchResultsView
-                    } else if !viewModel.searchText.isEmpty {
-                        noResultsView
-                    } else {
-                        emptyStateView
-                    }
-                    
-                    Spacer()
+        NavigationStack {
+            VStack(spacing: 0) {
+            // 検索バー
+            searchBar
+            
+            // フィルターセグメント
+            filterSegment
+            
+            // コンテンツ
+            if viewModel.isLoading {
+                loadingView
+            } else if viewModel.showingSearchHistory {
+                searchHistoryView
+            } else if viewModel.hasSearchResults {
+                searchResultsView
+            } else if !viewModel.searchText.isEmpty {
+                noResultsView
+            } else {
+                emptyStateView
+            }
+            
+            Spacer()
+            }
+            .navigationTitle("検索")
+            .navigationBarTitleDisplayMode(.inline)
+            .sidebarButton()
+            .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
+                Button("OK") {
+                    viewModel.errorMessage = nil
                 }
-                .navigationTitle("検索")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        ProfileIconButton(user: userManager.currentUser) {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                showingSidebar = true
-                            }
-                        }
-                    }
-                }
-                .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
-                    Button("OK") {
-                        viewModel.errorMessage = nil
-                    }
-                } message: {
-                    if let errorMessage = viewModel.errorMessage {
-                        Text(errorMessage)
-                    }
+            } message: {
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
                 }
             }
+            .withAppRouter()
+            .withSheetRouter(sheet: $sheetDestination)
         }
-        .withAppRouter()
-        .withSheetRouter(sheet: $sheetDestination)
     }
     
     // 検索バー
@@ -198,7 +187,7 @@ struct SearchView: View {
                         
                         ForEach(results.posts) { post in
                             PostSearchResultCard(post: post) {
-                                sheetDestination = .postDetail(post)
+                                sheetDestination = .postDetail(post.id)
                             }
                         }
                     }
@@ -270,169 +259,170 @@ struct SearchView: View {
             Spacer()
         }
     }
-}
-
-// 投稿検索結果カード
-struct PostSearchResultCard: View {
-    let post: Post
-    let onTap: () -> Void
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                // ユーザー情報
-                if let user = post.user {
-                    AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Circle()
-                            .fill(Color.gray.opacity(0.3))
-                    }
-                    .frame(width: 32, height: 32)
-                    .clipShape(Circle())
-                    
-                    Text(user.name ?? "Unknown User")
-                        .font(.caption)
-                        .foregroundColor(.primary)
-                }
-                
-                Spacer()
-                
-                // お店情報
-                if let shop = post.shop {
-                    Text(shop.name)
-                        .font(.caption)
-                        .foregroundColor(.orange)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.1))
-                        .cornerRadius(8)
-                }
-            }
-            
-            // 投稿内容
-            Text(post.content)
-                .font(.body)
-                .lineLimit(3)
-                .foregroundColor(.primary)
-            
-            // 画像
-            if let images = post.images, !images.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(images.prefix(3)) { image in
-                            AsyncImage(url: URL(string: image.imageUrl)) { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            } placeholder: {
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.3))
-                            }
-                            .frame(width: 60, height: 60)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+    // 投稿検索結果カード
+    struct PostSearchResultCard: View {
+        let post: Post
+        let onTap: () -> Void
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    // ユーザー情報
+                    if let user = post.user {
+                        AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            Circle()
+                                .fill(Color.gray.opacity(0.3))
                         }
+                        .frame(width: 32, height: 32)
+                        .clipShape(Circle())
                         
-                        if images.count > 3 {
-                            ZStack {
-                                Rectangle()
-                                    .fill(Color.black.opacity(0.5))
-                                    .frame(width: 60, height: 60)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                
-                                Text("+\(images.count - 3)")
-                                    .font(.caption)
-                                    .foregroundColor(.white)
+                        Text(user.name ?? "Unknown User")
+                            .font(.caption)
+                            .foregroundColor(.primary)
+                    }
+                    
+                    Spacer()
+                    
+                    // お店情報
+                    if let shop = post.shop {
+                        Text(shop.name)
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.orange.opacity(0.1))
+                            .cornerRadius(8)
+                    }
+                }
+                
+                // 投稿内容
+                Text(post.content)
+                    .font(.body)
+                    .lineLimit(3)
+                    .foregroundColor(.primary)
+                
+                // 画像
+                if let images = post.images, !images.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(images.prefix(3)) { image in
+                                AsyncImage(url: URL(string: image.imageUrl)) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                } placeholder: {
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.3))
+                                }
+                                .frame(width: 60, height: 60)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                            
+                            if images.count > 3 {
+                                ZStack {
+                                    Rectangle()
+                                        .fill(Color.black.opacity(0.5))
+                                        .frame(width: 60, height: 60)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    
+                                    Text("+\(images.count - 3)")
+                                        .font(.caption)
+                                        .foregroundColor(.white)
+                                }
                             }
                         }
                     }
                 }
-            }
-            
-            // 投稿日時
-            if let createdAt = post.createdAt {
-                Text(createdAt, style: .relative)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onTap()
-        }
-    }
-}
-
-// お店検索結果カード
-struct ShopSearchResultCard: View {
-    let shop: Shop
-    let onTap: () -> Void
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            // お店画像
-            AsyncImage(url: URL(string: shop.imageUrl ?? "")) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.3))
-            }
-            .frame(width: 80, height: 80)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            VStack(alignment: .leading, spacing: 4) {
-                // お店名
-                Text(shop.name)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
                 
-                // ジャンル
-                if let genre = shop.genre {
-                    Text(genre)
-                        .font(.caption)
-                        .foregroundColor(.orange)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Color.orange.opacity(0.1))
-                        .cornerRadius(6)
-                }
-                
-                // 住所
-                if let address = shop.address {
-                    Text(address)
+                // 投稿日時
+                if let createdAt = post.createdAt {
+                    Text(createdAt, style: .relative)
                         .font(.caption)
                         .foregroundColor(.gray)
-                        .lineLimit(2)
+                }
+            }
+            .padding()
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                onTap()
+            }
+        }
+    }
+    
+    // お店検索結果カード
+    struct ShopSearchResultCard: View {
+        let shop: Shop
+        let onTap: () -> Void
+        
+        var body: some View {
+            HStack(spacing: 12) {
+                // お店画像
+                AsyncImage(url: URL(string: shop.imageUrl ?? "")) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                }
+                .frame(width: 80, height: 80)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    // お店名
+                    Text(shop.name)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    
+                    // ジャンル
+                    if let genre = shop.genre {
+                        Text(genre)
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(Color.orange.opacity(0.1))
+                            .cornerRadius(6)
+                    }
+                    
+                    // 住所
+                    if let address = shop.address {
+                        Text(address)
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .lineLimit(2)
+                    }
+                    
+                    Spacer()
                 }
                 
                 Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
+                    .font(.caption)
             }
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
-                .font(.caption)
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onTap()
+            .padding()
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                onTap()
+            }
         }
     }
 }
+
 
 // 検索フィルタータイプ
 enum SearchFilterType: String, CaseIterable {

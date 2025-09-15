@@ -1,0 +1,605 @@
+{
+  "" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master.dia",
+    "emit-module-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master-emit-module.dia",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master.swiftdeps"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/App/AppDelegate.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/App/kumatomo.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/AppRouter/RouterDestination.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/AppRouter/SheetDestination.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/CategoryType.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/APIError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/AuthError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/CommentError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/EngagementError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/ImagePickerError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/ImageUploadError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/KumamonAIError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/ProfileError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/ShopAPIError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/StoryAPIError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/StoryError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/StoryValidationError.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Municipality.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/ReactionType.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/SideBarMenuItem.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/TabType.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/AIResponse.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/ChatMessage.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/Comment.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/EngagementResponse.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/ImageUploadResponse.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/PortalCardData.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/Post.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Post.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Post.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Post.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/PostImage.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/ProfileRequestModels.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/SearchResult.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/Shop.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/User.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/User.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/User.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/User.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Resources/Color.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Color.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Color.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/Color.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/AuthService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/CommentAPIService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/EngagementAPIService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/ImageUploadService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/KumamonAIService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/PostAPIService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/SearchAPIService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/ShopAPIService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/UserAPIService.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/APIHelper.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/APISession.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/AuthTokenManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/CurrentUserManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ErrorManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ErrorRecoveryManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ImageCache.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ImageLoader.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/NetworkMonitor.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/OfflineDataCache.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/OfflineQueueManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/PostCacheManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileCache.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileErrorHandler.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileFormValidation.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileImageManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProgressTracker.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/RetryManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ScrollOffsetPreferenceKey.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/SearchHistoryManager.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/SidebarEnvironment.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/AuthViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/BulletinBoardViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/CommentViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/EngagementViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/KumamonAIViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/PostDetailViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/PostViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/ProfileViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/SearchViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/ShopDetailViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/ShopListViewModel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/SidebarState.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Auth/InitialSetupView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Auth/LoginView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Auth/SignUpView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ActionButton.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ErrorView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/FloatingActionButton.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ImageEditSheet.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/LaunchScreenView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/NetworkStatusBanner.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/PostImagesGridView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/PostUserImageView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ProfileIconButton.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ProfileProgressIndicator.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/TagChip.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/TagSelectionView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/ContentView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Home/Components/LoadingStates.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Home/Components/PostTimeline.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Home/Components/TabNavigationHeader.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Home/HomeView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/HomeView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/HomeView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/HomeView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/KumamonAI/KumamonAIView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/MyPage/MyProfileView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/MyPage/ProfileEditView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/MyPage/ProfileImageView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalAdvertisingSlideshow.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalCard.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalErrorHandler.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Post/PostDetailView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Post/PostEditView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Post/PostPreviewView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostPreviewView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostPreviewView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostPreviewView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Post/PostView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Post/RegionalTagSelectionView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Search/SearchView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopDetailView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopListView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopMapView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopPickerView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/SideBar/Sections/ShopPostsSection.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/SideBar/Sections/SideBarView.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/SideBar/SidebarContainer.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.o"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/SideBar/SidebarPanel.swift" : {
+    "index-unit-output-path" : "/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Release-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.o"
+  }
+}

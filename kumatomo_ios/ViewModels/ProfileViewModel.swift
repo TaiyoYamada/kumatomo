@@ -15,6 +15,8 @@ class ProfileViewModel: ObservableObject {
     @Published var isImageUploading = false
     @Published var showSuccessMessage = false
     @Published var posts: [Post] = []
+    @Published var isLoadingMore: Bool = false
+    @Published var hasMorePosts: Bool = true
 
     // 編集用プロパティ
     @Published var email: String = ""
@@ -82,6 +84,8 @@ class ProfileViewModel: ObservableObject {
     private let errorHandler = ProfileErrorHandler.shared
     private let networkMonitor = NetworkMonitor.shared
     private var cancellables = Set<AnyCancellable>()
+    private var currentPage: Int = 1
+    private let postsPerPage: Int = 20
     
     // MARK: - Upload Cancellation
     private var profileImageUploadTask: Task<String?, Never>?
@@ -157,21 +161,48 @@ class ProfileViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // ユーザーのストーリーを読み込むメソッドを追加
+    // ユーザーのストーリーを読み込む（初回/リフレッシュ）
     func loadUserPosts(userID: Int) {
         isLoading = true
-        
+        currentPage = 1
+        hasMorePosts = true
+
         Task {
             do {
-                let fetchedPosts = try await postAPIService.fetchUserPosts(userId: userID)
+                let fetched = try await postAPIService.fetchUserPosts(userId: userID, page: currentPage, limit: postsPerPage)
                 await MainActor.run {
-                    self.posts = fetchedPosts
+                    self.posts = fetched
                     self.isLoading = false
+                    self.hasMorePosts = fetched.count >= self.postsPerPage
                 }
             } catch {
                 await MainActor.run {
                     self.handleError(error)
                     self.isLoading = false
+                }
+            }
+        }
+    }
+
+    // 追加読み込み（無限スクロール）
+    func loadMoreUserPosts(userID: Int) {
+        guard !isLoadingMore && hasMorePosts else { return }
+        isLoadingMore = true
+        let nextPage = currentPage + 1
+
+        Task {
+            do {
+                let fetched = try await postAPIService.fetchUserPosts(userId: userID, page: nextPage, limit: postsPerPage)
+                await MainActor.run {
+                    self.posts.append(contentsOf: fetched)
+                    self.currentPage = nextPage
+                    self.hasMorePosts = fetched.count >= self.postsPerPage
+                    self.isLoadingMore = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.handleError(error)
+                    self.isLoadingMore = false
                 }
             }
         }

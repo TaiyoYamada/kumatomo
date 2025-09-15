@@ -14,7 +14,7 @@ struct InitialSetupView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
 
-    let locations = ["熊本市", "八代市", "天草市", "玉名市", "人吉市", "菊池市", "宇城市", "宇土市", "山鹿市", "上天草市", "合志市", "水俣市", "阿蘇市", "荒尾市"]
+    let locations: [String] = City.allCases.map { $0.displayName }
     
     // フォームが有効かチェック
     var isFormValid: Bool {
@@ -244,6 +244,10 @@ struct InitialSetupView: View {
                 if success {
                     // 成功したらMainTabViewに遷移するよう状態を更新
                     print("✅ 初期設定保存成功")
+                    // 掲示板の市町村初期値をユーザーの選択に設定
+                    UserDefaults.standard.set(selectedLocation, forKey: "selectedMunicipality")
+                    // 初回は市町村タブを優先表示
+                    UserDefaults.standard.set(true, forKey: "preferMunicipalityTabOnFirstOpen")
                     viewModel.hasCompletedSetup = true
                     viewModel.isAuthenticated = true
                     dismiss()

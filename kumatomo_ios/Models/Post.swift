@@ -19,6 +19,13 @@ struct Post: Identifiable, Codable, Equatable {
     var isBookmarked: Bool?
     var municipality: String?
     
+    // 新しいエンゲージメント機能用プロパティ
+    var likeCount: Int?
+    var bookmarkCount: Int?
+    var isLikedByCurrentUser: Bool?
+    var isBookmarkedByCurrentUser: Bool?
+    var comments: [Comment]?
+    
     // 関連データ
     var user: User?
     var shop: Shop?
@@ -40,9 +47,32 @@ struct Post: Identifiable, Codable, Equatable {
         case commentCount = "comment_count"
         case isBookmarked = "is_bookmarked"
         case municipality
+        // 新しいエンゲージメント機能用CodingKeys
+        case likeCount = "like_count"
+        case bookmarkCount = "bookmark_count"
+        case isLikedByCurrentUser = "is_liked_by_current_user"
+        case isBookmarkedByCurrentUser = "is_bookmarked_by_current_user"
+        case comments
         case user
         case shop
         case images
+    }
+
+    // CamelCase alternative keys to support APIs that don't use snake_case
+    private enum AltKeys: String, CodingKey {
+        case userId
+        case shopId
+        case imageUrl
+        case createdAt
+        case updatedAt
+        case userReaction
+        case commentCount
+        case isBookmarked
+        case likeCount
+        case bookmarkCount
+        case isLikedByCurrentUser
+        case isBookmarkedByCurrentUser
+        case municipality
     }
     
     // デバッグ用のinit
@@ -53,22 +83,47 @@ struct Post: Identifiable, Codable, Equatable {
         print("🔍 Post利用可能キー: \(container.allKeys.map { $0.stringValue })")
         
         id = try container.decode(Int.self, forKey: .id)
-        userId = try container.decodeIfPresent(Int.self, forKey: .userId)
-        shopId = try container.decodeIfPresent(Int.self, forKey: .shopId)
-        content = try container.decode(String.self, forKey: .content)
-        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        let alt = try? decoder.container(keyedBy: AltKeys.self)
+
+        // Fallbacks for snake_case/camelCase
+        if let v = try? container.decodeIfPresent(Int.self, forKey: .userId) { userId = v } else { userId = try alt?.decodeIfPresent(Int.self, forKey: .userId) }
+        if let v = try? container.decodeIfPresent(Int.self, forKey: .shopId) { shopId = v } else { shopId = try alt?.decodeIfPresent(Int.self, forKey: .shopId) }
+        content = (try? container.decode(String.self, forKey: .content)) ?? ""
+        if let v = try? container.decodeIfPresent(String.self, forKey: .imageUrl) { imageUrl = v } else { imageUrl = try alt?.decodeIfPresent(String.self, forKey: .imageUrl) }
         tags = try container.decodeIfPresent([String].self, forKey: .tags)
-        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
-        updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+
+        // Dates: try native Date decode; if nil, try string parse from alt keys
+        if let date = try? container.decodeIfPresent(Date.self, forKey: .createdAt) {
+            createdAt = date
+        } else if let s = try alt?.decodeIfPresent(String.self, forKey: .createdAt) {
+            createdAt = APIHelper.parseDate(s)
+        } else {
+            createdAt = nil
+        }
+
+        if let date = try? container.decodeIfPresent(Date.self, forKey: .updatedAt) {
+            updatedAt = date
+        } else if let s = try alt?.decodeIfPresent(String.self, forKey: .updatedAt) {
+            updatedAt = APIHelper.parseDate(s)
+        } else {
+            updatedAt = nil
+        }
         
         // 新しいプロパティ
         category = try container.decodeIfPresent(CategoryType.self, forKey: .category)
         hashtags = try container.decodeIfPresent([String].self, forKey: .hashtags)
         reactions = try container.decodeIfPresent(PostReactions.self, forKey: .reactions)
-        userReaction = try container.decodeIfPresent(ReactionType.self, forKey: .userReaction)
-        commentCount = try container.decodeIfPresent(Int.self, forKey: .commentCount)
-        isBookmarked = try container.decodeIfPresent(Bool.self, forKey: .isBookmarked)
-        municipality = try container.decodeIfPresent(String.self, forKey: .municipality)
+        if let v = try? container.decodeIfPresent(ReactionType.self, forKey: .userReaction) { userReaction = v } else { userReaction = try alt?.decodeIfPresent(ReactionType.self, forKey: .userReaction) }
+        if let v = try? container.decodeIfPresent(Int.self, forKey: .commentCount) { commentCount = v } else { commentCount = try alt?.decodeIfPresent(Int.self, forKey: .commentCount) }
+        if let v = try? container.decodeIfPresent(Bool.self, forKey: .isBookmarked) { isBookmarked = v } else { isBookmarked = try alt?.decodeIfPresent(Bool.self, forKey: .isBookmarked) }
+        if let v = try? container.decodeIfPresent(String.self, forKey: .municipality) { municipality = v } else { municipality = try alt?.decodeIfPresent(String.self, forKey: .municipality) }
+        
+        // 新しいエンゲージメント機能用プロパティ
+        if let v = try? container.decodeIfPresent(Int.self, forKey: .likeCount) { likeCount = v } else { likeCount = try alt?.decodeIfPresent(Int.self, forKey: .likeCount) }
+        if let v = try? container.decodeIfPresent(Int.self, forKey: .bookmarkCount) { bookmarkCount = v } else { bookmarkCount = try alt?.decodeIfPresent(Int.self, forKey: .bookmarkCount) }
+        if let v = try? container.decodeIfPresent(Bool.self, forKey: .isLikedByCurrentUser) { isLikedByCurrentUser = v } else { isLikedByCurrentUser = try alt?.decodeIfPresent(Bool.self, forKey: .isLikedByCurrentUser) }
+        if let v = try? container.decodeIfPresent(Bool.self, forKey: .isBookmarkedByCurrentUser) { isBookmarkedByCurrentUser = v } else { isBookmarkedByCurrentUser = try alt?.decodeIfPresent(Bool.self, forKey: .isBookmarkedByCurrentUser) }
+        comments = try container.decodeIfPresent([Comment].self, forKey: .comments)
         
         user = try container.decodeIfPresent(User.self, forKey: .user)
         shop = try container.decodeIfPresent(Shop.self, forKey: .shop)
@@ -97,6 +152,13 @@ struct Post: Identifiable, Codable, Equatable {
         try container.encodeIfPresent(commentCount, forKey: .commentCount)
         try container.encodeIfPresent(isBookmarked, forKey: .isBookmarked)
         try container.encodeIfPresent(municipality, forKey: .municipality)
+        
+        // 新しいエンゲージメント機能用プロパティ
+        try container.encodeIfPresent(likeCount, forKey: .likeCount)
+        try container.encodeIfPresent(bookmarkCount, forKey: .bookmarkCount)
+        try container.encodeIfPresent(isLikedByCurrentUser, forKey: .isLikedByCurrentUser)
+        try container.encodeIfPresent(isBookmarkedByCurrentUser, forKey: .isBookmarkedByCurrentUser)
+        try container.encodeIfPresent(comments, forKey: .comments)
         
         try container.encodeIfPresent(user, forKey: .user)
         try container.encodeIfPresent(shop, forKey: .shop)
@@ -135,5 +197,66 @@ extension Post {
         self.tags = newTags
         self.updatedAt = Date()
     }
+    
+    // MARK: - Engagement Methods
+    
+    /// Updates the like status and count optimistically
+    mutating func updateLikeStatus(isLiked: Bool, likeCount: Int) {
+        self.isLikedByCurrentUser = isLiked
+        self.likeCount = likeCount
+        self.updatedAt = Date()
+    }
+    
+    /// Updates the bookmark status and count optimistically
+    mutating func updateBookmarkStatus(isBookmarked: Bool, bookmarkCount: Int) {
+        self.isBookmarkedByCurrentUser = isBookmarked
+        self.bookmarkCount = bookmarkCount
+        self.updatedAt = Date()
+    }
+    
+    /// Adds a new comment to the post
+    mutating func addComment(_ comment: Comment) {
+        if comments == nil {
+            comments = []
+        }
+        comments?.append(comment)
+        commentCount = (commentCount ?? 0) + 1
+        self.updatedAt = Date()
+    }
+    
+    /// Removes a comment from the post
+    mutating func removeComment(withId commentId: Int) {
+        comments?.removeAll { $0.id == commentId }
+        commentCount = max(0, (commentCount ?? 0) - 1)
+        self.updatedAt = Date()
+    }
+    
+    /// Returns the total engagement count (likes + bookmarks + comments)
+    var totalEngagementCount: Int {
+        return (likeCount ?? 0) + (bookmarkCount ?? 0) + (commentCount ?? 0)
+    }
+    
+    /// Returns true if the current user has engaged with this post in any way
+    var isEngagedByCurrentUser: Bool {
+        return (isLikedByCurrentUser == true) || (isBookmarkedByCurrentUser == true)
+    }
+    
+    /// Returns a formatted engagement summary string
+    var engagementSummary: String {
+        var parts: [String] = []
+        
+        if let likes = likeCount, likes > 0 {
+            parts.append("\(likes)いいね")
+        }
+        
+        if let comments = commentCount, comments > 0 {
+            parts.append("\(comments)コメント")
+        }
+        
+        if let bookmarks = bookmarkCount, bookmarks > 0 {
+            parts.append("\(bookmarks)ブックマーク")
+        }
+        
+        return parts.joined(separator: " • ")
+    }
 }
-

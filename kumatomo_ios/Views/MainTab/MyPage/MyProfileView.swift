@@ -3,70 +3,75 @@ import SwiftUI
 struct MyProfileView: View {
     @StateObject private var viewModel = ProfileViewModel(userID: 0)
     @StateObject private var postviewModel = PostViewModel()
+    @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
     @State private var showingNewPost = false
     @State private var selectedTab = 0
     @State private var sheetDestination: SheetDestination? = nil
     @State private var scrollOffset: CGFloat = 0
+    @Environment(\.openSidebar) private var openSidebar
+    @EnvironmentObject private var userManager: CurrentUserManager
     
     var body: some View {
         NavigationStack {
-            GeometryReader { geometry in
-                ScrollView {
-                    VStack(spacing: 0) {
-                        // カバー画像とプロフィール
-                        ModernProfileHeaderView(
-                            user: viewModel.profile,
-                            scrollOffset: scrollOffset,
-                            onEditTapped: {
-                                sheetDestination = .profileEdit(viewModel.profile, onProfileUpdated: {
-                                    // Refresh profile data after successful update
-                                    let userId = AuthService.shared.currentUser?.id ?? 0
-                                    viewModel.loadProfile(userID: userId)
-                                    viewModel.loadUserPosts(userID: userId)
-                                })
-                            }
-                        )
-                        .background(
-                            GeometryReader { geo in
-                                Color.clear
-                                    .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named("scroll")).minY)
-                            }
-                        )
-                        
-                        // プロフィール情報
-                        ModernProfileInfoView(user: viewModel.profile)
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 24)
-                        
-                        // 統計情報
-                        ProfileStatsView(user: viewModel.profile)
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 24)
-                        
-                        // タブセクション
-//                        ModernTabSectionView(selectedTab: $selectedTab)
-                        
-                        // 投稿グリッド
-                        ModernPostGridView(posts: viewModel.posts)
-                    }
+            ScrollView {
+                VStack(spacing: 0) {
+                    // カバー画像とプロフィール
+                    ModernProfileHeaderView(
+                        user: viewModel.profile,
+                        scrollOffset: 0,
+                        onEditTapped: {
+                            sheetDestination = .profileEdit(viewModel.profile, onProfileUpdated: {
+                                let userId = AuthService.shared.currentUser?.id ?? 0
+                                viewModel.loadProfile(userID: userId)
+                                viewModel.loadUserPosts(userID: userId)
+                            })
+                        }
+                    )
+                    
+                    // プロフィール情報
+                    ModernProfileInfoView(user: viewModel.profile)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
+                    
+                    // 統計情報（投稿数含む）
+                    ProfileStatsView(user: viewModel.profile)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
+                    
+                    // 区切り線
+                    Rectangle()
+                        .fill(Color(UIColor.separator))
+                        .frame(height: 1)
+                    
+                    // 掲示板と同じタイムライン（内部スクロールなし）
+                    PostTimeline(
+                        posts: viewModel.posts,
+                        loading: viewModel.isLoadingMore,
+                        onRefresh: { /* handled by outer ScrollView */ },
+                        onLoadMore: {
+                            let userId = AuthService.shared.currentUser?.id ?? 0
+                            viewModel.loadMoreUserPosts(userID: userId)
+                        },
+                        embedInScrollView: false
+                    )
+                    .environmentObject(bulletinBoardViewModel)
                 }
-                .coordinateSpace(name: "scroll")
-                .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-                    scrollOffset = value
-                }
-                .background(Color(.systemBackground))
             }
-            .navigationBarHidden(true)
-            .navigationTitle("プロフィール")
+            .refreshable {
+                let userId = AuthService.shared.currentUser?.id ?? 0
+                viewModel.loadProfile(userID: userId)
+                viewModel.loadUserPosts(userID: userId)
+            }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: SearchView()) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
+////            .sidebarButton()
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    NavigationLink(destination: SearchView()) {
+//                        Image(systemName: "magnifyingglass")
+//                            .foregroundColor(.primary)
+//                    }
+//                }
+//            }
             .withSheetRouter(sheet: $sheetDestination)
             .overlay {
                 if viewModel.isLoading {
@@ -85,11 +90,7 @@ struct MyProfileView: View {
             viewModel.loadProfile(userID: userId)
             viewModel.loadUserPosts(userID: userId)
         }
-        .refreshable {
-            let userId = AuthService.shared.currentUser?.id ?? 0
-            viewModel.loadProfile(userID: userId)
-            viewModel.loadUserPosts(userID: userId)
-        }
+        // refreshableはPostTimeline側で対応済み
     }
 }
 
@@ -650,10 +651,16 @@ struct PostCardContentView: View {
             }
             
             // 画像グリッド
+//            if let images = post.images, !images.isEmpty {
+//                PostImagesGridView(images: images.map { $0.imageUrl })
+//                    .cornerRadius(16)
+//            }
+            
             if let images = post.images, !images.isEmpty {
-                PostImagesGridView(images: images.map { $0.imageUrl })
+                PostImagesGridView(imageUrls: images.map { $0.imageUrl })
                     .cornerRadius(16)
             }
+
             
             // タグ表示
             if let tags = post.tags, !tags.isEmpty {
@@ -709,7 +716,7 @@ struct PostCardActionsView: View {
             ActionButton(
                 icon: post.userReaction == .thumbsUp ? "heart.fill" : "heart",
                 count: post.reactions?.thumbsUp ?? 0,
-                color: post.userReaction == .thumbsUp ? .red : .secondary,
+//                color: post.userReaction == .thumbsUp ? .red : .secondary,
                 activeColor: .red
             )
             
@@ -732,5 +739,3 @@ struct PostCardActionsView: View {
         .padding(.top, 12)
     }
 }
-
-

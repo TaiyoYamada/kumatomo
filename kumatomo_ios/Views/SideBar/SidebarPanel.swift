@@ -14,8 +14,11 @@ struct SidebarPanel: View {
             VStack(spacing: 0) {
                 Spacer().frame(height: UIApplication.shared.windows.first?.safeAreaInsets.top ?? 44)
                 
-                // Header - プロフィール画面への遷移
-                NavigationLink(value: RouterDestination.myProfile) {
+                // Header - プロフィールタブへ遷移（確実に遷移するためプログラマティックに切替）
+                Button(action: {
+                    AppRouter.shared.selectedTab = .profile
+                    onClose()
+                }) {
                     SidebarHeader(user: user)
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -31,14 +34,14 @@ struct SidebarPanel: View {
                                     handleLogout()
                                 }
                             } else {
-                                // NavigationLinkを使用した画面遷移
-                                NavigationLink(value: routerDestination(for: item)) {
+                                // 確実に遷移するため、AppRouterを使ってプログラマティックに遷移
+                                Button(action: {
+                                    navigate(using: item)
+                                    onClose()
+                                }) {
                                     SidebarMenuItemContent(icon: item.icon, title: item.title, subtitle: item.subtitle)
                                 }
                                 .buttonStyle(PlainButtonStyle())
-                                .simultaneousGesture(TapGesture().onEnded {
-                                    onClose() // サイドバーを閉じる
-                                })
                             }
                             
                             if index < allItems.count - 1 {
@@ -59,18 +62,42 @@ struct SidebarPanel: View {
     // 各メニュー項目に対応するRouterDestinationを返す
     private func routerDestination(for item: SidebarMenuItemType) -> RouterDestination {
         switch item {
-        case .shops:
-            return .shopList
+//        case .shops:
+//            return .shopList
         case .bookmarks:
-            return .bookmarks
+            return .bookmarkedPosts
         case .likes:
-            return .likes
+            return .likedPosts
         case .coupons:
             return .coupons
         case .settings:
             return .settings
         default:
             return .settings
+        }
+    }
+
+    // Sidebarメニューの遷移ロジック（AppRouterで確実に遷移）
+    private func navigate(using item: SidebarMenuItemType) {
+        // NavigationStackを持つタブを前面にする
+        if AppRouter.shared.selectedTab == .kumamonAI || AppRouter.shared.selectedTab == .profile {
+            AppRouter.shared.selectedTab = .portal
+        }
+
+        switch item {
+        case .bookmarks:
+            AppRouter.shared.navigateToBookmarkedPosts()
+        case .likes:
+            AppRouter.shared.navigateToLikedPosts()
+        case .coupons:
+            AppRouter.shared.navigate(to: .coupons)
+        case .settings:
+            AppRouter.shared.navigateToSettings()
+        case .shops:
+            // AppRouter.shared.navigate(to: .shopList)
+            break
+        default:
+            break
         }
     }
     

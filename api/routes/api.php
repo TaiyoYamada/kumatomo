@@ -11,6 +11,10 @@ use App\Http\Controllers\AdminShopController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\AIController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\MunicipalityController;
 
 // API動作確認用のテストルート
 Route::get('/', function () {
@@ -20,6 +24,9 @@ Route::get('/', function () {
         'timestamp' => now()->toISOString()
     ]);
 });
+
+// 市区町村（掲示板用タグ）一覧（認証不要）
+Route::get('/municipalities', [MunicipalityController::class, 'index']);
 
 // 新規ユーザー登録
 Route::post('/register', [AuthController::class, 'register']);
@@ -74,6 +81,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // 投稿の詳細取得
     Route::get('/posts/{post}', [PostController::class, 'show']);
 
+    // 市町村別の投稿一覧
+    Route::get('/posts/municipality/{name}', [PostController::class, 'indexByMunicipality']);
+
     // 投稿の更新
     Route::put('/posts/{post}', [PostController::class, 'update']);
 
@@ -85,6 +95,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 特定お店の投稿一覧
     Route::get('/shops/{shopId}/posts', [PostController::class, 'indexByShop']);
+
+    // Comment routes
+    Route::get('/posts/{postId}/comments', [CommentController::class, 'index']);
+    Route::post('/posts/{postId}/comments', [CommentController::class, 'store']);
+    Route::delete('/comments/{commentId}', [CommentController::class, 'destroy']);
+
+    // Like routes
+    Route::post('/posts/{postId}/like', [LikeController::class, 'toggle']);
+    Route::delete('/posts/{postId}/like', [LikeController::class, 'destroy']);
+    Route::get('/user/liked-posts', [LikeController::class, 'likedPosts']);
+
+    // Bookmark routes
+    Route::post('/posts/{postId}/bookmark', [BookmarkController::class, 'toggle']);
+    Route::delete('/posts/{postId}/bookmark', [BookmarkController::class, 'destroy']);
+    Route::get('/user/bookmarked-posts', [BookmarkController::class, 'bookmarkedPosts']);
 
     // 画像配信（認証不要）
     Route::get('/images/{path}', [ImageController::class, 'show'])->where('path', '.*');

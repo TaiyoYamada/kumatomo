@@ -16,94 +16,21 @@ struct ContentView: View {
                         }
                     }
             } else if viewModel.isAuthenticated {
-                if viewModel.hasCompletedSetup {
-                    MainTabView(viewModel: viewModel)
+                if let done = viewModel.hasCompletedSetup {
+                    if done {
+                        MainTabView(viewModel: viewModel)
+                    } else {
+                        InitialSetupView()
+                            .environmentObject(viewModel)
+                    }
                 } else {
-                    InitialSetupView()
-                        .environmentObject(viewModel)
+                    // 認証済みだがユーザー情報のロードが未完了。フリッカー防止の待機画面。
+                    LaunchScreenView()
                 }
             } else {
                 LoginView()
                     .environmentObject(viewModel)
             }
-        }
-    }
-}
-
-struct MainTabView: View {
-    
-    @ObservedObject var viewModel: AuthViewModel
-    @State private var selection: TabSelection = .portal
-    @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
-    @StateObject private var userManager = CurrentUserManager.shared
-    @StateObject private var sidebarState = SidebarState()
-    
-    
-    var body: some View {
-        SidebarContainer(isPresented: $sidebarState.isPresented, user: userManager.currentUser) {
-            VStack(spacing: 0) {
-                NetworkStatusBanner()
-                
-                TabView(selection: $selection) {
-                    //  ホームタブ（掲示板機能を統合）
-                    HomeView()
-                        .environmentObject(bulletinBoardViewModel)
-                        .environmentObject(userManager)
-                        .environment(\.openSidebar, sidebarState.open)
-                        .tabItem {
-                            Image(systemName: "house.fill")
-                            Text("ホーム")
-                        }
-                        .tag(TabSelection.home)
-                    
-                    //  検索タブ
-                    SearchView()
-                        .environmentObject(userManager)
-                        .environment(\.openSidebar, sidebarState.open)
-                        .tabItem {
-                            Image(systemName: "magnifyingglass")
-                            Text("検索")
-                        }
-                        .tag(TabSelection.search)
-                    
-                    
-                    //  ポータルタブ
-                    PortalView()
-                        .environmentObject(userManager)
-                        .environment(\.openSidebar, sidebarState.open)
-                        .tabItem {
-                            Image(systemName: "rectangle.grid.2x2")
-                            Text("ポータル")
-                        }
-                        .tag(TabSelection.portal)
-                    
-                    //  くまモンAIタブ
-                    KumamonAIView()
-                        .environmentObject(userManager)
-                        .environment(\.openSidebar, sidebarState.open)
-                        .tabItem {
-                            Image(systemName: "bubble.left.and.bubble.right")
-                            Text("くまモンAI")
-                        }
-                        .tag(TabSelection.kumamonAI)
-                    
-                    //  プロフィールタブ
-                    MyProfileView()
-                        .environmentObject(userManager)
-                        .environment(\.openSidebar, sidebarState.open)
-                        .tabItem {
-                            Image(systemName: "person.crop.circle")
-                            Text("プロフィール")
-                        }
-                        .tag(TabSelection.profile)
-                    
-                }
-                .accentColor(Color.primaryOrange)
-            }
-        }
-        .errorOverlay()
-        .onAppear {
-            userManager.loadCurrentUser()
         }
     }
 }

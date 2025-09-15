@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'kumatomo' in project 'kumatomo' (no dependencies)

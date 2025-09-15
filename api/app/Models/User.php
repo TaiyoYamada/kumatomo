@@ -55,6 +55,40 @@ class User extends Authenticatable
     ];
 
     /**
+     * Append camelCase image keys for clients expecting profileImageURL/coverImageURL
+     */
+    protected $appends = [
+        'profileImageURL',
+        'coverImageURL',
+    ];
+
+    /**
+     * Accessor: profileImageURL (absolute URL)
+     */
+    public function getProfileImageURLAttribute(): ?string
+    {
+        $path = $this->attributes['profile_image_url'] ?? null;
+        if (!$path) { return null; }
+        if (preg_match('/^https?:\/\//i', $path)) {
+            return $path;
+        }
+        return url($path);
+    }
+
+    /**
+     * Accessor: coverImageURL (absolute URL)
+     */
+    public function getCoverImageURLAttribute(): ?string
+    {
+        $path = $this->attributes['cover_image_url'] ?? null;
+        if (!$path) { return null; }
+        if (preg_match('/^https?:\/\//i', $path)) {
+            return $path;
+        }
+        return url($path);
+    }
+
+    /**
      * ユーザーが投稿したストーリーを取得
      */
     public function stories()
@@ -76,6 +110,46 @@ class User extends Authenticatable
     public function aiChatLogs()
     {
         return $this->hasMany(AIChatLog::class);
+    }
+
+    /**
+     * Get the comments made by the user.
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Get the likes made by the user.
+     */
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    /**
+     * Get the bookmarks made by the user.
+     */
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    /**
+     * Get posts liked by the user.
+     */
+    public function likedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'likes')->withTimestamps();
+    }
+
+    /**
+     * Get posts bookmarked by the user.
+     */
+    public function bookmarkedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'bookmarks')->withTimestamps();
     }
 
     /**

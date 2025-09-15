@@ -18,9 +18,23 @@ class PostController extends Controller
         $this->imageService = $imageService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $posts = Post::with(['user', 'shop', 'images'])->latest()->get();
+        
+        // Add engagement data for authenticated users
+        if ($request->user()) {
+            $userId = $request->user()->id;
+            $posts->transform(function ($post) use ($userId) {
+                $engagementData = $post->getEngagementDataForUser($userId);
+                $post->like_count = $engagementData['like_count'];
+                $post->bookmark_count = $engagementData['bookmark_count'];
+                $post->comment_count = $engagementData['comment_count'];
+                $post->is_liked_by_current_user = $engagementData['is_liked_by_current_user'];
+                $post->is_bookmarked_by_current_user = $engagementData['is_bookmarked_by_current_user'];
+                return $post;
+            });
+        }
         
         // デバッグ用：レスポンスをログに出力
         \Log::info('投稿一覧レスポンス', ['posts_count' => $posts->count()]);
@@ -91,6 +105,13 @@ class PostController extends Controller
             }
             
             \Log::info('投稿作成成功', ['post_id' => $post->id, 'user_id' => $post->user_id]);
+
+            // Increment user's post count
+            try {
+                $post->user()->increment('post_count');
+            } catch (\Exception $e) {
+                \Log::warning('post_countインクリメント失敗', ['user_id' => $post->user_id, 'error' => $e->getMessage()]);
+            }
 
             // 複数画像の処理
             if (isset($validated['images']) && !empty($validated['images'])) {
@@ -176,9 +197,22 @@ class PostController extends Controller
         }
     }
 
-    public function show(Post $post)
+    public function show(Request $request, Post $post)
     {
-        return response()->json($post->load(['user', 'shop', 'images']));
+        $post->load(['user', 'shop', 'images', 'comments.user:id,name,username,profile_image_url']);
+        
+        // Add engagement data for authenticated users
+        if ($request->user()) {
+            $userId = $request->user()->id;
+            $engagementData = $post->getEngagementDataForUser($userId);
+            $post->like_count = $engagementData['like_count'];
+            $post->bookmark_count = $engagementData['bookmark_count'];
+            $post->comment_count = $engagementData['comment_count'];
+            $post->is_liked_by_current_user = $engagementData['is_liked_by_current_user'];
+            $post->is_bookmarked_by_current_user = $engagementData['is_bookmarked_by_current_user'];
+        }
+        
+        return response()->json($post);
     }
 
     public function update(Request $request, Post $post)
@@ -233,6 +267,16 @@ class PostController extends Controller
             // 投稿を削除（PostImageは外部キー制約でカスケード削除される）
             $post->delete();
 
+            // Decrement user's post count safely
+            try {
+                $user = $request->user();
+                if ($user && $user->post_count > 0) {
+                    $user->decrement('post_count');
+                }
+            } catch (\Exception $e) {
+                \Log::warning('post_countデクリメント失敗', ['user_id' => $request->user()->id ?? null, 'error' => $e->getMessage()]);
+            }
+
             DB::commit();
 
             return response()->json(['message' => '投稿が削除されました']);
@@ -249,14 +293,86 @@ class PostController extends Controller
     }
 
     /**
+     * 市町村（市）ごとの投稿一覧を取得
+     */
+    public function indexByMunicipality(Request $request, string $name)
+    {
+        $validated = $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        $page = (int)($validated['page'] ?? 1);
+        $limit = (int)($validated['limit'] ?? 20);
+
+        // JSON配列のtags内に、指定の市名で始まるタグが1つでも含まれている投稿を検索
+        // 例: "熊本市" -> "熊本市", "熊本市中央区" など
+        $escaped = addcslashes($name, "%_\\");
+        $pattern = $escaped . '%';
+
+        $query = Post::query()
+            ->whereRaw("JSON_SEARCH(tags, 'one', ?) IS NOT NULL", [$pattern])
+            ->with(['user', 'shop', 'images'])
+            ->latest();
+
+        // ページネーション（簡易）
+        $posts = $query->forPage($page, $limit)->get();
+
+        // Add engagement data for authenticated users
+        if ($request->user()) {
+            $userId = $request->user()->id;
+            $posts->transform(function ($post) use ($userId) {
+                $engagementData = $post->getEngagementDataForUser($userId);
+                $post->like_count = $engagementData['like_count'];
+                $post->bookmark_count = $engagementData['bookmark_count'];
+                $post->comment_count = $engagementData['comment_count'];
+                $post->is_liked_by_current_user = $engagementData['is_liked_by_current_user'];
+                $post->is_bookmarked_by_current_user = $engagementData['is_bookmarked_by_current_user'];
+                return $post;
+            });
+        }
+
+        return response()->json($posts);
+    }
+
+    /**
      * 特定のユーザーのストーリーを一覧取得
      *
+     * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\User $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function indexByUser(User $user)
+    public function indexByUser(Request $request, User $user)
     {
-        return $user->stories()->with(['user', 'shop', 'images'])->latest()->get();
+        $validated = $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        $page = (int)($validated['page'] ?? 1);
+        $limit = (int)($validated['limit'] ?? 20);
+
+        $posts = $user->stories()
+            ->with(['user', 'shop', 'images'])
+            ->latest()
+            ->forPage($page, $limit)
+            ->get();
+        
+        // Add engagement data for authenticated users
+        if ($request->user()) {
+            $userId = $request->user()->id;
+            $posts->transform(function ($post) use ($userId) {
+                $engagementData = $post->getEngagementDataForUser($userId);
+                $post->like_count = $engagementData['like_count'];
+                $post->bookmark_count = $engagementData['bookmark_count'];
+                $post->comment_count = $engagementData['comment_count'];
+                $post->is_liked_by_current_user = $engagementData['is_liked_by_current_user'];
+                $post->is_bookmarked_by_current_user = $engagementData['is_bookmarked_by_current_user'];
+                return $post;
+            });
+        }
+        
+        return response()->json($posts);
     }
 
     /**
@@ -280,6 +396,20 @@ class PostController extends Controller
             ->with(['user', 'shop', 'images'])
             ->latest()
             ->paginate($perPage, ['*'], 'page', $page);
+
+        // Add engagement data for authenticated users
+        if ($request->user()) {
+            $userId = $request->user()->id;
+            $posts->getCollection()->transform(function ($post) use ($userId) {
+                $engagementData = $post->getEngagementDataForUser($userId);
+                $post->like_count = $engagementData['like_count'];
+                $post->bookmark_count = $engagementData['bookmark_count'];
+                $post->comment_count = $engagementData['comment_count'];
+                $post->is_liked_by_current_user = $engagementData['is_liked_by_current_user'];
+                $post->is_bookmarked_by_current_user = $engagementData['is_bookmarked_by_current_user'];
+                return $post;
+            });
+        }
 
         return response()->json($posts);
     }

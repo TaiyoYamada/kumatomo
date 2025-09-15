@@ -616,7 +616,6 @@ enum ProfileError: LocalizedError {
     
     // MARK: - Advanced Error Classification
     
-    /// Categorizes errors by their nature for better handling
     var errorCategory: ErrorCategory {
         switch self {
         case .networkError, .offlineError, .connectionTimeout, .slowConnection, .uploadTimeout:

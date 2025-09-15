@@ -41,10 +41,6 @@ struct ActionButton: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(isActive ? activeColor.opacity(0.1) : Color.clear)
-            )
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -126,27 +122,3 @@ struct BookmarkButton: View {
     }
 }
 
-// MARK: - Preview
-
-#if DEBUG
-struct ActionButton_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 16) {
-                LikeButton(count: 42, isLiked: false) {}
-                CommentButton(count: 12) {}
-                ShareButton(count: 5, isShared: false) {}
-                BookmarkButton(isBookmarked: false) {}
-            }
-            
-            HStack(spacing: 16) {
-                LikeButton(count: 1250, isLiked: true) {}
-                CommentButton(count: 89) {}
-                ShareButton(count: 23, isShared: true) {}
-                BookmarkButton(isBookmarked: true) {}
-            }
-        }
-        .padding()
-    }
-}
-#endif
