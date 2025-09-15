@@ -58,32 +58,32 @@ class AppRouter: ObservableObject {
         append(.postDetail(postId: postId))
     }
     
-    func navigateToLikedPosts() {
-        append(.likedPosts)
+    func navigateToLikedPosts(on tab: TabSelection? = nil) {
+        append(.likedPosts, to: tab)
     }
     
-    func navigateToBookmarkedPosts() {
-        append(.bookmarkedPosts)
+    func navigateToBookmarkedPosts(on tab: TabSelection? = nil) {
+        append(.bookmarkedPosts, to: tab)
     }
     
-    func navigateToUserProfile(userId: Int) {
-        append(.userProfile(userId: userId))
+    func navigateToUserProfile(userId: Int, on tab: TabSelection? = nil) {
+        append(.userProfile(userId: userId), to: tab)
     }
     
-    func navigateToMyProfile() {
-        append(.myProfile)
+    func navigateToMyProfile(on tab: TabSelection? = nil) {
+        append(.myProfile, to: tab)
     }
 //    
 //    func navigateToShopList() {
 //        append(.shopList)
 //    }
     
-    func navigateToSettings() {
-        append(.settings)
+    func navigateToSettings(on tab: TabSelection? = nil) {
+        append(.settings, to: tab)
     }
     
-    func navigateToSearch() {
-        append(.search)
+    func navigateToSearch(on tab: TabSelection? = nil) {
+        append(.search, to: tab)
     }
     
     // MARK: - Navigation Control
@@ -96,8 +96,8 @@ class AppRouter: ObservableObject {
         resetPath()
     }
     
-    func navigate(to destination: RouterDestination) {
-        append(destination)
+    func navigate(to destination: RouterDestination, on tab: TabSelection? = nil) {
+        append(destination, to: tab)
     }
     
     // MARK: - Deep Linking Support
@@ -112,23 +112,30 @@ class AppRouter: ObservableObject {
         case "post":
             if let postIdString = components.queryItems?.first(where: { $0.name == "id" })?.value,
                let postId = Int(postIdString) {
-                navigateToPostDetail(postId: postId)
+                // Open posts under portal tab for consistency
+                selectedTab = .portal
+                append(.postDetail(postId: postId), to: .portal)
             }
         case "user":
             if let userIdString = components.queryItems?.first(where: { $0.name == "id" })?.value,
                let userId = Int(userIdString) {
-                navigateToUserProfile(userId: userId)
+                selectedTab = .portal
+                navigateToUserProfile(userId: userId, on: .portal)
             }
         case "liked-posts":
-            navigateToLikedPosts()
+            selectedTab = .portal
+            navigateToLikedPosts(on: .portal)
         case "bookmarked-posts":
-            navigateToBookmarkedPosts()
+            selectedTab = .portal
+            navigateToBookmarkedPosts(on: .portal)
         case "profile":
-            navigateToMyProfile()
+            selectedTab = .portal
+            navigateToMyProfile(on: .portal)
 //        case "shops":
 //            navigateToShopList()
         case "settings":
-            navigateToSettings()
+            selectedTab = .portal
+            navigateToSettings(on: .portal)
         default:
             break
         }

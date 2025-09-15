@@ -97,7 +97,7 @@ struct BulletinBoardView: View {
                 })
                 .environmentObject(userManager)
             }
-            .withAppRouter()
+            
 //        }
     }
     

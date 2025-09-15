@@ -6,8 +6,7 @@ struct SearchView: View {
     @State private var sheetDestination: SheetDestination?
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
             // 検索バー
             searchBar
             
@@ -41,9 +40,7 @@ struct SearchView: View {
                     Text(errorMessage)
                 }
             }
-            .withAppRouter()
             .withSheetRouter(sheet: $sheetDestination)
-        }
     }
     
     // 検索バー

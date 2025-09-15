@@ -79,20 +79,20 @@ struct SidebarPanel: View {
 
     // Sidebarメニューの遷移ロジック（AppRouterで確実に遷移）
     private func navigate(using item: SidebarMenuItemType) {
-        // NavigationStackを持つタブを前面にする
-        if AppRouter.shared.selectedTab == .kumamonAI || AppRouter.shared.selectedTab == .profile {
-            AppRouter.shared.selectedTab = .portal
-        }
-
         switch item {
         case .bookmarks:
-            AppRouter.shared.navigateToBookmarkedPosts()
+            // 一貫してポータルタブのスタックで開く
+            AppRouter.shared.selectedTab = .portal
+            AppRouter.shared.navigateToBookmarkedPosts(on: .portal)
         case .likes:
-            AppRouter.shared.navigateToLikedPosts()
+            AppRouter.shared.selectedTab = .portal
+            AppRouter.shared.navigateToLikedPosts(on: .portal)
         case .coupons:
-            AppRouter.shared.navigate(to: .coupons)
+            AppRouter.shared.selectedTab = .portal
+            AppRouter.shared.navigate(to: .coupons, on: .portal)
         case .settings:
-            AppRouter.shared.navigateToSettings()
+            AppRouter.shared.selectedTab = .portal
+            AppRouter.shared.navigateToSettings(on: .portal)
         case .shops:
             // AppRouter.shared.navigate(to: .shopList)
             break

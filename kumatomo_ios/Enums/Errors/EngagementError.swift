@@ -2,6 +2,7 @@ import Foundation
 
 enum EngagementError: LocalizedError {
     case networkError(Error)
+    case requestCancelled
     case unauthorized
     case postNotFound
     case alreadyLiked
@@ -20,6 +21,8 @@ enum EngagementError: LocalizedError {
         switch self {
         case .networkError(let error):
             return "ネットワークエラーが発生しました: \(error.localizedDescription)"
+        case .requestCancelled:
+            return nil
         case .unauthorized:
             return "認証が必要です"
         case .postNotFound:
@@ -53,6 +56,8 @@ enum EngagementError: LocalizedError {
         switch self {
         case .networkError:
             return "インターネット接続を確認して、もう一度お試しください"
+        case .requestCancelled:
+            return nil
         case .unauthorized:
             return "ログインしてからもう一度お試しください"
         case .postNotFound:

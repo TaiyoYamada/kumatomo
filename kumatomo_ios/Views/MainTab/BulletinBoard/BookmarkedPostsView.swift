@@ -9,83 +9,79 @@ struct BookmarkedPostsView: View {
     @State private var toastType: ToastView.ToastType = .info
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Main content
-                if engagementViewModel.isLoadingBookmarkedPosts && engagementViewModel.bookmarkedPosts.isEmpty {
-                    // Loading state for initial load
-                    SkeletonLoadingView()
-                } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.bookmarkedPosts.isEmpty {
-                    // Error state when no posts are loaded
-                    if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
-                        NetworkErrorView {
-                            Task {
-                                await engagementViewModel.refreshBookmarkedPosts()
-                            }
-                        }
-                    } else {
-                        ErrorStateView(error: errorMessage) {
-                            Task {
-                                await engagementViewModel.refreshBookmarkedPosts()
-                            }
+        ZStack {
+            // Main content
+            if engagementViewModel.isLoadingBookmarkedPosts && engagementViewModel.bookmarkedPosts.isEmpty {
+                // Loading state for initial load
+                SkeletonLoadingView()
+            } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.bookmarkedPosts.isEmpty {
+                // Error state when no posts are loaded
+                if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
+                    NetworkErrorView {
+                        Task {
+                            await engagementViewModel.refreshBookmarkedPosts()
                         }
                     }
-                } else if engagementViewModel.bookmarkedPosts.isEmpty {
-                    // Empty state
-                    BookmarkedPostsEmptyStateView()
                 } else {
-                    // Posts list
-                    BookmarkedPostsTimeline(
-                        posts: engagementViewModel.bookmarkedPosts,
-                        loading: engagementViewModel.isLoadingBookmarkedPosts,
-                        onRefresh: {
-                            Task {
-                                await engagementViewModel.refreshBookmarkedPosts()
-                            }
-                        },
-                        onLoadMore: {
-                            Task {
-                                await engagementViewModel.loadMoreBookmarkedPosts()
-                            }
-                        },
-                        engagementViewModel: engagementViewModel
-                    )
+                    ErrorStateView(error: errorMessage) {
+                        Task {
+                            await engagementViewModel.refreshBookmarkedPosts()
+                        }
+                    }
                 }
+            } else if engagementViewModel.bookmarkedPosts.isEmpty {
+                // Empty state
+                BookmarkedPostsEmptyStateView()
+            } else {
+                // Posts list
+                BookmarkedPostsTimeline(
+                    posts: engagementViewModel.bookmarkedPosts,
+                    loading: engagementViewModel.isLoadingBookmarkedPosts,
+                    onRefresh: {
+                        Task {
+                            await engagementViewModel.refreshBookmarkedPosts()
+                        }
+                    },
+                    onLoadMore: {
+                        Task {
+                            await engagementViewModel.loadMoreBookmarkedPosts()
+                        }
+                    },
+                    engagementViewModel: engagementViewModel
+                )
+            }
+            
+            // Toast notification
+            VStack {
+                ToastView(
+                    message: toastMessage,
+                    type: toastType,
+                    isShowing: $showToast
+                )
                 
-                // Toast notification
-                VStack {
-                    ToastView(
-                        message: toastMessage,
-                        type: toastType,
-                        isShowing: $showToast
-                    )
-                    
-                    Spacer()
-                }
-                .zIndex(1)
+                Spacer()
             }
-            .navigationTitle("ブックマークした投稿")
-            .navigationBarTitleDisplayMode(.inline)
-            .task {
-                // Load bookmarked posts when view appears
-                if engagementViewModel.bookmarkedPosts.isEmpty {
-                    await engagementViewModel.loadBookmarkedPosts()
-                }
+            .zIndex(1)
+        }
+        .navigationTitle("ブックマークした投稿")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            // Load bookmarked posts when view appears
+            if engagementViewModel.bookmarkedPosts.isEmpty {
+                await engagementViewModel.loadBookmarkedPosts()
             }
-            .onChange(of: engagementViewModel.errorMessage) { errorMessage in
-                if let error = errorMessage {
-                    showToastMessage(error, type: .error)
-                }
+        }
+        .onChange(of: engagementViewModel.errorMessage) { errorMessage in
+            if let error = errorMessage {
+                showToastMessage(error, type: .error)
             }
-            .onChange(of: engagementViewModel.successMessage) { successMessage in
-                if !successMessage.isEmpty && engagementViewModel.showSuccessMessage {
-                    showToastMessage(successMessage, type: .success)
-                }
+        }
+        .onChange(of: engagementViewModel.successMessage) { successMessage in
+            if !successMessage.isEmpty && engagementViewModel.showSuccessMessage {
+                showToastMessage(successMessage, type: .success)
             }
-            .withAppRouter()
         }
     }
-    
     private func showToastMessage(_ message: String, type: ToastView.ToastType) {
         toastMessage = message
         toastType = type

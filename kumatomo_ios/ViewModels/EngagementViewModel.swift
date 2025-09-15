@@ -111,7 +111,12 @@ class EngagementViewModel: ObservableObject {
             print("✅ いいねした投稿読み込み成功: \(fetchedPosts.count)件 (合計: \(likedPosts.count)件)")
             
         } catch let error as EngagementError {
-            await handleEngagementError(error, context: "いいねした投稿読み込み")
+            // Ignore benign cancellations (e.g., view disappear, new refresh supersedes old)
+            if case .requestCancelled = error {
+                print("ℹ️ いいねした投稿読み込み: リクエストキャンセルを無視")
+            } else {
+                await handleEngagementError(error, context: "いいねした投稿読み込み")
+            }
         } catch {
             await handleGenericError(error, context: "いいねした投稿読み込み")
         }
@@ -178,7 +183,11 @@ class EngagementViewModel: ObservableObject {
             print("✅ ブックマークした投稿読み込み成功: \(fetchedPosts.count)件 (合計: \(bookmarkedPosts.count)件)")
             
         } catch let error as EngagementError {
-            await handleEngagementError(error, context: "ブックマークした投稿読み込み")
+            if case .requestCancelled = error {
+                print("ℹ️ ブックマークした投稿読み込み: リクエストキャンセルを無視")
+            } else {
+                await handleEngagementError(error, context: "ブックマークした投稿読み込み")
+            }
         } catch {
             await handleGenericError(error, context: "ブックマークした投稿読み込み")
         }

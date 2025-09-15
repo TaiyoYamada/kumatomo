@@ -9,80 +9,77 @@ struct LikedPostsView: View {
     @State private var toastType: ToastView.ToastType = .info
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Main content
-                if engagementViewModel.isLoadingLikedPosts && engagementViewModel.likedPosts.isEmpty {
-                    // Loading state for initial load
-                    SkeletonLoadingView()
-                } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.likedPosts.isEmpty {
-                    // Error state when no posts are loaded
-                    if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
-                        NetworkErrorView {
-                            Task {
-                                await engagementViewModel.refreshLikedPosts()
-                            }
-                        }
-                    } else {
-                        ErrorStateView(error: errorMessage) {
-                            Task {
-                                await engagementViewModel.refreshLikedPosts()
-                            }
+        ZStack {
+            // Main content
+            if engagementViewModel.isLoadingLikedPosts && engagementViewModel.likedPosts.isEmpty {
+                // Loading state for initial load
+                SkeletonLoadingView()
+            } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.likedPosts.isEmpty {
+                // Error state when no posts are loaded
+                if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
+                    NetworkErrorView {
+                        Task {
+                            await engagementViewModel.refreshLikedPosts()
                         }
                     }
-                } else if engagementViewModel.likedPosts.isEmpty {
-                    // Empty state
-                    LikedPostsEmptyStateView()
                 } else {
-                    // Posts list
-                    LikedPostsTimeline(
-                        posts: engagementViewModel.likedPosts,
-                        loading: engagementViewModel.isLoadingLikedPosts,
-                        onRefresh: {
-                            Task {
-                                await engagementViewModel.refreshLikedPosts()
-                            }
-                        },
-                        onLoadMore: {
-                            Task {
-                                await engagementViewModel.loadMoreLikedPosts()
-                            }
-                        },
-                        engagementViewModel: engagementViewModel
-                    )
+                    ErrorStateView(error: errorMessage) {
+                        Task {
+                            await engagementViewModel.refreshLikedPosts()
+                        }
+                    }
                 }
+            } else if engagementViewModel.likedPosts.isEmpty {
+                // Empty state
+                LikedPostsEmptyStateView()
+            } else {
+                // Posts list
+                LikedPostsTimeline(
+                    posts: engagementViewModel.likedPosts,
+                    loading: engagementViewModel.isLoadingLikedPosts,
+                    onRefresh: {
+                        Task {
+                            await engagementViewModel.refreshLikedPosts()
+                        }
+                    },
+                    onLoadMore: {
+                        Task {
+                            await engagementViewModel.loadMoreLikedPosts()
+                        }
+                    },
+                    engagementViewModel: engagementViewModel
+                )
+            }
+            
+            // Toast notification
+            VStack {
+                ToastView(
+                    message: toastMessage,
+                    type: toastType,
+                    isShowing: $showToast
+                )
                 
-                // Toast notification
-                VStack {
-                    ToastView(
-                        message: toastMessage,
-                        type: toastType,
-                        isShowing: $showToast
-                    )
-                    
-                    Spacer()
-                }
-                .zIndex(1)
+                Spacer()
             }
-            .navigationTitle("いいねした投稿")
-            .navigationBarTitleDisplayMode(.inline)
-            .task {
-                // Load liked posts when view appears
-                if engagementViewModel.likedPosts.isEmpty {
-                    await engagementViewModel.loadLikedPosts()
-                }
+            .zIndex(1)
+        }
+        .navigationTitle("いいねした投稿")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            // Load liked posts when view appears
+            if engagementViewModel.likedPosts.isEmpty {
+                await engagementViewModel.loadLikedPosts()
             }
-            .onChange(of: engagementViewModel.errorMessage) { errorMessage in
-                if let error = errorMessage {
-                    showToastMessage(error, type: .error)
-                }
+        }
+        .onChange(of: engagementViewModel.errorMessage) { errorMessage in
+            if let error = errorMessage {
+                showToastMessage(error, type: .error)
             }
-            .onChange(of: engagementViewModel.successMessage) { successMessage in
-                if !successMessage.isEmpty && engagementViewModel.showSuccessMessage {
-                    showToastMessage(successMessage, type: .success)
-                }
+        }
+        .onChange(of: engagementViewModel.successMessage) { successMessage in
+            if !successMessage.isEmpty && engagementViewModel.showSuccessMessage {
+                showToastMessage(successMessage, type: .success)
             }
-            .withAppRouter()
         }
     }
     
@@ -92,6 +89,7 @@ struct LikedPostsView: View {
         withAnimation {
             showToast = true
         }
+        
     }
 }
 

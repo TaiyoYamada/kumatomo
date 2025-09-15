@@ -6,6 +6,16 @@ class EngagementAPIService {
     private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
     
     private init() {}
+
+    // MARK: - Error Mapping
+
+    private func mapNetworkError(_ error: Error) -> EngagementError {
+        if let urlError = error as? URLError, urlError.code == .cancelled {
+            // Treat task cancellation as a benign event; higher layers will ignore
+            return .requestCancelled
+        }
+        return .networkError(error)
+    }
     
     // MARK: - Authentication
     
@@ -45,6 +55,49 @@ class EngagementAPIService {
         if let jsonString = String(data: data, encoding: .utf8) {
             print("💖 [\(context)] レスポンス: \(jsonString)")
         }
+    }
+    
+    // MARK: - Flexible Decoding Helpers
+    private func decodePostsArray(from data: Data) throws -> [Post] {
+        let decoder = APIHelper.makeDecoder()
+        // Try direct array first
+        if let posts = try? decoder.decode([Post].self, from: data) {
+            return posts
+        }
+        // Fallbacks for wrapped responses
+        let json = try JSONSerialization.jsonObject(with: data, options: [])
+        
+        func attemptDecode(from any: Any) -> [Post]? {
+            guard let array = any as? [Any] else { return nil }
+            let dictArray = array.compactMap { $0 as? [String: Any] }
+            guard !dictArray.isEmpty else { return [] }
+            if let arrayData = try? JSONSerialization.data(withJSONObject: dictArray) {
+                return try? decoder.decode([Post].self, from: arrayData)
+            }
+            return nil
+        }
+        
+        if let dict = json as? [String: Any] {
+            let keys = ["data", "posts", "items", "results", "list", "liked_posts", "bookmarked_posts"]
+            for key in keys {
+                if let val = dict[key] {
+                    if let decoded = attemptDecode(from: val) { return decoded }
+                    if let nested = val as? [String: Any] {
+                        for innerKey in keys {
+                            if let innerVal = nested[innerKey], let decoded = attemptDecode(from: innerVal) { return decoded }
+                        }
+                    }
+                }
+            }
+            // scan shallow values
+            for (_, value) in dict {
+                if let decoded = attemptDecode(from: value) { return decoded }
+                if let nested = value as? [String: Any] {
+                    for (_, v2) in nested { if let decoded = attemptDecode(from: v2) { return decoded } }
+                }
+            }
+        }
+        throw EngagementError.decodingError(DecodingError.typeMismatch([Post].self, .init(codingPath: [], debugDescription: "Expected posts array but got wrapped/different shape")))
     }
     
     // MARK: - Like API Methods
@@ -119,7 +172,7 @@ class EngagementAPIService {
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw EngagementError.networkError(error)
+            throw mapNetworkError(error)
         }
     }
     
@@ -186,7 +239,7 @@ class EngagementAPIService {
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw EngagementError.networkError(error)
+            throw mapNetworkError(error)
         }
     }
     
@@ -213,20 +266,11 @@ class EngagementAPIService {
             
             switch httpResponse.statusCode {
             case 200:
-                let decoder = APIHelper.makeDecoder()
                 do {
-                    let posts = try decoder.decode([Post].self, from: data)
+                    let posts = try decodePostsArray(from: data)
                     print("✅ いいねした投稿取得成功: \(posts.count)件")
                     return posts
                 } catch {
-//                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-//                        let root = (json["data"] as? [String: Any]) ?? json
-//                        let isBookmarked = (root["is_bookmarked"] as? Bool) ?? (root["isBookmarked"] as? Bool) ?? false
-//                        let bookmarkCount = (root["bookmark_count"] as? Int) ?? (root["bookmarkCount"] as? Int) ?? 0
-//                        let fallback = BookmarkResponse(isBookmarked: isBookmarked, bookmarkCount: bookmarkCount)
-//                        print("✅ ブックマーク切り替え成功(フォールバック): (合計: \(fallback.bookmarkCount))")
-//                        return fallback
-//                    }
                     print("🚨 デコードエラー: \(error)")
                     throw EngagementError.decodingError(error)
                 }
@@ -246,7 +290,7 @@ class EngagementAPIService {
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw EngagementError.networkError(error)
+            throw mapNetworkError(error)
         }
     }
     
@@ -327,7 +371,7 @@ class EngagementAPIService {
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw EngagementError.networkError(error)
+            throw mapNetworkError(error)
         }
     }
     
@@ -394,7 +438,7 @@ class EngagementAPIService {
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw EngagementError.networkError(error)
+            throw mapNetworkError(error)
         }
     }
     
@@ -421,9 +465,8 @@ class EngagementAPIService {
             
             switch httpResponse.statusCode {
             case 200:
-                let decoder = APIHelper.makeDecoder()
                 do {
-                    let posts = try decoder.decode([Post].self, from: data)
+                    let posts = try decodePostsArray(from: data)
                     print("✅ ブックマークした投稿取得成功: \(posts.count)件")
                     return posts
                 } catch {
@@ -446,7 +489,7 @@ class EngagementAPIService {
             throw error
         } catch {
             print("🚨 ネットワークエラー: \(error)")
-            throw EngagementError.networkError(error)
+            throw mapNetworkError(error)
         }
     }
     
