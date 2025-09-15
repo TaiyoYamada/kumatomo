@@ -14,7 +14,7 @@ struct InitialSetupView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
 
-    let locations = ["熊本市", "八代市", "天草市", "玉名市", "人吉市", "菊池市", "宇城市", "宇土市", "山鹿市", "上天草市", "合志市", "水俣市", "阿蘇市", "荒尾市"]
+    let locations: [String] = City.allCases.map { $0.displayName }
     
     // フォームが有効かチェック
     var isFormValid: Bool {

@@ -195,11 +195,7 @@ private struct ValidationMessage: View {
 #Preview {
     @Previewable @State var selectedTags: Set<String> = ["熊本県全体"]
     
-    let availableTags = [
-        "熊本県全体", "熊本市", "八代市", "人吉市", "荒尾市",
-        "水俣市", "玉名市", "山鹿市", "菊池市", "宇土市",
-        "上天草市", "宇城市", "阿蘇市", "天草市", "合志市"
-    ]
+    let availableTags = ["熊本県全体"] + City.allCases.map { $0.displayName }
     
     return VStack(spacing: 20) {
         Text("TagSelectionView Preview")

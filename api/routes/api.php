@@ -14,6 +14,7 @@ use App\Http\Controllers\AIController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\MunicipalityController;
 
 // API動作確認用のテストルート
 Route::get('/', function () {
@@ -23,6 +24,9 @@ Route::get('/', function () {
         'timestamp' => now()->toISOString()
     ]);
 });
+
+// 市区町村（掲示板用タグ）一覧（認証不要）
+Route::get('/municipalities', [MunicipalityController::class, 'index']);
 
 // 新規ユーザー登録
 Route::post('/register', [AuthController::class, 'register']);
