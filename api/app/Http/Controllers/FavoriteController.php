@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class FavoriteController extends Controller
 {
     /**
-     * Get user's favorite shops with pagination
+     * Get user's favorite shops with pagination and filtering
      *
      * @param Request $request
      * @return JsonResponse
@@ -31,31 +31,113 @@ class FavoriteController extends Controller
                 ], 401);
             }
 
-            $perPage = min($request->get('per_page', 20), 50); // Max 50 items per page
+            // Validate request parameters
+            $request->validate([
+                'genres' => 'nullable|string',
+                'lat' => 'nullable|numeric|between:-90,90',
+                'lng' => 'nullable|numeric|between:-180,180',
+                'radius' => 'nullable|numeric|min:0.1|max:100',
+                'q' => 'nullable|string|max:100',
+                'per_page' => 'nullable|integer|min:1|max:50',
+                'page' => 'nullable|integer|min:1',
+                'sort_by' => 'nullable|string|in:name,created_at,distance',
+                'sort_order' => 'nullable|string|in:asc,desc'
+            ]);
+
+            $perPage = min($request->get('per_page', 20), 50);
             $page = $request->get('page', 1);
 
-            $favorites = $user->favorites()
-                ->with(['shop' => function ($query) {
-                    $query->where('is_approved', true);
-                }])
-                ->latest()
-                ->paginate($perPage, ['*'], 'page', $page);
+            // Build query for favorite shops
+            $query = $user->favorites()
+                ->join('shops', 'favorites.shop_id', '=', 'shops.id')
+                ->where('shops.is_approved', true)
+                ->select('favorites.*', 'shops.*', 'favorites.created_at as favorited_at');
 
-            // Filter out favorites where shop is null (deleted shops)
-            $filteredFavorites = $favorites->getCollection()->filter(function ($favorite) {
-                return $favorite->shop !== null;
-            })->values();
+            // Genre filtering
+            if ($request->has('genres') && $request->genres) {
+                $genres = array_filter(explode(',', $request->genres));
+                if (!empty($genres)) {
+                    $query->whereIn('shops.genre', $genres);
+                }
+            }
 
-            // Update the collection with filtered results
-            $favorites->setCollection($filteredFavorites);
+            // Location-based filtering
+            if ($request->has('lat') && $request->has('lng')) {
+                $latitude = (float) $request->lat;
+                $longitude = (float) $request->lng;
+                $radius = (float) $request->get('radius', 10);
+
+                $query->selectRaw("
+                    favorites.*,
+                    shops.*,
+                    favorites.created_at as favorited_at,
+                    (6371 * acos(cos(radians(?)) 
+                    * cos(radians(shops.latitude)) 
+                    * cos(radians(shops.longitude) - radians(?)) 
+                    + sin(radians(?)) 
+                    * sin(radians(shops.latitude)))) AS distance
+                ", [$latitude, $longitude, $latitude])
+                ->having('distance', '<', $radius);
+            }
+
+            // Keyword search
+            if ($request->has('q') && $request->q) {
+                $keyword = $request->q;
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('shops.name', 'LIKE', "%{$keyword}%")
+                      ->orWhere('shops.description', 'LIKE', "%{$keyword}%")
+                      ->orWhere('shops.address', 'LIKE', "%{$keyword}%");
+                });
+            }
+
+            // Sorting
+            $sortBy = $request->get('sort_by', 'favorited_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+
+            if ($sortBy === 'distance' && $request->has('lat') && $request->has('lng')) {
+                $query->orderBy('distance', 'asc');
+            } elseif ($sortBy === 'favorited_at') {
+                $query->orderBy('favorites.created_at', $sortOrder);
+            } else {
+                $query->orderBy("shops.{$sortBy}", $sortOrder);
+            }
+
+            $favorites = $query->paginate($perPage, ['*'], 'page', $page);
 
             Log::info('Favorites fetched successfully', [
                 'user_id' => $user->id,
-                'count' => $filteredFavorites->count(),
-                'page' => $page
+                'count' => $favorites->count(),
+                'page' => $page,
+                'filters' => [
+                    'genres' => $request->get('genres'),
+                    'location' => $request->has('lat') && $request->has('lng'),
+                    'search' => $request->get('q')
+                ]
             ]);
 
-            return response()->json($favorites);
+            return response()->json([
+                'data' => $favorites->items(),
+                'pagination' => [
+                    'current_page' => $favorites->currentPage(),
+                    'last_page' => $favorites->lastPage(),
+                    'per_page' => $favorites->perPage(),
+                    'total' => $favorites->total(),
+                    'from' => $favorites->firstItem(),
+                    'to' => $favorites->lastItem(),
+                    'has_more_pages' => $favorites->hasMorePages()
+                ],
+                'filters' => [
+                    'genres' => $request->get('genres'),
+                    'location' => $request->has('lat') && $request->has('lng') ? [
+                        'lat' => $request->lat,
+                        'lng' => $request->lng,
+                        'radius' => $request->get('radius', 10)
+                    ] : null,
+                    'search' => $request->get('q'),
+                    'sort_by' => $sortBy,
+                    'sort_order' => $sortOrder
+                ]
+            ]);
 
         } catch (\Exception $e) {
             Log::error('Failed to fetch favorites', [

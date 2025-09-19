@@ -16,23 +16,30 @@ class ShopController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $query = Shop::query();
+            $query = Shop::query()->where('is_approved', true);
 
-            // ジャンルでフィルタリング
-            if ($request->has('genre') && $request->genre) {
+            // Multi-genre filtering (new feature)
+            if ($request->has('genres') && $request->genres) {
+                $genres = array_filter(explode(',', $request->genres));
+                if (!empty($genres)) {
+                    $query->whereIn('genre', $genres);
+                }
+            }
+            // Single genre filtering (backward compatibility)
+            elseif ($request->has('genre') && $request->genre) {
                 $query->byGenre($request->genre);
             }
 
-            // 位置情報での検索
+            // Location-based filtering with radius parameter
             if ($request->has('lat') && $request->has('lng')) {
-                $latitude = $request->lat;
-                $longitude = $request->lng;
-                $radius = $request->get('radius', 10); // デフォルト10km
+                $latitude = (float) $request->lat;
+                $longitude = (float) $request->lng;
+                $radius = (float) $request->get('radius', 10); // Default 10km
 
                 $query->nearby($latitude, $longitude, $radius);
             }
 
-            // キーワード検索
+            // Keyword search
             if ($request->has('q') && $request->q) {
                 $query->search($request->q);
             }

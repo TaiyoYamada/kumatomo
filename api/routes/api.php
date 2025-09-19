@@ -45,6 +45,12 @@ Route::post('/users', [UserController::class, 'store']);
 // Public favorite check endpoint (no auth required)
 Route::get('/favorites/check/{shop}', [FavoriteController::class, 'check']);
 
+// Public shop endpoints (no auth required)
+Route::get('/shops', [ShopController::class, 'index']);
+Route::get('/shops/search', [ShopController::class, 'search']);
+Route::get('/shops/{id}', [ShopController::class, 'show']);
+Route::get('/shops/{id}/posts', [ShopController::class, 'posts']);
+
 // 認証が必要なAPI
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -132,10 +138,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // AI Chat API
     Route::post('/ai/chat', [AIController::class, 'chat']);
 
-    Route::get('/shops', [ShopController::class, 'index']);
-    Route::get('/shops/search', [ShopController::class, 'search']);
-    Route::get('/shops/{id}', [ShopController::class, 'show']);
-    Route::get('/shops/{id}/posts', [ShopController::class, 'posts']);
+
 
     // Shop Proposal routes
     Route::get('/shop-proposals', [ShopProposalController::class, 'index']);

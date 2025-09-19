@@ -1,4 +1,4 @@
-// Shop Genre Enum - matches Laravel and iOS definitions
+// Shop Genre Enum
 export enum ShopGenre {
     RAMEN = 'ラーメン',
     CAFE = 'カフェ',
@@ -22,26 +22,9 @@ export enum ShopGenre {
     OTHER = 'その他'
 }
 
-// Shop interface - enhanced version of Store interface
+// Shop Interface
 export interface Shop {
     id: number
-    name: string
-    description: string | null
-    address: string | null
-    phone: string | null
-    business_hours: string | null
-    genre: ShopGenre | null
-    latitude: number | null
-    longitude: number | null
-    image_url: string | null
-    has_try_benefit: boolean
-    stamp_count: number
-    is_approved: boolean
-    created_at: string
-    updated_at: string
-}
-
-export interface ShopFormData {
     name: string
     description?: string
     address?: string
@@ -53,238 +36,97 @@ export interface ShopFormData {
     image_url?: string
     has_try_benefit: boolean
     stamp_count: number
-    is_approved?: boolean
+    is_approved: boolean
+    created_at: string
+    updated_at: string
+    distance?: number // Added when location filtering is used
 }
 
-export interface ShopCreateRequest extends ShopFormData { }
-
-export interface ShopUpdateRequest extends Partial<ShopFormData> {
-    id: number
-}
-
-export interface ShopListResponse {
-    data: Shop[]
-    meta: {
-        current_page: number
-        last_page: number
-        per_page: number
-        total: number
-        from: number
-        to: number
-    }
-}
-
-export interface ShopApiResponse {
-    data: Shop
-    message?: string
-}
-
-export interface ShopFilters {
-    search: string
-    genre: ShopGenre | null
-    city: string
-    has_try_benefit: boolean | null
-    is_approved: boolean | null
-    stamp_count_min: number | null
-    stamp_count_max: number | null
-}
-
-export interface ShopQueryParams {
-    page?: number
-    per_page?: number
-    search?: string
-    genre?: ShopGenre
-    city?: string
-    has_try_benefit?: boolean
-    is_approved?: boolean
-    stamp_count_min?: number
-    stamp_count_max?: number
-    sort_by?: string
-    sort_desc?: boolean
-}
-
-// Favorite interfaces
+// Favorite Interface
 export interface Favorite {
     id: number
     user_id: number
     shop_id: number
     shop?: Shop
     created_at: string
+    favorited_at?: string // When fetching favorites with shop data
+}
+
+// Shop Proposal Interface
+export interface ShopProposal {
+    id: number
+    user_id: number
+    name: string
+    address?: string
+    genre?: ShopGenre
+    description?: string
+    status: ProposalStatus
+    admin_notes?: string
+    created_at: string
     updated_at: string
+    processing?: boolean // UI state for loading
 }
 
-export interface FavoriteCreateRequest {
-    shop_id: number
-}
-
-export interface FavoriteToggleResponse {
-    favorited: boolean
-    message?: string
-}
-
-export interface FavoriteListResponse {
-    data: Favorite[]
-    meta: {
-        current_page: number
-        last_page: number
-        per_page: number
-        total: number
-        from: number
-        to: number
-    }
-}
-
-// Shop Proposal interfaces
 export enum ProposalStatus {
     PENDING = 'pending',
     APPROVED = 'approved',
     REJECTED = 'rejected'
 }
 
-export interface ShopProposal {
-    id: number
-    user_id: number
-    name: string
-    address: string | null
-    genre: ShopGenre | null
-    description: string | null
-    status: ProposalStatus
-    admin_notes: string | null
-    created_at: string
-    updated_at: string
-    user?: {
-        id: number
-        name: string
-        username: string
-        email: string
-    }
+// Favorite Statistics
+export interface FavoriteStats {
+    total_favorites: number
+    favorites_by_genre: Record<string, number>
 }
 
-export interface ShopProposalCreateRequest {
-    name: string
-    address?: string
-    genre?: ShopGenre
-    description?: string
-}
-
-export interface ShopProposalUpdateRequest {
-    status: ProposalStatus
-    admin_notes?: string
-}
-
-export interface ShopProposalApprovalRequest {
-    admin_notes?: string
-}
-
-export interface ShopProposalRejectionRequest {
-    admin_notes?: string
-}
-
-export interface ShopProposalListResponse {
-    data: ShopProposal[]
-    meta: {
-        current_page: number
-        last_page: number
-        per_page: number
-        total: number
-        from: number
-        to: number
-    }
-}
-
-export interface ShopProposalApiResponse {
-    data: ShopProposal
-    message?: string
-}
-
-export interface ShopProposalFilters {
-    status: ProposalStatus | null
-    search: string
-    user_id: number | null
-    genre: ShopGenre | null
-}
-
-export interface ShopProposalQueryParams {
-    page?: number
-    per_page?: number
-    status?: ProposalStatus
-    search?: string
-    user_id?: number
-    genre?: ShopGenre
-    sort_by?: string
-    sort_desc?: boolean
-}
-
-// Common API response types
-export interface ApiResponse<T> {
-    data: T
-    message?: string
-}
-
-export interface PaginatedResponse<T> {
-    data: T[]
-    meta: {
-        current_page: number
-        last_page: number
-        per_page: number
-        total: number
-        from: number
-        to: number
-    }
-}
-
-export interface ApiError {
+// Toggle Response
+export interface FavoriteToggleResponse {
+    favorited: boolean
     message: string
-    errors?: Record<string, string[]>
 }
 
-// Utility types for form validation
-export interface ValidationRule {
-    required?: boolean
-    minLength?: number
-    maxLength?: number
-    pattern?: RegExp
-    custom?: (value: any) => boolean | string
+// Check Response
+export interface FavoriteCheckResponse {
+    favorited: boolean
 }
 
-export interface FormValidationRules {
-    [key: string]: ValidationRule[]
+// Genre Option for UI
+export interface GenreOption {
+    label: string
+    value: ShopGenre
 }
 
-// Genre utility functions
-export const getGenreOptions = () => {
+// Helper function to get genre options
+export const getGenreOptions = (): GenreOption[] => {
     return Object.values(ShopGenre).map(genre => ({
         label: genre,
         value: genre
     }))
 }
 
-export const getGenreDisplayName = (genre: ShopGenre | null): string => {
-    return genre || 'ジャンル未設定'
-}
-
-export const getProposalStatusDisplayName = (status: ProposalStatus): string => {
-    switch (status) {
-        case ProposalStatus.PENDING:
-            return '承認待ち'
-        case ProposalStatus.APPROVED:
-            return '承認済み'
-        case ProposalStatus.REJECTED:
-            return '却下'
-        default:
-            return '不明'
+// Helper function to get genre color (can be customized)
+export const getGenreColor = (genre: ShopGenre): string => {
+    const colorMap: Record<ShopGenre, string> = {
+        [ShopGenre.RAMEN]: '#FF6B6B',
+        [ShopGenre.CAFE]: '#4ECDC4',
+        [ShopGenre.IZAKAYA]: '#45B7D1',
+        [ShopGenre.YAKINIKU]: '#96CEB4',
+        [ShopGenre.SUSHI]: '#FFEAA7',
+        [ShopGenre.SWEETS]: '#DDA0DD',
+        [ShopGenre.FAST_FOOD]: '#98D8C8',
+        [ShopGenre.RESTAURANT]: '#F7DC6F',
+        [ShopGenre.BAR]: '#BB8FCE',
+        [ShopGenre.BAKERY]: '#F8C471',
+        [ShopGenre.ITALIAN]: '#85C1E9',
+        [ShopGenre.CHINESE]: '#F1948A',
+        [ShopGenre.KOREAN]: '#82E0AA',
+        [ShopGenre.FRENCH]: '#D7BDE2',
+        [ShopGenre.JAPANESE]: '#A9DFBF',
+        [ShopGenre.WESTERN]: '#F9E79F',
+        [ShopGenre.SEAFOOD]: '#85C1E9',
+        [ShopGenre.VEGETARIAN]: '#ABEBC6',
+        [ShopGenre.BBQ]: '#FADBD8',
+        [ShopGenre.OTHER]: '#D5DBDB'
     }
-}
-
-export const getProposalStatusColor = (status: ProposalStatus): string => {
-    switch (status) {
-        case ProposalStatus.PENDING:
-            return 'warning'
-        case ProposalStatus.APPROVED:
-            return 'success'
-        case ProposalStatus.REJECTED:
-            return 'error'
-        default:
-            return 'default'
-    }
+    return colorMap[genre] || '#D5DBDB'
 }
