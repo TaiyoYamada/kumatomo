@@ -15,6 +15,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\ShopProposalController;
 use App\Http\Controllers\MunicipalityController;
 
 // API動作確認用のテストルート
@@ -136,6 +137,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/shops/{id}', [ShopController::class, 'show']);
     Route::get('/shops/{id}/posts', [ShopController::class, 'posts']);
 
+    // Shop Proposal routes
+    Route::get('/shop-proposals', [ShopProposalController::class, 'index']);
+    Route::post('/shop-proposals', [ShopProposalController::class, 'store']);
+    Route::get('/shop-proposals/{proposal}', [ShopProposalController::class, 'show']);
+    Route::put('/shop-proposals/{proposal}', [ShopProposalController::class, 'update']);
+    Route::delete('/shop-proposals/{proposal}', [ShopProposalController::class, 'destroy']);
+    Route::get('/shop-proposals-status', [ShopProposalController::class, 'status']);
+
 
 
     // 管理者用お店管理API
@@ -145,5 +154,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/shops/{id}', [AdminShopController::class, 'show']);
         Route::put('/shops/{id}', [AdminShopController::class, 'update']);
         Route::delete('/shops/{id}', [AdminShopController::class, 'destroy']);
+        
+        // Admin shop proposal management
+        Route::get('/shop-proposals', [ShopProposalController::class, 'adminIndex']);
+        Route::post('/shop-proposals/{proposal}/approve', [ShopProposalController::class, 'approve']);
+        Route::post('/shop-proposals/{proposal}/reject', [ShopProposalController::class, 'reject']);
     });
 });

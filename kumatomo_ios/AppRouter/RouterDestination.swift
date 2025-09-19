@@ -4,7 +4,8 @@ import SwiftUI
 // 統合済み: 全ての画面遷移はこのenumで管理
 enum RouterDestination: Hashable {
 	case myProfile      // マイプロフィール画面
-//	case shopList       // お店一覧画面
+	case shopList       // お店一覧画面
+	case favoritesList  // お気に入り一覧画面
 	case kumamonAI      // くまモンAI画面（サイドバーから遷移）
 	case bookmarks      // ブックマーク画面
 	case likes          // いいね一覧画面
@@ -35,8 +36,10 @@ extension View {
 			switch destination {
 			case .myProfile:
 				MyProfileView()
-//			case .shopList:
-//				ShopListView()
+			case .shopList:
+				ShopListView()
+			case .favoritesList:
+				FavoritesListView()
             case .kumamonAI:
                 KumamonAIView()
                     .environmentObject(CurrentUserManager.shared)
@@ -81,9 +84,9 @@ struct PlaceholderView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Image(systemName: "wrench.and.screwdriver")
+            Image(systemName: "hammer.and.wrench")
                 .font(.system(size: 48))
-//                .foregroundColor(.secondary)
+                .foregroundColor(.primaryOrange)
             
             Text(title)
                 .font(.title2)
@@ -92,6 +95,11 @@ struct PlaceholderView: View {
             Text("この機能は開発中です")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+            
+            Text("近日公開予定です")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.top, 4)
         }
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)

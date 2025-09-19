@@ -12,7 +12,7 @@
         </div>
         <v-chip class="stat-change" color="success" variant="tonal" size="small">+12%</v-chip>
       </v-card>
-      
+
       <v-card class="stat-card pa-4 d-flex align-center" elevation="1">
         <div class="stat-icon mr-4">
           <v-icon color="white" size="24">mdi-account-group</v-icon>
@@ -23,7 +23,7 @@
         </div>
         <v-chip class="stat-change" color="success" variant="tonal" size="small">+8%</v-chip>
       </v-card>
-      
+
       <v-card class="stat-card pa-4 d-flex align-center" elevation="1">
         <div class="stat-icon mr-4">
           <v-icon color="white" size="24">mdi-chart-line</v-icon>
@@ -34,7 +34,7 @@
         </div>
         <v-chip class="stat-change" color="error" variant="tonal" size="small">-3%</v-chip>
       </v-card>
-      
+
       <v-card class="stat-card pa-4 d-flex align-center" elevation="1">
         <div class="stat-icon mr-4">
           <v-icon color="white" size="24">mdi-star</v-icon>
@@ -53,15 +53,8 @@
       <v-card class="chart-section pa-4" elevation="1">
         <div class="section-header d-flex justify-space-between align-center mb-4">
           <h3 class="text-h6 font-weight-medium">月別店舗登録数</h3>
-          <v-select
-            class="period-select"
-            :items="['過去6ヶ月', '過去12ヶ月']"
-            model-value="過去6ヶ月"
-            variant="outlined"
-            density="compact"
-            hide-details
-            style="max-width: 150px;"
-          />
+          <v-select class="period-select" :items="['過去6ヶ月', '過去12ヶ月']" model-value="過去6ヶ月" variant="outlined"
+            density="compact" hide-details style="max-width: 150px;" />
         </div>
         <div class="chart-placeholder d-flex align-end justify-space-around pa-4" style="height: 200px;">
           <div class="chart-bar" style="height: 60%"></div>
@@ -93,7 +86,7 @@
               2時間前
             </v-list-item-subtitle>
           </v-list-item>
-          
+
           <v-list-item class="activity-item px-0 py-2">
             <template v-slot:prepend>
               <v-avatar class="activity-icon mr-3" color="primary" size="32">
@@ -107,7 +100,7 @@
               4時間前
             </v-list-item-subtitle>
           </v-list-item>
-          
+
           <v-list-item class="activity-item px-0 py-2">
             <template v-slot:prepend>
               <v-avatar class="activity-icon mr-3" color="primary" size="32">
@@ -121,7 +114,7 @@
               6時間前
             </v-list-item-subtitle>
           </v-list-item>
-          
+
           <v-list-item class="activity-item px-0 py-2">
             <template v-slot:prepend>
               <v-avatar class="activity-icon mr-3" color="primary" size="32">
@@ -143,52 +136,28 @@
     <v-card class="quick-actions pa-4" elevation="1">
       <h3 class="text-h6 font-weight-medium mb-4">クイックアクション</h3>
       <div class="actions-grid">
-        <v-card 
-          to="/shops/create" 
-          class="action-card pa-3 d-flex align-center" 
-          variant="outlined"
-          hover
-          ripple
-        >
+        <v-card to="/shops/create" class="action-card pa-3 d-flex align-center" variant="outlined" hover ripple>
           <v-avatar class="action-icon mr-3" color="primary" size="40">
             <v-icon color="white" size="20">mdi-plus</v-icon>
           </v-avatar>
           <span class="action-text text-body-1 font-weight-medium">新規店舗登録</span>
         </v-card>
-        
-        <v-card 
-          to="/shops" 
-          class="action-card pa-3 d-flex align-center" 
-          variant="outlined"
-          hover
-          ripple
-        >
+
+        <v-card to="/shops" class="action-card pa-3 d-flex align-center" variant="outlined" hover ripple>
           <v-avatar class="action-icon mr-3" color="primary" size="40">
             <v-icon color="white" size="20">mdi-format-list-bulleted</v-icon>
           </v-avatar>
           <span class="action-text text-body-1 font-weight-medium">店舗一覧</span>
         </v-card>
-        
-        <v-card 
-          to="/analytics" 
-          class="action-card pa-3 d-flex align-center" 
-          variant="outlined"
-          hover
-          ripple
-        >
+
+        <v-card to="/analytics" class="action-card pa-3 d-flex align-center" variant="outlined" hover ripple>
           <v-avatar class="action-icon mr-3" color="primary" size="40">
             <v-icon color="white" size="20">mdi-chart-line</v-icon>
           </v-avatar>
           <span class="action-text text-body-1 font-weight-medium">分析レポート</span>
         </v-card>
-        
-        <v-card 
-          to="/settings" 
-          class="action-card pa-3 d-flex align-center" 
-          variant="outlined"
-          hover
-          ripple
-        >
+
+        <v-card to="/settings" class="action-card pa-3 d-flex align-center" variant="outlined" hover ripple>
           <v-avatar class="action-icon mr-3" color="primary" size="40">
             <v-icon color="white" size="20">mdi-cog</v-icon>
           </v-avatar>
@@ -301,7 +270,7 @@ const stats = ref({
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .actions-grid {
     grid-template-columns: 1fr;
   }

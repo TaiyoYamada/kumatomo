@@ -76,9 +76,28 @@ struct ShopListView: View {
             }
             
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: viewModel.requestLocationPermission) {
-                    Image(systemName: "location")
-                        .foregroundColor(.orange)
+                HStack(spacing: 16) {
+                    Button(action: {
+                        sheetDestination = .shopProposalStatus
+                    }) {
+                        Image(systemName: "doc.text")
+                            .foregroundColor(.primary)
+                    }
+                    .accessibilityLabel("提案状況")
+                    
+                    Button(action: {
+                        sheetDestination = .shopProposal
+                    }) {
+                        Image(systemName: "plus.circle")
+                            .foregroundColor(.primaryOrange)
+                    }
+                    .accessibilityLabel("店舗を提案")
+                    
+                    Button(action: viewModel.requestLocationPermission) {
+                        Image(systemName: "location")
+                            .foregroundColor(.orange)
+                    }
+                    .accessibilityLabel("位置情報")
                 }
             }
         }
@@ -329,26 +348,42 @@ struct ShopErrorView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 48))
-                .foregroundColor(.primaryOrange)
-            
-            Text("エラーが発生しました")
-                .font(.system(size: 18, weight: .semibold))
-            
-            Text(message)
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-            
-            Button("再試行", action: onRetry)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .background(Color.primaryOrange)
-                .cornerRadius(8)
+            // 開発環境でAPIが未設定の場合は工具アイコンを表示
+            if !APIConfig.shared.isConfigured {
+                Image(systemName: "wrench.and.screwdriver")
+                    .font(.system(size: 48))
+                    .foregroundColor(.primaryOrange)
+                
+                Text("開発モード")
+                    .font(.system(size: 18, weight: .semibold))
+                
+                Text("APIが未設定のため、モックデータを表示しています")
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            } else {
+                Image(systemName: "wifi.slash")
+                    .font(.system(size: 48))
+                    .foregroundColor(.primaryOrange)
+                
+                Text("接続エラー")
+                    .font(.system(size: 18, weight: .semibold))
+                
+                Text(message)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+                
+                Button("再試行", action: onRetry)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(Color.primaryOrange)
+                    .cornerRadius(8)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

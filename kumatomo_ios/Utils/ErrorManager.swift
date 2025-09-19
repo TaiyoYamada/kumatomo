@@ -300,7 +300,7 @@ struct AppError: Identifiable, Equatable {
         switch error {
         case .networkError, .timeout, .serverError:
             return true
-        case .unauthorized, .forbidden, .notFound, .decodingError, .invalidURL, .invalidResponse, .userNotFound:
+        case .unauthorized, .forbidden, .notFound, .decodingError, .encodingError, .invalidURL, .invalidResponse, .userNotFound:
             return false
         case .rateLimitExceeded:
             return true

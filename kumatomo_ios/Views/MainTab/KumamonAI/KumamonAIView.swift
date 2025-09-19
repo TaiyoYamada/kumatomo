@@ -98,26 +98,33 @@ struct KumamonAIView: View {
             }
             
             // Service unavailable warning (only when API is properly configured)
-            if !viewModel.isServiceAvailable {
-                if APIConfig.shared.isConfigured {
-                    ServiceUnavailableView {
-                        Task {
-                            await viewModel.refreshServiceAvailability()
-                        }
+            if !viewModel.isServiceAvailable && APIConfig.shared.isConfigured {
+                ServiceUnavailableView {
+                    Task {
+                        await viewModel.refreshServiceAvailability()
                     }
-                } else {
-                    // Configuration hint when API endpoint is not set
-                    VStack(spacing: 8) {
-                        Text("AIサービスの接続先が未設定です")
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                        Text("XcodeのSchemeやInfo.plistで API_BASE_URL を設定してください")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.horizontal)
                 }
+            } else if !APIConfig.shared.isConfigured && viewModel.messages.isEmpty {
+                // Development mode hint when API endpoint is not set
+                VStack(spacing: 8) {
+                    HStack {
+                        Image(systemName: "wrench.and.screwdriver")
+                            .foregroundColor(.orange)
+                        Text("開発モード")
+                            .font(.footnote)
+                            .fontWeight(.medium)
+                            .foregroundColor(.orange)
+                    }
+                    Text("AIサービスが未設定のため、モック応答を使用しています")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .background(Color.orange.opacity(0.1))
+                .cornerRadius(8)
+                .padding(.horizontal)
             }
             
             // Input field and send button

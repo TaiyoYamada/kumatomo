@@ -68,11 +68,84 @@ class ShopListViewModel: ObservableObject {
             
             applyFilters()
         } catch {
-            errorMessage = error.localizedDescription
-            print("🚨 お店一覧の取得に失敗: \(error)")
+            // 開発環境でAPIが利用できない場合はモックデータを使用
+            if !APIConfig.shared.isConfigured || error.localizedDescription.contains("localhost") {
+                print("🔧 APIが利用できないため、モックデータを使用します")
+                shops = createMockShops()
+                applyFilters()
+            } else {
+                errorMessage = error.localizedDescription
+                print("🚨 お店一覧の取得に失敗: \(error)")
+            }
         }
         
         isLoading = false
+    }
+    
+    // MARK: - Mock Data for Development
+    private func createMockShops() -> [Shop] {
+        return [
+            Shop(
+                id: 1,
+                name: "熊本ラーメン 桂花",
+                description: "熊本の老舗ラーメン店。マー油が香る豚骨ラーメンが自慢です。",
+                address: "熊本県熊本市中央区花畑町11-9",
+                phone: "096-325-9609",
+                businessHours: "11:00-21:00",
+                genre: .restaurant,
+                latitude: 32.8031,
+                longitude: 130.7079,
+                imageUrl: nil
+            ),
+            Shop(
+                id: 2,
+                name: "熊本城",
+                description: "日本三名城の一つ。加藤清正が築いた名城で、熊本のシンボルです。",
+                address: "熊本県熊本市中央区本丸1-1",
+                phone: "096-352-5900",
+                businessHours: "9:00-17:00",
+                genre: .other,
+                latitude: 32.8064,
+                longitude: 130.7056,
+                imageUrl: nil
+            ),
+            Shop(
+                id: 3,
+                name: "水前寺成趣園",
+                description: "桃山式回遊庭園。富士山を模した築山と湧水池が美しい庭園です。",
+                address: "熊本県熊本市中央区水前寺公園8-1",
+                phone: "096-383-0074",
+                businessHours: "7:30-18:00",
+                genre: .other,
+                latitude: 32.7890,
+                longitude: 130.7420,
+                imageUrl: nil
+            ),
+            Shop(
+                id: 4,
+                name: "阿蘇ファームランド",
+                description: "阿蘇の大自然の中で体験できるテーマパーク。健康と癒しがテーマです。",
+                address: "熊本県阿蘇郡南阿蘇村河陽5579-3",
+                phone: "0967-67-2100",
+                businessHours: "9:00-17:00",
+                genre: .other,
+                latitude: 32.8500,
+                longitude: 131.0500,
+                imageUrl: nil
+            ),
+            Shop(
+                id: 5,
+                name: "馬刺し専門店 菅乃屋",
+                description: "熊本名物の馬刺しを味わえる専門店。新鮮な馬肉を提供しています。",
+                address: "熊本県熊本市中央区上通町6-17",
+                phone: "096-351-0529",
+                businessHours: "17:00-24:00",
+                genre: .restaurant,
+                latitude: 32.8100,
+                longitude: 130.7100,
+                imageUrl: nil
+            )
+        ]
     }
     
     func refreshShops() async {
@@ -135,4 +208,3 @@ class ShopListViewModel: ObservableObject {
         selectedShop = nil
     }
 }
-

@@ -38,6 +38,10 @@ struct MyProfileView: View {
                         .padding(.horizontal, 20)
                         .padding(.bottom, 12)
                     
+                    // お気に入りセクション
+                    FavoritesSectionView()
+                        .padding(.bottom, 12)
+                    
                     // 区切り線
                     Rectangle()
                         .fill(Color(UIColor.separator))

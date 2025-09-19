@@ -12,6 +12,8 @@ enum SheetDestination: Identifiable {
 	case postEdit(viewModel: PostViewModel)                                        // 投稿編集モーダル
     case profileImageEdit(selectedItem: Binding<PhotosPickerItem?>, onDelete: () -> Void)  // プロフィールアイコン画像編集モーダル
     case coverImageEdit(selectedItem: Binding<PhotosPickerItem?>, onDelete: () -> Void)   // プロフィール背景画像編集モーダル
+    case shopProposal                                                              // 店舗提案フォーム
+    case shopProposalStatus                                                        // 店舗提案状況
     
 
 	var id: String {
@@ -33,6 +35,10 @@ enum SheetDestination: Identifiable {
 			return "profileImageEdit"
 		case .coverImageEdit:
 			return "coverImageEdit"
+		case .shopProposal:
+			return "shopProposal"
+		case .shopProposalStatus:
+			return "shopProposalStatus"
 		}
 	}
 }
@@ -68,6 +74,10 @@ extension View {
                     selectedItem: selectedItem,
                     onDelete: onDelete
                 )
+            case .shopProposal:
+                ShopProposalFormView()
+            case .shopProposalStatus:
+                ShopProposalStatusView()
 			}
 		}
 	}

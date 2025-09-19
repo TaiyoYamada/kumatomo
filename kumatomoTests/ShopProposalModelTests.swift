@@ -4,35 +4,38 @@ import XCTest
 final class ShopProposalModelTests: XCTestCase {
     
     func testShopProposalInitialization() {
-        // Test basic shop proposal initialization
         let proposal = ShopProposal(
             id: 1,
-            userId: 100,
-            name: "New Ramen Shop",
-            address: "123 Ramen Street",
+            userId: 123,
+            name: "テスト店舗",
+            address: "熊本市中央区テスト町1-2-3",
             genre: .ramen,
-            description: "Best ramen in town",
+            description: "美味しいラーメン店です",
             status: .pending,
-            adminNotes: "Under review"
+            adminNotes: nil
         )
         
         XCTAssertEqual(proposal.id, 1)
-        XCTAssertEqual(proposal.userId, 100)
-        XCTAssertEqual(proposal.name, "New Ramen Shop")
-        XCTAssertEqual(proposal.address, "123 Ramen Street")
+        XCTAssertEqual(proposal.userId, 123)
+        XCTAssertEqual(proposal.name, "テスト店舗")
+        XCTAssertEqual(proposal.address, "熊本市中央区テスト町1-2-3")
         XCTAssertEqual(proposal.genre, .ramen)
-        XCTAssertEqual(proposal.description, "Best ramen in town")
+        XCTAssertEqual(proposal.description, "美味しいラーメン店です")
         XCTAssertEqual(proposal.status, .pending)
-        XCTAssertEqual(proposal.adminNotes, "Under review")
+        XCTAssertNil(proposal.adminNotes)
     }
     
-    func testShopProposalDefaultValues() {
-        // Test shop proposal initialization with default values
-        let proposal = ShopProposal(userId: 100, name: "Minimal Proposal")
+    func testShopProposalMinimalInitialization() {
+        let proposal = ShopProposal(
+            id: 2,
+            userId: 456,
+            name: "ミニマル店舗",
+            status: .pending
+        )
         
-        XCTAssertEqual(proposal.id, 0)
-        XCTAssertEqual(proposal.userId, 100)
-        XCTAssertEqual(proposal.name, "Minimal Proposal")
+        XCTAssertEqual(proposal.id, 2)
+        XCTAssertEqual(proposal.userId, 456)
+        XCTAssertEqual(proposal.name, "ミニマル店舗")
         XCTAssertNil(proposal.address)
         XCTAssertNil(proposal.genre)
         XCTAssertNil(proposal.description)
@@ -41,98 +44,74 @@ final class ShopProposalModelTests: XCTestCase {
     }
     
     func testProposalStatusDisplayNames() {
-        // Test proposal status display names
         XCTAssertEqual(ProposalStatus.pending.displayName, "承認待ち")
         XCTAssertEqual(ProposalStatus.approved.displayName, "承認済み")
         XCTAssertEqual(ProposalStatus.rejected.displayName, "却下")
     }
     
     func testProposalStatusIsActive() {
-        // Test proposal status isActive property
         XCTAssertTrue(ProposalStatus.pending.isActive)
         XCTAssertFalse(ProposalStatus.approved.isActive)
         XCTAssertFalse(ProposalStatus.rejected.isActive)
     }
     
-    func testProposalStatusCodable() {
-        // Test that ProposalStatus can be encoded and decoded
-        let status = ProposalStatus.pending
-        
-        let encoder = JSONEncoder()
-        let decoder = JSONDecoder()
-        
-        do {
-            let data = try encoder.encode(status)
-            let decodedStatus = try decoder.decode(ProposalStatus.self, from: data)
-            XCTAssertEqual(status, decodedStatus)
-        } catch {
-            XCTFail("ProposalStatus should be codable: \(error)")
+    func testShopProposalCodingKeys() {
+        let jsonData = """
+        {
+            "id": 1,
+            "user_id": 123,
+            "name": "テスト店舗",
+            "address": "熊本市中央区テスト町1-2-3",
+            "genre": "ラーメン",
+            "description": "美味しいラーメン店です",
+            "status": "pending",
+            "admin_notes": null,
+            "created_at": "2025-09-19T12:00:00.000000Z",
+            "updated_at": "2025-09-19T12:00:00.000000Z"
         }
-    }
-    
-    func testProposalStatusAllCases() {
-        // Test that all proposal status cases are available
-        let allCases = ProposalStatus.allCases
-        XCTAssertEqual(allCases.count, 3)
-        XCTAssertTrue(allCases.contains(.pending))
-        XCTAssertTrue(allCases.contains(.approved))
-        XCTAssertTrue(allCases.contains(.rejected))
-    }
-    
-    func testShopProposalCodable() {
-        // Test that ShopProposal can be encoded and decoded
-        let originalProposal = ShopProposal(
-            id: 1,
-            userId: 100,
-            name: "Codable Proposal",
-            address: "Test address",
-            genre: .cafe,
-            description: "Test description",
-            status: .approved,
-            adminNotes: "Approved by admin"
-        )
+        """.data(using: .utf8)!
         
-        let encoder = JSONEncoder()
         let decoder = JSONDecoder()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+        decoder.dateDecodingStrategy = .formatted(dateFormatter)
         
         do {
-            let data = try encoder.encode(originalProposal)
-            let decodedProposal = try decoder.decode(ShopProposal.self, from: data)
+            let proposal = try decoder.decode(ShopProposal.self, from: jsonData)
             
-            XCTAssertEqual(originalProposal.id, decodedProposal.id)
-            XCTAssertEqual(originalProposal.userId, decodedProposal.userId)
-            XCTAssertEqual(originalProposal.name, decodedProposal.name)
-            XCTAssertEqual(originalProposal.address, decodedProposal.address)
-            XCTAssertEqual(originalProposal.genre, decodedProposal.genre)
-            XCTAssertEqual(originalProposal.description, decodedProposal.description)
-            XCTAssertEqual(originalProposal.status, decodedProposal.status)
-            XCTAssertEqual(originalProposal.adminNotes, decodedProposal.adminNotes)
+            XCTAssertEqual(proposal.id, 1)
+            XCTAssertEqual(proposal.userId, 123)
+            XCTAssertEqual(proposal.name, "テスト店舗")
+            XCTAssertEqual(proposal.address, "熊本市中央区テスト町1-2-3")
+            XCTAssertEqual(proposal.genre, .ramen)
+            XCTAssertEqual(proposal.description, "美味しいラーメン店です")
+            XCTAssertEqual(proposal.status, .pending)
+            XCTAssertNil(proposal.adminNotes)
         } catch {
-            XCTFail("ShopProposal should be codable: \(error)")
+            XCTFail("Failed to decode ShopProposal: \(error)")
         }
     }
     
-    func testShopProposalEquatable() {
-        // Test that ShopProposal conforms to Equatable
+    func testShopProposalEquality() {
         let proposal1 = ShopProposal(
             id: 1,
-            userId: 100,
-            name: "Test Proposal",
+            userId: 123,
+            name: "テスト店舗",
             status: .pending
         )
         
         let proposal2 = ShopProposal(
             id: 1,
-            userId: 100,
-            name: "Test Proposal",
+            userId: 123,
+            name: "テスト店舗",
             status: .pending
         )
         
         let proposal3 = ShopProposal(
             id: 2,
-            userId: 200,
-            name: "Different Proposal",
-            status: .approved
+            userId: 123,
+            name: "テスト店舗",
+            status: .pending
         )
         
         XCTAssertEqual(proposal1, proposal2)

@@ -419,4 +419,209 @@ class ShopAPIService {
             maxRetries: 3
         )
     }
+    
+    // MARK: - Shop Proposal API Methods
+    
+    /// Submit a new shop proposal
+    func submitShopProposal(name: String, address: String?, genre: ShopGenre?, description: String?) async throws -> ShopProposal {
+        let endpoint = "\(baseURL)/shop-proposals"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw ShopAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        // Request body
+        let requestBody: [String: Any?] = [
+            "name": name,
+            "address": address,
+            "genre": genre?.rawValue,
+            "description": description
+        ]
+        
+        // Remove nil values
+        let cleanedBody = requestBody.compactMapValues { $0 }
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: cleanedBody)
+        } catch {
+            throw APIError.encodingError(error)
+        }
+        
+        print("📡 POST リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        print("📡 ボディ: \(cleanedBody)")
+        
+        let decoder = APIHelper.makeDecoder()
+        
+        do {
+            let (data, response) = try await APISession.shared.session.data(for: request)
+            let validatedData = try handleAPIResponse(data: data, response: response)
+            
+            // Parse the response which includes both data and message
+            if let json = try JSONSerialization.jsonObject(with: validatedData) as? [String: Any],
+               let proposalData = json["data"] as? [String: Any] {
+                let proposalJsonData = try JSONSerialization.data(withJSONObject: proposalData)
+                return try decoder.decode(ShopProposal.self, from: proposalJsonData)
+            } else {
+                // Fallback to direct decoding
+                return try decoder.decode(ShopProposal.self, from: validatedData)
+            }
+        } catch {
+            await errorManager.handleError(error, context: "Shop proposal submission failed")
+            throw error
+        }
+    }
+    
+    /// Fetch user's shop proposals
+    func fetchShopProposals(page: Int = 1) async throws -> [ShopProposal] {
+        let endpoint = "\(baseURL)/shop-proposals"
+        var urlComponents = URLComponents(string: endpoint)!
+        urlComponents.queryItems = [
+            URLQueryItem(name: "page", value: String(page))
+        ]
+        
+        guard let url = urlComponents.url else {
+            print("🚨 無効なURL: \(urlComponents)")
+            throw ShopAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        print("📡 GET リクエスト: \(url.absoluteString)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        let decoder = APIHelper.makeDecoder()
+        
+        return try await performRequestWithRetry(
+            request: request,
+            decoder: decoder,
+            type: [ShopProposal].self,
+            maxRetries: 3
+        )
+    }
+    
+    /// Get proposal status for user feedback
+    func fetchProposalStatus() async throws -> ProposalStatusResponse {
+        let endpoint = "\(baseURL)/shop-proposals-status"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw ShopAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        print("📡 GET リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        let decoder = APIHelper.makeDecoder()
+        
+        return try await performRequestWithRetry(
+            request: request,
+            decoder: decoder,
+            type: ProposalStatusResponse.self,
+            maxRetries: 3
+        )
+    }
+    
+    /// Update a shop proposal (only if pending)
+    func updateShopProposal(id: Int, name: String, address: String?, genre: ShopGenre?, description: String?) async throws -> ShopProposal {
+        let endpoint = "\(baseURL)/shop-proposals/\(id)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw ShopAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        // Request body
+        let requestBody: [String: Any?] = [
+            "name": name,
+            "address": address,
+            "genre": genre?.rawValue,
+            "description": description
+        ]
+        
+        // Remove nil values
+        let cleanedBody = requestBody.compactMapValues { $0 }
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: cleanedBody)
+        } catch {
+            throw APIError.encodingError(error)
+        }
+        
+        print("📡 PUT リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        print("📡 ボディ: \(cleanedBody)")
+        
+        let decoder = APIHelper.makeDecoder()
+        
+        return try await performRequestWithRetry(
+            request: request,
+            decoder: decoder,
+            type: ShopProposal.self,
+            maxRetries: 3
+        )
+    }
+    
+    /// Delete a shop proposal (only if pending)
+    func deleteShopProposal(id: Int) async throws {
+        let endpoint = "\(baseURL)/shop-proposals/\(id)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw ShopAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        print("📡 DELETE リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        do {
+            let (data, response) = try await APISession.shared.session.data(for: request)
+            _ = try handleAPIResponse(data: data, response: response)
+        } catch {
+            await errorManager.handleError(error, context: "Shop proposal deletion failed")
+            throw error
+        }
+    }
 }
