@@ -359,6 +359,8 @@ struct SearchView: View {
         let shop: Shop
         let onTap: () -> Void
         
+        @StateObject private var locationManager = LocationManager.shared
+        
         var body: some View {
             HStack(spacing: 12) {
                 // お店画像
@@ -374,11 +376,25 @@ struct SearchView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    // お店名
-                    Text(shop.name)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
+                    // お店名と距離
+                    HStack {
+                        Text(shop.name)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                        
+                        Spacer()
+                        
+                        if let distance = locationManager.distanceFromUser(to: shop) {
+                            Text(distance)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(4)
+                        }
+                    }
                     
                     // ジャンル
                     if let genre = shop.genre {
@@ -401,8 +417,6 @@ struct SearchView: View {
                     
                     Spacer()
                 }
-                
-                Spacer()
                 
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)

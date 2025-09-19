@@ -1,6 +1,7 @@
 import Foundation
 import CoreLocation
 import SwiftUI
+import Combine
 
 @MainActor
 class ShopListViewModel: ObservableObject {
@@ -10,21 +11,29 @@ class ShopListViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var selectedGenres: Set<ShopGenre> = []
     @Published var showingMap = false
-    @Published var userLocation: CLLocation?
     
     private let shopAPIService = ShopAPIService.shared
-    private let locationManager = CLLocationManager()
-    private var locationDelegate: LocationDelegate?
+    private let locationManager = LocationManager.shared
+    private var cancellables = Set<AnyCancellable>()
     
-    init() {
-        setupLocationManager()
+    // Computed property to access user location from LocationManager
+    var userLocation: CLLocation? {
+        return locationManager.userLocation
     }
     
-    private func setupLocationManager() {
-        locationDelegate = LocationDelegate(viewModel: self)
-        locationManager.delegate = locationDelegate
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
+    init() {
+        // Request location permission on initialization
+        locationManager.requestLocationPermission()
+        
+        // Observe location updates and reload shops when location is available
+        locationManager.$userLocation
+            .compactMap { $0 }
+            .sink { [weak self] _ in
+                Task { @MainActor in
+                    await self?.loadShops()
+                }
+            }
+            .store(in: &cancellables)
     }
     
     func loadShops() async {
@@ -85,60 +94,11 @@ class ShopListViewModel: ObservableObject {
     }
     
     func requestLocationPermission() {
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
+        locationManager.requestLocationPermission()
     }
     
     func distanceFromUser(to shop: Shop) -> String? {
-        guard let userLocation = userLocation,
-              let shopLat = shop.latitude,
-              let shopLng = shop.longitude else {
-            return nil
-        }
-        
-        let shopLocation = CLLocation(latitude: shopLat, longitude: shopLng)
-        let distance = userLocation.distance(from: shopLocation)
-        
-        if distance < 1000 {
-            return String(format: "%.0fm", distance)
-        } else {
-            return String(format: "%.1fkm", distance / 1000)
-        }
+        return locationManager.distanceFromUser(to: shop)
     }
 }
 
-// Location Manager Delegate
-class LocationDelegate: NSObject, CLLocationManagerDelegate {
-    weak var viewModel: ShopListViewModel?
-    
-    init(viewModel: ShopListViewModel) {
-        self.viewModel = viewModel
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        
-        Task { @MainActor in
-            viewModel?.userLocation = location
-            manager.stopUpdatingLocation()
-            await viewModel?.loadShops()
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("🚨 位置情報の取得に失敗: \(error)")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
-        case .authorizedWhenInUse, .authorizedAlways:
-            manager.startUpdatingLocation()
-        case .denied, .restricted:
-            print("🚨 位置情報の許可が拒否されました")
-        case .notDetermined:
-            manager.requestWhenInUseAuthorization()
-        @unknown default:
-            break
-        }
-    }
-}

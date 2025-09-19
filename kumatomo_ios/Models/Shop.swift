@@ -55,7 +55,7 @@ extension Shop {
         return CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
     
-    /// Calculates distance from user location to this shop
+    /// Calculates distance from user location to this shop using LocationManager
     func distanceFromUser(_ userLocation: CLLocation?) -> String? {
         guard let userLocation = userLocation,
               let coordinate = coordinate else { return nil }
@@ -63,10 +63,12 @@ extension Shop {
         let shopLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         let distance = userLocation.distance(from: shopLocation)
         
-        if distance < 1000 {
-            return String(format: "%.0fm", distance)
-        } else {
-            return String(format: "%.1fkm", distance / 1000)
-        }
+        return LocationManager.formatDistance(distance)
+    }
+    
+    /// Calculates distance from current user location using LocationManager
+    @MainActor
+    var distanceFromCurrentUser: String? {
+        return LocationManager.shared.distanceFromUser(to: self)
     }
 }

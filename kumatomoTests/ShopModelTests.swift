@@ -75,7 +75,7 @@ final class ShopModelTests: XCTestCase {
     }
     
     func testDistanceCalculation() {
-        // Test distance calculation
+        // Test distance calculation with user location parameter
         let shop = Shop(
             name: "Distance Test Shop",
             latitude: 35.6812,
@@ -104,6 +104,36 @@ final class ShopModelTests: XCTestCase {
         let shopNoCoords = Shop(name: "No Coords Shop")
         let noDistanceNoCoords = shopNoCoords.distanceFromUser(userLocation)
         XCTAssertNil(noDistanceNoCoords)
+    }
+    
+    @MainActor
+    func testDistanceFromCurrentUser() {
+        // Test distance calculation using LocationManager
+        let shop = Shop(
+            name: "Current User Distance Test Shop",
+            latitude: 35.6812,
+            longitude: 139.7671
+        )
+        
+        // Set up LocationManager with mock user location
+        let locationManager = LocationManager.shared
+        locationManager.userLocation = CLLocation(latitude: 35.6822, longitude: 139.7671)
+        
+        // Test distance from current user
+        let distance = shop.distanceFromCurrentUser
+        XCTAssertNotNil(distance, "Distance should not be nil when LocationManager has user location")
+        XCTAssertTrue(distance!.hasSuffix("m") || distance!.hasSuffix("km"), "Distance should have proper unit")
+        
+        // Test with no user location in LocationManager
+        locationManager.userLocation = nil
+        let noDistance = shop.distanceFromCurrentUser
+        XCTAssertNil(noDistance, "Distance should be nil when LocationManager has no user location")
+        
+        // Test shop without coordinates
+        locationManager.userLocation = CLLocation(latitude: 35.6822, longitude: 139.7671)
+        let shopNoCoords = Shop(name: "No Coords Shop")
+        let noDistanceNoCoords = shopNoCoords.distanceFromCurrentUser
+        XCTAssertNil(noDistanceNoCoords, "Distance should be nil when shop has no coordinates")
     }
     
     func testShopCodable() {
