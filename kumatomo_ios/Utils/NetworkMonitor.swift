@@ -347,4 +347,255 @@ extension NetworkMonitor {
         
         return delay + jitter
     }
+    
+    // MARK: - Enhanced Network Diagnostics
+    
+    func performNetworkDiagnostics() async -> NetworkDiagnostics {
+        let startTime = Date()
+        
+        // Test basic connectivity
+        let connectivityResult = await testConnectivity()
+        
+        // Test DNS resolution
+        let dnsResult = await testDNSResolution()
+        
+        // Test server reachability
+        let serverResult = await testServerReachability()
+        
+        let endTime = Date()
+        let totalTime = endTime.timeIntervalSince(startTime)
+        
+        return NetworkDiagnostics(
+            isConnected: isConnected,
+            connectionType: connectionType,
+            connectionQuality: connectionQuality,
+            isExpensive: isExpensive,
+            isConstrained: isConstrained,
+            connectivityTest: connectivityResult,
+            dnsTest: dnsResult,
+            serverTest: serverResult,
+            totalDiagnosticTime: totalTime,
+            timestamp: Date()
+        )
+    }
+    
+    private func testConnectivity() async -> DiagnosticResult {
+        guard isConnected else {
+            return DiagnosticResult(
+                success: false,
+                message: "デバイスがネットワークに接続されていません",
+                responseTime: 0,
+                error: "No network connection"
+            )
+        }
+        
+        let startTime = Date()
+        
+        do {
+            let url = URL(string: "https://www.google.com")!
+            let request = URLRequest(url: url, timeoutInterval: 5.0)
+            let (_, response) = try await URLSession.shared.data(for: request)
+            
+            let responseTime = Date().timeIntervalSince(startTime)
+            
+            if let httpResponse = response as? HTTPURLResponse,
+               httpResponse.statusCode == 200 {
+                return DiagnosticResult(
+                    success: true,
+                    message: "インターネット接続は正常です",
+                    responseTime: responseTime,
+                    error: nil
+                )
+            } else {
+                return DiagnosticResult(
+                    success: false,
+                    message: "インターネット接続に問題があります",
+                    responseTime: responseTime,
+                    error: "Invalid response"
+                )
+            }
+        } catch {
+            let responseTime = Date().timeIntervalSince(startTime)
+            return DiagnosticResult(
+                success: false,
+                message: "インターネット接続テストに失敗しました",
+                responseTime: responseTime,
+                error: error.localizedDescription
+            )
+        }
+    }
+    
+    private func testDNSResolution() async -> DiagnosticResult {
+        let startTime = Date()
+        
+        do {
+            let host = "api.example.com" // Replace with actual API host
+            let url = URL(string: "https://\(host)")!
+            let request = URLRequest(url: url, timeoutInterval: 3.0)
+            
+            // Just test DNS resolution, don't need full request
+            _ = try await URLSession.shared.data(for: request)
+            
+            let responseTime = Date().timeIntervalSince(startTime)
+            return DiagnosticResult(
+                success: true,
+                message: "DNS解決は正常です",
+                responseTime: responseTime,
+                error: nil
+            )
+        } catch {
+            let responseTime = Date().timeIntervalSince(startTime)
+            return DiagnosticResult(
+                success: false,
+                message: "DNS解決に失敗しました",
+                responseTime: responseTime,
+                error: error.localizedDescription
+            )
+        }
+    }
+    
+    private func testServerReachability() async -> DiagnosticResult {
+        let startTime = Date()
+        
+        do {
+            // Test API server health endpoint
+            let baseURL = APIConfig.shared.baseURLString
+            let healthURL = URL(string: "\(baseURL)/health")!
+            let request = URLRequest(url: healthURL, timeoutInterval: 10.0)
+            
+            let (_, response) = try await URLSession.shared.data(for: request)
+            let responseTime = Date().timeIntervalSince(startTime)
+            
+            if let httpResponse = response as? HTTPURLResponse,
+               200...299 ~= httpResponse.statusCode {
+                return DiagnosticResult(
+                    success: true,
+                    message: "APIサーバーは正常です",
+                    responseTime: responseTime,
+                    error: nil
+                )
+            } else {
+                return DiagnosticResult(
+                    success: false,
+                    message: "APIサーバーに問題があります",
+                    responseTime: responseTime,
+                    error: "Server returned error status"
+                )
+            }
+        } catch {
+            let responseTime = Date().timeIntervalSince(startTime)
+            return DiagnosticResult(
+                success: false,
+                message: "APIサーバーに接続できません",
+                responseTime: responseTime,
+                error: error.localizedDescription
+            )
+        }
+    }
+}
+
+// MARK: - Network Diagnostics Types
+
+struct NetworkDiagnostics {
+    let isConnected: Bool
+    let connectionType: NetworkMonitor.ConnectionType
+    let connectionQuality: NetworkMonitor.ConnectionQuality
+    let isExpensive: Bool
+    let isConstrained: Bool
+    let connectivityTest: DiagnosticResult
+    let dnsTest: DiagnosticResult
+    let serverTest: DiagnosticResult
+    let totalDiagnosticTime: TimeInterval
+    let timestamp: Date
+    
+    var overallHealth: NetworkHealth {
+        if !isConnected {
+            return .offline
+        }
+        
+        let allTestsPassed = connectivityTest.success && dnsTest.success && serverTest.success
+        
+        if allTestsPassed {
+            return connectionQuality == .excellent ? .excellent : .good
+        } else if connectivityTest.success {
+            return .degraded
+        } else {
+            return .poor
+        }
+    }
+    
+    var recommendations: [String] {
+        var suggestions: [String] = []
+        
+        if !isConnected {
+            suggestions.append("ネットワーク接続を確認してください")
+        }
+        
+        if isExpensive {
+            suggestions.append("従量制課金接続を使用中です。データ使用量にご注意ください")
+        }
+        
+        if isConstrained {
+            suggestions.append("制限された接続を使用中です。一部機能が制限される場合があります")
+        }
+        
+        if !connectivityTest.success {
+            suggestions.append("インターネット接続に問題があります")
+        }
+        
+        if !dnsTest.success {
+            suggestions.append("DNS設定を確認してください")
+        }
+        
+        if !serverTest.success {
+            suggestions.append("APIサーバーが利用できません。しばらく時間をおいてから再試行してください")
+        }
+        
+        return suggestions
+    }
+}
+
+struct DiagnosticResult {
+    let success: Bool
+    let message: String
+    let responseTime: TimeInterval
+    let error: String?
+}
+
+enum NetworkHealth {
+    case excellent
+    case good
+    case degraded
+    case poor
+    case offline
+    
+    var displayName: String {
+        switch self {
+        case .excellent:
+            return "優秀"
+        case .good:
+            return "良好"
+        case .degraded:
+            return "低下"
+        case .poor:
+            return "不良"
+        case .offline:
+            return "オフライン"
+        }
+    }
+    
+    var color: String {
+        switch self {
+        case .excellent:
+            return "green"
+        case .good:
+            return "blue"
+        case .degraded:
+            return "orange"
+        case .poor:
+            return "red"
+        case .offline:
+            return "gray"
+        }
+    }
 }

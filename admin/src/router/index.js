@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Dashboard from '../pages/Dashboard.vue'
 import ShopList from '../pages/ShopList.vue'
 import ShopForm from '../pages/ShopForm.vue'
+import ProposalReview from '../pages/ProposalReview.vue'
 
 const routes = [
     {
@@ -28,6 +29,11 @@ const routes = [
         name: 'ShopEdit',
         component: ShopForm,
         props: true
+    },
+    {
+        path: '/proposals',
+        name: 'ProposalReview',
+        component: ProposalReview
     }
 ]
 

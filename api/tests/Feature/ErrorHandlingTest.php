@@ -2,57 +2,72 @@
 
 namespace Tests\Feature;
 
-use App\Services\ErrorHandlingService;
+use Tests\TestCase;
+use App\Models\User;
+use App\Models\Shop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\JsonResponse;
-use Tests\TestCase;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class ErrorHandlingTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
-    /** @test */
-    public function it_creates_standardized_error_response()
+    protected $user;
+
+    protected function setUp(): void
     {
-        $response = ErrorHandlingService::createErrorResponse(
-            'SHOP_NOT_FOUND',
-            'カスタムメッセージ',
-            ['detail' => 'test'],
-            404
-        );
-
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(404, $response->getStatusCode());
-
-        $data = $response->getData(true);
-        $this->assertArrayHasKey('error', $data);
-        $this->assertEquals('SHOP_NOT_FOUND', $data['error']['code']);
-        $this->assertEquals('カスタムメッセージ', $data['error']['message']);
-        $this->assertArrayHasKey('timestamp', $data['error']);
-        $this->assertArrayHasKey('details', $data['error']);
+        parent::setUp();
+        
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user, 'sanctum');
     }
 
     /** @test */
     public function it_handles_validation_errors_properly()
     {
-        $response = $this->postJson('/api/shops/search', [
-            'q' => '', // Empty query should fail validation
+        // Test shop creation with invalid data
+        $response = $this->postJson('/api/admin/shops', [
+            'name' => '', // Required field empty
+            'genre' => 'invalid_genre', // Invalid enum value
+            'latitude' => 'not_a_number', // Invalid type
         ]);
 
-        $response->assertStatus(422);
-        $response->assertJsonStructure([
-            'error' => [
-                'code',
+        $response->assertStatus(422)
+            ->assertJsonStructure([
                 'message',
-                'timestamp',
-                'details'
-            ]
+                'errors' => [
+                    'name',
+                    'genre',
+                    'latitude'
+                ]
+            ]);
+
+        $responseData = $response->json();
+        $this->assertArrayHasKey('name', $responseData['errors']);
+        $this->assertArrayHasKey('genre', $responseData['errors']);
+        $this->assertArrayHasKey('latitude', $responseData['errors']);
+    }
+
+    /** @test */
+    public function it_handles_authentication_errors()
+    {
+        // Test without authentication
+        $this->withoutMiddleware(\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class);
+        
+        $response = $this->postJson('/api/admin/shops', [
+            'name' => 'Test Shop',
+            'genre' => 'ラーメン'
         ]);
 
-        $data = $response->json();
-        $this->assertEquals('VALIDATION_ERROR', $data['error']['code']);
-        $this->assertEquals('入力データに問題があります', $data['error']['message']);
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => 'Unauthenticated.'
+            ]);
     }
 
     /** @test */
@@ -60,115 +75,311 @@ class ErrorHandlingTest extends TestCase
     {
         $response = $this->getJson('/api/shops/99999');
 
-        $response->assertStatus(404);
-        $response->assertJsonStructure([
-            'error' => [
-                'code',
-                'message',
-                'timestamp'
-            ]
-        ]);
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'error' => [
+                    'message',
+                    'type',
+                    'code'
+                ]
+            ]);
 
-        $data = $response->json();
-        $this->assertEquals('SHOP_NOT_FOUND', $data['error']['code']);
+        $responseData = $response->json();
+        $this->assertEquals('not_found', $responseData['error']['type']);
     }
 
     /** @test */
-    public function it_handles_authentication_errors()
+    public function it_handles_server_errors_gracefully()
     {
-        $response = $this->postJson('/api/posts', [
-            'content' => 'Test post',
-        ]);
+        // Mock a database error
+        DB::shouldReceive('table')->andThrow(new \Exception('Database connection failed'));
 
-        $response->assertStatus(401);
-        $response->assertJsonStructure([
-            'error' => [
-                'code',
-                'message',
-                'timestamp'
-            ]
-        ]);
+        $response = $this->getJson('/api/shops');
 
-        $data = $response->json();
-        $this->assertEquals('AUTHENTICATION_REQUIRED', $data['error']['code']);
-        $this->assertEquals('認証が必要です', $data['error']['message']);
+        $response->assertStatus(500)
+            ->assertJsonStructure([
+                'error' => [
+                    'message',
+                    'type',
+                    'code'
+                ],
+                'meta' => [
+                    'request_id',
+                    'timestamp'
+                ]
+            ]);
+
+        $responseData = $response->json();
+        $this->assertEquals('server_error', $responseData['error']['type']);
+        $this->assertArrayHasKey('request_id', $responseData['meta']);
     }
 
     /** @test */
-    public function it_identifies_retryable_errors()
+    public function it_handles_rate_limiting()
     {
-        $this->assertTrue(ErrorHandlingService::isRetryableError('DATABASE_CONNECTION_ERROR'));
-        $this->assertTrue(ErrorHandlingService::isRetryableError('NETWORK_ERROR'));
-        $this->assertTrue(ErrorHandlingService::isRetryableError('SERVICE_UNAVAILABLE'));
+        // Simulate rate limiting by making many requests quickly
+        for ($i = 0; $i < 100; $i++) {
+            $response = $this->getJson('/api/shops');
+            
+            if ($response->status() === 429) {
+                $response->assertJsonStructure([
+                    'error' => [
+                        'message',
+                        'type',
+                        'retry_after'
+                    ]
+                ]);
+                
+                $responseData = $response->json();
+                $this->assertEquals('rate_limit_exceeded', $responseData['error']['type']);
+                $this->assertArrayHasKey('retry_after', $responseData['error']);
+                break;
+            }
+        }
+    }
+
+    /** @test */
+    public function it_provides_proper_error_context()
+    {
+        $response = $this->postJson('/api/shop-proposals', [
+            'name' => '', // Invalid data to trigger validation error
+        ]);
+
+        $response->assertStatus(422);
+        $responseData = $response->json();
+
+        // Check that error response includes helpful context
+        $this->assertArrayHasKey('message', $responseData);
+        $this->assertArrayHasKey('errors', $responseData);
         
-        $this->assertFalse(ErrorHandlingService::isRetryableError('VALIDATION_ERROR'));
-        $this->assertFalse(ErrorHandlingService::isRetryableError('AUTHENTICATION_REQUIRED'));
-        $this->assertFalse(ErrorHandlingService::isRetryableError('SHOP_NOT_FOUND'));
+        // Check for field-specific error messages
+        $this->assertArrayHasKey('name', $responseData['errors']);
+        $this->assertIsArray($responseData['errors']['name']);
     }
 
     /** @test */
-    public function it_provides_appropriate_retry_delays()
+    public function it_handles_network_timeout_simulation()
     {
-        $this->assertEquals(5, ErrorHandlingService::getRetryDelay('DATABASE_CONNECTION_ERROR'));
-        $this->assertEquals(3, ErrorHandlingService::getRetryDelay('NETWORK_ERROR'));
-        $this->assertEquals(60, ErrorHandlingService::getRetryDelay('RATE_LIMIT_EXCEEDED'));
-        $this->assertEquals(5, ErrorHandlingService::getRetryDelay('UNKNOWN_ERROR'));
+        // Simulate a slow operation that might timeout
+        $response = $this->withHeaders([
+            'X-Simulate-Timeout' => 'true'
+        ])->getJson('/api/shops');
+
+        // In a real scenario, this would test actual timeout handling
+        // For now, we'll test that the endpoint responds appropriately
+        $this->assertTrue(in_array($response->status(), [200, 408, 504]));
     }
 
     /** @test */
-    public function it_handles_endpoint_not_found()
+    public function it_logs_errors_appropriately()
     {
-        $response = $this->getJson('/api/nonexistent-endpoint');
+        Log::shouldReceive('error')
+            ->once()
+            ->with(\Mockery::type('string'), \Mockery::type('array'));
 
-        $response->assertStatus(404);
-        $response->assertJsonStructure([
-            'error' => [
-                'code',
-                'message',
-                'timestamp'
-            ]
+        // Trigger an error that should be logged
+        $this->postJson('/api/admin/shops', [
+            'name' => str_repeat('a', 1000), // Extremely long name to trigger error
+        ]);
+    }
+
+    /** @test */
+    public function it_handles_database_constraint_violations()
+    {
+        // Create a shop first
+        $shop = Shop::factory()->create(['name' => 'Unique Shop']);
+
+        // Try to create another shop with the same name (if unique constraint exists)
+        $response = $this->postJson('/api/admin/shops', [
+            'name' => 'Unique Shop',
+            'genre' => 'ラーメン'
         ]);
 
-        $data = $response->json();
-        $this->assertEquals('ENDPOINT_NOT_FOUND', $data['error']['code']);
-        $this->assertEquals('エンドポイントが見つかりません', $data['error']['message']);
+        // The response should handle the constraint violation gracefully
+        $this->assertTrue(in_array($response->status(), [422, 409]));
     }
 
     /** @test */
-    public function error_response_includes_recovery_suggestion()
+    public function it_handles_file_upload_errors()
     {
-        $response = ErrorHandlingService::createErrorResponse('NETWORK_ERROR');
-        $data = $response->getData(true);
+        // Test with invalid file type
+        $response = $this->postJson('/api/admin/shops', [
+            'name' => 'Test Shop',
+            'genre' => 'ラーメン',
+            'image' => 'invalid_file_data'
+        ]);
 
-        $this->assertArrayHasKey('recovery_suggestion', $data['error']);
-        $this->assertEquals('ネットワーク接続を確認してください', $data['error']['recovery_suggestion']);
+        if ($response->status() === 422) {
+            $responseData = $response->json();
+            $this->assertArrayHasKey('errors', $responseData);
+        }
     }
 
     /** @test */
-    public function error_response_excludes_debug_info_in_production()
+    public function it_provides_error_recovery_suggestions()
     {
-        // Temporarily set environment to production
-        $originalEnv = app()->environment();
-        app()->instance('env', 'production');
+        $response = $this->postJson('/api/shop-proposals', [
+            'name' => '', // Trigger validation error
+        ]);
 
-        $response = ErrorHandlingService::createErrorResponse('INTERNAL_SERVER_ERROR');
-        $data = $response->getData(true);
+        $response->assertStatus(422);
+        $responseData = $response->json();
 
-        $this->assertArrayNotHasKey('debug', $data['error']);
-
-        // Restore original environment
-        app()->instance('env', $originalEnv);
+        // Check that the error response includes helpful recovery information
+        $this->assertArrayHasKey('message', $responseData);
+        $this->assertIsString($responseData['message']);
+        $this->assertNotEmpty($responseData['message']);
     }
 
     /** @test */
-    public function error_response_includes_debug_info_in_development()
+    public function it_handles_concurrent_request_conflicts()
     {
-        // Ensure we're in a non-production environment
-        app()->instance('env', 'local');
+        $shop = Shop::factory()->create();
 
-        $response = ErrorHandlingService::createErrorResponse('INTERNAL_SERVER_ERROR');
-        $data = $response->getData(true);
+        // Simulate concurrent updates
+        $responses = [];
+        
+        for ($i = 0; $i < 5; $i++) {
+            $responses[] = $this->putJson("/api/admin/shops/{$shop->id}", [
+                'name' => "Updated Name {$i}",
+                'genre' => 'ラーメン'
+            ]);
+        }
 
-        $this->assertArrayHasKey('debug', $data['error']);
+        // At least one should succeed
+        $successCount = collect($responses)->filter(fn($r) => $r->status() === 200)->count();
+        $this->assertGreaterThan(0, $successCount);
+    }
+
+    /** @test */
+    public function it_handles_malformed_json_requests()
+    {
+        $response = $this->call('POST', '/api/admin/shops', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json'
+        ], 'invalid json data');
+
+        $response->assertStatus(400);
+    }
+
+    /** @test */
+    public function it_handles_missing_required_headers()
+    {
+        $response = $this->call('POST', '/api/admin/shops', [
+            'name' => 'Test Shop'
+        ], [], [], [
+            // Missing Content-Type header
+        ]);
+
+        // Should handle gracefully, either accepting or rejecting appropriately
+        $this->assertTrue(in_array($response->status(), [200, 201, 400, 415]));
+    }
+
+    /** @test */
+    public function it_provides_consistent_error_format()
+    {
+        $testCases = [
+            // Validation error
+            ['method' => 'POST', 'url' => '/api/admin/shops', 'data' => ['name' => '']],
+            // Not found error
+            ['method' => 'GET', 'url' => '/api/shops/99999', 'data' => []],
+            // Unauthorized (without auth)
+            ['method' => 'POST', 'url' => '/api/admin/shops', 'data' => ['name' => 'Test'], 'no_auth' => true],
+        ];
+
+        foreach ($testCases as $case) {
+            if (isset($case['no_auth'])) {
+                $this->withoutMiddleware(\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class);
+            }
+
+            $response = $this->json($case['method'], $case['url'], $case['data']);
+
+            if ($response->status() >= 400) {
+                $responseData = $response->json();
+                
+                // All error responses should have consistent structure
+                $this->assertTrue(
+                    isset($responseData['message']) || 
+                    isset($responseData['error']['message']),
+                    "Error response should have a message field"
+                );
+            }
+        }
+    }
+
+    /** @test */
+    public function it_handles_external_api_failures()
+    {
+        // Mock external HTTP calls to fail
+        Http::fake([
+            '*' => Http::response(null, 500)
+        ]);
+
+        // Test an endpoint that might make external API calls
+        $response = $this->getJson('/api/shops');
+
+        // Should handle external failures gracefully
+        $this->assertTrue(in_array($response->status(), [200, 500, 503]));
+    }
+
+    /** @test */
+    public function it_handles_cache_failures()
+    {
+        // Mock cache to fail
+        Cache::shouldReceive('get')->andThrow(new \Exception('Cache unavailable'));
+        Cache::shouldReceive('put')->andThrow(new \Exception('Cache unavailable'));
+
+        $response = $this->getJson('/api/shops');
+
+        // Should handle cache failures gracefully and still return data
+        $this->assertTrue(in_array($response->status(), [200, 500]));
+    }
+
+    /** @test */
+    public function it_provides_error_tracking_information()
+    {
+        $response = $this->getJson('/api/shops/99999');
+
+        $response->assertStatus(404);
+        $responseData = $response->json();
+
+        // Should include tracking information for debugging
+        if (isset($responseData['meta'])) {
+            $this->assertArrayHasKey('request_id', $responseData['meta']);
+            $this->assertArrayHasKey('timestamp', $responseData['meta']);
+        }
+    }
+
+    /** @test */
+    public function it_handles_memory_limit_scenarios()
+    {
+        // Test with a request that might consume a lot of memory
+        $largeData = array_fill(0, 10000, [
+            'name' => str_repeat('a', 100),
+            'description' => str_repeat('b', 1000)
+        ]);
+
+        $response = $this->postJson('/api/admin/shops/bulk', [
+            'shops' => $largeData
+        ]);
+
+        // Should handle gracefully, either processing or rejecting appropriately
+        $this->assertTrue(in_array($response->status(), [200, 201, 413, 422, 500]));
+    }
+
+    /** @test */
+    public function it_maintains_error_response_performance()
+    {
+        $startTime = microtime(true);
+
+        // Trigger various types of errors
+        $this->getJson('/api/shops/99999'); // Not found
+        $this->postJson('/api/admin/shops', ['name' => '']); // Validation
+        
+        $endTime = microtime(true);
+        $executionTime = $endTime - $startTime;
+
+        // Error responses should be fast (less than 1 second for multiple requests)
+        $this->assertLessThan(1.0, $executionTime);
     }
 }

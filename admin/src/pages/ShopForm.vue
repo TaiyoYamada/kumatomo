@@ -1,384 +1,344 @@
 <template>
-  <div class="shop-form">
-    <div class="page-header">
-      <h2 class="page-title">
+  <v-container class="shop-form pa-6">
+    <!-- Page Header -->
+    <v-card class="page-header pa-4 mb-6 d-flex justify-space-between align-center" elevation="1">
+      <h2 class="page-title text-h4 font-weight-bold ma-0">
         {{ isEdit ? 'お店編集' : '新規お店登録' }}
       </h2>
-      <router-link to="/shops" class="btn btn-secondary">
+      <v-btn to="/shops" color="grey" variant="outlined" prepend-icon="mdi-arrow-left">
         一覧に戻る
-      </router-link>
-    </div>
+      </v-btn>
+    </v-card>
 
     <!-- Loading State -->
-    <div v-if="loading" class="loading">
-      読み込み中...
-    </div>
+    <v-card v-if="loading" class="pa-8 text-center" elevation="1">
+      <v-progress-circular indeterminate color="primary" class="mb-4" />
+      <p class="text-body-1">読み込み中...</p>
+    </v-card>
 
     <!-- Error State -->
-    <div v-if="error" class="error">
+    <v-alert v-if="error" type="error" class="mb-6" closable @click:close="error = ''">
       {{ error }}
-    </div>
+    </v-alert>
 
     <!-- Form -->
-    <form v-if="!loading" @submit.prevent="handleSubmit" class="form">
-      <!-- Shop Name -->
-      <div class="form-group">
-        <label for="name" class="form-label required">お店名</label>
-        <input
-          id="name"
-          v-model="form.name"
-          type="text"
-          class="form-input"
-          :class="{ 'error': errors.name }"
-          placeholder="お店名を入力してください"
-          maxlength="100"
-          required
-        />
-        <div v-if="errors.name" class="field-error">{{ errors.name[0] }}</div>
-      </div>
+    <v-card v-if="!loading" class="pa-6" elevation="1">
+      <v-form ref="formRef" v-model="isFormValid" @submit.prevent="handleSubmit">
+        <v-row>
+          <!-- Shop Name -->
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.name" label="お店名" placeholder="お店名を入力してください" variant="outlined"
+              :rules="nameRules" :error-messages="getFieldError('name')" required counter="100" />
+          </v-col>
 
-      <!-- Description -->
-      <div class="form-group">
-        <label for="description" class="form-label">説明</label>
-        <textarea
-          id="description"
-          v-model="form.description"
-          class="form-textarea"
-          :class="{ 'error': errors.description }"
-          placeholder="お店の説明を入力してください"
-          rows="4"
-        ></textarea>
-        <div v-if="errors.description" class="field-error">{{ errors.description[0] }}</div>
-      </div>
+          <!-- Genre -->
+          <v-col cols="12" md="6">
+            <v-select v-model="form.genre" :items="genreOptions" label="ジャンル" placeholder="ジャンルを選択してください"
+              variant="outlined" :rules="genreRules" :error-messages="getFieldError('genre')" clearable />
+          </v-col>
 
-      <!-- Address -->
-      <div class="form-group">
-        <label for="address" class="form-label">住所</label>
-        <input
-          id="address"
-          v-model="form.address"
-          type="text"
-          class="form-input"
-          :class="{ 'error': errors.address }"
-          placeholder="住所を入力してください"
-          maxlength="255"
-        />
-        <div v-if="errors.address" class="field-error">{{ errors.address[0] }}</div>
-      </div>
+          <!-- Description -->
+          <v-col cols="12">
+            <v-textarea v-model="form.description" label="お店の説明" placeholder="お店の説明を入力してください" variant="outlined"
+              rows="4" :rules="descriptionRules" :error-messages="getFieldError('description')" counter="1000" />
+          </v-col>
 
-      <!-- Phone -->
-      <div class="form-group">
-        <label for="phone" class="form-label">電話番号</label>
-        <input
-          id="phone"
-          v-model="form.phone"
-          type="tel"
-          class="form-input"
-          :class="{ 'error': errors.phone }"
-          placeholder="電話番号を入力してください"
-          maxlength="20"
-        />
-        <div v-if="errors.phone" class="field-error">{{ errors.phone[0] }}</div>
-      </div>
+          <!-- Address -->
+          <v-col cols="12">
+            <v-text-field v-model="form.address" label="住所" placeholder="住所を入力してください" variant="outlined"
+              :rules="addressRules" :error-messages="getFieldError('address')" counter="255" />
+          </v-col>
 
-      <!-- Business Hours -->
-      <div class="form-group">
-        <label for="business_hours" class="form-label">営業時間</label>
-        <textarea
-          id="business_hours"
-          v-model="form.business_hours"
-          class="form-textarea"
-          :class="{ 'error': errors.business_hours }"
-          placeholder="営業時間を入力してください（例：10:00-22:00）"
-          rows="3"
-        ></textarea>
-        <div v-if="errors.business_hours" class="field-error">{{ errors.business_hours[0] }}</div>
-      </div>
+          <!-- Phone -->
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.phone" label="電話番号" placeholder="電話番号を入力してください" variant="outlined"
+              :rules="phoneRules" :error-messages="getFieldError('phone')" counter="20" />
+          </v-col>
 
-      <!-- Genre -->
-      <div class="form-group">
-        <label for="genre" class="form-label">ジャンル</label>
-        <select
-          id="genre"
-          v-model="form.genre"
-          class="form-select"
-          :class="{ 'error': errors.genre }"
-        >
-          <option value="">ジャンルを選択してください</option>
-          <option value="レストラン">レストラン</option>
-          <option value="カフェ">カフェ</option>
-          <option value="居酒屋">居酒屋</option>
-          <option value="ファストフード">ファストフード</option>
-          <option value="その他">その他</option>
-        </select>
-        <div v-if="errors.genre" class="field-error">{{ errors.genre[0] }}</div>
-      </div>
+          <!-- Business Hours -->
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.business_hours" label="営業時間" placeholder="例: 10:00-22:00" variant="outlined"
+              :rules="businessHoursRules" :error-messages="getFieldError('business_hours')" counter="100" />
+          </v-col>
 
-      <!-- Location -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="latitude" class="form-label">緯度</label>
-          <input
-            id="latitude"
-            v-model.number="form.latitude"
-            type="number"
-            step="0.00000001"
-            class="form-input"
-            :class="{ 'error': errors.latitude }"
-            placeholder="35.6762"
-          />
-          <div v-if="errors.latitude" class="field-error">{{ errors.latitude[0] }}</div>
-        </div>
+          <!-- Location -->
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.latitude" label="緯度" placeholder="例: 35.6762" variant="outlined" type="number"
+              step="any" :rules="latitudeRules" :error-messages="getFieldError('latitude')" />
+          </v-col>
 
-        <div class="form-group">
-          <label for="longitude" class="form-label">経度</label>
-          <input
-            id="longitude"
-            v-model.number="form.longitude"
-            type="number"
-            step="0.00000001"
-            class="form-input"
-            :class="{ 'error': errors.longitude }"
-            placeholder="139.6503"
-          />
-          <div v-if="errors.longitude" class="field-error">{{ errors.longitude[0] }}</div>
-        </div>
-      </div>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.longitude" label="経度" placeholder="例: 139.6503" variant="outlined" type="number"
+              step="any" :rules="longitudeRules" :error-messages="getFieldError('longitude')" />
+          </v-col>
 
-      <!-- Image Upload -->
-      <div class="form-group">
-        <label for="image" class="form-label">お店の画像</label>
-        
-        <!-- Current Image -->
-        <div v-if="form.image_url && !newImagePreview" class="current-image">
-          <img :src="form.image_url" :alt="form.name" class="image-preview" />
-          <button type="button" @click="removeCurrentImage" class="btn btn-sm btn-danger">
-            画像を削除
-          </button>
-        </div>
+          <!-- Try特典 Toggle -->
+          <v-col cols="12" md="6">
+            <v-switch v-model="form.has_try_benefit" label="Try特典あり" color="primary"
+              :error-messages="getFieldError('has_try_benefit')" hide-details="auto" />
+            <div class="text-caption text-medium-emphasis mt-1">
+              お客様がTry特典を利用できる場合はオンにしてください
+            </div>
+          </v-col>
 
-        <!-- New Image Preview -->
-        <div v-if="newImagePreview" class="image-preview-container">
-          <img :src="newImagePreview" alt="プレビュー" class="image-preview" />
-          <button type="button" @click="removeNewImage" class="btn btn-sm btn-danger">
-            画像を削除
-          </button>
-        </div>
+          <!-- Stamp Count -->
+          <v-col cols="12" md="6">
+            <v-text-field v-model.number="form.stamp_count" label="スタンプ数" placeholder="0" variant="outlined"
+              type="number" min="0" :rules="stampCountRules" :error-messages="getFieldError('stamp_count')" />
+          </v-col>
 
-        <!-- File Input -->
-        <input
-          id="image"
-          ref="imageInput"
-          type="file"
-          accept="image/*"
-          @change="handleImageChange"
-          class="form-file"
-          :class="{ 'error': errors.image }"
-        />
-        <div class="file-help">
-          JPEGまたはPNG形式の画像をアップロードしてください（最大5MB）
-        </div>
-        <div v-if="errors.image" class="field-error">{{ errors.image[0] }}</div>
-        <div v-if="imageUploading" class="upload-progress">
-          画像をアップロード中...
-        </div>
-      </div>
+          <!-- Image URL -->
+          <v-col cols="12">
+            <v-text-field v-model="form.image_url" label="画像URL" placeholder="店舗画像のURLを入力してください" variant="outlined"
+              :rules="imageUrlRules" :error-messages="getFieldError('image_url')" />
 
-      <!-- Submit Buttons -->
-      <div class="form-actions">
-        <router-link to="/shops" class="btn btn-secondary">
-          キャンセル
-        </router-link>
-        <button type="submit" class="btn btn-primary" :disabled="submitting">
-          {{ submitting ? '保存中...' : (isEdit ? '更新' : '登録') }}
-        </button>
-      </div>
-    </form>
-  </div>
+            <!-- Image Preview -->
+            <div v-if="form.image_url" class="mt-3">
+              <v-img :src="form.image_url" max-height="200" max-width="300" class="rounded" @error="handleImageError">
+                <template #placeholder>
+                  <div class="d-flex align-center justify-center fill-height">
+                    <v-progress-circular indeterminate />
+                  </div>
+                </template>
+              </v-img>
+            </div>
+          </v-col>
+
+          <!-- Approval Status (for editing) -->
+          <v-col v-if="isEdit" cols="12" md="6">
+            <v-switch v-model="form.is_approved" label="承認済み" color="success"
+              :error-messages="getFieldError('is_approved')" hide-details="auto" />
+            <div class="text-caption text-medium-emphasis mt-1">
+              お店を公開する場合はオンにしてください
+            </div>
+          </v-col>
+        </v-row>
+
+        <!-- Submit Buttons -->
+        <v-card-actions class="px-0 pt-6">
+          <v-spacer />
+          <v-btn to="/shops" variant="outlined" color="grey" :disabled="submitting">
+            キャンセル
+          </v-btn>
+          <v-btn type="submit" color="primary" :loading="submitting" :disabled="!isFormValid">
+            {{ isEdit ? '更新' : '登録' }}
+          </v-btn>
+        </v-card-actions>
+      </v-form>
+    </v-card>
+  </v-container>
 </template>
 
-<script setup>
-import { ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { shopService } from '../services/shopService.js'
-import { handleApiError } from '../utils/errorHandler.js'
+import { shopService } from '@/services/shopService'
+import { ShopGenre, getGenreOptions, type Shop } from '@/types/shop'
+import type { ShopFormData } from '@/types/api'
+
+interface Props {
+  id?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  id: undefined
+})
 
 const router = useRouter()
 const route = useRoute()
 
-// Props
-const props = defineProps({
-  id: String
-})
-
-// Reactive data
+// Form state
+const formRef = ref()
+const isFormValid = ref(false)
 const loading = ref(false)
 const submitting = ref(false)
-const imageUploading = ref(false)
 const error = ref('')
-const errors = ref({})
-const newImageFile = ref(null)
-const newImagePreview = ref('')
-const imageInput = ref(null)
+const validationErrors = ref<Record<string, string[]>>({})
 
-const form = ref({
+// Form data with proper typing
+const form = ref<ShopFormData & { is_approved?: boolean }>({
   name: '',
   description: '',
   address: '',
   phone: '',
   business_hours: '',
-  genre: '',
-  latitude: null,
-  longitude: null,
-  image_url: ''
+  genre: undefined,
+  latitude: undefined,
+  longitude: undefined,
+  image_url: '',
+  has_try_benefit: false,
+  stamp_count: 0,
+  is_approved: true
 })
 
 // Computed
 const isEdit = computed(() => !!props.id)
 
+// Genre options from enum
+const genreOptions = computed(() => getGenreOptions())
+
+// Validation rules
+const nameRules = [
+  (v: string) => !!v || 'お店名は必須です',
+  (v: string) => (v && v.length >= 2) || 'お店名は2文字以上で入力してください',
+  (v: string) => (v && v.length <= 100) || 'お店名は100文字以内で入力してください'
+]
+
+const genreRules = [
+  (v: ShopGenre | undefined) => !!v || 'ジャンルは必須です'
+]
+
+const descriptionRules = [
+  (v: string) => !v || v.length <= 1000 || '説明は1000文字以内で入力してください'
+]
+
+const addressRules = [
+  (v: string) => !v || v.length <= 255 || '住所は255文字以内で入力してください'
+]
+
+const phoneRules = [
+  (v: string) => !v || /^[\d\-\(\)\+\s]+$/.test(v) || '正しい電話番号形式で入力してください',
+  (v: string) => !v || v.length <= 20 || '電話番号は20文字以内で入力してください'
+]
+
+const businessHoursRules = [
+  (v: string) => !v || v.length <= 100 || '営業時間は100文字以内で入力してください'
+]
+
+const latitudeRules = [
+  (v: number | undefined) => v === undefined || (v >= -90 && v <= 90) || '緯度は-90から90の間で入力してください'
+]
+
+const longitudeRules = [
+  (v: number | undefined) => v === undefined || (v >= -180 && v <= 180) || '経度は-180から180の間で入力してください'
+]
+
+const stampCountRules = [
+  (v: number) => v >= 0 || 'スタンプ数は0以上で入力してください',
+  (v: number) => Number.isInteger(v) || 'スタンプ数は整数で入力してください'
+]
+
+const imageUrlRules = [
+  (v: string) => !v || isValidUrl(v) || '正しいURL形式で入力してください'
+]
+
+// Helper functions
+const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url)
+    return true
+  } catch {
+    return false
+  }
+}
+
+const getFieldError = (field: string): string[] => {
+  return validationErrors.value[field] || []
+}
+
+const handleImageError = () => {
+  console.warn('Failed to load image:', form.value.image_url)
+}
+
 // Methods
-const fetchShop = async () => {
+const fetchShop = async (): Promise<void> => {
   if (!props.id) return
-  
+
   try {
     loading.value = true
     error.value = ''
-    
-    const response = await shopService.getShop(props.id)
-    
-    // Populate form with existing data
-    Object.keys(form.value).forEach(key => {
-      if (response.data[key] !== undefined) {
-        form.value[key] = response.data[key]
+    validationErrors.value = {}
+
+    const response = await shopService.getShop(Number(props.id))
+
+    if (response.data) {
+      // Populate form with existing data
+      form.value = {
+        name: response.data.name || '',
+        description: response.data.description || '',
+        address: response.data.address || '',
+        phone: response.data.phone || '',
+        business_hours: response.data.business_hours || '',
+        genre: response.data.genre || undefined,
+        latitude: response.data.latitude || undefined,
+        longitude: response.data.longitude || undefined,
+        image_url: response.data.image_url || '',
+        has_try_benefit: response.data.has_try_benefit || false,
+        stamp_count: response.data.stamp_count || 0,
+        is_approved: response.data.is_approved || false
       }
-    })
-  } catch (err) {
-    error.value = handleApiError(err, 'お店の取得に失敗しました')
+    }
+  } catch (err: any) {
+    error.value = err.message || 'お店の取得に失敗しました'
   } finally {
     loading.value = false
   }
 }
 
-const handleImageChange = (event) => {
-  const file = event.target.files[0]
-  if (!file) return
-
-  // Validate file type
-  if (!file.type.startsWith('image/')) {
-    errors.value.image = ['画像ファイルを選択してください']
-    return
+const resetForm = (): void => {
+  form.value = {
+    name: '',
+    description: '',
+    address: '',
+    phone: '',
+    business_hours: '',
+    genre: undefined,
+    latitude: undefined,
+    longitude: undefined,
+    image_url: '',
+    has_try_benefit: false,
+    stamp_count: 0,
+    is_approved: true
   }
+  error.value = ''
+  validationErrors.value = {}
 
-  // Validate file size (5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    errors.value.image = ['ファイルサイズは5MB以下にしてください']
-    return
-  }
-
-  newImageFile.value = file
-  errors.value.image = null
-
-  // Create preview
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    newImagePreview.value = e.target.result
-  }
-  reader.readAsDataURL(file)
+  nextTick(() => {
+    formRef.value?.resetValidation()
+  })
 }
 
-const removeCurrentImage = () => {
-  form.value.image_url = ''
-}
+const handleSubmit = async (): Promise<void> => {
+  if (!isFormValid.value) return
 
-const removeNewImage = () => {
-  newImageFile.value = null
-  newImagePreview.value = ''
-  if (imageInput.value) {
-    imageInput.value.value = ''
-  }
-}
-
-const uploadImage = async () => {
-  if (!newImageFile.value) return null
-
-  try {
-    imageUploading.value = true
-    const response = await shopService.uploadImage(newImageFile.value)
-    return response.image_url
-  } catch (err) {
-    throw new Error(handleApiError(err, '画像のアップロードに失敗しました'))
-  } finally {
-    imageUploading.value = false
-  }
-}
-
-const validateForm = () => {
-  errors.value = {}
-  
-  if (!form.value.name.trim()) {
-    errors.value.name = ['お店名は必須です']
-  }
-  
-  if (form.value.name.length > 100) {
-    errors.value.name = ['お店名は100文字以内で入力してください']
-  }
-  
-  if (form.value.address && form.value.address.length > 255) {
-    errors.value.address = ['住所は255文字以内で入力してください']
-  }
-  
-  if (form.value.phone && form.value.phone.length > 20) {
-    errors.value.phone = ['電話番号は20文字以内で入力してください']
-  }
-  
-  if (form.value.latitude && (form.value.latitude < -90 || form.value.latitude > 90)) {
-    errors.value.latitude = ['緯度は-90から90の間で入力してください']
-  }
-  
-  if (form.value.longitude && (form.value.longitude < -180 || form.value.longitude > 180)) {
-    errors.value.longitude = ['経度は-180から180の間で入力してください']
-  }
-  
-  return Object.keys(errors.value).length === 0
-}
-
-const handleSubmit = async () => {
-  if (!validateForm()) return
-  
   try {
     submitting.value = true
     error.value = ''
-    
-    // Upload new image if selected
-    if (newImageFile.value) {
-      const imageUrl = await uploadImage()
-      form.value.image_url = imageUrl
-    }
-    
+    validationErrors.value = {}
+
     // Prepare data for submission
-    const submitData = { ...form.value }
-    
-    // Convert empty strings to null for optional fields
-    Object.keys(submitData).forEach(key => {
-      if (submitData[key] === '') {
-        submitData[key] = null
-      }
-    })
-    
-    if (isEdit.value) {
-      await shopService.updateShop(props.id, submitData)
-    } else {
-      await shopService.createShop(submitData)
+    const submitData: ShopFormData = {
+      name: form.value.name,
+      description: form.value.description || undefined,
+      address: form.value.address || undefined,
+      phone: form.value.phone || undefined,
+      business_hours: form.value.business_hours || undefined,
+      genre: form.value.genre,
+      latitude: form.value.latitude,
+      longitude: form.value.longitude,
+      image_url: form.value.image_url || undefined,
+      has_try_benefit: form.value.has_try_benefit,
+      stamp_count: form.value.stamp_count
     }
-    
-    // Redirect to shop list
-    router.push('/shops')
-  } catch (err) {
+
+    let result: Shop | null = null
+
+    if (isEdit.value && props.id) {
+      result = await shopService.updateShop(Number(props.id), submitData)
+    } else {
+      result = await shopService.createShop(submitData)
+    }
+
+    if (result) {
+      // Redirect to shop list
+      router.push('/shops')
+    }
+  } catch (err: any) {
     if (err.response?.status === 422) {
       // Validation errors from server
-      errors.value = err.response.data.errors || {}
+      validationErrors.value = err.response.data.errors || {}
     } else {
-      error.value = handleApiError(err, isEdit.value ? 'お店の更新に失敗しました' : 'お店の登録に失敗しました')
+      error.value = err.message || (isEdit.value ? 'お店の更新に失敗しました' : 'お店の登録に失敗しました')
     }
   } finally {
     submitting.value = false
@@ -395,208 +355,28 @@ onMounted(() => {
 
 <style scoped>
 .shop-form {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  background-color: rgb(var(--v-theme-surface));
 }
 
-.page-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-}
-
-.loading,
-.error {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1rem;
-}
-
-.error {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-}
-
-.form {
-  max-width: 600px;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-row {
-  display: flex;
-  gap: 1rem;
-}
-
-.form-row .form-group {
-  flex: 1;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.form-label.required::after {
-  content: ' *';
-  color: #dc3545;
-}
-
-.form-input,
-.form-textarea,
-.form-select {
+.v-form {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  transition: border-color 0.2s;
 }
 
-.form-input:focus,
-.form-textarea:focus,
-.form-select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.form-input.error,
-.form-textarea.error,
-.form-select.error,
-.form-file.error {
-  border-color: #dc3545;
-}
-
-.form-file {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-
-.file-help {
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 0.25rem;
-}
-
-.field-error {
-  color: #dc3545;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-}
-
-.current-image,
-.image-preview-container {
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.image-preview {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-
-.upload-progress {
-  color: #007bff;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #eee;
-}
-
-/* Button Styles */
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #545b62;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
-}
-
-.btn-sm {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .form-row {
-    flex-direction: column;
+  .v-container {
+    padding: 16px;
   }
-  
-  .form-actions {
+
+  .page-header {
     flex-direction: column;
-  }
-  
-  .current-image,
-  .image-preview-container {
-    flex-direction: column;
-    align-items: flex-start;
+    gap: 16px;
+    align-items: stretch !important;
   }
 }
 </style>

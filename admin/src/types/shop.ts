@@ -65,6 +65,12 @@ export interface ShopProposal {
     created_at: string
     updated_at: string
     processing?: boolean // UI state for loading
+    user?: {
+        id: number
+        name: string
+        username: string
+        email: string
+    }
 }
 
 export enum ProposalStatus {

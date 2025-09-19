@@ -159,12 +159,23 @@ class ShopAPIService {
         let decoder = APIHelper.makeDecoder()
         
         // Use the enhanced retry mechanism
-        return try await performRequestWithRetry(
-            request: request,
-            decoder: decoder,
-            type: [Shop].self,
-            maxRetries: 3
-        )
+        do {
+            return try await performRequestWithRetry(
+                request: request,
+                decoder: decoder,
+                type: [Shop].self,
+                maxRetries: 3
+            )
+        } catch let apiError as APIError {
+            // Treat 404 on the list endpoint as "no shops" instead of a hard error
+            if case .notFound = apiError {
+                print("ℹ️ /shops returned 404 -> interpreting as empty list")
+                return []
+            }
+            throw apiError
+        } catch {
+            throw error
+        }
     }
     
     // お店詳細を取得する
