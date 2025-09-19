@@ -11,9 +11,12 @@ class ShopListViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var selectedGenres: Set<ShopGenre> = []
     @Published var showingMap = false
+    @Published var favoritesErrorMessage: String?
+    @Published var selectedShop: Shop?
     
     private let shopAPIService = ShopAPIService.shared
     private let locationManager = LocationManager.shared
+    private let favoritesManager = FavoritesManager.shared
     private var cancellables = Set<AnyCancellable>()
     
     // Computed property to access user location from LocationManager
@@ -34,6 +37,18 @@ class ShopListViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+        
+        // Observe favorites manager errors
+        favoritesManager.$errorMessage
+            .sink { [weak self] errorMessage in
+                self?.favoritesErrorMessage = errorMessage
+            }
+            .store(in: &cancellables)
+        
+        // Load initial data
+        Task {
+            await loadShops()
+        }
     }
     
     func loadShops() async {
@@ -99,6 +114,25 @@ class ShopListViewModel: ObservableObject {
     
     func distanceFromUser(to shop: Shop) -> String? {
         return locationManager.distanceFromUser(to: shop)
+    }
+    
+    func dismissFavoritesError() {
+        favoritesErrorMessage = nil
+        favoritesManager.errorMessage = nil
+    }
+    
+    func selectShopFromMap(_ shop: Shop) {
+        selectedShop = shop
+        
+        // If we're in list view, scroll to the selected shop
+        if !showingMap {
+            // This would require additional implementation in the list view
+            // to handle scrolling to a specific shop
+        }
+    }
+    
+    func clearSelection() {
+        selectedShop = nil
     }
 }
 

@@ -159,9 +159,11 @@ struct ShopDetailView: View {
                     Button("閉じる") {
                         dismiss()
                     }
-                    .foregroundColor(.orange)
+                    .foregroundColor(.primaryOrange)
+                    .accessibilityLabel("店舗詳細を閉じる")
                 }
             }
+            .interactiveDismissDisabled(false) // Allow swipe to dismiss
             .task {
                 await viewModel.loadPosts(for: shop.id)
             }

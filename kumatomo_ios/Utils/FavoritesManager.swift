@@ -125,8 +125,3 @@ class FavoritesManager: ObservableObject {
     }
 }
 
-// MARK: - FavoriteToggleResponse Model
-struct FavoriteToggleResponse: Codable {
-    let favorited: Bool
-    let message: String?
-}
