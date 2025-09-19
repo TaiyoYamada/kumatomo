@@ -351,4 +351,72 @@ class ShopAPIService {
             throw ShopAPIError.networkError(error)
         }
     }
+    
+    // MARK: - Favorites API Methods
+    
+    /// Toggle favorite status for a shop
+    func toggleFavorite(shopId: Int) async throws -> FavoriteToggleResponse {
+        let endpoint = "\(baseURL)/favorites/toggle/\(shopId)"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw ShopAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        print("📡 POST リクエスト: \(endpoint)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        let decoder = APIHelper.makeDecoder()
+        
+        return try await performRequestWithRetry(
+            request: request,
+            decoder: decoder,
+            type: FavoriteToggleResponse.self,
+            maxRetries: 3
+        )
+    }
+    
+    /// Fetch user's favorite shops
+    func fetchFavorites(page: Int = 1) async throws -> [Favorite] {
+        let endpoint = "\(baseURL)/favorites"
+        var urlComponents = URLComponents(string: endpoint)!
+        urlComponents.queryItems = [
+            URLQueryItem(name: "page", value: String(page))
+        ]
+        
+        guard let url = urlComponents.url else {
+            print("🚨 無効なURL: \(urlComponents)")
+            throw ShopAPIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        // 認証トークンを設定
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        print("📡 GET リクエスト: \(url.absoluteString)")
+        print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
+        
+        let decoder = APIHelper.makeDecoder()
+        
+        return try await performRequestWithRetry(
+            request: request,
+            decoder: decoder,
+            type: [Favorite].self,
+            maxRetries: 3
+        )
+    }
 }

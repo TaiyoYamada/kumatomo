@@ -1,0 +1,24 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/GenreFilterView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "ジャンルで絞り込み",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 14
+        }
+      },
+      {
+        "comment": "",
+        "key": "クリア",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 21
+        }
+      }
+    ]
+  },
+  "version": 1
+}

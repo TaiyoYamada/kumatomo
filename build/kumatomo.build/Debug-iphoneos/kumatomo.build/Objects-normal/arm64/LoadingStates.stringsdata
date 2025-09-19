@@ -1,0 +1,64 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/Components/LoadingStates.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "エラーが発生しました",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 187
+        }
+      },
+      {
+        "comment": "",
+        "key": "再試行",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 204
+        }
+      },
+      {
+        "comment": "",
+        "key": "ネットワークに接続できません",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 290
+        }
+      },
+      {
+        "comment": "",
+        "key": "インターネット接続を確認してください",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 295
+        }
+      },
+      {
+        "comment": "",
+        "key": "再試行",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 306
+        }
+      },
+      {
+        "comment": "",
+        "key": "追加の投稿を読み込み中",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 364
+        }
+      },
+      {
+        "comment": "",
+        "key": "読み込み中...",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 355
+        }
+      }
+    ]
+  },
+  "version": 1
+}

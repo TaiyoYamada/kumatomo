@@ -1,0 +1,40 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ErrorRecoveryManager.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "キャンセル",
+        "location": {
+          "startingColumn": 37,
+          "startingLine": 334
+        }
+      },
+      {
+        "comment": "",
+        "key": "復旧オプション",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 337
+        }
+      },
+      {
+        "comment": "",
+        "key": "以下の復旧方法を試すことができます",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 338
+        }
+      },
+      {
+        "comment": "",
+        "key": "復旧を試行",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 345
+        }
+      }
+    ]
+  },
+  "version": 1
+}

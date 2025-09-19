@@ -1,0 +1,32 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ImageEditSheet.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "完了",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 45
+        }
+      },
+      {
+        "comment": "",
+        "key": "写真から選択",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "削除",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 98
+        }
+      }
+    ]
+  },
+  "version": 1
+}

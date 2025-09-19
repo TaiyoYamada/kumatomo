@@ -1,0 +1,56 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/MyPage/UserProfileView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "プロフィール",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "読み込み中...",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 14
+        }
+      },
+      {
+        "comment": "",
+        "key": "ユーザーの投稿",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 54
+        }
+      },
+      {
+        "comment": "",
+        "key": "投稿一覧は開発中です",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 58
+        }
+      },
+      {
+        "comment": "",
+        "key": "エラーが発生しました",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "再試行",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 78
+        }
+      }
+    ]
+  },
+  "version": 1
+}

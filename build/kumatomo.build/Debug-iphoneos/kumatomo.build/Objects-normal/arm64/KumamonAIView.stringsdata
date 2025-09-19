@@ -1,0 +1,120 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/KumamonAI/KumamonAIView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "くまモンAI",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 16
+        }
+      },
+      {
+        "comment": "",
+        "key": "クリア",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 184
+        }
+      },
+      {
+        "comment": "",
+        "key": "チャットクリア",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 188
+        }
+      },
+      {
+        "comment": "",
+        "key": "すべてのメッセージを削除します",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 189
+        }
+      },
+      {
+        "comment": "",
+        "key": "メッセージを入力...",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 115
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld/2000",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 129
+        }
+      },
+      {
+        "comment": "",
+        "key": "くまモンAI",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 166
+        }
+      },
+      {
+        "comment": "",
+        "key": "何でも聞いてください！\nくまモンがお答えします。",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 170
+        }
+      },
+      {
+        "comment": "",
+        "key": "あなたのメッセージ: %@",
+        "location": {
+          "startingColumn": 37,
+          "startingLine": 233
+        }
+      },
+      {
+        "comment": "",
+        "key": "送信時刻: %@",
+        "location": {
+          "startingColumn": 37,
+          "startingLine": 239
+        }
+      },
+      {
+        "comment": "",
+        "key": "くまモンの返答: %@",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 262
+        }
+      },
+      {
+        "comment": "",
+        "key": "再試行",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 351
+        }
+      },
+      {
+        "comment": "",
+        "key": "AIサービスが利用できません",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 382
+        }
+      },
+      {
+        "comment": "",
+        "key": "再接続",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 388
+        }
+      }
+    ]
+  },
+  "version": 1
+}

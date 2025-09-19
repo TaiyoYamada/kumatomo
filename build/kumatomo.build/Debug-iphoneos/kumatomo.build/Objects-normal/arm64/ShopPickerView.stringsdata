@@ -1,0 +1,104 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopPickerView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "お店を選択",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 48
+        }
+      },
+      {
+        "comment": "",
+        "key": "キャンセル",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 52
+        }
+      },
+      {
+        "comment": "",
+        "key": "クリア",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 58
+        }
+      },
+      {
+        "comment": "",
+        "key": "お店名、住所、ジャンルで検索",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 96
+        }
+      },
+      {
+        "comment": "",
+        "key": "お店を読み込み中...",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 120
+        }
+      },
+      {
+        "comment": "",
+        "key": "お店が登録されていません",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 138
+        }
+      },
+      {
+        "comment": "",
+        "key": "検索結果が見つかりません",
+        "location": {
+          "startingColumn": 80,
+          "startingLine": 138
+        }
+      },
+      {
+        "comment": "",
+        "key": "管理者によってお店が登録されるまでお待ちください",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "別のキーワードで検索してみてください",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 144
+        }
+      },
+      {
+        "comment": "",
+        "key": "エラーが発生しました",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 273
+        }
+      },
+      {
+        "comment": "",
+        "key": "再試行",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 284
+        }
+      },
+      {
+        "comment": "",
+        "key": "閉じる",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 290
+        }
+      }
+    ]
+  },
+  "version": 1
+}

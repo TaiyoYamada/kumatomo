@@ -14,6 +14,7 @@ use App\Http\Controllers\AIController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MunicipalityController;
 
 // API動作確認用のテストルート
@@ -39,6 +40,9 @@ Route::get('/ai/health', [AIController::class, 'health']);
 
 // プロフィール作成（認証不要 - 新規ユーザー登録用）
 Route::post('/users', [UserController::class, 'store']);
+
+// Public favorite check endpoint (no auth required)
+Route::get('/favorites/check/{shop}', [FavoriteController::class, 'check']);
 
 // 認証が必要なAPI
 Route::middleware('auth:sanctum')->group(function () {
@@ -110,6 +114,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{postId}/bookmark', [BookmarkController::class, 'toggle']);
     Route::delete('/posts/{postId}/bookmark', [BookmarkController::class, 'destroy']);
     Route::get('/user/bookmarked-posts', [BookmarkController::class, 'bookmarkedPosts']);
+
+    // Favorite routes
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites/toggle/{shop}', [FavoriteController::class, 'toggle']);
+    Route::delete('/favorites/{favorite}', [FavoriteController::class, 'destroy']);
+    Route::get('/favorites/stats', [FavoriteController::class, 'stats']);
 
     // 画像配信（認証不要）
     Route::get('/images/{path}', [ImageController::class, 'show'])->where('path', '.*');

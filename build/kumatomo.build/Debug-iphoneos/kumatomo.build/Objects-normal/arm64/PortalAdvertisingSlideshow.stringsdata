@@ -1,0 +1,64 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalAdvertisingSlideshow.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "アセット: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 162
+        }
+      },
+      {
+        "comment": "",
+        "key": "TODO: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 167
+        }
+      },
+      {
+        "comment": "",
+        "key": "画像が見つかりません",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 157
+        }
+      },
+      {
+        "comment": "",
+        "key": "スライド %lld",
+        "location": {
+          "startingColumn": 71,
+          "startingLine": 157
+        }
+      },
+      {
+        "comment": "",
+        "key": "スライドショーが設定されていません",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 192
+        }
+      },
+      {
+        "comment": "",
+        "key": "画像を追加してください",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 196
+        }
+      },
+      {
+        "comment": "",
+        "key": "オフライン",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 211
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -12,21 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('shops', function (Blueprint $table) {
-            // Drop the existing genre column and recreate with enum constraint
-            $table->dropColumn('genre');
-        });
-
-        Schema::table('shops', function (Blueprint $table) {
-            // Add genre column with enum constraint
-            $genreValues = ShopGenre::values();
-            $enumString = "'" . implode("','", $genreValues) . "'";
-            
-            $table->enum('genre', $genreValues)->nullable()->after('business_hours');
-            
-            // Recreate the index
-            $table->index('genre', 'idx_genre');
-        });
+        // For SQLite compatibility, we'll just ensure the genre column exists
+        // The enum constraint will be handled at the application level
+        if (!Schema::hasColumn('shops', 'genre')) {
+            Schema::table('shops', function (Blueprint $table) {
+                $table->string('genre', 50)->nullable()->after('business_hours');
+                $table->index('genre', 'idx_genre');
+            });
+        }
     }
 
     /**

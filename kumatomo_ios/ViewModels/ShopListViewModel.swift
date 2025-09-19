@@ -5,18 +5,16 @@ import SwiftUI
 @MainActor
 class ShopListViewModel: ObservableObject {
     @Published var shops: [Shop] = []
+    @Published var filteredShops: [Shop] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
-    @Published var selectedGenre: String? = nil
+    @Published var selectedGenres: Set<ShopGenre> = []
     @Published var showingMap = false
     @Published var userLocation: CLLocation?
     
     private let shopAPIService = ShopAPIService.shared
     private let locationManager = CLLocationManager()
     private var locationDelegate: LocationDelegate?
-    
-    // ジャンル一覧（フィルタリング用）
-    let genres = ["すべて", "カフェ", "レストラン", "居酒屋", "ファストフード", "スイーツ", "その他"]
     
     init() {
         setupLocationManager()
@@ -34,16 +32,17 @@ class ShopListViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let genre = selectedGenre == "すべて" ? nil : selectedGenre
             let latitude = userLocation?.coordinate.latitude
             let longitude = userLocation?.coordinate.longitude
             
             shops = try await shopAPIService.fetchShops(
-                genre: genre,
+                genre: nil, // Load all shops, filter locally for multi-select
                 latitude: latitude,
                 longitude: longitude,
                 radius: 5000 // 5km radius
             )
+            
+            applyFilters()
         } catch {
             errorMessage = error.localizedDescription
             print("🚨 お店一覧の取得に失敗: \(error)")
@@ -56,10 +55,28 @@ class ShopListViewModel: ObservableObject {
         await loadShops()
     }
     
-    func selectGenre(_ genre: String) {
-        selectedGenre = genre
-        Task {
-            await loadShops()
+    func toggleGenre(_ genre: ShopGenre) {
+        if selectedGenres.contains(genre) {
+            selectedGenres.remove(genre)
+        } else {
+            selectedGenres.insert(genre)
+        }
+        applyFilters()
+    }
+    
+    func clearAllGenres() {
+        selectedGenres.removeAll()
+        applyFilters()
+    }
+    
+    func applyFilters() {
+        if selectedGenres.isEmpty {
+            filteredShops = shops
+        } else {
+            filteredShops = shops.filter { shop in
+                guard let shopGenre = shop.genre else { return false }
+                return selectedGenres.contains(shopGenre)
+            }
         }
     }
     

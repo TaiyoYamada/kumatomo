@@ -1,0 +1,1398 @@
+{
+  "" : {
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master.dia",
+    "emit-module-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master-emit-module.dia",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo-master.swiftdeps"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/App/AppDelegate.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/App/kumatomo.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/kumatomo~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/AppRouter/AppRouter.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppRouter.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppRouter.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppRouter.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppRouter.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppRouter.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppRouter.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppRouter.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AppRouter~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/AppRouter/RouterDestination.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RouterDestination~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/AppRouter/SheetDestination.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SheetDestination~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/CategoryType.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CategoryType~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/City.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/City.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/City.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/City.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/City.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/City.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/City.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/City.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/City~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/APIError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/AuthError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/CommentError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/EngagementError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/ImagePickerError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImagePickerError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/ImageUploadError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/KumamonAIError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/ProfileError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/ShopAPIError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/StoryAPIError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryAPIError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/StoryError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Errors/StoryValidationError.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/StoryValidationError~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/Municipality.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Municipality~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/ReactionType.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ReactionType~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/ShopGenre.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopGenre.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopGenre.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopGenre.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopGenre.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopGenre.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopGenre.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopGenre.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopGenre~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/SideBarMenuItem.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarMenuItem~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Enums/TabType.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabType.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabType~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/AIResponse.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AIResponse~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/ChatMessage.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ChatMessage~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/Comment.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Comment.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Comment~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/EngagementResponse.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementResponse~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/Favorite.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Favorite.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Favorite.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Favorite.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Favorite.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Favorite.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Favorite.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Favorite.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Favorite~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/ImageUploadResponse.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadResponse~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/PortalCardData.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCardData~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/Post.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Post.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Post.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Post.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Post.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Post.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Post.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Post.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Post~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/PostImage.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImage~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/ProfileRequestModels.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileRequestModels~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/SearchResult.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchResult~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/Shop.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Shop.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Shop~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/ShopProposal.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopProposal.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopProposal.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopProposal.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopProposal.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopProposal.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopProposal.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopProposal.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopProposal~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Models/User.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/User.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/User.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/User.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/User.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/User.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/User.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/User.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/User~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Resources/Color.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Color.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Color.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Color.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Color.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Color.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Color.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Color.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/Color~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/AuthService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/CommentAPIService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentAPIService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/EngagementAPIService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementAPIService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/ImageUploadService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageUploadService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/KumamonAIService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/PostAPIService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostAPIService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/SearchAPIService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchAPIService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/ShopAPIService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopAPIService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Services/UserAPIService.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserAPIService~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/APIHelper.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APIHelper~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/APISession.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APISession.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/APISession~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/AuthTokenManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthTokenManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/CurrentUserManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CurrentUserManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ErrorManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ErrorRecoveryManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorRecoveryManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/FavoritesManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FavoritesManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FavoritesManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FavoritesManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FavoritesManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FavoritesManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FavoritesManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FavoritesManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FavoritesManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ImageCache.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageCache~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ImageLoader.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageLoader~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/NetworkMonitor.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkMonitor~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/NumberFormatter+Extensions.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NumberFormatter+Extensions.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NumberFormatter+Extensions.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NumberFormatter+Extensions.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NumberFormatter+Extensions.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NumberFormatter+Extensions.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NumberFormatter+Extensions.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NumberFormatter+Extensions.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NumberFormatter+Extensions~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/OfflineDataCache.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineDataCache~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/OfflineQueueManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/OfflineQueueManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/PostCacheManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostCacheManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileCache.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileCache~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileErrorHandler.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileErrorHandler~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileFormValidation.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileFormValidation~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileImageManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProgressTracker.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProgressTracker~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/RetryManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RetryManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ScrollOffsetPreferenceKey.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ScrollOffsetPreferenceKey~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/SearchHistoryManager.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchHistoryManager~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/SidebarButtonToolbarModifier.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarButtonToolbarModifier.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarButtonToolbarModifier.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarButtonToolbarModifier.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarButtonToolbarModifier.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarButtonToolbarModifier.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarButtonToolbarModifier.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarButtonToolbarModifier.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarButtonToolbarModifier~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/SidebarEnvironment.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarEnvironment~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/AuthViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/AuthViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/BulletinBoardViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/CommentViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/EngagementViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/KumamonAIViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/PostDetailViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/PostViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/ProfileViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/SearchViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/ShopDetailViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/ShopListViewModel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListViewModel~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/ViewModels/SidebarState.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarState~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Auth/InitialSetupView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/InitialSetupView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Auth/LoginView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoginView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Auth/SignUpView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SignUpView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ActionButton.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ActionButton~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/CommentComposeView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentComposeView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentComposeView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentComposeView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentComposeView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentComposeView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentComposeView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentComposeView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/CommentComposeView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/EngagementButton.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButton.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButton.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButton.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButton.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButton.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButton.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButton.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButton~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/EngagementButtonDemo.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonDemo.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonDemo.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonDemo.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonDemo.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonDemo.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonDemo.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonDemo.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonDemo~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/EngagementButtonsView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonsView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonsView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonsView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonsView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonsView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonsView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonsView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/EngagementButtonsView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ErrorView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ErrorView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/FloatingActionButton.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/FloatingActionButton~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/GenreChip.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreChip.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreChip.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreChip.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreChip.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreChip.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreChip.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreChip.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreChip~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/GenreFilterView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreFilterView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreFilterView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreFilterView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreFilterView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreFilterView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreFilterView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreFilterView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/GenreFilterView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ImageEditSheet.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ImageEditSheet~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/MockRecommendedShopCarouselView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MockRecommendedShopCarouselView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MockRecommendedShopCarouselView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MockRecommendedShopCarouselView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MockRecommendedShopCarouselView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MockRecommendedShopCarouselView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MockRecommendedShopCarouselView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MockRecommendedShopCarouselView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MockRecommendedShopCarouselView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/NetworkStatusBanner.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/NetworkStatusBanner~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/PostImagesGridView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostImagesGridView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/PostUserImageView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostUserImageView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ProfileIconButton.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileIconButton~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/ProfileProgressIndicator.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileProgressIndicator~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/TagChip.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagChip~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/TagSelectionView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TagSelectionView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/ContentView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/LaunchScreenView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LaunchScreenView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/BookmarkedPostsView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BookmarkedPostsView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BookmarkedPostsView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BookmarkedPostsView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BookmarkedPostsView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BookmarkedPostsView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BookmarkedPostsView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BookmarkedPostsView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BookmarkedPostsView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/BulletinBoardView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/BulletinBoardView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/Components/LoadingStates.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LoadingStates~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/Components/ModernPostCardView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ModernPostCardView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ModernPostCardView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ModernPostCardView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ModernPostCardView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ModernPostCardView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ModernPostCardView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ModernPostCardView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ModernPostCardView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/Components/PostTimeline.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostTimeline~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/Components/TabNavigationHeader.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/TabNavigationHeader~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/LikedPostsView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LikedPostsView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LikedPostsView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LikedPostsView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LikedPostsView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LikedPostsView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LikedPostsView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LikedPostsView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/LikedPostsView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/PostDetailView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostDetailView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/PostEditView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEditView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/PostEngagementDetailView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEngagementDetailView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEngagementDetailView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEngagementDetailView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEngagementDetailView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEngagementDetailView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEngagementDetailView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEngagementDetailView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostEngagementDetailView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/PostView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PostView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/RegionalTagSelectionView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/RegionalTagSelectionView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/KumamonAI/KumamonAIView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/KumamonAIView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/MyPage/MyProfileView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MyProfileView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/MyPage/ProfileEditView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileEditView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/MyPage/ProfileImageView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ProfileImageView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/MyPage/UserProfileView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserProfileView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserProfileView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserProfileView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserProfileView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserProfileView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserProfileView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserProfileView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/UserProfileView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalAdvertisingSlideshow.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalAdvertisingSlideshow~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalCard.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalCard~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalErrorHandler.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalErrorHandler~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Portal/PortalView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/PortalView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Search/SearchView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SearchView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopDetailView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopDetailView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopListView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopListView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopMapView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopMapView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/Shop/ShopPickerView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPickerView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTabView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MainTabView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MainTabView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MainTabView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MainTabView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MainTabView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MainTabView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MainTabView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/MainTabView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/SideBar/Sections/ShopPostsSection.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/ShopPostsSection~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/SideBar/Sections/SideBarView.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SideBarView~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/SideBar/SidebarContainer.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarContainer~partial.swiftmodule"
+  },
+  "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/SideBar/SidebarPanel.swift" : {
+    "const-values" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.swiftconstvalues",
+    "dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.d",
+    "diagnostics" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.dia",
+    "index-unit-output-path" : "/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.o",
+    "llvm-bc" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.bc",
+    "object" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.o",
+    "swift-dependencies" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel.swiftdeps",
+    "swiftmodule" : "/Users/yamadataiyou/Developer/kumatomo/build/kumatomo.build/Debug-iphoneos/kumatomo.build/Objects-normal/arm64/SidebarPanel~partial.swiftmodule"
+  }
+}

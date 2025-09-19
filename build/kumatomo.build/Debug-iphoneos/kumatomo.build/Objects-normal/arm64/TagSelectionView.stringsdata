@@ -1,0 +1,32 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/TagSelectionView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "TagSelectionView Preview",
+        "location": {
+          "startingColumn": 1,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selected Tags:",
+        "location": {
+          "startingColumn": 1,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "• %@",
+        "location": {
+          "startingColumn": 1,
+          "startingLine": 195
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,88 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Utils/ProfileErrorHandler.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "エラーが発生しました",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 275
+        }
+      },
+      {
+        "comment": "",
+        "key": "再試行",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 277
+        }
+      },
+      {
+        "comment": "",
+        "key": "キャンセル",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 282
+        }
+      },
+      {
+        "comment": "",
+        "key": "エラーが発生しました",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 288
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 290
+        }
+      },
+      {
+        "comment": "",
+        "key": "エラー",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 267
+        }
+      },
+      {
+        "comment": "",
+        "key": "再試行しますか？",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 300
+        }
+      },
+      {
+        "comment": "",
+        "key": "操作を再試行しますか？",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 301
+        }
+      },
+      {
+        "comment": "",
+        "key": "再試行",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 302
+        }
+      },
+      {
+        "comment": "",
+        "key": "キャンセル",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 307
+        }
+      }
+    ]
+  },
+  "version": 1
+}

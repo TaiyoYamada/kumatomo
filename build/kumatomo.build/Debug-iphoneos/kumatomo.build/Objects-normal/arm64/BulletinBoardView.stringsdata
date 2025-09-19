@@ -1,0 +1,16 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/BulletinBoardView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "ホーム",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 76
+        }
+      }
+    ]
+  },
+  "version": 1
+}

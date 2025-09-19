@@ -1,0 +1,48 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/GenreChip.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "選択中のジャンル。タップして選択解除",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 35
+        }
+      },
+      {
+        "comment": "",
+        "key": "タップして選択",
+        "location": {
+          "startingColumn": 100,
+          "startingLine": 35
+        }
+      },
+      {
+        "comment": "",
+        "key": "選択中",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 37
+        }
+      },
+      {
+        "comment": "",
+        "key": "未選択",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 37
+        }
+      },
+      {
+        "comment": "",
+        "key": "GenreChip Preview",
+        "location": {
+          "startingColumn": 1,
+          "startingLine": 41
+        }
+      }
+    ]
+  },
+  "version": 1
+}

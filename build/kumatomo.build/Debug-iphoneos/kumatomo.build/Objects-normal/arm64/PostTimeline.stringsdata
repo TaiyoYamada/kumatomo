@@ -1,0 +1,24 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/MainTab/BulletinBoard/Components/PostTimeline.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "まだ投稿がありません",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 130
+        }
+      },
+      {
+        "comment": "",
+        "key": "最初の投稿をしてみませんか？",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 135
+        }
+      }
+    ]
+  },
+  "version": 1
+}

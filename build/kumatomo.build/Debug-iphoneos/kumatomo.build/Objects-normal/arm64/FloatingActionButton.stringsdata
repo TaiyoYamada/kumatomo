@@ -1,0 +1,24 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/FloatingActionButton.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "新しい投稿を作成",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 29
+        }
+      },
+      {
+        "comment": "",
+        "key": "タップして投稿画面を開きます",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 30
+        }
+      }
+    ]
+  },
+  "version": 1
+}

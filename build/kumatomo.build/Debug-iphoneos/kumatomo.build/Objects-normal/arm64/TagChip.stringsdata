@@ -1,0 +1,40 @@
+{
+  "source": "/Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Views/Components/TagChip.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "タグ: %@",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 44
+        }
+      },
+      {
+        "comment": "",
+        "key": "選択中のタグ。タップして選択解除",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 39
+        }
+      },
+      {
+        "comment": "",
+        "key": "タップして選択",
+        "location": {
+          "startingColumn": 102,
+          "startingLine": 39
+        }
+      },
+      {
+        "comment": "",
+        "key": "TagChip Preview",
+        "location": {
+          "startingColumn": 1,
+          "startingLine": 67
+        }
+      }
+    ]
+  },
+  "version": 1
+}

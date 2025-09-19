@@ -47,7 +47,7 @@ struct RecommendedShopCarouselView: View {
             HStack(spacing: spacing) {
                 ForEach(0..<2, id: \.self) { _ in
                     ForEach(shops) { shop in
-                        ShopCardView(shop: shop)
+                        MockShopCardView(shop: shop)
                             .frame(width: cardWidth)
                     }
                 }
@@ -99,17 +99,17 @@ struct RecommendedShopCarouselView: View {
     }
 
     /// - Returns: x を (-by, 0] の範囲に折りたたんだ値（無限ループ用）
-    private func normalized(_ x: CGFloat, by by: CGFloat) -> CGFloat {
-        guard by > 0 else { return 0 }
-        var v = x.truncatingRemainder(dividingBy: by)
-        if v > 0 { v -= by }  // 0 より大きければ左側レンジへ移す
+    private func normalized(_ x: CGFloat, by divisor: CGFloat) -> CGFloat {
+        guard divisor > 0 else { return 0 }
+        var v = x.truncatingRemainder(dividingBy: divisor)
+        if v > 0 { v -= divisor }  // 0 より大きければ左側レンジへ移す
         // これで常に -by .. 0 の範囲に収まる
         return v
     }
 }
 
-// MARK: - Shop Card View
-struct ShopCardView: View {
+// MARK: - Mock Shop Card View
+struct MockShopCardView: View {
     let shop: ShopData
 
     var body: some View {
