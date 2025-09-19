@@ -66,12 +66,12 @@ struct ShopListView: View {
                 }
         }
         .navigationTitle("お店一覧")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                NavigationLink(value: RouterDestination.search) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.primary)
+                Button(action: viewModel.requestLocationPermission) {
+                    Image(systemName: "location")
+                        .foregroundColor(.orange)
                 }
             }
             
@@ -83,7 +83,6 @@ struct ShopListView: View {
                         Image(systemName: "doc.text")
                             .foregroundColor(.primary)
                     }
-                    .accessibilityLabel("提案状況")
                     
                     Button(action: {
                         sheetDestination = .shopProposal
@@ -91,19 +90,11 @@ struct ShopListView: View {
                         Image(systemName: "plus.circle")
                             .foregroundColor(.primaryOrange)
                     }
-                    .accessibilityLabel("店舗を提案")
-                    
-                    Button(action: viewModel.requestLocationPermission) {
-                        Image(systemName: "location")
-                            .foregroundColor(.orange)
-                    }
-                    .accessibilityLabel("位置情報")
                 }
             }
         }
         .withSheetRouter(sheet: $sheetDestination)
         .withAppRouter()
-        .accessibilityIdentifier("ShopListView")
     }
 }
 

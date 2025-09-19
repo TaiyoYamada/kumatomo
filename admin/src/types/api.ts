@@ -79,6 +79,5 @@ export interface ShopFormData {
     latitude?: number
     longitude?: number
     image_url?: string
-    has_try_benefit: boolean
     stamp_count: number
 }

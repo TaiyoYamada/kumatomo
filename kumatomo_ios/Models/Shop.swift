@@ -17,7 +17,7 @@ struct Shop: Identifiable, Codable, Equatable {
     var isApproved: Bool
     var createdAt: Date?
     var updatedAt: Date?
-    
+
     enum CodingKeys: String, CodingKey {
         case id, name, description, address, phone, genre, latitude, longitude
         case businessHours = "business_hours"
@@ -27,6 +27,82 @@ struct Shop: Identifiable, Codable, Equatable {
         case isApproved = "is_approved"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        // Required
+        id = try container.decode(Int.self, forKey: .id)
+        name = (try? container.decode(String.self, forKey: .name)) ?? ""
+
+        // Optionals
+        description = try? container.decode(String.self, forKey: .description)
+        address = try? container.decode(String.self, forKey: .address)
+        phone = try? container.decode(String.self, forKey: .phone)
+        businessHours = try? container.decode(String.self, forKey: .businessHours)
+
+        // Genre as raw string -> enum
+        if let genreString = try? container.decode(String.self, forKey: .genre) {
+            genre = ShopGenre(rawValue: genreString)
+        } else {
+            genre = nil
+        }
+
+        // Flexible number decoding (string or number)
+        func decodeDoubleFlexible(_ key: CodingKeys) -> Double? {
+            if let d = try? container.decode(Double.self, forKey: key) { return d }
+            if let s = try? container.decode(String.self, forKey: key) { return Double(s) }
+            return nil
+        }
+        latitude = decodeDoubleFlexible(.latitude)
+        longitude = decodeDoubleFlexible(.longitude)
+
+        imageUrl = try? container.decode(String.self, forKey: .imageUrl)
+
+        // Defaults when missing
+        if let b = try? container.decode(Bool.self, forKey: .hasTryBenefit) {
+            hasTryBenefit = b
+        } else if let i = try? container.decode(Int.self, forKey: .hasTryBenefit) {
+            hasTryBenefit = (i != 0)
+        } else if let s = try? container.decode(String.self, forKey: .hasTryBenefit) {
+            hasTryBenefit = (s == "1" || s.lowercased() == "true")
+        } else {
+            hasTryBenefit = false
+        }
+
+        if let i = (try? container.decode(Int.self, forKey: .stampCount)) ?? (try? container.decode(String.self, forKey: .stampCount)).flatMap(Int.init) {
+            stampCount = i
+        } else {
+            stampCount = 0
+        }
+
+        if let b = try? container.decode(Bool.self, forKey: .isApproved) {
+            isApproved = b
+        } else if let i = try? container.decode(Int.self, forKey: .isApproved) {
+            isApproved = (i != 0)
+        } else if let s = try? container.decode(String.self, forKey: .isApproved) {
+            isApproved = (s == "1" || s.lowercased() == "true")
+        } else {
+            isApproved = true
+        }
+
+        // Dates (use decoder's strategy first; fallback to manual)
+        if let d = try? container.decode(Date.self, forKey: .createdAt) {
+            createdAt = d
+        } else if let s = try? container.decode(String.self, forKey: .createdAt) {
+            createdAt = APIHelper.parseDate(s)
+        } else {
+            createdAt = nil
+        }
+
+        if let d = try? container.decode(Date.self, forKey: .updatedAt) {
+            updatedAt = d
+        } else if let s = try? container.decode(String.self, forKey: .updatedAt) {
+            updatedAt = APIHelper.parseDate(s)
+        } else {
+            updatedAt = nil
+        }
     }
 }
 

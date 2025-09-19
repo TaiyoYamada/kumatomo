@@ -231,20 +231,3 @@ struct InfoRow: View {
         }
     }
 }
-
-#Preview {
-    ShopDetailView(
-        shop: Shop(
-            id: 1,
-            name: "サンプルカフェ",
-            description: "美味しいコーヒーと手作りスイーツが楽しめる、落ち着いた雰囲気のカフェです。Wi-Fi完備で作業にも最適です。",
-            address: "東京都渋谷区神南1-1-1",
-            phone: "03-1234-5678",
-            businessHours: "平日 8:00-20:00\n土日祝 9:00-21:00",
-            genre: .cafe,
-            latitude: 35.6762,
-            longitude: 139.6503,
-            imageUrl: "https://example.com/cafe.jpg"
-        )
-    )
-}

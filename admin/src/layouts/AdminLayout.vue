@@ -10,7 +10,6 @@
   >
     <!-- Mobile/Tablet menu button -->
     <v-app-bar-nav-icon
-      v-if="isDrawerTemporary"
       @click="toggleDrawer"
       color="on-surface"
       class="drawer-toggle-btn"
@@ -105,8 +104,8 @@
     v-if="!isStandalone"
     v-model="drawer"
     app
-    :permanent="isDrawerPermanent"
-    :temporary="isDrawerTemporary"
+    :permanent="false"
+    :temporary="true"
     color="surface"
     width="280"
     elevation="8"
@@ -166,7 +165,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useRoute } from 'vue-router'
 
@@ -182,9 +181,9 @@ const isDesktop = computed(() => width.value >= 1024)
 const isTablet = computed(() => width.value >= 768 && width.value < 1024)
 const isMobile = computed(() => width.value < 768)
 
-// Computed property for drawer behavior
-const isDrawerTemporary = computed(() => !isDesktop.value)
-const isDrawerPermanent = computed(() => isDesktop.value)
+// Drawer is always temporary; toggled by header button
+const isDrawerTemporary = computed(() => true)
+const isDrawerPermanent = computed(() => false)
 
 // Standalone pages (no sidebar): login/register or routes with meta.standalone
 const isStandalone = computed(() => {
@@ -237,49 +236,18 @@ const navigationItems = [
   }
 ]
 
-// Handle responsive drawer behavior
-const handleResize = () => {
-  if (isDesktop.value) {
-    // Desktop: drawer is always open and permanent
-    drawer.value = true
-  } else {
-    // Mobile/Tablet: drawer is closed by default and temporary
-    drawer.value = false
-  }
-}
-
 // Toggle drawer function for mobile navigation
 const toggleDrawer = () => {
   drawer.value = !drawer.value
 }
 
-// Close drawer when clicking outside on mobile/tablet
-const closeDrawerOnMobile = () => {
-  if (isDrawerTemporary.value) {
-    drawer.value = false
-  }
-}
-
-// Lifecycle hooks
-onMounted(() => {
-  handleResize()
-  window.addEventListener('resize', handleResize)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
+// Close drawer helper
+const closeDrawerOnMobile = () => { drawer.value = false }
 </script>
 
 <style scoped>
-/* CSS Custom Properties for consistent orange accent usage */
-:root {
-  --orange-primary: 249, 168, 37;
-  --orange-hover: rgba(249, 168, 37, 0.08);
-  --orange-active: rgba(249, 168, 37, 0.12);
-  --orange-shadow: rgba(249, 168, 37, 0.15);
-  --orange-focus: rgba(249, 168, 37, 0.2);
-}
+/* Disable animations/transitions across admin */
+*, *::before, *::after { transition: none !important; animation: none !important; }
 /* Search field removed */
 
 /* Enhanced navigation item styling with consistent spacing */

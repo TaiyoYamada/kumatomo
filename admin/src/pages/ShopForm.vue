@@ -72,13 +72,14 @@
               step="any" :rules="longitudeRules" :error-messages="getFieldError('longitude')" />
           </v-col>
 
-          <!-- Try特典 Toggle -->
-          <v-col cols="12" md="6">
-            <v-switch v-model="form.has_try_benefit" label="Try特典あり" color="primary"
-              :error-messages="getFieldError('has_try_benefit')" hide-details="auto" />
-            <div class="text-caption text-medium-emphasis mt-1">
-              お客様がTry特典を利用できる場合はオンにしてください
-            </div>
+          <!-- Map picker (MapLibre GL JS) -->
+          <v-col cols="12">
+            <MapPicker
+              :latitude="form.latitude"
+              :longitude="form.longitude"
+              @update:latitude="(v:any)=> form.latitude = v"
+              @update:longitude="(v:any)=> form.longitude = v"
+            />
           </v-col>
 
           <!-- Stamp Count -->
@@ -89,8 +90,13 @@
 
           <!-- Image URL -->
           <v-col cols="12">
-            <v-text-field v-model="form.image_url" label="画像URL" placeholder="店舗画像のURLを入力してください" variant="outlined"
-              :rules="imageUrlRules" :error-messages="getFieldError('image_url')" />
+            <v-text-field v-model="form.image_url" label="画像URL（任意）" placeholder="画像URLを入力するか、下でファイル選択"
+              variant="outlined" :rules="imageUrlRules" :error-messages="getFieldError('image_url')" />
+
+            <!-- File Upload -->
+            <v-file-input v-model="imageFile" accept="image/*" label="店舗画像を選択" variant="outlined" density="comfortable"
+              prepend-icon="mdi-image" :disabled="uploadingImage" @update:model-value="onFileSelected" />
+            <v-progress-linear v-if="uploadingImage" indeterminate color="primary" class="mt-2" />
 
             <!-- Image Preview -->
             <div v-if="form.image_url" class="mt-3">
@@ -135,6 +141,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { shopService } from '@/services/shopService'
 import { ShopGenre, getGenreOptions, type Shop } from '@/types/shop'
 import type { ShopFormData } from '@/types/api'
+import MapPicker from '@/components/MapPicker.vue'
 
 interface Props {
   id?: string
@@ -166,7 +173,6 @@ const form = ref<ShopFormData & { is_approved?: boolean }>({
   latitude: undefined,
   longitude: undefined,
   image_url: '',
-  has_try_benefit: false,
   stamp_count: 0,
   is_approved: true
 })
@@ -240,6 +246,25 @@ const handleImageError = () => {
   console.warn('Failed to load image:', form.value.image_url)
 }
 
+// Image upload state
+const imageFile = ref<File | null>(null)
+const uploadingImage = ref(false)
+
+const onFileSelected = async () => {
+  if (!imageFile.value) return
+  try {
+    uploadingImage.value = true
+    const res = await shopService.uploadImage(imageFile.value)
+    if (res?.url) {
+      form.value.image_url = res.url
+    }
+  } catch (e: any) {
+    error.value = e?.message || '画像のアップロードに失敗しました'
+  } finally {
+    uploadingImage.value = false
+  }
+}
+
 // Methods
 const fetchShop = async (): Promise<void> => {
   if (!props.id) return
@@ -263,7 +288,6 @@ const fetchShop = async (): Promise<void> => {
         latitude: response.data.latitude || undefined,
         longitude: response.data.longitude || undefined,
         image_url: response.data.image_url || '',
-        has_try_benefit: response.data.has_try_benefit || false,
         stamp_count: response.data.stamp_count || 0,
         is_approved: response.data.is_approved || false
       }
@@ -286,7 +310,6 @@ const resetForm = (): void => {
     latitude: undefined,
     longitude: undefined,
     image_url: '',
-    has_try_benefit: false,
     stamp_count: 0,
     is_approved: true
   }
@@ -317,7 +340,6 @@ const handleSubmit = async (): Promise<void> => {
       latitude: form.value.latitude,
       longitude: form.value.longitude,
       image_url: form.value.image_url || undefined,
-      has_try_benefit: form.value.has_try_benefit,
       stamp_count: form.value.stamp_count
     }
 

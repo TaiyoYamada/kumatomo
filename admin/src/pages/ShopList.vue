@@ -54,10 +54,6 @@
           <span v-else class="text-medium-emphasis">-</span>
         </template>
 
-        <template v-slot:item.has_try_benefit="{ item }">
-          <v-chip :color="item.has_try_benefit ? 'success' : 'grey'" :text="item.has_try_benefit ? 'あり' : 'なし'"
-            variant="tonal" size="small" />
-        </template>
 
         <template v-slot:item.stamp_count="{ item }">
           <v-chip :text="item.stamp_count.toString()" color="info" variant="tonal" size="small" />
@@ -168,7 +164,6 @@ const headers = ref([
   { title: 'ID', key: 'id', sortable: true, width: '80px' },
   { title: 'お店名', key: 'name', sortable: true },
   { title: 'ジャンル', key: 'genre', sortable: true, width: '120px' },
-  { title: 'Try特典', key: 'has_try_benefit', sortable: true, width: '100px' },
   { title: 'スタンプ数', key: 'stamp_count', sortable: true, width: '100px' },
   { title: '承認状態', key: 'is_approved', sortable: true, width: '100px' },
   { title: '住所', key: 'address', sortable: false },

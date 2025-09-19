@@ -117,7 +117,7 @@ class ShopAPIService {
         }
     }
     
-    // お店一覧を取得する
+    // お店一覧を取得する（APIは { data: [Shop], pagination: {...} } を返す）
     func fetchShops(genre: String? = nil, latitude: Double? = nil, longitude: Double? = nil, radius: Int? = nil, page: Int = 1) async throws -> [Shop] {
         var urlComponents = URLComponents(string: "\(baseURL)/shops")!
         var queryItems: [URLQueryItem] = []
@@ -160,12 +160,13 @@ class ShopAPIService {
         
         // Use the enhanced retry mechanism
         do {
-            return try await performRequestWithRetry(
+            let response = try await performRequestWithRetry(
                 request: request,
                 decoder: decoder,
-                type: [Shop].self,
+                type: ShopListResponse.self,
                 maxRetries: 3
             )
+            return response.data
         } catch let apiError as APIError {
             // Treat 404 on the list endpoint as "no shops" instead of a hard error
             if case .notFound = apiError {
@@ -178,7 +179,7 @@ class ShopAPIService {
         }
     }
     
-    // お店詳細を取得する
+    // お店詳細を取得する（APIは { data: Shop } を返す）
     func fetchShop(id: Int) async throws -> Shop {
         let endpoint = "\(baseURL)/shops/\(id)"
         guard let url = URL(string: endpoint) else {
@@ -213,12 +214,18 @@ class ShopAPIService {
             
             if httpResponse.statusCode == 200 {
                 let decoder = APIHelper.makeDecoder()
-                
                 do {
-                    return try decoder.decode(Shop.self, from: data)
+                    // Prefer wrapped response
+                    let wrapped = try decoder.decode(ShopResponse.self, from: data)
+                    return wrapped.data
                 } catch {
-                    print("🚨 デコードエラー: \(error)")
-                    throw ShopAPIError.decodingError(error)
+                    // Fallback: try decoding as plain Shop (for backward-compat)
+                    do {
+                        return try decoder.decode(Shop.self, from: data)
+                    } catch {
+                        print("🚨 デコードエラー: \(error)")
+                        throw ShopAPIError.decodingError(error)
+                    }
                 }
             } else if httpResponse.statusCode == 404 {
                 throw ShopAPIError.shopNotFound
@@ -237,7 +244,7 @@ class ShopAPIService {
         }
     }
     
-    // お店に関連する投稿を取得する
+    // お店に関連する投稿を取得する（Laravel paginate形式 { current_page, data, ... }）
     func fetchShopPosts(shopId: Int, page: Int = 1, perPage: Int = 10) async throws -> [Post] {
         let endpoint = "\(baseURL)/shops/\(shopId)/posts"
         var urlComponents = URLComponents(string: endpoint)!
@@ -278,12 +285,17 @@ class ShopAPIService {
             
             if httpResponse.statusCode == 200 {
                 let decoder = APIHelper.makeDecoder()
-                
                 do {
-                    return try decoder.decode([Post].self, from: data)
+                    let envelope = try decoder.decode(PostListResponse.self, from: data)
+                    return envelope.data
                 } catch {
-                    print("🚨 デコードエラー: \(error)")
-                    throw ShopAPIError.decodingError(error)
+                    // フォールバック：配列直デコード（互換）
+                    do {
+                        return try decoder.decode([Post].self, from: data)
+                    } catch {
+                        print("🚨 デコードエラー: \(error)")
+                        throw ShopAPIError.decodingError(error)
+                    }
                 }
             } else if let jsonString = String(data: data, encoding: .utf8) {
                 print("🚨 エラーレスポンス: \(jsonString)")

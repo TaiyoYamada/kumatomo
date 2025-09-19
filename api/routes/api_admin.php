@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminShopController;
 use App\Http\Controllers\ShopProposalController;
+use App\Http\Controllers\UnifiedImageUploadController;
 
 // Admin routes must be authenticated
 Route::middleware('auth:sanctum')
@@ -19,5 +20,7 @@ Route::middleware('auth:sanctum')
         Route::get('/shop-proposals', [ShopProposalController::class, 'adminIndex']);
         Route::post('/shop-proposals/{proposal}/approve', [ShopProposalController::class, 'approve']);
         Route::post('/shop-proposals/{proposal}/reject', [ShopProposalController::class, 'reject']);
-    });
 
+        // Admin shop image upload (reuses unified uploader)
+        Route::post('/shops/upload-image', [UnifiedImageUploadController::class, 'upload']);
+    });
