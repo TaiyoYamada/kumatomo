@@ -19,8 +19,10 @@ class AdminShopController extends Controller
             $query = Shop::query();
 
             // キーワード検索
-            if ($request->has('q') && $request->q) {
-                $query->search($request->q);
+            // 'q' と 'search' の両方をサポート
+            $keyword = $request->get('q') ?? $request->get('search');
+            if (!empty($keyword)) {
+                $query->search($keyword);
             }
 
             // ジャンルでフィルタリング
@@ -39,6 +41,9 @@ class AdminShopController extends Controller
                     'last_page' => $shops->lastPage(),
                     'per_page' => $shops->perPage(),
                     'total' => $shops->total(),
+                    'from' => $shops->firstItem(),
+                    'to' => $shops->lastItem(),
+                    'has_more_pages' => $shops->hasMorePages(),
                 ]
             ]);
 
@@ -68,7 +73,14 @@ class AdminShopController extends Controller
                 'genre' => 'nullable|string|max:50',
                 'latitude' => 'nullable|numeric|between:-90,90',
                 'longitude' => 'nullable|numeric|between:-180,180',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+                // URL指定での登録も許可
+                'image_url' => 'nullable|url|max:255',
+                // 画像ファイルアップロード（任意）
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                // 管理系フィールド
+                'has_try_benefit' => 'nullable|boolean',
+                'stamp_count' => 'nullable|integer|min:0',
+                'is_approved' => 'nullable|boolean',
             ]);
 
             // 画像アップロード処理
@@ -159,7 +171,14 @@ class AdminShopController extends Controller
                 'genre' => 'nullable|string|max:50',
                 'latitude' => 'nullable|numeric|between:-90,90',
                 'longitude' => 'nullable|numeric|between:-180,180',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+                // URL指定での更新も許可
+                'image_url' => 'nullable|url|max:255',
+                // 画像ファイルアップロード（任意）
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                // 管理系フィールド
+                'has_try_benefit' => 'nullable|boolean',
+                'stamp_count' => 'nullable|integer|min:0',
+                'is_approved' => 'nullable|boolean',
             ]);
 
             // 画像アップロード処理

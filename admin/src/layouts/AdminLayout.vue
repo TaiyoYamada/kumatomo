@@ -42,19 +42,6 @@
 
     <v-spacer />
 
-    <!-- Search Box -->
-    <v-text-field
-      v-if="isDesktop"
-      v-model="searchQuery"
-      placeholder="検索..."
-      prepend-inner-icon="mdi-magnify"
-      variant="outlined"
-      density="compact"
-      hide-details
-      class="search-field mr-4"
-      style="max-width: 300px;"
-    />
-
     <!-- User Actions -->
     <div class="d-flex align-center user-actions">
       <!-- Notification Button -->
@@ -115,6 +102,7 @@
 
   <!-- Navigation Drawer (Sidebar) -->
   <v-navigation-drawer
+    v-if="!isStandalone"
     v-model="drawer"
     app
     :permanent="isDrawerPermanent"
@@ -188,7 +176,6 @@ const route = useRoute()
 
 // Reactive data
 const drawer = ref(true)
-const searchQuery = ref('')
 
 // Computed properties for responsive breakpoints
 const isDesktop = computed(() => width.value >= 1024)
@@ -198,6 +185,12 @@ const isMobile = computed(() => width.value < 768)
 // Computed property for drawer behavior
 const isDrawerTemporary = computed(() => !isDesktop.value)
 const isDrawerPermanent = computed(() => isDesktop.value)
+
+// Standalone pages (no sidebar): login/register or routes with meta.standalone
+const isStandalone = computed(() => {
+  const standaloneMeta = route.meta && (route.meta.standalone === true)
+  return standaloneMeta || route.path === '/login' || route.path === '/register'
+})
 
 // Helper function to determine active route
 const isActiveRoute = (itemRoute) => {
@@ -287,14 +280,7 @@ onUnmounted(() => {
   --orange-shadow: rgba(249, 168, 37, 0.15);
   --orange-focus: rgba(249, 168, 37, 0.2);
 }
-/* Custom styling for search field */
-.search-field :deep(.v-field__outline) {
-  border-radius: 12px;
-}
-
-.search-field :deep(.v-field--focused .v-field__outline) {
-  border-color: rgb(var(--v-theme-primary));
-}
+/* Search field removed */
 
 /* Enhanced navigation item styling with consistent spacing */
 .nav-item {
@@ -490,18 +476,7 @@ onUnmounted(() => {
   box-shadow: 0 0 0 1px rgba(var(--orange-primary), 0.1);
 }
 
-.search-field:focus-within :deep(.v-field__outline) {
-  border-color: rgb(var(--v-theme-primary)) !important;
-  box-shadow: 0 0 0 2px var(--orange-focus);
-}
-
-.search-field :deep(.v-field__prepend-inner .v-icon) {
-  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-field:hover :deep(.v-field__prepend-inner .v-icon) {
-  color: rgb(var(--v-theme-primary)) !important;
-}
+/* Search field styles removed */
 
 /* Mobile/Tablet navigation button styling */
 .drawer-toggle-btn {

@@ -635,4 +635,101 @@ class ShopAPIService {
             throw error
         }
     }
+
+    // MARK: - Admin: Shop Proposal Management (for admin users)
+
+    /// Fetch all shop proposals for admin review
+    func fetchAdminShopProposals(status: ProposalStatus? = nil,
+                                 search: String? = nil,
+                                 page: Int = 1,
+                                 perPage: Int = 20) async throws -> [ShopProposal] {
+        var urlComponents = URLComponents(string: "\(baseURL)/admin/shop-proposals")!
+        var queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "page", value: String(page)),
+            URLQueryItem(name: "per_page", value: String(perPage))
+        ]
+        if let status = status { queryItems.append(URLQueryItem(name: "status", value: status.rawValue)) }
+        if let search = search, !search.isEmpty { queryItems.append(URLQueryItem(name: "search", value: search)) }
+        urlComponents.queryItems = queryItems
+
+        guard let url = urlComponents.url else {
+            print("🚨 無効なURL: \(urlComponents)")
+            throw ShopAPIError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        print("📡 GET リクエスト: \(url.absoluteString)")
+        let decoder = APIHelper.makeDecoder()
+        return try await performRequestWithRetry(
+            request: request,
+            decoder: decoder,
+            type: [ShopProposal].self,
+            maxRetries: 3
+        )
+    }
+
+    /// Approve a shop proposal (admin)
+    func approveAdminShopProposal(id: Int, adminNotes: String? = nil) async throws -> AdminApproveResponse {
+        let endpoint = "\(baseURL)/admin/shop-proposals/\(id)/approve"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw ShopAPIError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        // Optional body
+        if let notes = adminNotes {
+            let body: [String: Any] = ["admin_notes": notes]
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        }
+
+        print("📡 POST リクエスト: \(endpoint)")
+        let decoder = APIHelper.makeDecoder()
+        return try await performRequestWithRetry(
+            request: request,
+            decoder: decoder,
+            type: AdminApproveResponse.self,
+            maxRetries: 3
+        )
+    }
+
+    /// Reject a shop proposal (admin)
+    func rejectAdminShopProposal(id: Int, adminNotes: String) async throws -> ShopProposal {
+        let endpoint = "\(baseURL)/admin/shop-proposals/\(id)/reject"
+        guard let url = URL(string: endpoint) else {
+            print("🚨 無効なURL: \(endpoint)")
+            throw ShopAPIError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let token = getAuthToken()
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        let body: [String: Any] = ["admin_notes": adminNotes]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        print("📡 POST リクエスト: \(endpoint)")
+        let decoder = APIHelper.makeDecoder()
+        return try await performRequestWithRetry(
+            request: request,
+            decoder: decoder,
+            type: ShopProposal.self,
+            maxRetries: 3
+        )
+    }
 }
