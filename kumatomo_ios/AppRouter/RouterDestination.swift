@@ -5,6 +5,7 @@ import SwiftUI
 enum RouterDestination: Hashable {
 	case myProfile      // マイプロフィール画面
 //	case shopList       // お店一覧画面
+	case kumamonAI      // くまモンAI画面（サイドバーから遷移）
 	case bookmarks      // ブックマーク画面
 	case likes          // いいね一覧画面
 	case coupons        // クーポン画面
@@ -24,7 +25,7 @@ enum TabSelection: Hashable {
 	case bulletinboard       // 掲示板タブ
 	case search     // 検索タブ
 	case portal     // ポータルタブ
-	case kumamonAI  // くまモンAIタブ
+	case shop       // お店タブ
 	case profile    // プロフィールタブ
 }
 
@@ -36,6 +37,9 @@ extension View {
 				MyProfileView()
 //			case .shopList:
 //				ShopListView()
+            case .kumamonAI:
+                KumamonAIView()
+                    .environmentObject(CurrentUserManager.shared)
 			case .bookmarks:
 				BookmarkedPostsView()
 					.environmentObject(CurrentUserManager.shared)
@@ -93,7 +97,5 @@ struct PlaceholderView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-
 
 

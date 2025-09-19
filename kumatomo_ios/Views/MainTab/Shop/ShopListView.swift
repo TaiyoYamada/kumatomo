@@ -6,8 +6,7 @@ struct ShopListView: View {
     @State private var sheetDestination: SheetDestination?
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
                 // ジャンルフィルター
                 GenreFilterView(
                     selectedGenres: viewModel.selectedGenres,
@@ -65,28 +64,27 @@ struct ShopListView: View {
                         distanceFromUser: viewModel.distanceFromUser
                     )
                 }
-            }
-            .navigationTitle("お店一覧")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(value: RouterDestination.search) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.primary)
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: viewModel.requestLocationPermission) {
-                        Image(systemName: "location")
-                            .foregroundColor(.orange)
-                    }
-                }
-            }
-            .withSheetRouter(sheet: $sheetDestination)
-            .withAppRouter()
-            .accessibilityIdentifier("ShopListView")
         }
+        .navigationTitle("お店一覧")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink(value: RouterDestination.search) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.primary)
+                }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: viewModel.requestLocationPermission) {
+                    Image(systemName: "location")
+                        .foregroundColor(.orange)
+                }
+            }
+        }
+        .withSheetRouter(sheet: $sheetDestination)
+        .withAppRouter()
+        .accessibilityIdentifier("ShopListView")
     }
 }
 

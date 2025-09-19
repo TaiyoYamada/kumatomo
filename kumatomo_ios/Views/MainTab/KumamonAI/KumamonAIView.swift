@@ -5,25 +5,23 @@ struct KumamonAIView: View {
     @FocusState private var isInputFocused: Bool
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                // Chat Messages Area
-                chatMessagesView
-                
-                // Input Area
-                messageInputView
+        VStack(spacing: 0) {
+            // Chat Messages Area
+            chatMessagesView
+            
+            // Input Area
+            messageInputView
+        }
+        .navigationTitle("くまモンAI")
+        .navigationBarTitleDisplayMode(.inline)
+        .sidebarButton()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                clearButton
             }
-            .navigationTitle("くまモンAI")
-            .navigationBarTitleDisplayMode(.inline)
-            .sidebarButton()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    clearButton
-                }
-            }
-            .onTapGesture {
-                isInputFocused = false
-            }
+        }
+        .onTapGesture {
+            isInputFocused = false
         }
         .onAppear {
             viewModel.checkServiceAvailability()
@@ -99,12 +97,26 @@ struct KumamonAIView: View {
                 )
             }
             
-            // Service unavailable warning
+            // Service unavailable warning (only when API is properly configured)
             if !viewModel.isServiceAvailable {
-                ServiceUnavailableView {
-                    Task {
-                        await viewModel.refreshServiceAvailability()
+                if APIConfig.shared.isConfigured {
+                    ServiceUnavailableView {
+                        Task {
+                            await viewModel.refreshServiceAvailability()
+                        }
                     }
+                } else {
+                    // Configuration hint when API endpoint is not set
+                    VStack(spacing: 8) {
+                        Text("AIサービスの接続先が未設定です")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                        Text("XcodeのSchemeやInfo.plistで API_BASE_URL を設定してください")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.horizontal)
                 }
             }
             

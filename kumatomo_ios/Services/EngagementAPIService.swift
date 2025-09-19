@@ -3,7 +3,7 @@ import Foundation
 class EngagementAPIService {
     static let shared = EngagementAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
+    private let baseURL = APIConfig.shared.baseURLString
     
     private init() {}
 

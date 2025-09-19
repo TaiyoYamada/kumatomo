@@ -3,7 +3,7 @@ import Foundation
 class KumamonAIService {
     static let shared = KumamonAIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
+    private let baseURL = APIConfig.shared.baseURLString
     private let timeout: TimeInterval = 30.0
     
     private init() {}

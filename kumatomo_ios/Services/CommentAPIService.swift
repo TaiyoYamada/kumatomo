@@ -4,7 +4,7 @@ import UIKit
 class CommentAPIService {
     static let shared = CommentAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
+    private let baseURL = APIConfig.shared.baseURLString
     private let imageUploadService = ImageUploadService.shared
     
     private init() {}

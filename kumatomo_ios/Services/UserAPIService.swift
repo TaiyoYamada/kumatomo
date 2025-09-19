@@ -12,13 +12,7 @@ struct UsernameAvailabilityResponse: Codable {
 
 class UserAPIService {
     static let shared = UserAPIService()
-    private var baseURL: URL {
-        guard let urlString = ProcessInfo.processInfo.environment["API_BASE_URL"],
-              let url = URL(string: urlString) else {
-            return URL(string: "http://localhost:8000/api")!
-        }
-        return url
-    }
+    private var baseURL: URL? { APIConfig.shared.baseURL }
 
 
     private var jsonDecoder: JSONDecoder {
@@ -37,6 +31,7 @@ class UserAPIService {
     // ユーザープロフィール取得（GET /api/users/{id}）
     func fetchProfile(userID: String) -> AnyPublisher<User, Error> {
         // 正しいURLパスを構築
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -85,6 +80,7 @@ class UserAPIService {
 
     // 🔹 ユーザープロフィール保存（POST /api/users）
     func saveProfile(_ profile: User) -> AnyPublisher<Bool, Error> {
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         var request = URLRequest(url: baseURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -119,6 +115,7 @@ class UserAPIService {
 
     // 🔹 新規ユーザー登録（POST /api/users）
     func createUser(_ user: User) -> AnyPublisher<Bool, Error> {
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         var request = URLRequest(url: baseURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -142,6 +139,7 @@ class UserAPIService {
     
     /// Updates user profile information
     func updateProfile(_ user: User) -> AnyPublisher<User, Error> {
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent("users").appendingPathComponent("\(user.id)")
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
@@ -193,6 +191,7 @@ class UserAPIService {
     
     /// Updates user's username
     func updateUsername(_ username: String) -> AnyPublisher<User, Error> {
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent("users/update-username")
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
@@ -242,6 +241,7 @@ class UserAPIService {
     
     /// Checks if a username is available
     func checkUsernameAvailability(_ username: String) -> AnyPublisher<Bool, Error> {
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent("users/check-username")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -315,6 +315,7 @@ class UserAPIService {
     // MARK: - Private Image Upload Helper
     
     private func uploadImage(_ image: UIImage, endpoint: String) -> AnyPublisher<String, Error> {
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent(endpoint.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
         
         guard let imageData = image.jpegData(compressionQuality: 0.7) else {
@@ -375,6 +376,7 @@ class UserAPIService {
     /// Creates a new user profile with comprehensive error handling and progress tracking
     @MainActor
     func createProfile(_ user: User, progressTracker: ProgressTracker? = nil) -> AnyPublisher<User, Error> {
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent("users")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -486,6 +488,8 @@ class UserAPIService {
                 .eraseToAnyPublisher()
         }
         
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
+        
         let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -541,6 +545,7 @@ class UserAPIService {
     /// Deletes a user profile with confirmation and cleanup
     @MainActor
     func deleteProfile(userID: String, progressTracker: ProgressTracker? = nil) -> AnyPublisher<Bool, Error> {
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -637,6 +642,7 @@ class UserAPIService {
             return Fail(error: error).eraseToAnyPublisher()
         }
         
+        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent(endpoint.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
         
         guard let imageData = image.jpegData(compressionQuality: 0.7) else {
@@ -792,6 +798,7 @@ class UserAPIService {
 extension UserAPIService {
     /// Async API for fetching a user profile
     func fetchProfileAsync(userID: String) async throws -> User {
+        guard let baseURL else { throw APIError.invalidURL }
         let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -815,4 +822,3 @@ extension UserAPIService {
         return userResponse.data
     }
 }
-

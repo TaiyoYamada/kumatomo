@@ -12,8 +12,7 @@ struct PortalView: View {
     
     // MARK: - Body
     var body: some View {
-        NavigationStack {
-            ScrollView {
+        ScrollView {
                 LazyVStack(spacing: 24) {
                     VStack(spacing: 0) {
                         PortalAdvertisingSlideshow()
@@ -49,43 +48,42 @@ struct PortalView: View {
                     Spacer(minLength: 20)
                 }
                 .padding(.bottom, 16)
+        }
+        .scrollIndicators(.hidden)
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("ポータル")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                ProfileIconButton(
+                    user: userManager.currentUser,
+                    action: { openSidebar() }
+                )
             }
-            .scrollIndicators(.hidden)
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("ポータル")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    ProfileIconButton(
-                        user: userManager.currentUser,
-                        action: { openSidebar() }
-                    )
-                }
-                
-                // MARK: - Network Status Indicator
-                // Shows network connectivity status in toolbar
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if !networkMonitor.isConnected {
-                        Button {
-                            showingNetworkAlert = true
-                        } label: {
-                            Image(systemName: "wifi.slash")
-                                .foregroundColor(.red)
-                        }
+            
+            // MARK: - Network Status Indicator
+            // Shows network connectivity status in toolbar
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if !networkMonitor.isConnected {
+                    Button {
+                        showingNetworkAlert = true
+                    } label: {
+                        Image(systemName: "wifi.slash")
+                            .foregroundColor(.red)
                     }
                 }
             }
-            .alert("ネットワーク接続", isPresented: $showingNetworkAlert) {
-                Button("OK") { }
-            } message: {
-                Text(networkMonitor.getNetworkStatusMessage())
-            }
-            .overlay(alignment: .bottom) {
-                // MARK: - Network Status Banner
-                // Shows persistent network status banner when offline
-                if !networkMonitor.isConnected {
-                    networkStatusBanner
-                }
+        }
+        .alert("ネットワーク接続", isPresented: $showingNetworkAlert) {
+            Button("OK") { }
+        } message: {
+            Text(networkMonitor.getNetworkStatusMessage())
+        }
+        .overlay(alignment: .bottom) {
+            // MARK: - Network Status Banner
+            // Shows persistent network status banner when offline
+            if !networkMonitor.isConnected {
+                networkStatusBanner
             }
         }
     }

@@ -11,7 +11,7 @@ class AppRouter: ObservableObject {
         .bulletinboard: NavigationPath(),
         .search: NavigationPath(),
         .portal: NavigationPath(),
-        .kumamonAI: NavigationPath(),
+        .shop: NavigationPath(),
         .profile: NavigationPath()
     ]
     

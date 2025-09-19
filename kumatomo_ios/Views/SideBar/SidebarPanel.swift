@@ -59,11 +59,9 @@ struct SidebarPanel: View {
         }
     }
     
-    // 各メニュー項目に対応するRouterDestinationを返す
+    // 各メニュー項目に対応するRouterDestinationを返す（未使用だが将来拡張用に残す）
     private func routerDestination(for item: SidebarMenuItemType) -> RouterDestination {
         switch item {
-//        case .shops:
-//            return .shopList
         case .bookmarks:
             return .bookmarkedPosts
         case .likes:
@@ -72,6 +70,8 @@ struct SidebarPanel: View {
             return .coupons
         case .settings:
             return .settings
+        case .kumamonAI:
+            return .kumamonAI
         default:
             return .settings
         }
@@ -93,9 +93,9 @@ struct SidebarPanel: View {
         case .settings:
             AppRouter.shared.selectedTab = .portal
             AppRouter.shared.navigateToSettings(on: .portal)
-        case .shops:
-            // AppRouter.shared.navigate(to: .shopList)
-            break
+        case .kumamonAI:
+            AppRouter.shared.selectedTab = .portal
+            AppRouter.shared.navigate(to: .kumamonAI, on: .portal)
         default:
             break
         }
