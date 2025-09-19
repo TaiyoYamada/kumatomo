@@ -21,7 +21,10 @@ class Shop extends Model
         'genre',
         'latitude',
         'longitude',
-        'image_url'
+        'image_url',
+        'has_try_benefit',
+        'stamp_count',
+        'is_approved'
     ];
 
     /**
@@ -30,6 +33,9 @@ class Shop extends Model
     protected $casts = [
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
+        'has_try_benefit' => 'boolean',
+        'stamp_count' => 'integer',
+        'is_approved' => 'boolean',
     ];
 
     /**
@@ -38,6 +44,22 @@ class Shop extends Model
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * このお店をお気に入りにしているユーザーを取得。
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * このお店をお気に入りにしているユーザーを取得（多対多）。
+     */
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorites');
     }
 
     /**

@@ -382,7 +382,7 @@ struct SearchView: View {
                     
                     // ジャンル
                     if let genre = shop.genre {
-                        Text(genre)
+                        Text(genre.displayName)
                             .font(.caption)
                             .foregroundColor(.orange)
                             .padding(.horizontal, 8)

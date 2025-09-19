@@ -18,7 +18,7 @@ struct ShopPickerView: View {
             return viewModel.shops.filter { shop in
                 shop.name.localizedCaseInsensitiveContains(searchText) ||
                 shop.address?.localizedCaseInsensitiveContains(searchText) == true ||
-                shop.genre?.localizedCaseInsensitiveContains(searchText) == true
+                shop.genre?.displayName.localizedCaseInsensitiveContains(searchText) == true
             }
         }
     }
@@ -216,7 +216,7 @@ private struct ShopPickerRow: View {
                     
                     HStack {
                         if let genre = shop.genre {
-                            Text(genre)
+                            Text(genre.displayName)
                                 .font(.caption)
                                 .foregroundStyle(.orange)
                                 .padding(.horizontal, 6)

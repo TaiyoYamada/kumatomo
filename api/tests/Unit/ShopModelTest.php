@@ -114,7 +114,10 @@ class ShopModelTest extends TestCase
             'genre',
             'latitude',
             'longitude',
-            'image_url'
+            'image_url',
+            'has_try_benefit',
+            'stamp_count',
+            'is_approved'
         ];
         
         $this->assertEquals($expectedFillable, $shop->getFillable());
@@ -127,12 +130,18 @@ class ShopModelTest extends TestCase
         $expectedCasts = [
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
+            'has_try_benefit' => 'boolean',
+            'stamp_count' => 'integer',
+            'is_approved' => 'boolean',
         ];
         
         $casts = $shop->getCasts();
         
         $this->assertEquals('decimal:8', $casts['latitude']);
         $this->assertEquals('decimal:8', $casts['longitude']);
+        $this->assertEquals('boolean', $casts['has_try_benefit']);
+        $this->assertEquals('integer', $casts['stamp_count']);
+        $this->assertEquals('boolean', $casts['is_approved']);
     }
 
     protected function tearDown(): void

@@ -129,7 +129,7 @@ struct ShopMapPin: View {
                 name: "サンプルカフェ",
                 description: "美味しいコーヒーが飲めるお店",
                 address: "東京都渋谷区",
-                genre: "カフェ",
+                genre: .cafe,
                 latitude: 35.6762,
                 longitude: 139.6503
             ),
@@ -138,7 +138,7 @@ struct ShopMapPin: View {
                 name: "イタリアンレストラン",
                 description: "本格的なイタリア料理",
                 address: "東京都新宿区",
-                genre: "レストラン",
+                genre: .restaurant,
                 latitude: 35.6896,
                 longitude: 139.6917
             )

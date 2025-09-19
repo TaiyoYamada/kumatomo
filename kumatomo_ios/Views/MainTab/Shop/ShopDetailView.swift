@@ -48,7 +48,7 @@ struct ShopDetailView: View {
                                 .foregroundColor(.primary)
                             
                             if let genre = shop.genre {
-                                Text(genre)
+                                Text(genre.displayName)
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(.orange)
                                     .padding(.horizontal, 12)
@@ -239,7 +239,7 @@ struct InfoRow: View {
             address: "東京都渋谷区神南1-1-1",
             phone: "03-1234-5678",
             businessHours: "平日 8:00-20:00\n土日祝 9:00-21:00",
-            genre: "カフェ",
+            genre: .cafe,
             latitude: 35.6762,
             longitude: 139.6503,
             imageUrl: "https://example.com/cafe.jpg"
