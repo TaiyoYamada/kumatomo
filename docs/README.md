@@ -32,6 +32,14 @@ docker compose build
 docker compose up -d
 ```
 
+### フロントエンドの起動
+
+```
+cd admin
+yarn dev
+```
+
+
 ## ライセンス
 
 
