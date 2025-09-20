@@ -83,6 +83,7 @@ final class KumamonAIViewModel: ObservableObject {
     /// Send a message to Kumamon AI
     /// - Parameter message: The message to send (optional, uses inputText if nil)
     func sendMessage(_ message: String? = nil) async {
+        print("[KumamonAIViewModel] sendMessage invoked. input length=\(inputText.count)")
         let messageToSend = message ?? inputText
         let sanitizedMessage = aiService.sanitizeMessage(messageToSend)
         
@@ -113,8 +114,10 @@ final class KumamonAIViewModel: ObservableObject {
         serviceState = .loading
         
         do {
+            print("[KumamonAIViewModel] calling service.sendMessage")
             // Send message to AI service
             let response = try await aiService.sendMessage(sanitizedMessage)
+            print("[KumamonAIViewModel] got response")
             
             // Add AI response to chat
             let aiMessage = ChatMessage.aiMessage(response.message)
@@ -137,6 +140,7 @@ final class KumamonAIViewModel: ObservableObject {
                 await handleKumamonAIError(error)
             }
         } catch {
+            print("[KumamonAIViewModel] sendMessage error -> \(error)")
             await handleGenericError(error)
         }
         
@@ -183,10 +187,12 @@ final class KumamonAIViewModel: ObservableObject {
     
     /// Check if the AI service is available
     func checkServiceAvailability() {
+        print("[KumamonAIViewModel] checkServiceAvailability start")
         Task {
             let available = await aiService.checkServiceAvailability()
             await MainActor.run {
                 self.isServiceAvailable = available
+                print("[KumamonAIViewModel] checkServiceAvailability result=\(available)")
                 if !available {
                     // 開発環境でAPIが設定されていない場合は警告を表示しない
                     if APIConfig.shared.isConfigured {
@@ -204,6 +210,7 @@ final class KumamonAIViewModel: ObservableObject {
     
     /// Refresh the service availability
     func refreshServiceAvailability() async {
+        print("[KumamonAIViewModel] refreshServiceAvailability start")
         checkServiceAvailability()
     }
     

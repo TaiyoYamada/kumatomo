@@ -65,19 +65,25 @@ struct LikedPostsView: View {
         }
         .navigationTitle("いいねした投稿")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            print("[LikedPostsView] onAppear")
+        }
         .task {
             // Load liked posts when view appears
             if engagementViewModel.likedPosts.isEmpty {
+                print("[LikedPostsView] task start -> loadLikedPosts")
                 await engagementViewModel.loadLikedPosts()
             }
         }
         .onChange(of: engagementViewModel.errorMessage) { errorMessage in
             if let error = errorMessage {
+                print("[LikedPostsView] errorMessage changed -> \(error)")
                 showToastMessage(error, type: .error)
             }
         }
         .onChange(of: engagementViewModel.successMessage) { successMessage in
             if !successMessage.isEmpty && engagementViewModel.showSuccessMessage {
+                print("[LikedPostsView] successMessage -> \(successMessage)")
                 showToastMessage(successMessage, type: .success)
             }
         }

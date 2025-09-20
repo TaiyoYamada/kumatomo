@@ -41,12 +41,12 @@ struct MainTabView: View {
                 
                 NavigationStack(path: appRouter.pathBinding(for: .portal)) {
                     PortalView()
+                        .withAppRouter() // Attach destination to stack content to ensure resolution
                     // ★ navigationTitleとtoolbarはここでは設定しない
                 }
                 .environmentObject(userManager)
                 .environmentObject(sidebarState)
                 .environment(\.openSidebar, sidebarState.open)
-                .withAppRouter()
                 .tabItem {
                     Image(systemName: "rectangle.grid.2x2")
                     Text("ポータル")

@@ -65,19 +65,25 @@ struct BookmarkedPostsView: View {
         }
         .navigationTitle("ブックマークした投稿")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            print("[BookmarkedPostsView] onAppear")
+        }
         .task {
             // Load bookmarked posts when view appears
             if engagementViewModel.bookmarkedPosts.isEmpty {
+                print("[BookmarkedPostsView] task start -> loadBookmarkedPosts")
                 await engagementViewModel.loadBookmarkedPosts()
             }
         }
         .onChange(of: engagementViewModel.errorMessage) { errorMessage in
             if let error = errorMessage {
+                print("[BookmarkedPostsView] errorMessage changed -> \(error)")
                 showToastMessage(error, type: .error)
             }
         }
         .onChange(of: engagementViewModel.successMessage) { successMessage in
             if !successMessage.isEmpty && engagementViewModel.showSuccessMessage {
+                print("[BookmarkedPostsView] successMessage -> \(successMessage)")
                 showToastMessage(successMessage, type: .success)
             }
         }

@@ -35,34 +35,43 @@ class AppRouter: ObservableObject {
     // MARK: - Helpers
     private func append(_ destination: RouterDestination, to tab: TabSelection? = nil) {
         let targetTab = tab ?? selectedTab
+        print("[AppRouter] append destination=\(destination) to tab=\(targetTab)")
         var path = navigationPaths[targetTab] ?? NavigationPath()
+        print("[AppRouter] before append path.count=\(path.count)")
         path.append(destination)
         navigationPaths[targetTab] = path
+        print("[AppRouter] after append path.count=\(path.count)")
     }
     
     private func removeLast(from tab: TabSelection? = nil) {
         let targetTab = tab ?? selectedTab
         var path = navigationPaths[targetTab] ?? NavigationPath()
+        print("[AppRouter] removeLast on tab=\(targetTab) path.count(before)=\(path.count)")
         if !path.isEmpty { path.removeLast() }
         navigationPaths[targetTab] = path
+        print("[AppRouter] path.count(after)=\(path.count)")
     }
     
     private func resetPath(for tab: TabSelection? = nil) {
         let targetTab = tab ?? selectedTab
+        print("[AppRouter] resetPath for tab=\(targetTab)")
         navigationPaths[targetTab] = NavigationPath()
     }
     
     // MARK: - Navigation Methods
     
     func navigateToPostDetail(postId: Int) {
+        print("[AppRouter] navigateToPostDetail id=\(postId) currentTab=\(selectedTab)")
         append(.postDetail(postId: postId))
     }
     
     func navigateToLikedPosts(on tab: TabSelection? = nil) {
+        print("[AppRouter] navigateToLikedPosts requested on tab=\(tab.self ?? selectedTab)")
         append(.likedPosts, to: tab)
     }
     
     func navigateToBookmarkedPosts(on tab: TabSelection? = nil) {
+        print("[AppRouter] navigateToBookmarkedPosts requested on tab=\(tab.self ?? selectedTab)")
         append(.bookmarkedPosts, to: tab)
     }
     
@@ -97,7 +106,9 @@ class AppRouter: ObservableObject {
     }
     
     func navigate(to destination: RouterDestination, on tab: TabSelection? = nil) {
-        append(destination, to: tab)
+        let targetTab = tab ?? selectedTab
+        print("[AppRouter] navigate to destination=\(destination) on tab=\(targetTab)")
+        append(destination, to: targetTab)
     }
     
     // MARK: - Deep Linking Support
@@ -107,6 +118,7 @@ class AppRouter: ObservableObject {
               let host = components.host else {
             return
         }
+        print("[AppRouter] handleDeepLink host=\(host) query=\(components.queryItems ?? [])")
         
         switch host {
         case "post":
@@ -137,6 +149,7 @@ class AppRouter: ObservableObject {
             selectedTab = .portal
             navigateToSettings(on: .portal)
         default:
+            print("[AppRouter] deep link not handled: \(host)")
             break
         }
     }

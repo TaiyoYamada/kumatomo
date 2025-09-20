@@ -11,7 +11,6 @@ struct TimelinePostCardView: View {
     @State private var showingPostDetail = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @EnvironmentObject private var userManager: CurrentUserManager
-    @EnvironmentObject private var bulletinBoardViewModel: BulletinBoardViewModel
     
     // Engagement state
     @State private var isTogglingLike = false
@@ -184,8 +183,8 @@ struct TimelinePostCardView: View {
                             if let handler = customOnLike {
                                 await handler(post)
                             } else {
-                                // Fallback to default view model handler
-                                bulletinBoardViewModel.toggleLike(for: post)
+                                // No-op fallback to avoid unexpected dependencies
+                                print("ℹ️ No custom like handler provided")
                             }
                         },
                         onComment: {

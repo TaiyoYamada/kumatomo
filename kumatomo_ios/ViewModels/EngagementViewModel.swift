@@ -85,7 +85,7 @@ class EngagementViewModel: ObservableObject {
         
         clearError()
         
-        print("📖 いいねした投稿読み込み開始 (ページ: \(likedPostsPage), リフレッシュ: \(refresh))")
+        print("[EngagementVM] loadLikedPosts start page=\(likedPostsPage) refresh=\(refresh))")
         
         do {
             let fetchedPosts = try await engagementAPIService.fetchLikedPosts()
@@ -108,7 +108,7 @@ class EngagementViewModel: ObservableObject {
                 likedPostsPage += 1
             }
             
-            print("✅ いいねした投稿読み込み成功: \(fetchedPosts.count)件 (合計: \(likedPosts.count)件)")
+            print("[EngagementVM] loadLikedPosts success count=\(fetchedPosts.count) total=\(likedPosts.count)")
             
         } catch let error as EngagementError {
             // Ignore benign cancellations (e.g., view disappear, new refresh supersedes old)
@@ -123,6 +123,7 @@ class EngagementViewModel: ObservableObject {
         
         isLoadingLikedPosts = false
         isRefreshingLikedPosts = false
+        print("[EngagementVM] loadLikedPosts end")
     }
     
     /// Refresh liked posts (clears existing data and reloads)
@@ -157,7 +158,7 @@ class EngagementViewModel: ObservableObject {
         
         clearError()
         
-        print("📖 ブックマークした投稿読み込み開始 (ページ: \(bookmarkedPostsPage), リフレッシュ: \(refresh))")
+        print("[EngagementVM] loadBookmarkedPosts start page=\(bookmarkedPostsPage) refresh=\(refresh))")
         
         do {
             let fetchedPosts = try await engagementAPIService.fetchBookmarkedPosts()
@@ -180,7 +181,7 @@ class EngagementViewModel: ObservableObject {
                 bookmarkedPostsPage += 1
             }
             
-            print("✅ ブックマークした投稿読み込み成功: \(fetchedPosts.count)件 (合計: \(bookmarkedPosts.count)件)")
+            print("[EngagementVM] loadBookmarkedPosts success count=\(fetchedPosts.count) total=\(bookmarkedPosts.count)")
             
         } catch let error as EngagementError {
             if case .requestCancelled = error {
@@ -194,6 +195,7 @@ class EngagementViewModel: ObservableObject {
         
         isLoadingBookmarkedPosts = false
         isRefreshingBookmarkedPosts = false
+        print("[EngagementVM] loadBookmarkedPosts end")
     }
     
     /// Refresh bookmarked posts (clears existing data and reloads)

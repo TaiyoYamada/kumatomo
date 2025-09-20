@@ -24,6 +24,7 @@ struct KumamonAIView: View {
             isInputFocused = false
         }
         .onAppear {
+            print("[KumamonAIView] onAppear -> checkServiceAvailability")
             viewModel.checkServiceAvailability()
         }
     }

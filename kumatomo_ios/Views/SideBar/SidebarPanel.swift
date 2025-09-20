@@ -79,25 +79,30 @@ struct SidebarPanel: View {
 
     // Sidebarメニューの遷移ロジック（AppRouterで確実に遷移）
     private func navigate(using item: SidebarMenuItemType) {
-        switch item {
-        case .bookmarks:
-            // 一貫してポータルタブのスタックで開く
-            AppRouter.shared.selectedTab = .portal
-            AppRouter.shared.navigateToBookmarkedPosts(on: .portal)
-        case .likes:
-            AppRouter.shared.selectedTab = .portal
-            AppRouter.shared.navigateToLikedPosts(on: .portal)
-        case .coupons:
-            AppRouter.shared.selectedTab = .portal
-            AppRouter.shared.navigate(to: .coupons, on: .portal)
-        case .settings:
-            AppRouter.shared.selectedTab = .portal
-            AppRouter.shared.navigateToSettings(on: .portal)
-        case .kumamonAI:
-            AppRouter.shared.selectedTab = .portal
-            AppRouter.shared.navigate(to: .kumamonAI, on: .portal)
-        default:
-            break
+        // Ensure navigation happens on the active tab stack after switching tabs
+        let router = AppRouter.shared
+        print("[Sidebar] navigate item=\(item)")
+        router.selectedTab = .portal
+        print("[Sidebar] selectedTab -> portal")
+        router.popToRoot()
+        
+        // Slight delay to avoid race with sidebar dismissal & tab switch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            print("[Sidebar] perform navigation for item=\(item)")
+            switch item {
+            case .bookmarks:
+                router.navigateToBookmarkedPosts(on: .portal)
+            case .likes:
+                router.navigateToLikedPosts(on: .portal)
+            case .coupons:
+                router.navigate(to: .coupons, on: .portal)
+            case .settings:
+                router.navigateToSettings(on: .portal)
+            case .kumamonAI:
+                router.navigate(to: .kumamonAI, on: .portal)
+            default:
+                break
+            }
         }
     }
     
