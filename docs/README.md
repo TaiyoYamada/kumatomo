@@ -19,7 +19,7 @@
 
 ## 動作環境
 - Frontend: Vite + Vue3 + Vuetify3 + TypeScript
-- Backend: PHP 8.x, Laravel 10.x, Composer, MySQL/SQLite
+- Backend: PHP 8.x, Laravel 10.x, Composer, MySQL
 - iOS: Xcode 15 以降, Swift 5.9 以降（iOS 17 目安）
 - 推奨: Docker Desktop（ローカル開発の簡略化）
 
