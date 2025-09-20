@@ -84,6 +84,11 @@ class FavoritesManager: ObservableObject {
             favoriteIds = Set(favorites.map { $0.shopId })
             
             print("✅ Loaded \(favorites.count) favorites")
+            #if DEBUG
+            for f in favorites {
+                print("🧩 [Favorites] favId=\(f.id) shopId=\(f.shopId) shopImage=\(f.shop?.imageUrl ?? "<nil>")")
+            }
+            #endif
         } catch {
             errorMessage = "お気に入りの読み込みに失敗しました: \(error.localizedDescription)"
             print("🚨 Failed to load favorites: \(error)")
@@ -124,4 +129,3 @@ class FavoritesManager: ObservableObject {
         return favoriteIds.isEmpty
     }
 }
-

@@ -11,7 +11,7 @@ struct ShopDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // 店舗画像（最適化された遅延読み込み）
-                    AsyncImage(url: URL(string: shop.imageUrl ?? "")) { imagePhase in
+                    AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { imagePhase in
                         switch imagePhase {
                         case .success(let image):
                             image
@@ -38,6 +38,11 @@ struct ShopDetailView: View {
                         @unknown default:
                             EmptyView()
                         }
+                    }
+                    .onAppear {
+                        #if DEBUG
+                        ImageDebugLogger.logImage(shop.imageUrl, context: "ShopDetail:shopId=\(shop.id)")
+                        #endif
                     }
                     
                     VStack(alignment: .leading, spacing: 16) {

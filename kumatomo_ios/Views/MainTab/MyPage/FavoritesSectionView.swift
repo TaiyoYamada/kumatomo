@@ -150,7 +150,7 @@ struct FavoritesCompactCardView: View {
         Button(action: onTap) {
             HStack(spacing: 12) {
                 // Shop image
-                AsyncImage(url: URL(string: shop.imageUrl ?? "")) { image in
+                AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -166,6 +166,11 @@ struct FavoritesCompactCardView: View {
                 .frame(width: 60, height: 60)
                 .clipped()
                 .cornerRadius(8)
+                .onAppear {
+                    #if DEBUG
+                    ImageDebugLogger.logImage(shop.imageUrl, context: "FavoritesSection:shopId=\(shop.id)")
+                    #endif
+                }
                 
                 // Shop info
                 VStack(alignment: .leading, spacing: 4) {

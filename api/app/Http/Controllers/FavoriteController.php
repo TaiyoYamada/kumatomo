@@ -47,11 +47,33 @@ class FavoriteController extends Controller
             $perPage = min($request->get('per_page', 20), 50);
             $page = $request->get('page', 1);
 
-            // Build query for favorite shops
+            // Build query for favorite shops with explicit aliases to avoid ambiguous columns
             $query = $user->favorites()
                 ->join('shops', 'favorites.shop_id', '=', 'shops.id')
                 ->where('shops.is_approved', true)
-                ->select('favorites.*', 'shops.*', 'favorites.created_at as favorited_at');
+                ->select([
+                    'favorites.id as favorite_id',
+                    'favorites.user_id',
+                    'favorites.shop_id',
+                    'favorites.created_at as favorited_at',
+                    'favorites.updated_at as favorite_updated_at',
+                    // Shop columns (aliased)
+                    'shops.id as shop_id',
+                    'shops.name as shop_name',
+                    'shops.description as shop_description',
+                    'shops.address as shop_address',
+                    'shops.phone as shop_phone',
+                    'shops.business_hours as shop_business_hours',
+                    'shops.genre as shop_genre',
+                    'shops.latitude as shop_latitude',
+                    'shops.longitude as shop_longitude',
+                    'shops.image_url as shop_image_url',
+                    'shops.has_try_benefit as shop_has_try_benefit',
+                    'shops.stamp_count as shop_stamp_count',
+                    'shops.is_approved as shop_is_approved',
+                    'shops.created_at as shop_created_at',
+                    'shops.updated_at as shop_updated_at',
+                ]);
 
             // Genre filtering
             if ($request->has('genres') && $request->genres) {
@@ -68,13 +90,10 @@ class FavoriteController extends Controller
                 $radius = (float) $request->get('radius', 10);
 
                 $query->selectRaw("
-                    favorites.*,
-                    shops.*,
-                    favorites.created_at as favorited_at,
-                    (6371 * acos(cos(radians(?)) 
-                    * cos(radians(shops.latitude)) 
-                    * cos(radians(shops.longitude) - radians(?)) 
-                    + sin(radians(?)) 
+                    (6371 * acos(cos(radians(?))
+                    * cos(radians(shops.latitude))
+                    * cos(radians(shops.longitude) - radians(?))
+                    + sin(radians(?))
                     * sin(radians(shops.latitude)))) AS distance
                 ", [$latitude, $longitude, $latitude])
                 ->having('distance', '<', $radius);
@@ -104,6 +123,40 @@ class FavoriteController extends Controller
 
             $favorites = $query->paginate($perPage, ['*'], 'page', $page);
 
+            // Normalize image URLs and shape response into nested structure compatible with clients
+            $items = collect($favorites->items())->map(function ($row) {
+                // Ensure absolute image URL for shop
+                $imageUrl = $row->shop_image_url ?? null;
+                if (!empty($imageUrl) && !preg_match('/^https?:\/\//i', $imageUrl)) {
+                    $imageUrl = url(ltrim($imageUrl, '/'));
+                }
+
+                return [
+                    'id' => (int) $row->favorite_id,
+                    'user_id' => (int) $row->user_id,
+                    'shop_id' => (int) $row->shop_id,
+                    'created_at' => $row->favorited_at,
+                    'updated_at' => $row->favorite_updated_at,
+                    'shop' => [
+                        'id' => (int) $row->shop_id,
+                        'name' => $row->shop_name,
+                        'description' => $row->shop_description,
+                        'address' => $row->shop_address,
+                        'phone' => $row->shop_phone,
+                        'business_hours' => $row->shop_business_hours,
+                        'genre' => $row->shop_genre,
+                        'latitude' => $row->shop_latitude,
+                        'longitude' => $row->shop_longitude,
+                        'image_url' => $imageUrl,
+                        'has_try_benefit' => (bool) $row->shop_has_try_benefit,
+                        'stamp_count' => (int) $row->shop_stamp_count,
+                        'is_approved' => (bool) $row->shop_is_approved,
+                        'created_at' => $row->shop_created_at,
+                        'updated_at' => $row->shop_updated_at,
+                    ]
+                ];
+            })->values();
+
             Log::info('Favorites fetched successfully', [
                 'user_id' => $user->id,
                 'count' => $favorites->count(),
@@ -116,7 +169,7 @@ class FavoriteController extends Controller
             ]);
 
             return response()->json([
-                'data' => $favorites->items(),
+                'data' => $items,
                 'pagination' => [
                     'current_page' => $favorites->currentPage(),
                     'last_page' => $favorites->lastPage(),

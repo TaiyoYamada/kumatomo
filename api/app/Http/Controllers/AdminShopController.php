@@ -64,6 +64,11 @@ class AdminShopController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
+            // Accept both snake_case and camelCase from clients
+            if ($request->has('imageUrl') && !$request->has('image_url')) {
+                $request->merge(['image_url' => $request->input('imageUrl')]);
+            }
+
             $validatedData = $request->validate([
                 'name' => 'required|string|max:100',
                 'description' => 'nullable|string|max:1000',
@@ -73,8 +78,8 @@ class AdminShopController extends Controller
                 'genre' => 'nullable|string|max:50',
                 'latitude' => 'nullable|numeric|between:-90,90',
                 'longitude' => 'nullable|numeric|between:-180,180',
-                // URL指定での登録も許可
-                'image_url' => 'nullable|url|max:255',
+                // URL指定での登録も許可（DB仕様に合わせて最大2048文字）
+                'image_url' => 'nullable|url|max:2048',
                 // 画像ファイルアップロード（任意）
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 // 管理系フィールド
@@ -162,6 +167,11 @@ class AdminShopController extends Controller
                 ], 404);
             }
 
+            // Accept both snake_case and camelCase from clients
+            if ($request->has('imageUrl') && !$request->has('image_url')) {
+                $request->merge(['image_url' => $request->input('imageUrl')]);
+            }
+
             $validatedData = $request->validate([
                 'name' => 'required|string|max:100',
                 'description' => 'nullable|string|max:1000',
@@ -171,8 +181,8 @@ class AdminShopController extends Controller
                 'genre' => 'nullable|string|max:50',
                 'latitude' => 'nullable|numeric|between:-90,90',
                 'longitude' => 'nullable|numeric|between:-180,180',
-                // URL指定での更新も許可
-                'image_url' => 'nullable|url|max:255',
+                // URL指定での更新も許可（DB仕様に合わせて最大2048文字）
+                'image_url' => 'nullable|url|max:2048',
                 // 画像ファイルアップロード（任意）
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 // 管理系フィールド

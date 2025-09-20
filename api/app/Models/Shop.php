@@ -98,4 +98,24 @@ class Shop extends Model
               ->orWhere('address', 'LIKE', "%{$keyword}%");
         });
     }
+
+    /**
+     * アクセサ: 画像URLを常に絶対URLで返す
+     */
+    public function getImageUrlAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        // すでにhttp(s)で始まる場合はそのまま返す
+        if (preg_match('/^https?:\/\//i', $value)) {
+            return $value;
+        }
+
+        // 先頭スラッシュがある/ないに関わらずアプリURLを付与
+        // 例: "/storage/shops/.." or "storage/shops/..."
+        $path = ltrim($value, '/');
+        return url($path);
+    }
 }

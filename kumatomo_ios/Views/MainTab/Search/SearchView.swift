@@ -364,7 +364,7 @@ struct SearchView: View {
         var body: some View {
             HStack(spacing: 12) {
                 // お店画像
-                AsyncImage(url: URL(string: shop.imageUrl ?? "")) { image in
+                AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -374,6 +374,11 @@ struct SearchView: View {
                 }
                 .frame(width: 80, height: 80)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .onAppear {
+                    #if DEBUG
+                    ImageDebugLogger.logImage(shop.imageUrl, context: "Search:shopId=\(shop.id)")
+                    #endif
+                }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     // お店名と距離

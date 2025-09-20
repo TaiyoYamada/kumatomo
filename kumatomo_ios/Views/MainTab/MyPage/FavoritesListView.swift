@@ -119,7 +119,7 @@ struct FavoriteShopCardView: View {
             VStack(alignment: .leading, spacing: 12) {
                 // 店舗画像 with favorite button overlay
                 ZStack(alignment: .topTrailing) {
-                    AsyncImage(url: URL(string: shop.imageUrl ?? "")) { image in
+                    AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -135,6 +135,11 @@ struct FavoriteShopCardView: View {
                     .frame(height: 160)
                     .clipped()
                     .cornerRadius(12)
+                    .onAppear {
+                        #if DEBUG
+                        ImageDebugLogger.logImage(shop.imageUrl, context: "FavoritesList:shopId=\(shop.id)")
+                        #endif
+                    }
                     
                     // Favorite star button - always filled since this is favorites list
                     Button(action: {

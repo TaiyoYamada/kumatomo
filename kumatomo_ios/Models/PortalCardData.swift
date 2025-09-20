@@ -1,5 +1,6 @@
 import Foundation
 
+// これはモックデータです。admin側から取得するように将来的に変更する予定です。
 struct PortalCardData: Identifiable {
     let id = UUID()
     let title: String

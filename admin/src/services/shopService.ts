@@ -14,8 +14,13 @@ export interface ShopServiceParams {
 
 export interface ImageUploadResponse {
     url: string
-    path: string
-    message: string
+    path?: string
+    message?: string
+    urls?: {
+        thumbnail?: string
+        medium?: string
+        original?: string
+    }
 }
 
 export const shopService = {
@@ -54,11 +59,19 @@ export const shopService = {
         const formData = new FormData()
         formData.append('image', file)
 
-        const response: AxiosResponse<ImageUploadResponse> = await api.post('/admin/shops/upload-image', formData, {
+        const response: AxiosResponse<any> = await api.post('/admin/shops/upload-image', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         })
-        return response.data
+        // The API returns { success, message, data: { url, urls, metadata, ... } }
+        const payload = response.data || {}
+        const data = payload.data || payload
+        return {
+            url: data.url,
+            path: data.path || data.urls?.medium || data.url,
+            message: payload.message,
+            urls: data.urls
+        }
     }
 }

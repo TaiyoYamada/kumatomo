@@ -184,7 +184,7 @@ private struct ShopPickerRow: View {
         Button(action: onTap) {
             HStack(spacing: 12) {
                 // Shop Image or Placeholder
-                AsyncImage(url: URL(string: shop.imageUrl ?? "")) { image in
+                AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -199,6 +199,11 @@ private struct ShopPickerRow: View {
                 }
                 .frame(width: 60, height: 60)
                 .cornerRadius(8)
+                .onAppear {
+                    #if DEBUG
+                    ImageDebugLogger.logImage(shop.imageUrl, context: "ShopPicker:shopId=\(shop.id)")
+                    #endif
+                }
                 
                 // Shop Info
                 VStack(alignment: .leading, spacing: 4) {

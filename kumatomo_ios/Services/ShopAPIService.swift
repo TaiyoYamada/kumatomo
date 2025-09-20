@@ -435,12 +435,25 @@ class ShopAPIService {
         
         let decoder = APIHelper.makeDecoder()
         
-        return try await performRequestWithRetry(
-            request: request,
-            decoder: decoder,
-            type: [Favorite].self,
-            maxRetries: 3
-        )
+        // Be robust to both envelope { data: [...] } and raw array [...] responses
+        do {
+            struct FavoritesEnvelope: Decodable { let data: [Favorite] }
+            let envelope = try await performRequestWithRetry(
+                request: request,
+                decoder: decoder,
+                type: FavoritesEnvelope.self,
+                maxRetries: 3
+            )
+            return envelope.data
+        } catch {
+            // Fallback to raw array
+            return try await performRequestWithRetry(
+                request: request,
+                decoder: decoder,
+                type: [Favorite].self,
+                maxRetries: 3
+            )
+        }
     }
     
     // MARK: - Shop Proposal API Methods

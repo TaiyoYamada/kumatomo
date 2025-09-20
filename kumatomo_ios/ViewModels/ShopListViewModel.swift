@@ -67,6 +67,10 @@ class ShopListViewModel: ObservableObject {
             )
             
             applyFilters()
+            #if DEBUG
+            print("🧩 [ShopListVM] fetched shops count=\(shops.count)")
+            for s in shops { print("🧩 [ShopListVM] id=\(s.id) name=\(s.name) imageUrl=\(s.imageUrl ?? "<nil>")") }
+            #endif
         } catch {
             // 開発環境でAPIが利用できない場合はモックデータを使用
             if !APIConfig.shared.isConfigured || error.localizedDescription.contains("localhost") {

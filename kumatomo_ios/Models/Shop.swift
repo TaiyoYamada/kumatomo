@@ -28,6 +28,11 @@ struct Shop: Identifiable, Codable, Equatable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
+    
+    private enum AltCodingKeys: String, CodingKey {
+        case imageUrlCamel = "imageUrl"
+        case imageURLCaps = "imageURL"
+    }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -58,7 +63,14 @@ struct Shop: Identifiable, Codable, Equatable {
         latitude = decodeDoubleFlexible(.latitude)
         longitude = decodeDoubleFlexible(.longitude)
 
-        imageUrl = try? container.decode(String.self, forKey: .imageUrl)
+        if let url = try? container.decode(String.self, forKey: .imageUrl) {
+            imageUrl = url
+        } else {
+            // Fallback to camelCase variants for robustness
+            let alt = try? decoder.container(keyedBy: AltCodingKeys.self)
+            imageUrl = (try? alt?.decodeIfPresent(String.self, forKey: .imageUrlCamel))
+                ?? (try? alt?.decodeIfPresent(String.self, forKey: .imageURLCaps))
+        }
 
         // Defaults when missing
         if let b = try? container.decode(Bool.self, forKey: .hasTryBenefit) {
