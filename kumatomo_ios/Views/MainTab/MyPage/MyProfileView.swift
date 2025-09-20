@@ -38,9 +38,7 @@ struct MyProfileView: View {
                         .padding(.horizontal, 20)
                         .padding(.bottom, 12)
                     
-                    // お気に入りセクション
-                    FavoritesSectionView()
-                        .padding(.bottom, 12)
+                    // お気に入りセクションはサイドバーの独立画面へ移動
                     
                     // 区切り線
                     Rectangle()
@@ -388,7 +386,8 @@ struct ProfileStatsView: View {
             StatItemView(
                 count: user.postCount ?? 0,
                 label: "投稿",
-                isClickable: false
+                isClickable: false,
+                labelColor: .primary
             )
             
             Spacer()
@@ -419,6 +418,7 @@ struct StatItemView: View {
     let count: Int
     let label: String
     let isClickable: Bool
+    var labelColor: Color = .secondary
     
     private var formattedCount: String {
         if count >= 1000000 {
@@ -444,7 +444,7 @@ struct StatItemView: View {
                 
                 Text(label)
                     .font(.system(size: 15))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(labelColor)
             }
         }
         .disabled(!isClickable)

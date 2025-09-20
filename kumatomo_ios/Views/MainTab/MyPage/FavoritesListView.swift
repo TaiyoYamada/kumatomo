@@ -41,7 +41,7 @@ struct FavoritesListView: View {
                     )
                 }
             }
-            .navigationTitle("お気に入り")
+            .navigationTitle("お気に入り店舗")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

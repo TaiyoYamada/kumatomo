@@ -2,13 +2,14 @@ import Foundation
 
 // MARK: - Sidebar Menu Item Type
 enum SidebarMenuItemType: CaseIterable {
-    case kumamonAI, bookmarks, likes, coupons, notifications, help, contact, settings, logout
+    case kumamonAI, bookmarks, likes, favoriteShops, coupons, notifications, help, contact, settings, logout
     
     var icon: String {
         switch self {
         case .kumamonAI: return "bubble.left.and.bubble.right"
         case .bookmarks: return "bookmark.fill"
         case .likes: return "heart.fill"
+        case .favoriteShops: return "star.fill"
         case .coupons: return "ticket.fill"
         case .notifications: return "bell.fill"
         case .help: return "questionmark.circle.fill"
@@ -23,6 +24,7 @@ enum SidebarMenuItemType: CaseIterable {
         case .kumamonAI: return "くまモンAI"
         case .bookmarks: return "ブックマーク"
         case .likes: return "いいね"
+        case .favoriteShops: return "お気に入り店舗"
         case .coupons: return "クーポン"
         case .notifications: return "お知らせ"
         case .help: return "ヘルプ"
@@ -37,6 +39,7 @@ enum SidebarMenuItemType: CaseIterable {
         case .kumamonAI: return "AIに相談する"
         case .bookmarks: return "保存した投稿"
         case .likes: return "いいねした投稿"
+        case .favoriteShops: return "保存したお店"
         case .coupons: return "利用可能なクーポン"
         case .settings: return "アプリの設定"
         case .logout: return "サインアウトします"
@@ -53,14 +56,14 @@ enum SidebarMenuItemType: CaseIterable {
     
     var externalURL: String? {
         switch self {
-        case .notifications, .help, .contact: return "https://www.notion.so/"
+        case .notifications, .help, .contact: return "https://www.notion.so/274db424e42280019ed4d3cbbcd9540d"
         default: return nil
         }
     }
     
     var isPrimarySection: Bool {
         switch self {
-        case .kumamonAI, .bookmarks, .likes, .coupons: return true
+        case .kumamonAI, .bookmarks, .likes, .favoriteShops, .coupons: return true
         default: return false
         }
     }
