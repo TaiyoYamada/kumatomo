@@ -701,24 +701,9 @@ struct PostCardContentView: View {
             }
 
             
-            // タグ表示
+            // タグ表示（先頭に#、オレンジ、背景なし、折返し可）
             if let tags = post.tags, !tags.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(tags, id: \.self) { tag in
-                            Text("#\(tag)")
-                                .font(.system(size: 14))
-                                .foregroundColor(.orange)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.orange.opacity(0.1))
-                                )
-                        }
-                    }
-                    .padding(.horizontal, 1)
-                }
+                CategoryTagsView(tags: tags)
             }
         }
         .padding(.leading, 56)

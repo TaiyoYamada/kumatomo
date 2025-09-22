@@ -172,10 +172,10 @@ struct TimelinePostCardView: View {
                             PostMediaView(imageUrl: imageUrl)
                         }
                         
-                        // Category Tags
-                        if let tags = post.tags, !tags.isEmpty {
-                            CategoryTagsView(tags: tags)
-                        }
+                    // Category Tags (display as inline hashtags)
+                    if let tags = post.tags, !tags.isEmpty {
+                        CategoryTagsView(tags: tags)
+                    }
                     }
                     // Make only this upper content tappable to open details
                     .contentShape(Rectangle())
@@ -389,77 +389,13 @@ struct PostMediaView: View {
 
 struct CategoryTagsView: View {
     let tags: [String]
-    let columns = [
-        GridItem(.adaptive(minimum: 80), spacing: 8)
-    ]
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
-    private var adaptiveTagSize: CGFloat {
-        switch dynamicTypeSize {
-        case .xSmall, .small:
-            return 10
-        case .medium:
-            return 12
-        case .large:
-            return 13
-        case .xLarge:
-            return 14
-        case .xxLarge:
-            return 15
-        case .xxxLarge:
-            return 16
-        default:
-            return 12
-        }
-    }
-    
-    private var adaptivePadding: CGFloat {
-        switch dynamicTypeSize {
-        case .xSmall, .small:
-            return 3
-        case .medium:
-            return 4
-        case .large:
-            return 5
-        case .xLarge:
-            return 6
-        case .xxLarge:
-            return 7
-        case .xxxLarge:
-            return 8
-        default:
-            return 4
-        }
-    }
     
     var body: some View {
-        LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
-            ForEach(tags, id: \.self) { tag in
-                Text(tag)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(categoryColor(for: tag))
-                    .cornerRadius(16)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                    .accessibilityLabel("カテゴリー: \(tag)")
-                    .accessibilityIdentifier("category_tag_\(tag)")
-            }
-        }
-    }
-    
-    private func categoryColor(for tag: String) -> Color {
-        switch tag {
-        case "グルメ":
-            return .green
-        case "イベント":
-            return .purple
-        case "緊急":
-            return .red
-        default:
-            return .orange
-        }
+        // Render as simple inline hashtags, wrapping across lines as needed
+        Text(tags.map { "#\($0)" }.joined(separator: " "))
+            .font(.system(size: 14, weight: .medium))
+            .foregroundColor(.orange)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityLabel("タグ: \(tags.joined(separator: ", "))")
     }
 }
