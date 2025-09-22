@@ -33,22 +33,23 @@ struct LikedPostsView: View {
                 // Empty state
                 LikedPostsEmptyStateView()
             } else {
-                // Posts list
-                LikedPostsTimeline(
+                // Reuse the common PostTimeline view for consistency
+                PostTimeline(
                     posts: engagementViewModel.likedPosts,
                     loading: engagementViewModel.isLoadingLikedPosts,
                     onRefresh: {
-                        Task {
-                            await engagementViewModel.refreshLikedPosts()
-                        }
+                        Task { await engagementViewModel.refreshLikedPosts() }
                     },
                     onLoadMore: {
-                        Task {
-                            await engagementViewModel.loadMoreLikedPosts()
-                        }
-                    },
-                    engagementViewModel: engagementViewModel
+                        Task { await engagementViewModel.loadMoreLikedPosts() }
+                    }
+                , embedInScrollView: true,
+                  onToggleLike: { post in
+                    await engagementViewModel.toggleLike(for: post)
+                  }
                 )
+                // Provide a BulletinBoardViewModel to satisfy environment needs
+                .environmentObject(BulletinBoardViewModel())
             }
             
             // Toast notification

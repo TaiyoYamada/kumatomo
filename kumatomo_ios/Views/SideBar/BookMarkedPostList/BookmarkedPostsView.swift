@@ -33,22 +33,23 @@ struct BookmarkedPostsView: View {
                 // Empty state
                 BookmarkedPostsEmptyStateView()
             } else {
-                // Posts list
-                BookmarkedPostsTimeline(
+                // Reuse the common PostTimeline view for consistency
+                PostTimeline(
                     posts: engagementViewModel.bookmarkedPosts,
                     loading: engagementViewModel.isLoadingBookmarkedPosts,
                     onRefresh: {
-                        Task {
-                            await engagementViewModel.refreshBookmarkedPosts()
-                        }
+                        Task { await engagementViewModel.refreshBookmarkedPosts() }
                     },
                     onLoadMore: {
-                        Task {
-                            await engagementViewModel.loadMoreBookmarkedPosts()
-                        }
-                    },
-                    engagementViewModel: engagementViewModel
+                        Task { await engagementViewModel.loadMoreBookmarkedPosts() }
+                    }
+                , embedInScrollView: true,
+                  onToggleLike: { post in
+                    await engagementViewModel.toggleLike(for: post)
+                  }
                 )
+                // Provide a BulletinBoardViewModel to satisfy environment needs
+                .environmentObject(BulletinBoardViewModel())
             }
             
             // Toast notification
