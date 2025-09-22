@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A modern Twitter-like post card view for displaying posts in the timeline
 struct TimelinePostCardView: View {
     let post: Post
     let onPostTap: (() -> Void)?
