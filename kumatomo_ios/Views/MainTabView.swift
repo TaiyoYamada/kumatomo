@@ -68,15 +68,20 @@ struct MainTabView: View {
                 }
                 .tag(TabSelection.shop)
                 
-                MyProfileView()
-                    .environmentObject(userManager)
-                    .environmentObject(sidebarState)
-                    .environment(\.openSidebar, sidebarState.open)
-                    .tabItem {
-                        Image(systemName: "person.crop.circle.fill")
-                        Text("プロフィール")
-                    }
-                    .tag(TabSelection.profile)
+                NavigationStack(path: appRouter.pathBinding(for: .profile)) {
+                    MyProfileView()
+                        .environmentObject(userManager)
+                        .environmentObject(sidebarState)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .withAppRouter()
+                        .navigationTitle("プロフィール")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+                .tabItem {
+                    Image(systemName: "person.crop.circle.fill")
+                    Text("プロフィール")
+                }
+                .tag(TabSelection.profile)
             }
             .accentColor(Color.primaryOrange)
         }
