@@ -23,6 +23,10 @@ struct PostTimeline: View {
                         if post.id == posts.last?.id {
                             onLoadMore()
                         }
+                    },
+                    onToggleLike: { post in
+                        // Delegate like toggle to the timeline's view model
+                        bulletinBoardViewModel.toggleLike(for: post)
                     }
                 )
             }
@@ -59,15 +63,17 @@ private struct PostCell: View {
     let post: Post
     let onTap: () -> Void
     let onAppear: () -> Void
+    let onToggleLike: (Post) async -> Void
     
     var body: some View {
         VStack(spacing: 0) {
-            TimelinePostCardView(post: post)
-                .onTapGesture {
-                    print("投稿をタップしたよ")
-                    onTap()
-                }
-                .contentShape(Rectangle())
+            // Pass tap handler into the card so it can
+            // attach the gesture only to non-button areas.
+            TimelinePostCardView(
+                post: post,
+                onPostTap: onTap,
+                customOnLike: onToggleLike
+            )
                 .onAppear(perform: onAppear)
 
             // 投稿ごとの区切り線
@@ -140,6 +146,3 @@ struct BulletinEmptyStateView: View {
         .padding(.horizontal, 32)
     }
 }
-
-
-

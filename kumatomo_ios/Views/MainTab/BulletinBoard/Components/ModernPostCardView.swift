@@ -132,13 +132,15 @@ struct TimelinePostCardView: View {
                 
                 // Content Area (Right side)
                 VStack(alignment: .leading, spacing: 8) {
-                    // User Info Header (Twitter-like: Name, @username · time)
-                    HStack(spacing: 6) {
-                        Text(post.user?.name ?? "ユーザー")
-                            .font(.system(size: adaptiveUserNameSize, weight: .semibold))
-                            .foregroundColor(.primary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
+                    // Tappable content (header + text + media + tags)
+                    VStack(alignment: .leading, spacing: 8) {
+                        // User Info Header (Twitter-like: Name, @username · time)
+                        HStack(spacing: 6) {
+                            Text(post.user?.name ?? "ユーザー")
+                                .font(.system(size: adaptiveUserNameSize, weight: .semibold))
+                                .foregroundColor(.primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
 
                         if let username = post.user?.username, !username.isEmpty {
                             Text("@\(username)")
@@ -158,21 +160,27 @@ struct TimelinePostCardView: View {
                             .minimumScaleFactor(0.8)
 
                         Spacer()
+                        }
+                        
+                        // Post Content with hashtags
+                        PostContentView(content: post.content)
+                        
+                        // Post Media
+                        if let images = post.images, !images.isEmpty {
+                            PostMediaView(images: images)
+                        } else if let imageUrl = post.imageUrl, !imageUrl.isEmpty {
+                            PostMediaView(imageUrl: imageUrl)
+                        }
+                        
+                        // Category Tags
+                        if let tags = post.tags, !tags.isEmpty {
+                            CategoryTagsView(tags: tags)
+                        }
                     }
-                    
-                    // Post Content with hashtags
-                    PostContentView(content: post.content)
-                    
-                    // Post Media
-                    if let images = post.images, !images.isEmpty {
-                        PostMediaView(images: images)
-                    } else if let imageUrl = post.imageUrl, !imageUrl.isEmpty {
-                        PostMediaView(imageUrl: imageUrl)
-                    }
-                    
-                    // Category Tags
-                    if let tags = post.tags, !tags.isEmpty {
-                        CategoryTagsView(tags: tags)
+                    // Make only this upper content tappable to open details
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        onPostTap?()
                     }
                     
                     // Engagement Buttons (Timeline version - no bookmark count)
@@ -195,7 +203,6 @@ struct TimelinePostCardView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, adaptivePadding)
-            .contentShape(Rectangle())
         }
         .background(Color(.systemBackground))
         .accessibilityElement(children: .contain)
