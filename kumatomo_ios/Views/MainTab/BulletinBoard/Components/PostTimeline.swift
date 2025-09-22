@@ -6,6 +6,8 @@ struct PostTimeline: View {
     let onRefresh: () -> Void
     let onLoadMore: () -> Void
     var embedInScrollView: Bool = true
+    // Optional like toggle handler for callers that own their own posts array
+    var onToggleLike: ((Post) async -> Void)? = nil
     
     @EnvironmentObject private var bulletinBoardViewModel: BulletinBoardViewModel
 
@@ -25,8 +27,12 @@ struct PostTimeline: View {
                         }
                     },
                     onToggleLike: { post in
-                        // Delegate like toggle to the timeline's view model
-                        bulletinBoardViewModel.toggleLike(for: post)
+                        if let handler = onToggleLike {
+                            await handler(post)
+                        } else {
+                            // Default to bulletin board VM when no handler provided
+                            bulletinBoardViewModel.toggleLike(for: post)
+                        }
                     }
                 )
             }

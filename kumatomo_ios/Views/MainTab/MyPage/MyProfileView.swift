@@ -54,7 +54,43 @@ struct MyProfileView: View {
                             let userId = AuthService.shared.currentUser?.id ?? 0
                             viewModel.loadMoreUserPosts(userID: userId)
                         },
-                        embedInScrollView: false
+                        embedInScrollView: false,
+                        onToggleLike: { post in
+                            let postId = post.id
+                            let originalIsLiked = post.isLikedByCurrentUser ?? false
+                            let originalLikeCount = post.likeCount ?? 0
+
+                            // Optimistic update on the profile's posts list
+                            await MainActor.run {
+                                if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                                    var p = viewModel.posts[idx]
+                                    let newIsLiked = !originalIsLiked
+                                    let newLikeCount = originalIsLiked ? max(0, originalLikeCount - 1) : originalLikeCount + 1
+                                    p.updateLikeStatus(isLiked: newIsLiked, likeCount: newLikeCount)
+                                    viewModel.posts[idx] = p
+                                }
+                            }
+
+                            do {
+                                let response = try await EngagementAPIService.shared.toggleLike(postId: postId)
+                                await MainActor.run {
+                                    if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                                        var p = viewModel.posts[idx]
+                                        p.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
+                                        viewModel.posts[idx] = p
+                                    }
+                                }
+                            } catch {
+                                // Roll back on failure
+                                await MainActor.run {
+                                    if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                                        var p = viewModel.posts[idx]
+                                        p.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
+                                        viewModel.posts[idx] = p
+                                    }
+                                }
+                            }
+                        }
                     )
                     .environmentObject(bulletinBoardViewModel)
                 }
