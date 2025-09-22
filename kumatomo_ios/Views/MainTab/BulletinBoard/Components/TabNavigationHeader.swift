@@ -198,32 +198,43 @@ struct MunicipalityPickerView: View {
                 .padding(.horizontal)
                 .padding(.top)
                 
-                // City list only
-                List(filteredCities, id: \.self) { city in
-                    Button(action: {
-                        onSelection(city)
-                    }) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(city)
-                                    .foregroundColor(.primary)
-                                    .font(.system(size: adaptiveFontSize))
+                // City list (ScrollView + LazyVStack) to avoid List/gesture quirks
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(filteredCities, id: \.self) { city in
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(city)
+                                        .foregroundColor(.primary)
+                                        .font(.system(size: adaptiveFontSize))
+                                }
+
+                                Spacer()
+
+                                if selectedMunicipality == city {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(Color(hex: "1DA1F2"))
+                                        .accessibilityLabel("選択中")
+                                }
                             }
-                            
-                            Spacer()
-                            
-                            if selectedMunicipality == city {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(Color(hex: "1DA1F2"))
-                                    .accessibilityLabel("選択中")
+                            .padding(.horizontal)
+                            .padding(.vertical, 12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                onSelection(city)
+                                // Proactively dismiss to avoid any stale overlays
+                                dismiss()
                             }
+
+                            // Row divider
+                            Rectangle()
+                                .fill(Color(hex: "E5E7EB"))
+                                .frame(height: 1)
+                                .padding(.leading)
                         }
-                        .padding(.vertical, 8)
-                        .frame(minHeight: 44) // Ensure minimum touch target
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
-                .listStyle(PlainListStyle())
             }
             .navigationTitle("市町村を選択")
             .navigationBarTitleDisplayMode(.inline)
