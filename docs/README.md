@@ -23,6 +23,7 @@
 - iOS: Xcode 15 以降, Swift 5.9 以降（iOS 17 目安）
 - 推奨: Docker Desktop（ローカル開発の簡略化）
 
+
 ## セットアップ
 
 ### 開発環境の起動（Docker）
@@ -42,8 +43,4 @@ yarn dev
 
 ## ライセンス
 
-
 本プロジェクトは [MIT License](./LICENSE) の内容に従います。
-
-
-
