@@ -65,6 +65,11 @@ class AppRouter: ObservableObject {
         append(.postDetail(postId: postId))
     }
     
+    func navigateToShopDetail(shopId: Int) {
+        print("[AppRouter] navigateToShopDetail id=\(shopId) currentTab=\(selectedTab)")
+        append(.shopDetail(shopId: shopId))
+    }
+    
     func navigateToLikedPosts(on tab: TabSelection? = nil) {
         print("[AppRouter] navigateToLikedPosts requested on tab=\(tab.self ?? selectedTab)")
         append(.likedPosts, to: tab)

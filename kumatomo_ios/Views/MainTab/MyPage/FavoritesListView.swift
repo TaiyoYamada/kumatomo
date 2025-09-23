@@ -4,7 +4,7 @@ import CoreLocation
 struct FavoritesListView: View {
     @StateObject private var favoritesManager = FavoritesManager.shared
     @StateObject private var locationManager = LocationManager.shared
-    @State private var sheetDestination: SheetDestination?
+    
     
     var body: some View {
         NavigationStack {
@@ -21,7 +21,7 @@ struct FavoritesListView: View {
                             // Add haptic feedback for better UX
                             let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                             impactFeedback.impactOccurred()
-                            sheetDestination = .shopDetail(shop)
+                            AppRouter.shared.navigateToShopDetail(shopId: shop.id)
                         },
                         onRefresh: {
                             Task {
@@ -56,7 +56,7 @@ struct FavoritesListView: View {
                     .disabled(favoritesManager.isLoading)
                 }
             }
-            .withSheetRouter(sheet: $sheetDestination)
+            // Shop詳細はNavigationStack遷移に変更
             .onAppear {
                 Task {
                     await favoritesManager.loadFavorites()
@@ -315,6 +315,17 @@ struct FavoritesEmptyStateView: View {
         .padding(.horizontal, 40)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .accessibilityIdentifier("FavoritesEmptyStateView")
+    }
+}
+
+// MARK: - Button Style
+/// カード押下時の軽いフィードバックを与える共通ボタンスタイル。
+struct ShopCardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .opacity(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.easeInOut(duration: 0.08), value: configuration.isPressed)
     }
 }
 

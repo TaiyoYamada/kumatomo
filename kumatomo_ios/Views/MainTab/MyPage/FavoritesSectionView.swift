@@ -4,7 +4,7 @@ import CoreLocation
 struct FavoritesSectionView: View {
     @StateObject private var favoritesManager = FavoritesManager.shared
     @StateObject private var locationManager = LocationManager.shared
-    @State private var sheetDestination: SheetDestination?
+    
     
     private let maxDisplayCount = 3 // Show only first 3 favorites in compact view
     
@@ -53,7 +53,7 @@ struct FavoritesSectionView: View {
                     onShopTapped: { shop in
                         let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                         impactFeedback.impactOccurred()
-                        sheetDestination = .shopDetail(shop)
+                        AppRouter.shared.navigateToShopDetail(shopId: shop.id)
                     }
                 )
             }
@@ -73,7 +73,7 @@ struct FavoritesSectionView: View {
                 )
             }
         }
-        .withSheetRouter(sheet: $sheetDestination)
+        // Shop詳細はNavigationStack遷移に変更
         .onAppear {
             Task {
                 await favoritesManager.loadFavorites()

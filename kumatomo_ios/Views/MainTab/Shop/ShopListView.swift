@@ -4,6 +4,7 @@ import MapKit
 struct ShopListView: View {
     @StateObject private var viewModel = ShopListViewModel()
     @State private var sheetDestination: SheetDestination?
+    @EnvironmentObject private var appRouter: AppRouter
     
     var body: some View {
         VStack(spacing: 0) {
@@ -37,7 +38,7 @@ struct ShopListView: View {
                             // Add haptic feedback for map pin taps
                             let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                             impactFeedback.impactOccurred()
-                            sheetDestination = .shopDetail(shop)
+                            appRouter.navigateToShopDetail(shopId: shop.id)
                         }
                     )
                 } else {
@@ -51,12 +52,6 @@ struct ShopListView: View {
                             Task {
                                 await viewModel.refreshShops()
                             }
-                        },
-                        onShopTapped: { shop in
-                            // Add haptic feedback for better UX
-                            let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-                            impactFeedback.impactOccurred()
-                            sheetDestination = .shopDetail(shop)
                         },
                         onDismissFavoritesError: {
                             viewModel.dismissFavoritesError()
@@ -149,7 +144,6 @@ struct ShopListContentView: View {
     let favoritesErrorMessage: String?
     let userLocation: CLLocation?
     let onRefresh: () -> Void
-    let onShopTapped: (Shop) -> Void
     let onDismissFavoritesError: () -> Void
     let distanceFromUser: (Shop) -> String?
     
@@ -165,8 +159,7 @@ struct ShopListContentView: View {
                         ForEach(shops) { shop in
                             ShopCardView(
                                 shop: shop,
-                                distance: distanceFromUser(shop),
-                                onTap: { onShopTapped(shop) }
+                                distance: distanceFromUser(shop)
                             )
                             .accessibilityIdentifier("ShopCard_\(shop.id)")
                         }
@@ -196,13 +189,12 @@ struct ShopListContentView: View {
 struct ShopCardView: View {
     let shop: Shop
     let distance: String?
-    let onTap: () -> Void
     
     @StateObject private var favoritesManager = FavoritesManager.shared
     @State private var isTogglingFavorite = false
     
     var body: some View {
-        Button(action: onTap) {
+        NavigationLink(value: RouterDestination.shopDetail(shopId: shop.id)) {
             VStack(alignment: .leading, spacing: 12) {
                 // 店舗画像 with favorite button overlay
                 ZStack(alignment: .topTrailing) {
@@ -314,7 +306,7 @@ struct ShopCardView: View {
             .cornerRadius(16)
             .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
         }
-        .buttonStyle(ShopCardButtonStyle())
+        .buttonStyle(PlainButtonStyle())
     }
     
     private func toggleFavorite() async {
@@ -405,15 +397,7 @@ struct RefreshableScrollView<Content: View>: View {
     }
 }
 
-// MARK: - Shop Card Button Style
-struct ShopCardButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .opacity(configuration.isPressed ? 0.9 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
-    }
-}
+
 
 // MARK: - Favorites Error Banner
 struct FavoritesErrorBanner: View {

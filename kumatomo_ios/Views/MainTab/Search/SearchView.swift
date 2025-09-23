@@ -195,7 +195,7 @@ struct SearchView: View {
                         
                         ForEach(results.shops) { shop in
                             ShopSearchResultCard(shop: shop) {
-                                sheetDestination = .shopDetail(shop)
+                                AppRouter.shared.navigateToShopDetail(shopId: shop.id)
                             }
                         }
                     }

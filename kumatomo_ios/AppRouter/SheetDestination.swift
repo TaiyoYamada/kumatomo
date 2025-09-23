@@ -5,7 +5,6 @@ import PhotosUI
 // 統合済み: 全てのシート・モーダル表示はこのenumで管理
 enum SheetDestination: Identifiable {
 	case postDetail(Int)                                                           // 投稿詳細モーダル
-	case shopDetail(Shop)                                                          // お店詳細モーダル
 	case shopPicker(selectedShop: Binding<Shop?>)                                  // // 投稿プレビューモーダル
 	case profileEdit(User, onProfileUpdated: (() -> Void)? = nil)              // プロフィール編集モーダル
 	case municipalityPicker(selected: String?, onSelect: (String) -> Void)         // 市区町村選択モーダル
@@ -20,8 +19,6 @@ enum SheetDestination: Identifiable {
 		switch self {
 		case .postDetail(let postId):
 			return "postDetail_\(postId)"
-		case .shopDetail(let shop):
-			return "shopDetail_\(shop.id)"
 		case .shopPicker:
 			return "shopPicker"
 		case .profileEdit(let user, _):
@@ -50,8 +47,6 @@ extension View {
 			case .postDetail(let postId):
 				PostDetailView(postId: postId)
 					.environmentObject(CurrentUserManager.shared)
-			case .shopDetail(let shop):
-				ShopDetailView(shop: shop)
 			case .shopPicker(let selectedShop):
 				ShopPickerView(selectedShop: selectedShop)
 			case .profileEdit(let user, let onProfileUpdated):

@@ -2,14 +2,16 @@ import SwiftUI
 import MapKit
 
 struct ShopDetailView: View {
-    let shop: Shop
-    @Environment(\.dismiss) private var dismiss
+    let shopId: Int
+    @State private var shop: Shop?
+    @State private var isLoadingShop = false
+    @State private var shopErrorMessage: String?
     @StateObject private var viewModel = ShopDetailViewModel()
     
     var body: some View {
-        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    if let shop = shop {
                     // 店舗画像（最適化された遅延読み込み）
                     AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { imagePhase in
                         switch imagePhase {
@@ -147,7 +149,7 @@ struct ShopDetailView: View {
                             errorMessage: viewModel.errorMessage,
                             onRefresh: {
                                 Task {
-                                    await viewModel.loadPosts(for: shop.id)
+                                    await viewModel.loadPosts(for: shopId)
                                 }
                             }
                         )
@@ -155,22 +157,44 @@ struct ShopDetailView: View {
                         Spacer(minLength: 20)
                     }
                     .padding(.horizontal, 20)
-                }
-            }
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("閉じる") {
-                        dismiss()
+                    } else if isLoadingShop {
+                        VStack(spacing: 16) {
+                            ProgressView()
+                            Text("店舗情報を読み込み中...")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 16))
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if let message = shopErrorMessage {
+                        VStack(spacing: 12) {
+                            Image(systemName: "wifi.slash")
+                                .font(.system(size: 40))
+                                .foregroundColor(.primaryOrange)
+                            Text(message)
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                            Button("再試行") {
+                                Task { await loadShop() }
+                            }
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(Color.primaryOrange)
+                            .cornerRadius(8)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .foregroundColor(.primaryOrange)
-                    .accessibilityLabel("店舗詳細を閉じる")
                 }
             }
-            .interactiveDismissDisabled(false) // Allow swipe to dismiss
+//            .navigationTitle(shop?.name ?? "お店詳細")
+//            .navigationBarTitleDisplayMode(.large)
             .task {
-                await viewModel.loadPosts(for: shop.id)
+                await withTaskGroup(of: Void.self) { group in
+                    group.addTask { await loadShop() }
+                    group.addTask { await viewModel.loadPosts(for: shopId) }
+                    await group.waitForAll()
+                }
             }
             .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
                 Button("OK") {
@@ -181,7 +205,6 @@ struct ShopDetailView: View {
                     Text(errorMessage)
                 }
             }
-        }
     }
     
     private func makePhoneCall(to phoneNumber: String) {
@@ -196,7 +219,8 @@ struct ShopDetailView: View {
     }
     
     private func openInMaps() {
-        guard let latitude = shop.latitude,
+        guard let shop = shop,
+              let latitude = shop.latitude,
               let longitude = shop.longitude else { return }
         
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -206,6 +230,19 @@ struct ShopDetailView: View {
         mapItem.openInMaps(launchOptions: [
             MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
         ])
+    }
+    
+    @MainActor
+    private func loadShop() async {
+        isLoadingShop = true
+        shopErrorMessage = nil
+        do {
+            let fetched = try await ShopAPIService.shared.fetchShop(id: shopId)
+            self.shop = fetched
+        } catch {
+            self.shopErrorMessage = error.localizedDescription
+        }
+        isLoadingShop = false
     }
 }
 
