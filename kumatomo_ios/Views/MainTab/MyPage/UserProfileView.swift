@@ -8,7 +8,7 @@ struct UserProfileView: View {
     @State private var errorMessage: String?
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 if isLoading {
                     ProgressView("読み込み中...")

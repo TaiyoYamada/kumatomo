@@ -165,11 +165,3 @@ struct EngagementButtonDemo: View {
         }
     }
 }
-
-// MARK: - Preview
-
-#Preview {
-    NavigationView {
-        EngagementButtonDemo()
-    }
-}

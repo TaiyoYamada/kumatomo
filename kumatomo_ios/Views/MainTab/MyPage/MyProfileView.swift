@@ -465,25 +465,28 @@ struct StatItemView: View {
         }
     }
     
+    @ViewBuilder
     var body: some View {
-        Button(action: {
-            if isClickable {
+        let content = HStack(spacing: 4) {
+            Text(formattedCount)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(.primary)
+            Text(label)
+                .font(.system(size: 15))
+                .foregroundColor(labelColor)
+        }
+
+        if isClickable {
+            Button(action: {
                 // TODO: フォロー/フォロワー一覧画面への遷移
                 print("Navigate to \(label) list")
+            }) {
+                content
             }
-        }) {
-            HStack(spacing: 4) {
-                Text(formattedCount)
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.primary)
-                
-                Text(label)
-                    .font(.system(size: 15))
-                    .foregroundColor(labelColor)
-            }
+            .buttonStyle(PlainButtonStyle())
+        } else {
+            content
         }
-        .disabled(!isClickable)
-        .buttonStyle(PlainButtonStyle())
     }
 }
 

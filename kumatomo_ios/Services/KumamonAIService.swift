@@ -198,7 +198,6 @@ extension KumamonAIService {
                 return false
             }
         }
-        
         return true
     }
     

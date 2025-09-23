@@ -806,15 +806,13 @@ extension UserAPIService {
         if let token = AuthTokenManager.shared.token {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        // --- 👇 ここから修正！ ---
+
         // キャッシュを完全に無視して、必ずサーバーから新しい情報を取得するようにする
         request.cachePolicy = .reloadIgnoringLocalCacheData
-        // さらに強力なキャッシュ無効化ヘッダーを追加
         request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
         request.setValue("no-store", forHTTPHeaderField: "Cache-Control")
         request.setValue("0", forHTTPHeaderField: "Expires")
         request.setValue("no-cache", forHTTPHeaderField: "Pragma")
-        // --- 👆 ここまで修正！ ---
         
         let (data, response) = try await APISession.shared.session.data(for: request)
         try validateResponse(response)
