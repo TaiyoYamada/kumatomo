@@ -1,6 +1,5 @@
 .editorconfig
 .env
-.env.example
 
 .kiro
 .vscode

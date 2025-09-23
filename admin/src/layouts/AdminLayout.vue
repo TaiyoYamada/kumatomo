@@ -10,7 +10,6 @@
   >
     <!-- Mobile/Tablet menu button -->
     <v-app-bar-nav-icon
-      v-if="isDrawerTemporary"
       @click="toggleDrawer"
       color="on-surface"
       class="drawer-toggle-btn"
@@ -41,19 +40,6 @@
     </div>
 
     <v-spacer />
-
-    <!-- Search Box -->
-    <v-text-field
-      v-if="isDesktop"
-      v-model="searchQuery"
-      placeholder="検索..."
-      prepend-inner-icon="mdi-magnify"
-      variant="outlined"
-      density="compact"
-      hide-details
-      class="search-field mr-4"
-      style="max-width: 300px;"
-    />
 
     <!-- User Actions -->
     <div class="d-flex align-center user-actions">
@@ -115,10 +101,11 @@
 
   <!-- Navigation Drawer (Sidebar) -->
   <v-navigation-drawer
+    v-if="!isStandalone"
     v-model="drawer"
     app
-    :permanent="isDrawerPermanent"
-    :temporary="isDrawerTemporary"
+    :permanent="false"
+    :temporary="true"
     color="surface"
     width="280"
     elevation="8"
@@ -178,7 +165,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useRoute } from 'vue-router'
 
@@ -188,16 +175,21 @@ const route = useRoute()
 
 // Reactive data
 const drawer = ref(true)
-const searchQuery = ref('')
 
 // Computed properties for responsive breakpoints
 const isDesktop = computed(() => width.value >= 1024)
 const isTablet = computed(() => width.value >= 768 && width.value < 1024)
 const isMobile = computed(() => width.value < 768)
 
-// Computed property for drawer behavior
-const isDrawerTemporary = computed(() => !isDesktop.value)
-const isDrawerPermanent = computed(() => isDesktop.value)
+// Drawer is always temporary; toggled by header button
+const isDrawerTemporary = computed(() => true)
+const isDrawerPermanent = computed(() => false)
+
+// Standalone pages (no sidebar): login/register or routes with meta.standalone
+const isStandalone = computed(() => {
+  const standaloneMeta = route.meta && (route.meta.standalone === true)
+  return standaloneMeta || route.path === '/login' || route.path === '/register'
+})
 
 // Helper function to determine active route
 const isActiveRoute = (itemRoute) => {
@@ -244,57 +236,19 @@ const navigationItems = [
   }
 ]
 
-// Handle responsive drawer behavior
-const handleResize = () => {
-  if (isDesktop.value) {
-    // Desktop: drawer is always open and permanent
-    drawer.value = true
-  } else {
-    // Mobile/Tablet: drawer is closed by default and temporary
-    drawer.value = false
-  }
-}
-
 // Toggle drawer function for mobile navigation
 const toggleDrawer = () => {
   drawer.value = !drawer.value
 }
 
-// Close drawer when clicking outside on mobile/tablet
-const closeDrawerOnMobile = () => {
-  if (isDrawerTemporary.value) {
-    drawer.value = false
-  }
-}
-
-// Lifecycle hooks
-onMounted(() => {
-  handleResize()
-  window.addEventListener('resize', handleResize)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
+// Close drawer helper
+const closeDrawerOnMobile = () => { drawer.value = false }
 </script>
 
 <style scoped>
-/* CSS Custom Properties for consistent orange accent usage */
-:root {
-  --orange-primary: 249, 168, 37;
-  --orange-hover: rgba(249, 168, 37, 0.08);
-  --orange-active: rgba(249, 168, 37, 0.12);
-  --orange-shadow: rgba(249, 168, 37, 0.15);
-  --orange-focus: rgba(249, 168, 37, 0.2);
-}
-/* Custom styling for search field */
-.search-field :deep(.v-field__outline) {
-  border-radius: 12px;
-}
-
-.search-field :deep(.v-field--focused .v-field__outline) {
-  border-color: rgb(var(--v-theme-primary));
-}
+/* Disable animations/transitions across admin */
+*, *::before, *::after { transition: none !important; animation: none !important; }
+/* Search field removed */
 
 /* Enhanced navigation item styling with consistent spacing */
 .nav-item {
@@ -490,18 +444,7 @@ onUnmounted(() => {
   box-shadow: 0 0 0 1px rgba(var(--orange-primary), 0.1);
 }
 
-.search-field:focus-within :deep(.v-field__outline) {
-  border-color: rgb(var(--v-theme-primary)) !important;
-  box-shadow: 0 0 0 2px var(--orange-focus);
-}
-
-.search-field :deep(.v-field__prepend-inner .v-icon) {
-  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-field:hover :deep(.v-field__prepend-inner .v-icon) {
-  color: rgb(var(--v-theme-primary)) !important;
-}
+/* Search field styles removed */
 
 /* Mobile/Tablet navigation button styling */
 .drawer-toggle-btn {

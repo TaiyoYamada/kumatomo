@@ -3,7 +3,7 @@ import Foundation
 class SearchAPIService {
     static let shared = SearchAPIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
+    private let baseURL = APIConfig.shared.baseURLString
     
     // 認証トークンの取得
     private func getAuthToken() -> String {
@@ -96,4 +96,3 @@ private struct SearchAPIResponse: Codable {
     let query: String
     let type: String
 }
-

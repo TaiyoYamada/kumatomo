@@ -2,16 +2,18 @@ import SwiftUI
 import MapKit
 
 struct ShopDetailView: View {
-    let shop: Shop
-    @Environment(\.dismiss) private var dismiss
+    let shopId: Int
+    @State private var shop: Shop?
+    @State private var isLoadingShop = false
+    @State private var shopErrorMessage: String?
     @StateObject private var viewModel = ShopDetailViewModel()
     
     var body: some View {
-        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    if let shop = shop {
                     // 店舗画像（最適化された遅延読み込み）
-                    AsyncImage(url: URL(string: shop.imageUrl ?? "")) { imagePhase in
+                    AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { imagePhase in
                         switch imagePhase {
                         case .success(let image):
                             image
@@ -39,6 +41,11 @@ struct ShopDetailView: View {
                             EmptyView()
                         }
                     }
+                    .onAppear {
+                        #if DEBUG
+                        ImageDebugLogger.logImage(shop.imageUrl, context: "ShopDetail:shopId=\(shop.id)")
+                        #endif
+                    }
                     
                     VStack(alignment: .leading, spacing: 16) {
                         // 店舗名とジャンル
@@ -48,7 +55,7 @@ struct ShopDetailView: View {
                                 .foregroundColor(.primary)
                             
                             if let genre = shop.genre {
-                                Text(genre)
+                                Text(genre.displayName)
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(.orange)
                                     .padding(.horizontal, 12)
@@ -142,7 +149,7 @@ struct ShopDetailView: View {
                             errorMessage: viewModel.errorMessage,
                             onRefresh: {
                                 Task {
-                                    await viewModel.loadPosts(for: shop.id)
+                                    await viewModel.loadPosts(for: shopId)
                                 }
                             }
                         )
@@ -150,20 +157,44 @@ struct ShopDetailView: View {
                         Spacer(minLength: 20)
                     }
                     .padding(.horizontal, 20)
-                }
-            }
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("閉じる") {
-                        dismiss()
+                    } else if isLoadingShop {
+                        VStack(spacing: 16) {
+                            ProgressView()
+                            Text("店舗情報を読み込み中...")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 16))
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if let message = shopErrorMessage {
+                        VStack(spacing: 12) {
+                            Image(systemName: "wifi.slash")
+                                .font(.system(size: 40))
+                                .foregroundColor(.primaryOrange)
+                            Text(message)
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                            Button("再試行") {
+                                Task { await loadShop() }
+                            }
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(Color.primaryOrange)
+                            .cornerRadius(8)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .foregroundColor(.orange)
                 }
             }
+//            .navigationTitle(shop?.name ?? "お店詳細")
+//            .navigationBarTitleDisplayMode(.large)
             .task {
-                await viewModel.loadPosts(for: shop.id)
+                await withTaskGroup(of: Void.self) { group in
+                    group.addTask { await loadShop() }
+                    group.addTask { await viewModel.loadPosts(for: shopId) }
+                    await group.waitForAll()
+                }
             }
             .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
                 Button("OK") {
@@ -174,7 +205,6 @@ struct ShopDetailView: View {
                     Text(errorMessage)
                 }
             }
-        }
     }
     
     private func makePhoneCall(to phoneNumber: String) {
@@ -189,7 +219,8 @@ struct ShopDetailView: View {
     }
     
     private func openInMaps() {
-        guard let latitude = shop.latitude,
+        guard let shop = shop,
+              let latitude = shop.latitude,
               let longitude = shop.longitude else { return }
         
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -199,6 +230,19 @@ struct ShopDetailView: View {
         mapItem.openInMaps(launchOptions: [
             MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
         ])
+    }
+    
+    @MainActor
+    private func loadShop() async {
+        isLoadingShop = true
+        shopErrorMessage = nil
+        do {
+            let fetched = try await ShopAPIService.shared.fetchShop(id: shopId)
+            self.shop = fetched
+        } catch {
+            self.shopErrorMessage = error.localizedDescription
+        }
+        isLoadingShop = false
     }
 }
 
@@ -228,21 +272,4 @@ struct InfoRow: View {
             Spacer()
         }
     }
-}
-
-#Preview {
-    ShopDetailView(
-        shop: Shop(
-            id: 1,
-            name: "サンプルカフェ",
-            description: "美味しいコーヒーと手作りスイーツが楽しめる、落ち着いた雰囲気のカフェです。Wi-Fi完備で作業にも最適です。",
-            address: "東京都渋谷区神南1-1-1",
-            phone: "03-1234-5678",
-            businessHours: "平日 8:00-20:00\n土日祝 9:00-21:00",
-            genre: "カフェ",
-            latitude: 35.6762,
-            longitude: 139.6503,
-            imageUrl: "https://example.com/cafe.jpg"
-        )
-    )
 }

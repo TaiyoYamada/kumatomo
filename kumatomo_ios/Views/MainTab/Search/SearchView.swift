@@ -6,8 +6,7 @@ struct SearchView: View {
     @State private var sheetDestination: SheetDestination?
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
             // 検索バー
             searchBar
             
@@ -41,9 +40,7 @@ struct SearchView: View {
                     Text(errorMessage)
                 }
             }
-            .withAppRouter()
             .withSheetRouter(sheet: $sheetDestination)
-        }
     }
     
     // 検索バー
@@ -198,7 +195,7 @@ struct SearchView: View {
                         
                         ForEach(results.shops) { shop in
                             ShopSearchResultCard(shop: shop) {
-                                sheetDestination = .shopDetail(shop)
+                                AppRouter.shared.navigateToShopDetail(shopId: shop.id)
                             }
                         }
                     }
@@ -362,10 +359,12 @@ struct SearchView: View {
         let shop: Shop
         let onTap: () -> Void
         
+        @StateObject private var locationManager = LocationManager.shared
+        
         var body: some View {
             HStack(spacing: 12) {
                 // お店画像
-                AsyncImage(url: URL(string: shop.imageUrl ?? "")) { image in
+                AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -375,17 +374,36 @@ struct SearchView: View {
                 }
                 .frame(width: 80, height: 80)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .onAppear {
+                    #if DEBUG
+                    ImageDebugLogger.logImage(shop.imageUrl, context: "Search:shopId=\(shop.id)")
+                    #endif
+                }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    // お店名
-                    Text(shop.name)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
+                    // お店名と距離
+                    HStack {
+                        Text(shop.name)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                        
+                        Spacer()
+                        
+                        if let distance = locationManager.distanceFromUser(to: shop) {
+                            Text(distance)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(4)
+                        }
+                    }
                     
                     // ジャンル
                     if let genre = shop.genre {
-                        Text(genre)
+                        Text(genre.displayName)
                             .font(.caption)
                             .foregroundColor(.orange)
                             .padding(.horizontal, 8)
@@ -404,8 +422,6 @@ struct SearchView: View {
                     
                     Spacer()
                 }
-                
-                Spacer()
                 
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)

@@ -1,15 +1,46 @@
 // Network status monitoring
 let isOnline = navigator.onLine
 let networkListeners = []
+let networkStatus = {
+    isOnline,
+    connectionType: 'unknown'
+}
+
+// Enhanced network monitoring with Connection API
+if ('connection' in navigator) {
+    const connection = navigator.connection
+
+    networkStatus = {
+        isOnline,
+        connectionType: connection.type || 'unknown',
+        effectiveType: connection.effectiveType,
+        downlink: connection.downlink,
+        rtt: connection.rtt,
+        saveData: connection.saveData
+    }
+
+    connection.addEventListener('change', () => {
+        networkStatus = {
+            isOnline,
+            connectionType: connection.type || 'unknown',
+            effectiveType: connection.effectiveType,
+            downlink: connection.downlink,
+            rtt: connection.rtt,
+            saveData: connection.saveData
+        }
+    })
+}
 
 // Listen for network status changes
 window.addEventListener('online', () => {
     isOnline = true
+    networkStatus.isOnline = true
     networkListeners.forEach(listener => listener(true))
 })
 
 window.addEventListener('offline', () => {
     isOnline = false
+    networkStatus.isOnline = false
     networkListeners.forEach(listener => listener(false))
 })
 
@@ -23,6 +54,7 @@ export const ERROR_TYPES = {
     SERVER_ERROR: 'SERVER_ERROR',
     TIMEOUT_ERROR: 'TIMEOUT_ERROR',
     OFFLINE_ERROR: 'OFFLINE_ERROR',
+    RATE_LIMIT_ERROR: 'RATE_LIMIT_ERROR',
     UNKNOWN_ERROR: 'UNKNOWN_ERROR'
 }
 
@@ -36,6 +68,7 @@ const ERROR_MESSAGES = {
     [ERROR_TYPES.SERVER_ERROR]: 'サーバーエラーが発生しました',
     [ERROR_TYPES.TIMEOUT_ERROR]: 'リクエストがタイムアウトしました',
     [ERROR_TYPES.OFFLINE_ERROR]: 'インターネット接続がありません',
+    [ERROR_TYPES.RATE_LIMIT_ERROR]: 'リクエスト制限を超えています',
     [ERROR_TYPES.UNKNOWN_ERROR]: '予期しないエラーが発生しました'
 }
 
@@ -49,6 +82,7 @@ const RECOVERY_SUGGESTIONS = {
     [ERROR_TYPES.SERVER_ERROR]: 'しばらく時間をおいてから再試行してください',
     [ERROR_TYPES.TIMEOUT_ERROR]: '通信環境を確認して再試行してください',
     [ERROR_TYPES.OFFLINE_ERROR]: 'インターネット接続を確認してください',
+    [ERROR_TYPES.RATE_LIMIT_ERROR]: 'しばらく時間をおいてから再試行してください',
     [ERROR_TYPES.UNKNOWN_ERROR]: 'ページを再読み込みしてください'
 }
 
@@ -56,7 +90,8 @@ const RECOVERY_SUGGESTIONS = {
 const RETRYABLE_ERRORS = [
     ERROR_TYPES.NETWORK_ERROR,
     ERROR_TYPES.SERVER_ERROR,
-    ERROR_TYPES.TIMEOUT_ERROR
+    ERROR_TYPES.TIMEOUT_ERROR,
+    ERROR_TYPES.RATE_LIMIT_ERROR
 ]
 
 export const getErrorType = (error) => {
@@ -80,6 +115,8 @@ export const getErrorType = (error) => {
             case 408:
             case 504:
                 return ERROR_TYPES.TIMEOUT_ERROR
+            case 429:
+                return ERROR_TYPES.RATE_LIMIT_ERROR
             case 500:
             case 502:
             case 503:

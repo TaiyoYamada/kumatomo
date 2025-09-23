@@ -195,7 +195,7 @@ private struct ShopEditCard: View {
                             }
                             
                             if let genre = shop.genre {
-                                Text(genre)
+                                Text(genre.displayName)
                                     .font(.caption)
                                     .foregroundStyle(.orange)
                                     .padding(.horizontal, 6)

@@ -8,7 +8,7 @@ class AuthService: ObservableObject {
     static let shared = AuthService()
     
     private var cancellables = Set<AnyCancellable>()
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
+    private let baseURL = APIConfig.shared.baseURLString
 
     init() {
         print("🚀 AuthService init called")

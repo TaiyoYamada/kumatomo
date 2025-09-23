@@ -41,41 +41,50 @@ struct MainTabView: View {
                 
                 NavigationStack(path: appRouter.pathBinding(for: .portal)) {
                     PortalView()
-                        .environmentObject(userManager)
-                        .environmentObject(sidebarState)
-                        .environment(\.openSidebar, sidebarState.open)
-                        .withAppRouter()
+                        .withAppRouter() // Attach destination to stack content to ensure resolution
                     // ★ navigationTitleとtoolbarはここでは設定しない
                 }
+                .environmentObject(userManager)
+                .environmentObject(sidebarState)
+                .environment(\.openSidebar, sidebarState.open)
                 .tabItem {
                     Image(systemName: "rectangle.grid.2x2")
                     Text("ポータル")
                 }
                 .tag(TabSelection.portal)
                 
-                KumamonAIView()
-                    .environmentObject(userManager)
-                    .environmentObject(sidebarState)
-                    .environment(\.openSidebar, sidebarState.open)
-                    .tabItem {
-                        Image(systemName: "bubble.left.and.bubble.right")
-                        Text("くまモンAI")
-                    }
-                    .tag(TabSelection.kumamonAI)
+                // お店一覧タブ
+                NavigationStack(path: appRouter.pathBinding(for: .shop)) {
+                    ShopListView()
+                        .environmentObject(userManager)
+                        .environmentObject(sidebarState)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .withAppRouter()
+                        .navigationTitle("お店一覧")
+                }
+                .tabItem {
+                    Image(systemName: "storefront.fill")
+                    Text("お店")
+                }
+                .tag(TabSelection.shop)
                 
-                MyProfileView()
-                    .environmentObject(userManager)
-                    .environmentObject(sidebarState)
-                    .environment(\.openSidebar, sidebarState.open)
-                    .tabItem {
-                        Image(systemName: "person.crop.circle.fill")
-                        Text("プロフィール")
-                    }
-                    .tag(TabSelection.profile)
+                NavigationStack(path: appRouter.pathBinding(for: .profile)) {
+                    MyProfileView()
+                        .environmentObject(userManager)
+                        .environmentObject(sidebarState)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .withAppRouter()
+                        .navigationTitle("プロフィール")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+                .tabItem {
+                    Image(systemName: "person.crop.circle.fill")
+                    Text("プロフィール")
+                }
+                .tag(TabSelection.profile)
             }
             .accentColor(Color.primaryOrange)
         }
-        .errorOverlay()
         .onAppear {
             userManager.loadCurrentUser()
         }

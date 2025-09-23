@@ -212,14 +212,6 @@ export function useStoreApi() {
         return ''
     }
 
-    // Helper function to determine Try benefit availability
-    const hasTryBenefit = (store: Store): boolean => {
-        // This would be based on actual business logic
-        // For now, return a placeholder based on genre
-        const benefitGenres = ['レストラン', 'カフェ', '居酒屋']
-        return benefitGenres.includes(store.genre || '')
-    }
-
     // Helper function to determine store status
     const getStoreStatus = (store: Store): 'active' | 'inactive' => {
         // This would be based on actual business logic
@@ -232,7 +224,6 @@ export function useStoreApi() {
         return {
             ...store,
             city: extractCityFromAddress(store.address),
-            has_try_benefit: hasTryBenefit(store),
             status: getStoreStatus(store)
         }
     }

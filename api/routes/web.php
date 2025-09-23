@@ -7,5 +7,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// 古い形式の画像配信ルート（後方互換性のため）
+// 画像配信ルート
+// 新形式: publicディスク配下を任意パスで配信 (/storage/{path})
+Route::get('/storage/{path}', [ImageController::class, 'show'])->where('path', '.*');
+
+// 旧形式の互換: /storage/uploads/{filename}
 Route::get('/storage/uploads/{filename}', [ImageController::class, 'showStorage'])->where('filename', '.*');

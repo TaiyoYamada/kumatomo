@@ -1,32 +1,54 @@
 import Foundation
 import CoreLocation
 import SwiftUI
+import Combine
 
 @MainActor
 class ShopListViewModel: ObservableObject {
     @Published var shops: [Shop] = []
+    @Published var filteredShops: [Shop] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
-    @Published var selectedGenre: String? = nil
+    @Published var selectedGenres: Set<ShopGenre> = []
     @Published var showingMap = false
-    @Published var userLocation: CLLocation?
+    @Published var favoritesErrorMessage: String?
+    @Published var selectedShop: Shop?
     
     private let shopAPIService = ShopAPIService.shared
-    private let locationManager = CLLocationManager()
-    private var locationDelegate: LocationDelegate?
+    private let locationManager = LocationManager.shared
+    private let favoritesManager = FavoritesManager.shared
+    private var cancellables = Set<AnyCancellable>()
     
-    // ジャンル一覧（フィルタリング用）
-    let genres = ["すべて", "カフェ", "レストラン", "居酒屋", "ファストフード", "スイーツ", "その他"]
-    
-    init() {
-        setupLocationManager()
+    // Computed property to access user location from LocationManager
+    var userLocation: CLLocation? {
+        return locationManager.userLocation
     }
     
-    private func setupLocationManager() {
-        locationDelegate = LocationDelegate(viewModel: self)
-        locationManager.delegate = locationDelegate
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
+    init() {
+        // Request location permission on initialization
+        locationManager.requestLocationPermission()
+        
+        // Observe location updates and reload shops when location is available
+        locationManager.$userLocation
+            .compactMap { $0 }
+            .sink { [weak self] _ in
+                Task { @MainActor in
+                    await self?.loadShops()
+                }
+            }
+            .store(in: &cancellables)
+        
+        // Observe favorites manager errors
+        favoritesManager.$errorMessage
+            .sink { [weak self] errorMessage in
+                self?.favoritesErrorMessage = errorMessage
+            }
+            .store(in: &cancellables)
+        
+        // Load initial data
+        Task {
+            await loadShops()
+        }
     }
     
     func loadShops() async {
@@ -34,33 +56,146 @@ class ShopListViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let genre = selectedGenre == "すべて" ? nil : selectedGenre
             let latitude = userLocation?.coordinate.latitude
             let longitude = userLocation?.coordinate.longitude
             
             shops = try await shopAPIService.fetchShops(
-                genre: genre,
+                genre: nil, // Load all shops, filter locally for multi-select
                 latitude: latitude,
                 longitude: longitude,
                 radius: 5000 // 5km radius
             )
+            
+            applyFilters()
+            #if DEBUG
+            print("🧩 [ShopListVM] fetched shops count=\(shops.count)")
+            for s in shops { print("🧩 [ShopListVM] id=\(s.id) name=\(s.name) imageUrl=\(s.imageUrl ?? "<nil>")") }
+            #endif
         } catch {
-            errorMessage = error.localizedDescription
-            print("🚨 お店一覧の取得に失敗: \(error)")
+            // 開発環境でAPIが利用できない場合はモックデータを使用
+            if !APIConfig.shared.isConfigured || error.localizedDescription.contains("localhost") {
+                print("🔧 APIが利用できないため、モックデータを使用します")
+                shops = createMockShops()
+                applyFilters()
+            } else {
+                errorMessage = error.localizedDescription
+                print("🚨 お店一覧の取得に失敗: \(error)")
+            }
         }
         
         isLoading = false
+    }
+    
+    // MARK: - Mock Data for Development
+    private func createMockShops() -> [Shop] {
+        return [
+            Shop(
+                id: 1,
+                name: "熊本ラーメン 桂花",
+                description: "熊本の老舗ラーメン店。マー油が香る豚骨ラーメンが自慢です。",
+                address: "熊本県熊本市中央区花畑町11-9",
+                phone: "096-325-9609",
+                businessHours: "11:00-21:00",
+                genre: .restaurant,
+                latitude: 32.8031,
+                longitude: 130.7079,
+                imageUrl: nil
+            ),
+            Shop(
+                id: 2,
+                name: "熊本城",
+                description: "日本三名城の一つ。加藤清正が築いた名城で、熊本のシンボルです。",
+                address: "熊本県熊本市中央区本丸1-1",
+                phone: "096-352-5900",
+                businessHours: "9:00-17:00",
+                genre: .other,
+                latitude: 32.8064,
+                longitude: 130.7056,
+                imageUrl: nil
+            ),
+            Shop(
+                id: 3,
+                name: "水前寺成趣園",
+                description: "桃山式回遊庭園。富士山を模した築山と湧水池が美しい庭園です。",
+                address: "熊本県熊本市中央区水前寺公園8-1",
+                phone: "096-383-0074",
+                businessHours: "7:30-18:00",
+                genre: .other,
+                latitude: 32.7890,
+                longitude: 130.7420,
+                imageUrl: nil
+            ),
+            Shop(
+                id: 4,
+                name: "阿蘇ファームランド",
+                description: "阿蘇の大自然の中で体験できるテーマパーク。健康と癒しがテーマです。",
+                address: "熊本県阿蘇郡南阿蘇村河陽5579-3",
+                phone: "0967-67-2100",
+                businessHours: "9:00-17:00",
+                genre: .other,
+                latitude: 32.8500,
+                longitude: 131.0500,
+                imageUrl: nil
+            ),
+            Shop(
+                id: 5,
+                name: "馬刺し専門店 菅乃屋",
+                description: "熊本名物の馬刺しを味わえる専門店。新鮮な馬肉を提供しています。",
+                address: "熊本県熊本市中央区上通町6-17",
+                phone: "096-351-0529",
+                businessHours: "17:00-24:00",
+                genre: .restaurant,
+                latitude: 32.8100,
+                longitude: 130.7100,
+                imageUrl: nil
+            )
+        ]
     }
     
     func refreshShops() async {
         await loadShops()
     }
     
-    func selectGenre(_ genre: String) {
-        selectedGenre = genre
-        Task {
-            await loadShops()
+    func toggleGenre(_ genre: ShopGenre) {
+        if selectedGenres.contains(genre) {
+            selectedGenres.remove(genre)
+        } else {
+            selectedGenres.insert(genre)
         }
+        applyFilters()
+    }
+    
+    func clearAllGenres() {
+        selectedGenres.removeAll()
+        applyFilters()
+    }
+    
+    func applyFilters() {
+        // 1) ジャンルフィルタ適用
+        var result: [Shop]
+        if selectedGenres.isEmpty {
+            result = shops
+        } else {
+            result = shops.filter { shop in
+                guard let shopGenre = shop.genre else { return false }
+                return selectedGenres.contains(shopGenre)
+            }
+        }
+
+        // 2) 現在地に近い順にソート（位置情報がある場合のみ）
+        if let userLocation = userLocation {
+            let userCoord = userLocation.coordinate
+            result.sort { a, b in
+                // 座標がないものは後ろへ
+                guard let aCoord = a.coordinate else { return false }
+                guard let bCoord = b.coordinate else { return true }
+                let da = locationManager.distance(from: userCoord, to: aCoord)
+                let db = locationManager.distance(from: userCoord, to: bCoord)
+                return da < db
+            }
+        }
+
+        filteredShops = result
     }
     
     func toggleMapView() {
@@ -68,60 +203,29 @@ class ShopListViewModel: ObservableObject {
     }
     
     func requestLocationPermission() {
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
+        locationManager.requestLocationPermission()
     }
     
     func distanceFromUser(to shop: Shop) -> String? {
-        guard let userLocation = userLocation,
-              let shopLat = shop.latitude,
-              let shopLng = shop.longitude else {
-            return nil
-        }
+        return locationManager.distanceFromUser(to: shop)
+    }
+    
+    func dismissFavoritesError() {
+        favoritesErrorMessage = nil
+        favoritesManager.errorMessage = nil
+    }
+    
+    func selectShopFromMap(_ shop: Shop) {
+        selectedShop = shop
         
-        let shopLocation = CLLocation(latitude: shopLat, longitude: shopLng)
-        let distance = userLocation.distance(from: shopLocation)
-        
-        if distance < 1000 {
-            return String(format: "%.0fm", distance)
-        } else {
-            return String(format: "%.1fkm", distance / 1000)
-        }
-    }
-}
-
-// Location Manager Delegate
-class LocationDelegate: NSObject, CLLocationManagerDelegate {
-    weak var viewModel: ShopListViewModel?
-    
-    init(viewModel: ShopListViewModel) {
-        self.viewModel = viewModel
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        
-        Task { @MainActor in
-            viewModel?.userLocation = location
-            manager.stopUpdatingLocation()
-            await viewModel?.loadShops()
+        // If we're in list view, scroll to the selected shop
+        if !showingMap {
+            // This would require additional implementation in the list view
+            // to handle scrolling to a specific shop
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("🚨 位置情報の取得に失敗: \(error)")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
-        case .authorizedWhenInUse, .authorizedAlways:
-            manager.startUpdatingLocation()
-        case .denied, .restricted:
-            print("🚨 位置情報の許可が拒否されました")
-        case .notDetermined:
-            manager.requestWhenInUseAuthorization()
-        @unknown default:
-            break
-        }
+    func clearSelection() {
+        selectedShop = nil
     }
 }

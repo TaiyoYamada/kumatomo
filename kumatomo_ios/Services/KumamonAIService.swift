@@ -3,7 +3,7 @@ import Foundation
 class KumamonAIService {
     static let shared = KumamonAIService()
     
-    private let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"] ?? "http://localhost:8000/api"
+    private let baseURL = APIConfig.shared.baseURLString
     private let timeout: TimeInterval = 30.0
     
     private init() {}
@@ -14,11 +14,6 @@ class KumamonAIService {
     }
     
     // MARK: - API Communication
-    
-    /// Send a message to Kumamon AI and receive a response
-    /// - Parameter message: The user's message to send to the AI
-    /// - Returns: AIResponse containing the AI's reply
-    /// - Throws: KumamonAIError for various error conditions
     func sendMessage(_ message: String) async throws -> AIResponse {
         // Validate input
         guard !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -150,8 +145,6 @@ class KumamonAIService {
     
     // MARK: - Health Check
     
-    /// Check if the AI service is available
-    /// - Returns: Boolean indicating service availability
     func checkServiceAvailability() async -> Bool {
         let endpoint = "\(baseURL)/ai/health"
         guard let url = URL(string: endpoint) else {
@@ -185,9 +178,6 @@ class KumamonAIService {
 // MARK: - Message Validation
 extension KumamonAIService {
     
-    /// Validate message content before sending
-    /// - Parameter message: The message to validate
-    /// - Returns: Boolean indicating if the message is valid
     func isValidMessage(_ message: String) -> Bool {
         let trimmed = message.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -208,13 +198,9 @@ extension KumamonAIService {
                 return false
             }
         }
-        
         return true
     }
     
-    /// Sanitize message content
-    /// - Parameter message: The message to sanitize
-    /// - Returns: Sanitized message
     func sanitizeMessage(_ message: String) -> String {
         return message
             .trimmingCharacters(in: .whitespacesAndNewlines)

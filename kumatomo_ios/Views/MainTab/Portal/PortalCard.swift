@@ -9,12 +9,13 @@ struct PortalCardGrid: View {
     // MARK: - Body
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 0) {
+            LazyHStack(spacing: 16) {
                 ForEach(cards) { card in
                     PortalCardView(cardData: card)
                         .frame(width: 100, height: 120)
                 }
             }
+            .padding(.horizontal, 16)
         }
     }
 }

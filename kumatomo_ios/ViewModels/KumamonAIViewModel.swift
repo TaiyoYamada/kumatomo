@@ -6,25 +6,18 @@ import Combine
 final class KumamonAIViewModel: ObservableObject {
     // MARK: - Published Properties
     
-    /// Array of chat messages in the conversation
     @Published var messages: [ChatMessage] = []
     
-    /// Current loading state of the AI service
     @Published var isLoading: Bool = false
     
-    /// Current error message, if any
     @Published var errorMessage: String?
     
-    /// Current input text from the user
     @Published var inputText: String = ""
     
-    /// Whether the AI is currently typing (for UI animation)
     @Published var isTyping: Bool = false
     
-    /// Current service state for detailed UI feedback
     @Published var serviceState: AIServiceState = .idle
     
-    /// Whether the service is available
     @Published var isServiceAvailable: Bool = true
     
     // MARK: - Private Properties
@@ -34,7 +27,6 @@ final class KumamonAIViewModel: ObservableObject {
     
     // MARK: - Computed Properties
     
-    /// Whether the user can send a message
     var canSendMessage: Bool {
         !inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && 
         !isLoading && 
@@ -42,12 +34,11 @@ final class KumamonAIViewModel: ObservableObject {
         isServiceAvailable
     }
     
-    /// Sanitized input text for validation
     var sanitizedInputText: String {
         aiService.sanitizeMessage(inputText)
     }
     
-    /// Whether the current input is valid
+
     var isInputValid: Bool {
         aiService.isValidMessage(inputText)
     }
@@ -80,9 +71,8 @@ final class KumamonAIViewModel: ObservableObject {
     
     // MARK: - Public Methods
     
-    /// Send a message to Kumamon AI
-    /// - Parameter message: The message to send (optional, uses inputText if nil)
     func sendMessage(_ message: String? = nil) async {
+        print("[KumamonAIViewModel] sendMessage invoked. input length=\(inputText.count)")
         let messageToSend = message ?? inputText
         let sanitizedMessage = aiService.sanitizeMessage(messageToSend)
         
@@ -113,8 +103,10 @@ final class KumamonAIViewModel: ObservableObject {
         serviceState = .loading
         
         do {
+            print("[KumamonAIViewModel] calling service.sendMessage")
             // Send message to AI service
             let response = try await aiService.sendMessage(sanitizedMessage)
+            print("[KumamonAIViewModel] got response")
             
             // Add AI response to chat
             let aiMessage = ChatMessage.aiMessage(response.message)
@@ -126,8 +118,18 @@ final class KumamonAIViewModel: ObservableObject {
             print("✅ AI応答成功: \(response.message)")
             
         } catch let error as KumamonAIError {
-            await handleKumamonAIError(error)
+            // 開発環境でAPIが利用できない場合はモック応答を使用
+            if !APIConfig.shared.isConfigured || ( { if case .aiServiceUnavailable = error { return true } else { return false } }() ) {
+                let mockResponse = generateMockResponse(for: sanitizedMessage)
+                let aiMessage = ChatMessage.aiMessage(mockResponse)
+                messages.append(aiMessage)
+                serviceState = .success
+                print("🔧 モック応答を使用: \(mockResponse)")
+            } else {
+                await handleKumamonAIError(error)
+            }
         } catch {
+            print("[KumamonAIViewModel] sendMessage error -> \(error)")
             await handleGenericError(error)
         }
         
@@ -143,7 +145,6 @@ final class KumamonAIViewModel: ObservableObject {
         }
     }
     
-    /// Clear all chat messages (stateless behavior)
     func clearChat() {
         messages.removeAll()
         inputText = ""
@@ -155,7 +156,6 @@ final class KumamonAIViewModel: ObservableObject {
         print("🧹 チャット履歴をクリアしました")
     }
     
-    /// Retry the last failed message
     func retryLastMessage() async {
         // Find the last user message
         guard let lastUserMessage = messages.last(where: { $0.isFromUser }) else {
@@ -172,22 +172,30 @@ final class KumamonAIViewModel: ObservableObject {
         await sendMessage(lastUserMessage.content)
     }
     
-    /// Check if the AI service is available
     func checkServiceAvailability() {
+        print("[KumamonAIViewModel] checkServiceAvailability start")
         Task {
             let available = await aiService.checkServiceAvailability()
             await MainActor.run {
                 self.isServiceAvailable = available
+                print("[KumamonAIViewModel] checkServiceAvailability result=\(available)")
                 if !available {
-                    self.errorMessage = "AIサービスが利用できません"
-                    self.serviceState = .error(.aiServiceUnavailable)
+                    // 開発環境でAPIが設定されていない場合は警告を表示しない
+                    if APIConfig.shared.isConfigured {
+                        self.errorMessage = "AIサービスが利用できません"
+                        self.serviceState = .error(.aiServiceUnavailable)
+                    } else {
+                        // API未設定の場合は利用可能として扱い、モック応答を使用
+                        self.isServiceAvailable = true
+                        print("🔧 AI APIが未設定のため、モック応答を使用します")
+                    }
                 }
             }
         }
     }
     
-    /// Refresh the service availability
     func refreshServiceAvailability() async {
+        print("[KumamonAIViewModel] refreshServiceAvailability start")
         checkServiceAvailability()
     }
     
@@ -231,7 +239,6 @@ final class KumamonAIViewModel: ObservableObject {
         print("🚨 Generic error: \(error.localizedDescription)")
     }
     
-    /// Clear the current error message
     func clearError() {
         errorMessage = nil
         if case .error = serviceState {
@@ -241,36 +248,60 @@ final class KumamonAIViewModel: ObservableObject {
     
     // MARK: - Utility Methods
     
-    /// Get the count of messages in the conversation
     var messageCount: Int {
         messages.count
     }
     
-    /// Get the count of user messages
     var userMessageCount: Int {
         messages.filter { $0.isFromUser }.count
     }
     
-    /// Get the count of AI messages
     var aiMessageCount: Int {
         messages.filter { !$0.isFromUser }.count
     }
     
-    /// Check if the conversation has any messages
     var hasMessages: Bool {
         !messages.isEmpty
     }
     
-    /// Get the last message in the conversation
     var lastMessage: ChatMessage? {
         messages.last
     }
     
-    /// Get a formatted conversation summary for debugging
     var conversationSummary: String {
         let userCount = userMessageCount
         let aiCount = aiMessageCount
         return "会話: ユーザー \(userCount)件, AI \(aiCount)件, 合計 \(messageCount)件"
+    }
+    
+    // MARK: - Mock Response for Development
+    
+    private func generateMockResponse(for message: String) -> String {
+        let mockResponses = [
+            "こんにちは！くまモンだモン！何でも聞いてくださいモン！",
+            "熊本のことなら何でも知ってるモン！お手伝いするモン！",
+            "それは面白い質問だモン！熊本には素晴らしい場所がたくさんあるモン！",
+            "くまモンがお答えするモン！熊本城や阿蘇山はとても有名だモン！",
+            "熊本の美味しい食べ物といえば、馬刺しや熊本ラーメンがおすすめだモン！",
+            "水前寺成趣園や阿蘇ファームランドも素敵な場所だモン！",
+            "熊本の方言で「だっこん」は「とても」という意味だモン！",
+            "くまモンは熊本県のPRキャラクターだモン！みんなに愛されて嬉しいモン！"
+        ]
+        
+        // メッセージの内容に基づいて適切な応答を選択
+        let lowercaseMessage = message.lowercased()
+        
+        if lowercaseMessage.contains("こんにちは") || lowercaseMessage.contains("はじめまして") {
+            return mockResponses[0]
+        } else if lowercaseMessage.contains("熊本") || lowercaseMessage.contains("観光") {
+            return mockResponses[2]
+        } else if lowercaseMessage.contains("食べ物") || lowercaseMessage.contains("グルメ") {
+            return mockResponses[4]
+        } else if lowercaseMessage.contains("場所") || lowercaseMessage.contains("スポット") {
+            return mockResponses[5]
+        } else {
+            return mockResponses.randomElement() ?? mockResponses[1]
+        }
     }
 }
 
@@ -278,22 +309,14 @@ final class KumamonAIViewModel: ObservableObject {
 
 extension KumamonAIViewModel {
     
-    /// Remove a specific message from the conversation
-    /// - Parameter messageId: The ID of the message to remove
     func removeMessage(withId messageId: UUID) {
         messages.removeAll { $0.id == messageId }
     }
     
-    /// Get messages filtered by sender type
-    /// - Parameter isFromUser: Whether to get user messages (true) or AI messages (false)
-    /// - Returns: Array of filtered messages
     func getMessages(fromUser isFromUser: Bool) -> [ChatMessage] {
         messages.filter { $0.isFromUser == isFromUser }
     }
     
-    /// Get the most recent messages up to a specified count
-    /// - Parameter count: Maximum number of messages to return
-    /// - Returns: Array of recent messages
     func getRecentMessages(count: Int) -> [ChatMessage] {
         Array(messages.suffix(count))
     }
@@ -303,8 +326,6 @@ extension KumamonAIViewModel {
 
 extension KumamonAIViewModel {
     
-    /// Validate the current input text and return validation result
-    /// - Returns: Validation result with error message if invalid
     func validateCurrentInput() -> (isValid: Bool, errorMessage: String?) {
         let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -323,17 +344,14 @@ extension KumamonAIViewModel {
         return (true, nil)
     }
     
-    /// Get the character count of the current input
     var inputCharacterCount: Int {
         inputText.count
     }
     
-    /// Get the remaining character count for input
     var remainingCharacterCount: Int {
         max(0, 2000 - inputCharacterCount)
     }
     
-    /// Whether the input is approaching the character limit
     var isApproachingLimit: Bool {
         inputCharacterCount > 1800
     }

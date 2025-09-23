@@ -59,11 +59,9 @@ struct SidebarPanel: View {
         }
     }
     
-    // 各メニュー項目に対応するRouterDestinationを返す
+    // 各メニュー項目に対応するRouterDestinationを返す（未使用だが将来拡張用に残す）
     private func routerDestination(for item: SidebarMenuItemType) -> RouterDestination {
         switch item {
-//        case .shops:
-//            return .shopList
         case .bookmarks:
             return .bookmarkedPosts
         case .likes:
@@ -72,6 +70,8 @@ struct SidebarPanel: View {
             return .coupons
         case .settings:
             return .settings
+        case .kumamonAI:
+            return .kumamonAI
         default:
             return .settings
         }
@@ -79,25 +79,32 @@ struct SidebarPanel: View {
 
     // Sidebarメニューの遷移ロジック（AppRouterで確実に遷移）
     private func navigate(using item: SidebarMenuItemType) {
-        // NavigationStackを持つタブを前面にする
-        if AppRouter.shared.selectedTab == .kumamonAI || AppRouter.shared.selectedTab == .profile {
-            AppRouter.shared.selectedTab = .portal
-        }
-
-        switch item {
-        case .bookmarks:
-            AppRouter.shared.navigateToBookmarkedPosts()
-        case .likes:
-            AppRouter.shared.navigateToLikedPosts()
-        case .coupons:
-            AppRouter.shared.navigate(to: .coupons)
-        case .settings:
-            AppRouter.shared.navigateToSettings()
-        case .shops:
-            // AppRouter.shared.navigate(to: .shopList)
-            break
-        default:
-            break
+        // Ensure navigation happens on the active tab stack after switching tabs
+        let router = AppRouter.shared
+        print("[Sidebar] navigate item=\(item)")
+        router.selectedTab = .portal
+        print("[Sidebar] selectedTab -> portal")
+        router.popToRoot()
+        
+        // Slight delay to avoid race with sidebar dismissal & tab switch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            print("[Sidebar] perform navigation for item=\(item)")
+            switch item {
+            case .bookmarks:
+                router.navigateToBookmarkedPosts(on: .portal)
+            case .likes:
+                router.navigateToLikedPosts(on: .portal)
+            case .favoriteShops:
+                router.navigate(to: .favoritesList, on: .portal)
+            case .coupons:
+                router.navigate(to: .coupons, on: .portal)
+            case .settings:
+                router.navigateToSettings(on: .portal)
+            case .kumamonAI:
+                router.navigate(to: .kumamonAI, on: .portal)
+            default:
+                break
+            }
         }
     }
     

@@ -16,7 +16,7 @@ struct PostEngagementDetailView: View {
     @FocusState private var isCommentFocused: Bool
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color(.systemBackground)
                     .ignoresSafeArea()

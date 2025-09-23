@@ -1,0 +1,3 @@
+
+API_SCHEME = https
+API_HOST = staging.kumatomo.com

@@ -4,6 +4,7 @@ enum APIError: LocalizedError {
     case invalidURL
     case networkError(Error)
     case decodingError(DecodingError)
+    case encodingError(Error)
     case apiError(statusCode: Int, message: String)
     case serverError(message: String)
     case unknownError(Error)
@@ -23,6 +24,8 @@ enum APIError: LocalizedError {
             return "ネットワークエラー: \(error.localizedDescription)"
         case .decodingError(let error):
             return getDecodingErrorMessage(from: error)
+        case .encodingError(let error):
+            return "データエンコードエラー: \(error.localizedDescription)"
         case .apiError(let statusCode, let message):
             return "APIエラー (コード: \(statusCode)): \(message)"
         case .serverError(let message):
@@ -54,6 +57,8 @@ enum APIError: LocalizedError {
             return "ネットワーク接続を確認してください"
         case .decodingError:
             return "データ形式を確認してください"
+        case .encodingError:
+            return "送信データを確認してください"
         case .apiError:
             return "しばらく時間をおいてから再試行してください"
         case .serverError:
@@ -83,6 +88,8 @@ enum APIError: LocalizedError {
             return "ネットワーク接続に問題があります"
         case .decodingError:
             return "サーバーからのデータ形式が正しくありません"
+        case .encodingError:
+            return "送信データの形式に問題があります"
         case .apiError(let statusCode, _):
             return "サーバーがエラーを返しました (HTTP \(statusCode))"
         case .serverError:

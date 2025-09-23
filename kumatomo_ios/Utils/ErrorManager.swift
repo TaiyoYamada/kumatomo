@@ -20,8 +20,11 @@ class ErrorManager: ObservableObject {
     private func setupNetworkMonitoring() {
         NetworkMonitor.shared.$isConnected
             .sink { [weak self] isConnected in
-                if !isConnected {
-                    self?.handleError(AppError.networkError(URLError(.notConnectedToInternet)))
+                // グローバルなオーバーレイは出さない（UI全体を覆ってしまうため）
+                // 各画面（例: Portal のバナーや個別のリスト・詳細のエラービュー）で表現する
+                // ネットワーク復帰時はネットワーク系のエラー表示を明示的に閉じる
+                if isConnected, let error = self?.currentError, error.errorType == .network {
+                    self?.dismissError()
                 }
             }
             .store(in: &cancellables)
@@ -297,7 +300,7 @@ struct AppError: Identifiable, Equatable {
         switch error {
         case .networkError, .timeout, .serverError:
             return true
-        case .unauthorized, .forbidden, .notFound, .decodingError, .invalidURL, .invalidResponse, .userNotFound:
+        case .unauthorized, .forbidden, .notFound, .decodingError, .encodingError, .invalidURL, .invalidResponse, .userNotFound:
             return false
         case .rateLimitExceeded:
             return true

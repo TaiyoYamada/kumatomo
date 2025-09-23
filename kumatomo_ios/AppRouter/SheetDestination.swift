@@ -5,21 +5,20 @@ import PhotosUI
 // 統合済み: 全てのシート・モーダル表示はこのenumで管理
 enum SheetDestination: Identifiable {
 	case postDetail(Int)                                                           // 投稿詳細モーダル
-	case shopDetail(Shop)                                                          // お店詳細モーダル
 	case shopPicker(selectedShop: Binding<Shop?>)                                  // // 投稿プレビューモーダル
 	case profileEdit(User, onProfileUpdated: (() -> Void)? = nil)              // プロフィール編集モーダル
 	case municipalityPicker(selected: String?, onSelect: (String) -> Void)         // 市区町村選択モーダル
 	case postEdit(viewModel: PostViewModel)                                        // 投稿編集モーダル
     case profileImageEdit(selectedItem: Binding<PhotosPickerItem?>, onDelete: () -> Void)  // プロフィールアイコン画像編集モーダル
     case coverImageEdit(selectedItem: Binding<PhotosPickerItem?>, onDelete: () -> Void)   // プロフィール背景画像編集モーダル
+    case shopProposal                                                              // 店舗提案フォーム
+    case shopProposalStatus                                                        // 店舗提案状況
     
 
 	var id: String {
 		switch self {
 		case .postDetail(let postId):
 			return "postDetail_\(postId)"
-		case .shopDetail(let shop):
-			return "shopDetail_\(shop.id)"
 		case .shopPicker:
 			return "shopPicker"
 		case .profileEdit(let user, _):
@@ -33,6 +32,10 @@ enum SheetDestination: Identifiable {
 			return "profileImageEdit"
 		case .coverImageEdit:
 			return "coverImageEdit"
+		case .shopProposal:
+			return "shopProposal"
+		case .shopProposalStatus:
+			return "shopProposalStatus"
 		}
 	}
 }
@@ -44,8 +47,6 @@ extension View {
 			case .postDetail(let postId):
 				PostDetailView(postId: postId)
 					.environmentObject(CurrentUserManager.shared)
-			case .shopDetail(let shop):
-				ShopDetailView(shop: shop)
 			case .shopPicker(let selectedShop):
 				ShopPickerView(selectedShop: selectedShop)
 			case .profileEdit(let user, let onProfileUpdated):
@@ -68,6 +69,10 @@ extension View {
                     selectedItem: selectedItem,
                     onDelete: onDelete
                 )
+            case .shopProposal:
+                ShopProposalFormView()
+            case .shopProposalStatus:
+                ShopProposalStatusView()
 			}
 		}
 	}

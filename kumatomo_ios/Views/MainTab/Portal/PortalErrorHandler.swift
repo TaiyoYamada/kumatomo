@@ -1,23 +1,6 @@
 import Foundation
 import SwiftUI
 
-/**
- * PortalErrorHandler - Centralized Error Handling for Portal Components
- * 
- * This utility provides centralized error handling specifically for portal screen components.
- * It includes URL validation, network error handling, asset validation, and user-friendly
- * error messages in Japanese.
- * 
- * Features:
- * - URL validation and sanitization
- * - Network connectivity error handling
- * - Asset existence validation
- * - Localized error messages
- * - Retry logic for network operations
- * - Error categorization and logging
- * 
- * Requirements Fulfilled: 1.5, 2.3, 3.4, 5.1
- */
 class PortalErrorHandler: ObservableObject {
     static let shared = PortalErrorHandler()
     

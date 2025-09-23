@@ -1,14 +1,15 @@
 import SwiftUI
 
-/// A modern Twitter-like post card view for displaying posts in the timeline
 struct TimelinePostCardView: View {
     let post: Post
     let onPostTap: (() -> Void)?
+    // Optional custom engagement handler for like. When nil, fallback to
+    // BulletinBoardViewModel's default like toggle.
+    let customOnLike: ((Post) async -> Void)?
     
     @State private var showingPostDetail = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @EnvironmentObject private var userManager: CurrentUserManager
-    @EnvironmentObject private var bulletinBoardViewModel: BulletinBoardViewModel
     
     // Engagement state
     @State private var isTogglingLike = false
@@ -19,9 +20,10 @@ struct TimelinePostCardView: View {
     
     // MARK: - Initializers
     
-    init(post: Post, onPostTap: (() -> Void)? = nil) {
+    init(post: Post, onPostTap: (() -> Void)? = nil, customOnLike: ((Post) async -> Void)? = nil) {
         self.post = post
         self.onPostTap = onPostTap
+        self.customOnLike = customOnLike
     }
     
     // Date formatter
@@ -130,13 +132,15 @@ struct TimelinePostCardView: View {
                 
                 // Content Area (Right side)
                 VStack(alignment: .leading, spacing: 8) {
-                    // User Info Header (Twitter-like: Name, @username · time)
-                    HStack(spacing: 6) {
-                        Text(post.user?.name ?? "ユーザー")
-                            .font(.system(size: adaptiveUserNameSize, weight: .semibold))
-                            .foregroundColor(.primary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
+                    // Tappable content (header + text + media + tags)
+                    VStack(alignment: .leading, spacing: 8) {
+                        // User Info Header (Twitter-like: Name, @username · time)
+                        HStack(spacing: 6) {
+                            Text(post.user?.name ?? "ユーザー")
+                                .font(.system(size: adaptiveUserNameSize, weight: .semibold))
+                                .foregroundColor(.primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
 
                         if let username = post.user?.username, !username.isEmpty {
                             Text("@\(username)")
@@ -156,28 +160,39 @@ struct TimelinePostCardView: View {
                             .minimumScaleFactor(0.8)
 
                         Spacer()
-                    }
-                    
-                    // Post Content with hashtags
-                    PostContentView(content: post.content)
-                    
-                    // Post Media
-                    if let images = post.images, !images.isEmpty {
-                        PostMediaView(images: images)
-                    } else if let imageUrl = post.imageUrl, !imageUrl.isEmpty {
-                        PostMediaView(imageUrl: imageUrl)
-                    }
-                    
-                    // Category Tags
+                        }
+                        
+                        // Post Content with hashtags
+                        PostContentView(content: post.content)
+                        
+                        // Post Media
+                        if let images = post.images, !images.isEmpty {
+                            PostMediaView(images: images)
+                        } else if let imageUrl = post.imageUrl, !imageUrl.isEmpty {
+                            PostMediaView(imageUrl: imageUrl)
+                        }
+                        
+                    // Category Tags (display as inline hashtags)
                     if let tags = post.tags, !tags.isEmpty {
                         CategoryTagsView(tags: tags)
+                    }
+                    }
+                    // Make only this upper content tappable to open details
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        onPostTap?()
                     }
                     
                     // Engagement Buttons (Timeline version - no bookmark count)
                     EngagementButtonsView.timeline(
                         post: post,
-                        onLike: {
-                            bulletinBoardViewModel.toggleLike(for: post)
+                        onLike: { @MainActor in
+                            if let handler = customOnLike {
+                                await handler(post)
+                            } else {
+                                // No-op fallback to avoid unexpected dependencies
+                                print("ℹ️ No custom like handler provided")
+                            }
                         },
                         onComment: {
                             onPostTap?()
@@ -188,7 +203,6 @@ struct TimelinePostCardView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, adaptivePadding)
-            .contentShape(Rectangle())
         }
         .background(Color(.systemBackground))
         .accessibilityElement(children: .contain)
@@ -375,77 +389,13 @@ struct PostMediaView: View {
 
 struct CategoryTagsView: View {
     let tags: [String]
-    let columns = [
-        GridItem(.adaptive(minimum: 80), spacing: 8)
-    ]
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
-    private var adaptiveTagSize: CGFloat {
-        switch dynamicTypeSize {
-        case .xSmall, .small:
-            return 10
-        case .medium:
-            return 12
-        case .large:
-            return 13
-        case .xLarge:
-            return 14
-        case .xxLarge:
-            return 15
-        case .xxxLarge:
-            return 16
-        default:
-            return 12
-        }
-    }
-    
-    private var adaptivePadding: CGFloat {
-        switch dynamicTypeSize {
-        case .xSmall, .small:
-            return 3
-        case .medium:
-            return 4
-        case .large:
-            return 5
-        case .xLarge:
-            return 6
-        case .xxLarge:
-            return 7
-        case .xxxLarge:
-            return 8
-        default:
-            return 4
-        }
-    }
     
     var body: some View {
-        LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
-            ForEach(tags, id: \.self) { tag in
-                Text(tag)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(categoryColor(for: tag))
-                    .cornerRadius(16)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                    .accessibilityLabel("カテゴリー: \(tag)")
-                    .accessibilityIdentifier("category_tag_\(tag)")
-            }
-        }
-    }
-    
-    private func categoryColor(for tag: String) -> Color {
-        switch tag {
-        case "グルメ":
-            return .green
-        case "イベント":
-            return .purple
-        case "緊急":
-            return .red
-        default:
-            return .orange
-        }
+        // Render as simple inline hashtags, wrapping across lines as needed
+        Text(tags.map { "#\($0)" }.joined(separator: " "))
+            .font(.system(size: 14, weight: .medium))
+            .foregroundColor(.orange)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityLabel("タグ: \(tags.joined(separator: ", "))")
     }
 }

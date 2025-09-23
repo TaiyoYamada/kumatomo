@@ -6,6 +6,8 @@ struct PostTimeline: View {
     let onRefresh: () -> Void
     let onLoadMore: () -> Void
     var embedInScrollView: Bool = true
+    // Optional like toggle handler for callers that own their own posts array
+    var onToggleLike: ((Post) async -> Void)? = nil
     
     @EnvironmentObject private var bulletinBoardViewModel: BulletinBoardViewModel
 
@@ -22,6 +24,14 @@ struct PostTimeline: View {
                         // 最後の投稿が表示されたら、新しい投稿を読み込みます
                         if post.id == posts.last?.id {
                             onLoadMore()
+                        }
+                    },
+                    onToggleLike: { post in
+                        if let handler = onToggleLike {
+                            await handler(post)
+                        } else {
+                            // Default to bulletin board VM when no handler provided
+                            bulletinBoardViewModel.toggleLike(for: post)
                         }
                     }
                 )
@@ -59,15 +69,17 @@ private struct PostCell: View {
     let post: Post
     let onTap: () -> Void
     let onAppear: () -> Void
+    let onToggleLike: (Post) async -> Void
     
     var body: some View {
         VStack(spacing: 0) {
-            TimelinePostCardView(post: post)
-                .onTapGesture {
-                    print("投稿をタップしたよ")
-                    onTap()
-                }
-                .contentShape(Rectangle())
+            // Pass tap handler into the card so it can
+            // attach the gesture only to non-button areas.
+            TimelinePostCardView(
+                post: post,
+                onPostTap: onTap,
+                customOnLike: onToggleLike
+            )
                 .onAppear(perform: onAppear)
 
             // 投稿ごとの区切り線
@@ -140,6 +152,3 @@ struct BulletinEmptyStateView: View {
         .padding(.horizontal, 32)
     }
 }
-
-
-

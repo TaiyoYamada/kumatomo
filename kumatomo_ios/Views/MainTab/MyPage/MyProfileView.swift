@@ -12,77 +12,113 @@ struct MyProfileView: View {
     @EnvironmentObject private var userManager: CurrentUserManager
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    // カバー画像とプロフィール
-                    ModernProfileHeaderView(
-                        user: viewModel.profile,
-                        scrollOffset: 0,
-                        onEditTapped: {
-                            sheetDestination = .profileEdit(viewModel.profile, onProfileUpdated: {
-                                let userId = AuthService.shared.currentUser?.id ?? 0
-                                viewModel.loadProfile(userID: userId)
-                                viewModel.loadUserPosts(userID: userId)
-                            })
-                        }
-                    )
-                    
-                    // プロフィール情報
-                    ModernProfileInfoView(user: viewModel.profile)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 12)
-                    
-                    // 統計情報（投稿数含む）
-                    ProfileStatsView(user: viewModel.profile)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 12)
-                    
-                    // 区切り線
-                    Rectangle()
-                        .fill(Color(UIColor.separator))
-                        .frame(height: 1)
-                    
-                    // 掲示板と同じタイムライン（内部スクロールなし）
-                    PostTimeline(
-                        posts: viewModel.posts,
-                        loading: viewModel.isLoadingMore,
-                        onRefresh: { /* handled by outer ScrollView */ },
-                        onLoadMore: {
+        ScrollView {
+            VStack(spacing: 0) {
+                // カバー画像とプロフィール
+                ModernProfileHeaderView(
+                    user: viewModel.profile,
+                    scrollOffset: 0,
+                    onEditTapped: {
+                        sheetDestination = .profileEdit(viewModel.profile, onProfileUpdated: {
                             let userId = AuthService.shared.currentUser?.id ?? 0
-                            viewModel.loadMoreUserPosts(userID: userId)
-                        },
-                        embedInScrollView: false
+                            viewModel.loadProfile(userID: userId)
+                            viewModel.loadUserPosts(userID: userId)
+                        })
+                    }
+                )
+                
+                // プロフィール情報
+                ModernProfileInfoView(user: viewModel.profile)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 12)
+                
+                // 統計情報（投稿数含む）
+                ProfileStatsView(user: viewModel.profile)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 12)
+                
+                // お気に入りセクションはサイドバーの独立画面へ移動
+                
+                // 区切り線
+                Rectangle()
+                    .fill(Color(UIColor.separator))
+                    .frame(height: 1)
+                
+                // 掲示板と同じタイムライン（内部スクロールなし）
+                PostTimeline(
+                    posts: viewModel.posts,
+                    loading: viewModel.isLoadingMore,
+                    onRefresh: { /* handled by outer ScrollView */ },
+                    onLoadMore: {
+                        let userId = AuthService.shared.currentUser?.id ?? 0
+                        viewModel.loadMoreUserPosts(userID: userId)
+                    },
+                    embedInScrollView: false,
+                    onToggleLike: { post in
+                        let postId = post.id
+                        let originalIsLiked = post.isLikedByCurrentUser ?? false
+                        let originalLikeCount = post.likeCount ?? 0
+                        
+                        // Optimistic update on the profile's posts list
+                        await MainActor.run {
+                            if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                                var p = viewModel.posts[idx]
+                                let newIsLiked = !originalIsLiked
+                                let newLikeCount = originalIsLiked ? max(0, originalLikeCount - 1) : originalLikeCount + 1
+                                p.updateLikeStatus(isLiked: newIsLiked, likeCount: newLikeCount)
+                                viewModel.posts[idx] = p
+                            }
+                        }
+                        
+                        do {
+                            let response = try await EngagementAPIService.shared.toggleLike(postId: postId)
+                            await MainActor.run {
+                                if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                                    var p = viewModel.posts[idx]
+                                    p.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
+                                    viewModel.posts[idx] = p
+                                }
+                            }
+                        } catch {
+                            // Roll back on failure
+                            await MainActor.run {
+                                if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                                    var p = viewModel.posts[idx]
+                                    p.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
+                                    viewModel.posts[idx] = p
+                                }
+                            }
+                        }
+                    }
+                )
+                .environmentObject(bulletinBoardViewModel)
+        }
+        }
+        .refreshable {
+            let userId = AuthService.shared.currentUser?.id ?? 0
+            viewModel.loadProfile(userID: userId)
+            viewModel.loadUserPosts(userID: userId)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+    ////            .sidebarButton()
+    //            .toolbar {
+    //                ToolbarItem(placement: .navigationBarTrailing) {
+    //                    NavigationLink(destination: SearchView()) {
+    //                        Image(systemName: "magnifyingglass")
+    //                            .foregroundColor(.primary)
+    //                    }
+    //                }
+    //            }
+        .withSheetRouter(sheet: $sheetDestination)
+        .overlay {
+            if viewModel.isLoading {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .overlay(
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.white)
                     )
-                    .environmentObject(bulletinBoardViewModel)
-                }
-            }
-            .refreshable {
-                let userId = AuthService.shared.currentUser?.id ?? 0
-                viewModel.loadProfile(userID: userId)
-                viewModel.loadUserPosts(userID: userId)
-            }
-            .navigationBarTitleDisplayMode(.inline)
-////            .sidebarButton()
-//            .toolbar {
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    NavigationLink(destination: SearchView()) {
-//                        Image(systemName: "magnifyingglass")
-//                            .foregroundColor(.primary)
-//                    }
-//                }
-//            }
-            .withSheetRouter(sheet: $sheetDestination)
-            .overlay {
-                if viewModel.isLoading {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-                        .overlay(
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.white)
-                        )
-                }
             }
         }
         .onAppear {
@@ -90,9 +126,10 @@ struct MyProfileView: View {
             viewModel.loadProfile(userID: userId)
             viewModel.loadUserPosts(userID: userId)
         }
-        // refreshableはPostTimeline側で対応済み
-    }
+        }
+    // refreshableはPostTimeline側で対応済み
 }
+
 
 struct ModernProfileHeaderView: View {
     let user: User
@@ -384,7 +421,8 @@ struct ProfileStatsView: View {
             StatItemView(
                 count: user.postCount ?? 0,
                 label: "投稿",
-                isClickable: false
+                isClickable: false,
+                labelColor: .primary
             )
             
             Spacer()
@@ -415,6 +453,7 @@ struct StatItemView: View {
     let count: Int
     let label: String
     let isClickable: Bool
+    var labelColor: Color = .secondary
     
     private var formattedCount: String {
         if count >= 1000000 {
@@ -426,25 +465,28 @@ struct StatItemView: View {
         }
     }
     
+    @ViewBuilder
     var body: some View {
-        Button(action: {
-            if isClickable {
+        let content = HStack(spacing: 4) {
+            Text(formattedCount)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(.primary)
+            Text(label)
+                .font(.system(size: 15))
+                .foregroundColor(labelColor)
+        }
+
+        if isClickable {
+            Button(action: {
                 // TODO: フォロー/フォロワー一覧画面への遷移
                 print("Navigate to \(label) list")
+            }) {
+                content
             }
-        }) {
-            HStack(spacing: 4) {
-                Text(formattedCount)
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.primary)
-                
-                Text(label)
-                    .font(.system(size: 15))
-                    .foregroundColor(.secondary)
-            }
+            .buttonStyle(PlainButtonStyle())
+        } else {
+            content
         }
-        .disabled(!isClickable)
-        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -662,24 +704,9 @@ struct PostCardContentView: View {
             }
 
             
-            // タグ表示
+            // タグ表示（先頭に#、オレンジ、背景なし、折返し可）
             if let tags = post.tags, !tags.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(tags, id: \.self) { tag in
-                            Text("#\(tag)")
-                                .font(.system(size: 14))
-                                .foregroundColor(.orange)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.orange.opacity(0.1))
-                                )
-                        }
-                    }
-                    .padding(.horizontal, 1)
-                }
+                CategoryTagsView(tags: tags)
             }
         }
         .padding(.leading, 56)

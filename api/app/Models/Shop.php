@@ -21,7 +21,10 @@ class Shop extends Model
         'genre',
         'latitude',
         'longitude',
-        'image_url'
+        'image_url',
+        'has_try_benefit',
+        'stamp_count',
+        'is_approved'
     ];
 
     /**
@@ -30,6 +33,9 @@ class Shop extends Model
     protected $casts = [
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
+        'has_try_benefit' => 'boolean',
+        'stamp_count' => 'integer',
+        'is_approved' => 'boolean',
     ];
 
     /**
@@ -38,6 +44,22 @@ class Shop extends Model
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * このお店をお気に入りにしているユーザーを取得。
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * このお店をお気に入りにしているユーザーを取得（多対多）。
+     */
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorites');
     }
 
     /**
@@ -75,5 +97,25 @@ class Shop extends Model
               ->orWhere('description', 'LIKE', "%{$keyword}%")
               ->orWhere('address', 'LIKE', "%{$keyword}%");
         });
+    }
+
+    /**
+     * アクセサ: 画像URLを常に絶対URLで返す
+     */
+    public function getImageUrlAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        // すでにhttp(s)で始まる場合はそのまま返す
+        if (preg_match('/^https?:\/\//i', $value)) {
+            return $value;
+        }
+
+        // 先頭スラッシュがある/ないに関わらずアプリURLを付与
+        // 例: "/storage/shops/.." or "storage/shops/..."
+        $path = ltrim($value, '/');
+        return url($path);
     }
 }

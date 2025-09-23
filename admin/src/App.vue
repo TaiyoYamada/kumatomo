@@ -195,10 +195,8 @@ h6 { font-size: 1rem; font-weight: 600; }
   outline: none;
 }
 
-/* Smooth transitions for interactive elements */
-button, a, input, select, textarea {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Disable animations/transitions across admin */
+*, *::before, *::after { transition: none !important; animation: none !important; }
 
 /* Ensure consistent border radius */
 .rounded { border-radius: 0.5rem !important; }
