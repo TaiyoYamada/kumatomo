@@ -171,14 +171,31 @@ class ShopListViewModel: ObservableObject {
     }
     
     func applyFilters() {
+        // 1) ジャンルフィルタ適用
+        var result: [Shop]
         if selectedGenres.isEmpty {
-            filteredShops = shops
+            result = shops
         } else {
-            filteredShops = shops.filter { shop in
+            result = shops.filter { shop in
                 guard let shopGenre = shop.genre else { return false }
                 return selectedGenres.contains(shopGenre)
             }
         }
+
+        // 2) 現在地に近い順にソート（位置情報がある場合のみ）
+        if let userLocation = userLocation {
+            let userCoord = userLocation.coordinate
+            result.sort { a, b in
+                // 座標がないものは後ろへ
+                guard let aCoord = a.coordinate else { return false }
+                guard let bCoord = b.coordinate else { return true }
+                let da = locationManager.distance(from: userCoord, to: aCoord)
+                let db = locationManager.distance(from: userCoord, to: bCoord)
+                return da < db
+            }
+        }
+
+        filteredShops = result
     }
     
     func toggleMapView() {
