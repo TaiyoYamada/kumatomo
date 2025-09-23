@@ -28,7 +28,7 @@ struct PortalView: View {
                                 .foregroundColor(.primary)
                             Spacer()
                         }
-                        .padding(.horizontal, 15)
+                        .padding(.horizontal, 16)
                         // Cards grid component
                         PortalCardGrid(cards: samplePortalCards)
                     }
@@ -41,11 +41,10 @@ struct PortalView: View {
                                 .foregroundColor(.primary)
                             Spacer()
                         }
-                        .padding(.horizontal, 15)
+                        .padding(.horizontal, 16)
                         
                         RecommendedShopCarouselView(shops: sampleShops)
                     }
-                    Spacer(minLength: 20)
                 }
                 .padding(.bottom, 16)
         }
@@ -79,11 +78,14 @@ struct PortalView: View {
         } message: {
             Text(networkMonitor.getNetworkStatusMessage())
         }
-        .overlay(alignment: .bottom) {
-            // MARK: - Network Status Banner
-            // Shows persistent network status banner when offline
+        .safeAreaInset(edge: .bottom) {
+            // MARK: - Network Status Banner (safe area)
+            // Insert banner in safe area so content isn't obscured
             if !networkMonitor.isConnected {
                 networkStatusBanner
+            } else {
+                // Maintain a small, consistent bottom inset for spacing
+                Color.clear.frame(height: 8)
             }
         }
     }

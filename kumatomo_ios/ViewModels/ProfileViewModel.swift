@@ -210,7 +210,6 @@ class ProfileViewModel: ObservableObject {
     
     // MARK: - Enhanced Form Validation System (Task 3.4)
     
-    /// Enhanced form validation setup with comprehensive real-time feedback
     private func setupFormValidation() {
         setupFieldValidation()
         setupUsernameAvailabilityValidation()
@@ -218,7 +217,7 @@ class ProfileViewModel: ObservableObject {
         setupValidationResultTracking()
     }
     
-    /// Sets up individual field validation with debouncing
+    
     private func setupFieldValidation() {
         // Real-time validation for email with enhanced feedback
         $email
@@ -261,7 +260,6 @@ class ProfileViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    /// Sets up username validation with availability checking
     private func setupUsernameAvailabilityValidation() {
         $username
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
@@ -271,7 +269,6 @@ class ProfileViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    /// Sets up form state tracking for unsaved changes
     private func setupFormStateTracking() {
         Publishers.CombineLatest4($email, $name, $username, $bio)
             .combineLatest(Publishers.CombineLatest($location, $birthday))
@@ -282,7 +279,6 @@ class ProfileViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    /// Sets up validation result tracking for overall form validity
     private func setupValidationResultTracking() {
         Publishers.CombineLatest4($emailValidation, $nameValidation, $usernameValidation, $bioValidation)
             .combineLatest(Publishers.CombineLatest($locationValidation, $birthdayValidation))
@@ -295,7 +291,6 @@ class ProfileViewModel: ObservableObject {
     
     // MARK: - Enhanced Field Validation Methods
     
-    /// Enhanced email validation with specific feedback
     private func validateEmailField(_ email: String) {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -309,7 +304,6 @@ class ProfileViewModel: ObservableObject {
         logValidationResult(field: "email", result: emailValidation)
     }
     
-    /// Enhanced name validation with specific feedback
     private func validateNameField(_ name: String) {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         nameValidation = ProfileFormValidation.validateName(trimmedName)
@@ -317,7 +311,6 @@ class ProfileViewModel: ObservableObject {
         logValidationResult(field: "name", result: nameValidation)
     }
     
-    /// Enhanced bio validation with character count feedback
     private func validateBioField(_ bio: String) {
         let trimmedBio = bio.trimmingCharacters(in: .whitespacesAndNewlines)
         bioValidation = ProfileFormValidation.validateBio(trimmedBio)
@@ -334,7 +327,6 @@ class ProfileViewModel: ObservableObject {
         logValidationResult(field: "bio", result: bioValidation)
     }
     
-    /// Enhanced location validation
     private func validateLocationField(_ location: String) {
         let trimmedLocation = location.trimmingCharacters(in: .whitespacesAndNewlines)
         locationValidation = ProfileFormValidation.validateLocation(trimmedLocation)
@@ -342,7 +334,6 @@ class ProfileViewModel: ObservableObject {
         logValidationResult(field: "location", result: locationValidation)
     }
     
-    /// Enhanced birthday validation with age restrictions
     private func validateBirthdayField(_ birthday: Date) {
         birthdayValidation = ProfileFormValidation.validateBirthday(birthday)
         
@@ -357,7 +348,7 @@ class ProfileViewModel: ObservableObject {
         logValidationResult(field: "birthday", result: birthdayValidation)
     }
     
-    /// Logs validation results for debugging
+
     private func logValidationResult(field: String, result: ValidationResult) {
         switch result {
         case .valid:
@@ -369,7 +360,6 @@ class ProfileViewModel: ObservableObject {
     
     // MARK: - Enhanced Username Validation with Debounced API Calls
     
-    /// Enhanced username validation with availability checking and debouncing
     private func validateUsernameWithAvailability(_ username: String) {
         // Cancel previous validation work
         usernameValidationWorkItem?.cancel()
@@ -407,7 +397,6 @@ class ProfileViewModel: ObservableObject {
         print("⏳ Username availability check scheduled for: \(username)")
     }
     
-    /// Performs the actual username availability check
     private func performUsernameAvailabilityCheck(_ username: String) {
         isValidatingUsername = true
         usernameCheckMessage = "確認中..."
@@ -428,7 +417,6 @@ class ProfileViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    /// Handles username availability check results
     private func handleUsernameAvailabilityResult(username: String, isAvailable: Bool) {
         isUsernameAvailable = isAvailable
         usernameCheckMessage = isAvailable ? "利用可能です" : "既に使用されています"
@@ -443,7 +431,7 @@ class ProfileViewModel: ObservableObject {
         print("🔍 Username '\(username)' is \(status)")
     }
     
-    /// Handles username availability check errors
+
     private func handleUsernameCheckError(_ error: Error) {
         isUsernameAvailable = nil
         usernameCheckMessage = "確認に失敗しました"
@@ -456,7 +444,6 @@ class ProfileViewModel: ObservableObject {
     
     // MARK: - Enhanced Form State Management
     
-    /// Enhanced form validity state management
     private func updateFormValidityState() {
         let fieldValidationsValid = emailValidation.isValid &&
                                     nameValidation.isValid &&
@@ -480,7 +467,6 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    /// Logs current form validation issues for debugging
     private func logFormValidationIssues() {
         var issues: [String] = []
         
@@ -514,7 +500,7 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    /// Gets comprehensive validation summary
+
     func getValidationSummary() -> ValidationSummary {
         return ValidationSummary(
             emailValidation: emailValidation,
@@ -530,7 +516,6 @@ class ProfileViewModel: ObservableObject {
         )
     }
     
-    /// Validates all fields manually with comprehensive feedback
     func validateAllFields() {
         print("🔍 Performing comprehensive form validation...")
         
@@ -554,9 +539,6 @@ class ProfileViewModel: ObservableObject {
         let summary = getValidationSummary()
         print("📋 Validation summary: \(summary.isFormValid ? "✅ Valid" : "❌ Invalid")")
     }
-    
-    
-    
     
     
     private func checkForUnsavedChanges() {
@@ -609,7 +591,6 @@ class ProfileViewModel: ObservableObject {
     
     // MARK: - Profile Creation Logic
     
-    /// Creates a new user profile with comprehensive validation and error handling
     @MainActor
     func createProfile() async -> Bool {
         // Check network connectivity first

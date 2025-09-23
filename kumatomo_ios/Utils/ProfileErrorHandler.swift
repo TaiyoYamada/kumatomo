@@ -22,7 +22,6 @@ class ProfileErrorHandler: ObservableObject {
     
     // MARK: - Error Handling Methods
     
-    /// Handles profile-related errors with appropriate user feedback
     func handleError(_ error: Error, retryAction: (() async -> Void)? = nil) {
         let profileError = convertToProfileError(error)
         self.currentError = profileError
@@ -41,7 +40,7 @@ class ProfileErrorHandler: ObservableObject {
         }
     }
     
-    /// Converts generic errors to ProfileError
+
     private func convertToProfileError(_ error: Error) -> ProfileError {
         if let profileError = error as? ProfileError {
             return profileError
@@ -63,7 +62,7 @@ class ProfileErrorHandler: ObservableObject {
         return .networkError(error)
     }
     
-    /// Converts URLError to ProfileError
+
     private func convertURLError(_ urlError: URLError) -> ProfileError {
         switch urlError.code {
         case .notConnectedToInternet, .dataNotAllowed:
@@ -79,7 +78,7 @@ class ProfileErrorHandler: ObservableObject {
         }
     }
     
-    /// Converts ImageUploadError to ProfileError
+    
     private func convertImageError(_ imageError: ImageUploadError) -> ProfileError {
         switch imageError {
         case .imageConversionFailed:
@@ -182,8 +181,6 @@ class ProfileErrorHandler: ObservableObject {
         
         print("🚨 ProfileError: \(errorInfo)")
         
-        // In production, you might want to send this to a crash reporting service
-        // CrashReporter.recordError(error, userInfo: errorInfo)
     }
     
     // MARK: - Error Message Formatting
@@ -261,7 +258,7 @@ class ProfileErrorHandler: ObservableObject {
 // MARK: - SwiftUI Integration
 
 extension ProfileErrorHandler {
-    /// Creates error alert for SwiftUI views
+
     func errorAlert() -> Alert {
         guard let error = currentError else {
             return Alert(title: Text("エラー"))

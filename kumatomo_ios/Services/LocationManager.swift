@@ -2,7 +2,7 @@ import Foundation
 import CoreLocation
 import Combine
 
-/// LocationManager service for handling CoreLocation integration with proper permission handling and graceful degradation
+
 class LocationManager: NSObject, ObservableObject {
     static let shared = LocationManager()
     
@@ -24,7 +24,7 @@ class LocationManager: NSObject, ObservableObject {
     
     // MARK: - Public Methods
     
-    /// Requests location permission and starts location updates if granted
+
     func requestLocationPermission() {
         switch authorizationStatus {
         case .notDetermined:
@@ -38,7 +38,7 @@ class LocationManager: NSObject, ObservableObject {
         }
     }
     
-    /// Starts location updates if permission is granted
+
     func startLocationUpdates() {
         guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
             locationError = .permissionDenied
@@ -55,13 +55,13 @@ class LocationManager: NSObject, ObservableObject {
         locationError = nil
     }
     
-    /// Stops location updates
+
     func stopLocationUpdates() {
         locationManager.stopUpdatingLocation()
         isLocationEnabled = false
     }
     
-    /// Requests a one-time location update
+
     func requestOneTimeLocation(completion: @escaping (Result<CLLocation, LocationError>) -> Void) {
         locationUpdateCompletion = completion
         
@@ -78,14 +78,14 @@ class LocationManager: NSObject, ObservableObject {
         locationManager.requestLocation()
     }
     
-    /// Calculates distance between two coordinates
+
     func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> CLLocationDistance {
         let fromLocation = CLLocation(latitude: from.latitude, longitude: from.longitude)
         let toLocation = CLLocation(latitude: to.latitude, longitude: to.longitude)
         return fromLocation.distance(from: toLocation)
     }
     
-    /// Formats distance with proper unit formatting (meters/kilometers)
+
     static func formatDistance(_ distance: CLLocationDistance) -> String {
         if distance < 1000 {
             return String(format: "%.0fm", distance)
@@ -94,7 +94,7 @@ class LocationManager: NSObject, ObservableObject {
         }
     }
     
-    /// Calculates and formats distance from user location to a coordinate
+
     func distanceFromUser(to coordinate: CLLocationCoordinate2D) -> String? {
         guard let userLocation = userLocation else { return nil }
         

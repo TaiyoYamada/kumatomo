@@ -2,12 +2,6 @@ import Foundation
 import SwiftUI
 import Combine
 
-/**
- * ImageLoader - 画像をURLから非同期で読み込むユーティリティクラス
- * 
- * URLから画像を読み込み、キャッシュする機能を提供します。
- * ObservableObjectに準拠しているため、SwiftUIのビューから観測可能です。
- */
 class ImageLoader: ObservableObject {
     @Published var image: UIImage?
     @Published var isLoading: Bool = false
@@ -21,11 +15,6 @@ class ImageLoader: ObservableObject {
         self.cache = cache
     }
     
-    /**
-     * 指定されたURLから画像を読み込む
-     * 
-     * - Parameter urlString: 画像のURL文字列
-     */
     func loadImage(from url: URL) {
         // すでに同じURLを読み込み中ならスキップ
         if self.urlString == url.absoluteString { return }
@@ -67,18 +56,11 @@ class ImageLoader: ObservableObject {
             })
     }
 
-    
-    /**
-     * 現在の読み込み処理をキャンセルする
-     */
     func cancel() {
         cancellable?.cancel()
         isLoading = false
     }
     
-    /**
-     * ローディング中や読み込みが完了した後のクリーンアップ
-     */
     func cleanup() {
         cancel()
         image = nil

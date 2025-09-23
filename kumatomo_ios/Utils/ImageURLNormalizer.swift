@@ -1,9 +1,7 @@
 import Foundation
 
 enum ImageURLNormalizer {
-    /// Normalize image URL strings so they load reliably on device and simulator.
-    /// - Handles relative storage paths like "/storage/..."
-    /// - Rewrites localhost/127.0.0.1 hosts to match API base host
+
     static func normalize(_ urlString: String?) -> URL? {
         guard var raw = urlString?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {
             return nil

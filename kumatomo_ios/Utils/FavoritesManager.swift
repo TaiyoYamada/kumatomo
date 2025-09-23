@@ -22,7 +22,6 @@ class FavoritesManager: ObservableObject {
     
     // MARK: - Public Methods
     
-    /// Toggle favorite status for a shop
     func toggleFavorite(shop: Shop) async {
         let wasAlreadyFavorite = favoriteIds.contains(shop.id)
         
@@ -66,12 +65,10 @@ class FavoritesManager: ObservableObject {
         }
     }
     
-    /// Check if a shop is favorited
     func isFavorite(shopId: Int) -> Bool {
         return favoriteIds.contains(shopId)
     }
     
-    /// Load user's favorite shops from the server
     func loadFavorites() async {
         isLoading = true
         errorMessage = nil
@@ -97,19 +94,19 @@ class FavoritesManager: ObservableObject {
         isLoading = false
     }
     
-    /// Refresh favorites from server
+    
     func refreshFavorites() async {
         await loadFavorites()
     }
     
-    /// Clear all favorites (for logout scenarios)
+    
     func clearFavorites() {
         favoriteShops.removeAll()
         favoriteIds.removeAll()
         errorMessage = nil
     }
     
-    /// Get favorite shops sorted by creation date (newest first)
+    
     func getFavoriteShopsSorted() -> [Shop] {
         return favoriteShops.sorted { shop1, shop2 in
             guard let date1 = shop1.createdAt, let date2 = shop2.createdAt else {
@@ -119,12 +116,12 @@ class FavoritesManager: ObservableObject {
         }
     }
     
-    /// Get favorite count
+    
     var favoriteCount: Int {
         return favoriteIds.count
     }
     
-    /// Check if favorites are empty
+    
     var isEmpty: Bool {
         return favoriteIds.isEmpty
     }

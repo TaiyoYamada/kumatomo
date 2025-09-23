@@ -8,6 +8,7 @@ struct ShopData: Identifiable {
     let imageName: String
 }
 
+// MARK: - User-driven Infinite Carousel
 struct RecommendedShopCarouselView: View {
     // Data
     let shops: [ShopData]
@@ -16,95 +17,65 @@ struct RecommendedShopCarouselView: View {
     private let cardWidth: CGFloat = 280
     private let spacing: CGFloat = 16
     private let rowHeight: CGFloat = 320
+    private let horizontalPadding: CGFloat = 16
 
-    // Auto-scroll
-    @State private var baseOffset: CGFloat = 0     // 純粋な自動スクロールの値
-    @State private var dragOffset: CGFloat = 0     // ユーザー操作分（ジェスチャー中のみ）
-    @State private var isDragging: Bool = false
-
-    /// 1秒あたりに左へ進むポイント数（小さくするとゆっくり）
-    var speed: CGFloat = 24
-
-    /// 自動再開までの待機秒（ドラッグ終了後に間を置きたい場合）
-    var resumeDelay: TimeInterval = 0.0
-
-    // タイマーでなめらかに前進（60fps想定）
-    private let ticker = Timer.publish(every: 1.0/60.0, on: .main, in: .common).autoconnect()
-    @State private var lastTick = Date()
-    @State private var resumeAt: Date? = nil
-
-    private var unitWidth: CGFloat { cardWidth + spacing }
-    private var loopWidth: CGFloat { unitWidth * CGFloat(max(shops.count, 1)) }
-
-    // 実際に適用するオフセット（自動 + ドラッグ）を無限ループ範囲に正規化
-    private var effectiveOffset: CGFloat {
-        normalized(baseOffset + dragOffset, by: loopWidth)
-    }
+    // Large virtual range to simulate infinite scrolling
+    // 中央から開始し、ユーザー操作のみで無限に流せるようにする
+    private let loopSpan: Int = 500
+    private var loopRange: ClosedRange<Int> { (-loopSpan)...loopSpan }
+    private var centerIndex: Int { 0 }
 
     var body: some View {
-        ZStack { // クリップ用のコンテナ
-            // 2周分並べてシームレスに見せる
-            HStack(spacing: spacing) {
-                ForEach(0..<2, id: \.self) { _ in
-                    ForEach(shops) { shop in
-                        MockShopCardView(shop: shop)
-                            .frame(width: cardWidth)
+        if shops.isEmpty {
+            emptyState
+        } else {
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: spacing) {
+                        ForEach(loopRange, id: \.self) { i in
+                            let shop = shops[safe: positiveMod(i, shops.count)]
+                            if let shop {
+                                MockShopCardView(shop: shop)
+                                    .frame(width: cardWidth)
+                                    .id(i)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, horizontalPadding)
+                }
+                .frame(height: rowHeight)
+                .onAppear {
+                    // 初期表示は中央の要素の先頭を左端に合わせる（均一な見た目）
+                    DispatchQueue.main.async {
+                        proxy.scrollTo(centerIndex, anchor: .leading)
                     }
                 }
             }
-            .offset(x: effectiveOffset)
-            .frame(height: rowHeight)
-            .clipped()
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 5)
-                    .onChanged { value in
-                        if !isDragging { isDragging = true }
-                        // ユーザーの指の移動量をそのまま反映（ベース値は触らない）
-                        dragOffset = value.translation.width
-                    }
-                    .onEnded { value in
-                        // ドラッグ終了時にベースへ取り込み、ドラッグ分はリセット
-                        baseOffset = normalized(baseOffset + value.translation.width, by: loopWidth)
-                        dragOffset = 0
-                        isDragging = false
-                        // 自動再開の遅延指定
-                        if resumeDelay > 0 {
-                            resumeAt = Date().addingTimeInterval(resumeDelay)
-                        } else {
-                            resumeAt = nil
-                        }
-                        // タイマーステップの基準時刻を更新（ジャンプ防止）
-                        lastTick = Date()
-                    }
-            )
-        }
-        .frame(height: rowHeight)
-        .onReceive(ticker) { now in
-            guard !shops.isEmpty else { return }
-
-            let dt = now.timeIntervalSince(lastTick)
-            lastTick = now
-
-            // ドラッグ中は自動スクロール停止
-            if isDragging { return }
-
-            // 遅延再開が設定されている場合は、その時刻までは待つ
-            if let resumeAt, now < resumeAt { return }
-
-            // 左方向に進める（負方向）
-            let step = speed * CGFloat(dt) // pt/sec * sec = pt
-            baseOffset = normalized(baseOffset - step, by: loopWidth)
         }
     }
 
-    /// - Returns: x を (-by, 0] の範囲に折りたたんだ値（無限ループ用）
-    private func normalized(_ x: CGFloat, by divisor: CGFloat) -> CGFloat {
-        guard divisor > 0 else { return 0 }
-        var v = x.truncatingRemainder(dividingBy: divisor)
-        if v > 0 { v -= divisor }  // 0 より大きければ左側レンジへ移す
-        // これで常に -by .. 0 の範囲に収まる
-        return v
+    // MARK: - Helpers
+    private func positiveMod(_ a: Int, _ m: Int) -> Int {
+        guard m > 0 else { return 0 }
+        let r = a % m
+        return r < 0 ? r + m : r
+    }
+
+    private var emptyState: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(Color(.systemGray6))
+            .frame(height: rowHeight)
+            .overlay {
+                VStack(spacing: 8) {
+                    Image(systemName: "cart")
+                        .font(.system(size: 36))
+                        .foregroundColor(.secondary)
+                    Text("おすすめのお店がありません")
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
+                }
+            }
+            .padding(.horizontal, horizontalPadding)
     }
 }
 
@@ -156,6 +127,7 @@ struct MockShopCardView: View {
     }
 }
 
+// サンプルデータ
 let sampleShops: [ShopData] = [
     ShopData(name: "くまもとドーナツ", location: "熊本市中央区", imageName: "donatu"),
     ShopData(name: "さばのみそにや", location: "熊本市中央区", imageName: "saba"),
@@ -163,3 +135,10 @@ let sampleShops: [ShopData] = [
     ShopData(name: "中華のみせ", location: "熊本市中央区", imageName: "tyuka"),
     ShopData(name: "和食店", location: "天草市", imageName: "washoku")
 ]
+
+// 安全添字アクセス
+private extension Array {
+    subscript(safe index: Index) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
+}

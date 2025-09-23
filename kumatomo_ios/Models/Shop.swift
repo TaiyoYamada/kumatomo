@@ -137,13 +137,13 @@ extension Shop {
         self.updatedAt = Date()
     }
     
-    /// Returns the coordinate of the shop if latitude and longitude are available
+
     var coordinate: CLLocationCoordinate2D? {
         guard let lat = latitude, let lng = longitude else { return nil }
         return CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
     
-    /// Calculates distance from user location to this shop using LocationManager
+
     func distanceFromUser(_ userLocation: CLLocation?) -> String? {
         guard let userLocation = userLocation,
               let coordinate = coordinate else { return nil }
@@ -154,7 +154,7 @@ extension Shop {
         return LocationManager.formatDistance(distance)
     }
     
-    /// Calculates distance from current user location using LocationManager
+
     @MainActor
     var distanceFromCurrentUser: String? {
         return LocationManager.shared.distanceFromUser(to: self)
