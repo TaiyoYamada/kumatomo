@@ -10,6 +10,7 @@
 - お店の検索・クーポン取得
 - シンプルで直感的なUI
 
+
 ## リポジトリ構成
 - `admin/` - 管理者画面（Vue+Vuetify+Typescript）
 - `api/` — Laravel 製の REST API
