@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E54643492EB25CD80099ECF4 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E54643482EB25CD80099ECF4 /* Resolver */; };
+		E546434B2EB25CD80099ECF4 /* Resolver-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = E546434A2EB25CD80099ECF4 /* Resolver-Dynamic */; };
+		E546434D2EB25CD80099ECF4 /* Resolver-Static in Frameworks */ = {isa = PBXBuildFile; productRef = E546434C2EB25CD80099ECF4 /* Resolver-Static */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		E58F651B2E7841F3002DBE21 /* kumatomo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "kumatomo-Info.plist"; sourceTree = "<group>"; };
 		E5CD33332E43698300ACDA82 /* kumatomo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kumatomo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -24,6 +30,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E546434B2EB25CD80099ECF4 /* Resolver-Dynamic in Frameworks */,
+				E546434D2EB25CD80099ECF4 /* Resolver-Static in Frameworks */,
+				E54643492EB25CD80099ECF4 /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,6 +76,9 @@
 			);
 			name = kumatomo;
 			packageProductDependencies = (
+				E54643482EB25CD80099ECF4 /* Resolver */,
+				E546434A2EB25CD80099ECF4 /* Resolver-Dynamic */,
+				E546434C2EB25CD80099ECF4 /* Resolver-Static */,
 			);
 			productName = kumatomo;
 			productReference = E5CD33332E43698300ACDA82 /* kumatomo.app */;
@@ -96,6 +108,9 @@
 			);
 			mainGroup = E5CD332A2E43698300ACDA82;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E5CD33342E43698300ACDA82 /* Products */;
 			projectDirPath = "";
@@ -538,6 +553,35 @@
 			defaultConfigurationName = "Debug-Simulator";
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Resolver";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E54643482EB25CD80099ECF4 /* Resolver */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */;
+			productName = Resolver;
+		};
+		E546434A2EB25CD80099ECF4 /* Resolver-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */;
+			productName = "Resolver-Dynamic";
+		};
+		E546434C2EB25CD80099ECF4 /* Resolver-Static */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */;
+			productName = "Resolver-Static";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E5CD332B2E43698300ACDA82 /* Project object */;
 }
