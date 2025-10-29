@@ -27,10 +27,11 @@ class PostDetailViewModel: ObservableObject {
     
     // MARK: - Services
     
-    @Injected var postRepository: PostRepository
-    @Injected var commentRepository: CommentRepository
-    @Injected var engagementRepository: EngagementRepository
-    @Injected var imageUploader: ImageUploadRepository
+    @Injected var fetchPostUseCase: FetchPostUseCase
+    @Injected var fetchCommentsUseCase: FetchCommentsUseCase
+    @Injected var createCommentUseCase: CreateCommentUseCase
+    @Injected var toggleLikeUseCase: ToggleLikeUseCase
+    @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
     @Injected var authRepository: AuthRepository
     
     // MARK: - Computed Properties
@@ -58,7 +59,7 @@ class PostDetailViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let fetchedPost = try await postRepository.fetchPost(postId: postId)
+            let fetchedPost = try await fetchPostUseCase.execute(postId: postId)
             post = fetchedPost
             print("✅ 投稿詳細読み込み成功: ID \(postId)")
             print("📊 エンゲージメント: いいね\(fetchedPost.likeCount ?? 0)件, ブックマーク\(fetchedPost.bookmarkCount ?? 0)件, コメント\(fetchedPost.commentCount ?? 0)件")
@@ -86,7 +87,7 @@ class PostDetailViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let fetchedComments = try await commentRepository.fetchComments(postId: postId)
+            let fetchedComments = try await fetchCommentsUseCase.execute(postId: postId)
             comments = fetchedComments.sorted { $0.createdAt < $1.createdAt }
             print("✅ コメント読み込み成功: \(fetchedComments.count)件")
         } catch let error as CommentError {
@@ -132,26 +133,19 @@ class PostDetailViewModel: ObservableObject {
         
         print("🔄 いいね最適化更新: \(newIsLiked ? "いいね" : "いいね解除") (カウント: \(newLikeCount))")
         
-        // API call with rollback capability
-        let result = await engagementRepository.optimisticToggleLike(
-            postId: currentPost.id,
-            currentState: originalIsLiked,
-            currentCount: originalLikeCount
-        )
-        
-        if result.success, let response = result.response {
+        // API call with rollback capability via UseCase
+        let result = await toggleLikeUseCase.execute(postId: currentPost.id, currentState: originalIsLiked, currentCount: originalLikeCount)
+        switch result {
+        case .success(let response):
             // Update with server response
             currentPost.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
             post = currentPost
             print("✅ いいね更新成功: \(response.isLiked ? "いいね" : "いいね解除") (サーバーカウント: \(response.likeCount))")
-        } else {
+        case .failure(let error):
             // Rollback on failure
             currentPost.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
             post = currentPost
-            
-            if let error = result.error {
-                await handleEngagementError(error, context: "いいね切り替え")
-            }
+            await handleEngagementError(error, context: "いいね切り替え")
             print("❌ いいね更新失敗 - ロールバック実行")
         }
         
@@ -186,26 +180,19 @@ class PostDetailViewModel: ObservableObject {
         
         print("🔄 ブックマーク最適化更新: \(newIsBookmarked ? "ブックマーク" : "ブックマーク解除") (カウント: \(newBookmarkCount))")
         
-        // API call with rollback capability
-        let result = await engagementRepository.optimisticToggleBookmark(
-            postId: currentPost.id,
-            currentState: originalIsBookmarked,
-            currentCount: originalBookmarkCount
-        )
-        
-        if result.success, let response = result.response {
+        // API call with rollback capability via UseCase
+        let result = await toggleBookmarkUseCase.execute(postId: currentPost.id, currentState: originalIsBookmarked, currentCount: originalBookmarkCount)
+        switch result {
+        case .success(let response):
             // Update with server response
             currentPost.updateBookmarkStatus(isBookmarked: response.isBookmarked, bookmarkCount: response.bookmarkCount)
             post = currentPost
             print("✅ ブックマーク更新成功: \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))")
-        } else {
+        case .failure(let error):
             // Rollback on failure
             currentPost.updateBookmarkStatus(isBookmarked: originalIsBookmarked, bookmarkCount: originalBookmarkCount)
             post = currentPost
-            
-            if let error = result.error {
-                await handleEngagementError(error, context: "ブックマーク切り替え")
-            }
+            await handleEngagementError(error, context: "ブックマーク切り替え")
             print("❌ ブックマーク更新失敗 - ロールバック実行")
         }
         
@@ -244,11 +231,7 @@ class PostDetailViewModel: ObservableObject {
         
         do {
             let imageData = image?.jpegData(compressionQuality: 0.8)
-            let newComment = try await commentRepository.createComment(
-                postId: currentPost.id,
-                content: trimmedText,
-                imageData: imageData
-            )
+            let newComment = try await createCommentUseCase.execute(postId: currentPost.id, content: trimmedText, imageData: imageData)
             
             // Add comment to local list
             comments.append(newComment)

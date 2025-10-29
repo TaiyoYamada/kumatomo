@@ -27,8 +27,12 @@ class BulletinBoardViewModel: ObservableObject {
     
     // MARK: - Private Properties
     
-    @Injected var postRepository: PostRepository
-    @Injected var engagementRepository: EngagementRepository
+    @Injected var fetchAllPostsWithCacheUseCase: FetchAllPostsWithCacheUseCase
+    @Injected var fetchMunicipalityPostsWithCacheUseCase: FetchMunicipalityPostsWithCacheUseCase
+    @Injected var fetchFollowingPostsWithCacheUseCase: FetchFollowingPostsWithCacheUseCase
+    @Injected var toggleLikeUseCase: ToggleLikeUseCase
+    @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
+    @Injected var toggleReactionUseCase: ToggleReactionUseCase
     private var currentPage = 1
     private let postsPerPage = 20
     private var cancellables = Set<AnyCancellable>()
@@ -229,7 +233,7 @@ class BulletinBoardViewModel: ObservableObject {
         
         switch activeTab {
         case .all:
-            return try await postRepository.fetchAllPostsWithCache(
+            return try await fetchAllPostsWithCacheUseCase.execute(
                 page: page, 
                 limit: postsPerPage, 
                 useCache: useCache
@@ -238,14 +242,14 @@ class BulletinBoardViewModel: ObservableObject {
             guard let municipality = selectedMunicipality else {
                 throw BulletinBoardError.municipalityNotSelected
             }
-            return try await postRepository.fetchMunicipalityPostsWithCache(
+            return try await fetchMunicipalityPostsWithCacheUseCase.execute(
                 municipality: municipality,
                 page: page,
                 limit: postsPerPage,
                 useCache: useCache
             )
         case .following:
-            return try await postRepository.fetchFollowingPostsWithCache(
+            return try await fetchFollowingPostsWithCacheUseCase.execute(
                 page: page, 
                 limit: postsPerPage, 
                 useCache: useCache
@@ -273,7 +277,8 @@ class BulletinBoardViewModel: ObservableObject {
         do {
             // Send to server if online
             if NetworkMonitor.shared.isConnected {
-                let response = try await engagementRepository.toggleLike(postId: postId)
+                let likeResult = await toggleLikeUseCase.execute(postId: postId, currentState: originalIsLiked, currentCount: originalLikeCount)
+                guard case .success(let response) = likeResult else { throw EngagementError.unknownError(NSError(domain: "toggleLike", code: -1)) }
                 
                 // Update with server response
                 updatePostInList(postId: postId) { post in
@@ -330,7 +335,7 @@ class BulletinBoardViewModel: ObservableObject {
         do {
             // Send to server if online
             if NetworkMonitor.shared.isConnected {
-                let serverReactions = try await postRepository.toggleReaction(
+                let serverReactions = try await toggleReactionUseCase.execute(
                     postId: postId,
                     reactionType: reactionType
                 )
@@ -398,7 +403,8 @@ class BulletinBoardViewModel: ObservableObject {
         do {
             // Send to server if online
             if NetworkMonitor.shared.isConnected {
-                let response = try await engagementRepository.toggleBookmark(postId: postId)
+                let bookmarkResult = await toggleBookmarkUseCase.execute(postId: postId, currentState: originalIsBookmarked, currentCount: originalBookmarkCount)
+                guard case .success(let response) = bookmarkResult else { throw EngagementError.unknownError(NSError(domain: "toggleBookmark", code: -1)) }
                 
                 // Update with server response
                 updatePostInList(postId: postId) { post in

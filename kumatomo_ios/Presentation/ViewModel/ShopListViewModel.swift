@@ -15,7 +15,7 @@ class ShopListViewModel: ObservableObject {
     @Published var favoritesErrorMessage: String?
     @Published var selectedShop: Shop?
     
-    @Injected var shopRepository: ShopRepository
+    @Injected var fetchShopsUseCase: FetchShopsUseCase
     private let locationManager = LocationManager.shared
     private let favoritesManager = FavoritesManager.shared
     private var cancellables = Set<AnyCancellable>()
@@ -60,7 +60,7 @@ class ShopListViewModel: ObservableObject {
             let latitude = userLocation?.coordinate.latitude
             let longitude = userLocation?.coordinate.longitude
             
-            shops = try await shopRepository.fetchShops(
+            shops = try await fetchShopsUseCase.execute(
                 genre: nil, // Load all shops, filter locally for multi-select
                 latitude: latitude,
                 longitude: longitude,

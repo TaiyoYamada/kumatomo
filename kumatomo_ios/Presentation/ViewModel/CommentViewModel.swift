@@ -27,7 +27,7 @@ class CommentViewModel: ObservableObject {
     
     // MARK: - Services
     
-    @Injected var commentRepository: CommentRepository
+    @Injected var createCommentUseCase: CreateCommentUseCase
     
     // MARK: - Computed Properties
     
@@ -196,11 +196,7 @@ class CommentViewModel: ObservableObject {
             let trimmedText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
             
             let imageData = selectedImage?.jpegData(compressionQuality: 0.8)
-            let comment = try await commentRepository.createComment(
-                postId: postId,
-                content: trimmedText,
-                imageData: imageData
-            )
+            let comment = try await createCommentUseCase.execute(postId: postId, content: trimmedText, imageData: imageData)
             
             // Clear form on success
             clearForm()

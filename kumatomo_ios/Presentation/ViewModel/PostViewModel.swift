@@ -85,8 +85,16 @@ class PostViewModel: ObservableObject {
     @Published var isDeleting: Bool = false
     @Published var isUpdating: Bool = false
     
-    @Injected var postRepository: PostRepository
-    @Injected var imageUploader: ImageUploadRepository
+    // UseCases
+    @Injected var fetchAllPostsUseCase: FetchAllPostsUseCase
+    @Injected var fetchUserPostsUseCase: FetchUserPostsUseCase
+    @Injected var fetchMunicipalityPostsUseCase: FetchMunicipalityPostsUseCase
+    @Injected var fetchFollowingPostsUseCase: FetchFollowingPostsUseCase
+    @Injected var fetchPostUseCase: FetchPostUseCase
+    @Injected var createPostUseCase: CreatePostUseCase
+    @Injected var createPostWithMultipleImagesUseCase: CreatePostWithMultipleImagesUseCase
+    @Injected var updatePostUseCase: UpdatePostUseCase
+    @Injected var deletePostUseCase: DeletePostUseCase
     @Injected var authRepository: AuthRepository
     
     // MARK: - Validation
@@ -308,15 +316,11 @@ class PostViewModel: ObservableObject {
     // MARK: - API Calls
     
     func fetchAllPosts() async {
-        await performAsyncOperation {
-            self.posts = try await self.postRepository.fetchAllPosts(page: nil, limit: nil)
-        }
+        await performAsyncOperation { self.posts = try await self.fetchAllPostsUseCase.execute(page: nil, limit: nil) }
     }
     
     func fetchUserPosts(userId: Int) async {
-        await performAsyncOperation {
-            self.userPosts = try await self.postRepository.fetchUserPosts(userId: userId, page: nil, limit: nil)
-        }
+        await performAsyncOperation { self.userPosts = try await self.fetchUserPostsUseCase.execute(userId: userId, page: nil, limit: nil) }
     }
     
     func postPost(userId: Int, content: String) async -> Bool {
@@ -335,18 +339,12 @@ class PostViewModel: ObservableObject {
         showSuccessModal = false
         
         do {
-            // Upload image if present
-            var uploadedImageURL: String? = nil
-            if let image = selectedImage {
-                uploadedImageURL = try await uploadImage(image)
-            }
-            
-            // Post post
-            let newPost = try await postRepository.createPost(
+            let imageData = selectedImage?.jpegData(compressionQuality: 0.7)
+            let newPost = try await createPostUseCase.execute(
                 userId: userId,
                 content: content,
-                imageUrl: uploadedImageURL,
-                tags: Array(selectedTags)
+                tags: Array(selectedTags),
+                imageData: imageData
             )
             
             // Success handling
@@ -381,21 +379,13 @@ class PostViewModel: ObservableObject {
         showSuccessModal = false
         
         do {
-            // Upload multiple images
-            var uploadedImageURLs: [String] = []
-            for (index, image) in images.enumerated() {
-                let imageURL = try await uploadImage(image)
-                uploadedImageURLs.append(imageURL)
-                print("✅ 画像 \(index + 1)/\(images.count) アップロード完了: \(imageURL)")
-            }
-            
-            // Create post with multiple images
-            let newPost = try await postRepository.createPostWithMultipleImages(
+            let datas: [Data] = images.compactMap { $0.jpegData(compressionQuality: 0.7) }
+            let newPost = try await createPostWithMultipleImagesUseCase.execute(
                 userId: userId,
                 content: content,
                 shopId: shopId,
-                imageUrls: uploadedImageURLs,
-                tags: Array(selectedTags)
+                tags: Array(selectedTags),
+                imageDatas: datas
             )
             
             // Success handling
@@ -475,7 +465,7 @@ class PostViewModel: ObservableObject {
         }
         
         do {
-            let serverPost = try await postRepository.updatePost(
+            let serverPost = try await updatePostUseCase.execute(
                 postId: post.id,
                 content: postContent,
                 shopId: selectedShop?.id,
@@ -549,7 +539,7 @@ class PostViewModel: ObservableObject {
         userPosts.removeAll { $0.id == post.id }
         
         do {
-            try await postRepository.deletePost(postId: post.id)
+            try await deletePostUseCase.execute(postId: post.id)
             
             // Success handling
             await handleSuccessfulDeletion()
@@ -586,7 +576,7 @@ class PostViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let post = try await postRepository.fetchPost(postId: postId)
+            let post = try await fetchPostUseCase.execute(postId: postId)
             isLoading = false
             return post
         } catch let error as PostAPIError {
@@ -635,23 +625,6 @@ class PostViewModel: ObservableObject {
     }
     
     // MARK: - Private Methods
-    
-    private func uploadImage(_ image: UIImage) async throws -> String {
-        do {
-            guard let data = image.jpegData(compressionQuality: 0.7) else {
-                throw ImageUploadError.imageConversionFailed
-            }
-            let imageURL = try await imageUploader.uploadImage(data, endpoint: "/upload-image")
-            print("✅ 画像アップロード成功: \(imageURL)")
-            return imageURL
-        } catch let error as ImageUploadError {
-            print("❌ 画像アップロード失敗: \(error.localizedDescription)")
-            throw error
-        } catch {
-            print("❌ 画像アップロード失敗: \(error.localizedDescription)")
-            throw ImageUploadError.uploadFailed(reason: error.localizedDescription)
-        }
-    }
     
     private func handleSuccessfulSubmission(_ newPost: Post) async {
         posts.insert(newPost, at: 0)
@@ -835,14 +808,14 @@ extension PostViewModel {
     private func fetchMunicipalityPosts(municipality: String) async {
         await performAsyncOperation {
             // TODO: Implement municipality-specific API call
-            self.posts = try await self.postRepository.fetchAllPosts(page: nil, limit: nil)
+            self.posts = try await self.fetchAllPostsUseCase.execute(page: nil, limit: nil)
         }
     }
     
     private func fetchFollowingPosts() async {
         await performAsyncOperation {
             // TODO: Implement following-specific API call
-            self.posts = try await self.postRepository.fetchAllPosts(page: nil, limit: nil)
+            self.posts = try await self.fetchAllPostsUseCase.execute(page: nil, limit: nil)
         }
     }
 }

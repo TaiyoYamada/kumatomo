@@ -30,6 +30,11 @@ final class AuthViewModel: ObservableObject {
     
     @Injected var authRepository: AuthRepository       // 認証・ユーザー取得
     @Injected var imageUploader: ImageUploadRepository // 画像アップロード
+    // Optional: UseCases wrappers
+    @Injected var signInUseCase: SignInUseCase
+    @Injected var signOutUseCase: SignOutUseCase
+    @Injected var createUserUseCase: CreateUserUseCase
+    @Injected var updateUserUseCase: UpdateUserUseCase
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -82,7 +87,7 @@ final class AuthViewModel: ObservableObject {
         errorMessage = ""
         
         do {
-            try await authRepository.signIn(withEmail: email, password: password)
+            try await signInUseCase.execute(email: email, password: password)
             resetForm()
         } catch {
             errorMessage = error.localizedDescription
@@ -101,10 +106,7 @@ final class AuthViewModel: ObservableObject {
         
         do {
             // Auth サービスでユーザー作成（サーバー側で自動的にランダムなusernameが生成される）
-            try await authRepository.createUser(
-                withEmail: email,
-                password: password,
-            )
+            try await createUserUseCase.execute(email: email, password: password)
             
             resetForm()
         } catch {
@@ -123,7 +125,7 @@ final class AuthViewModel: ObservableObject {
         errorMessage = ""
         
         do {
-            try await authRepository.signOut()
+            try await signOutUseCase.execute()
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -178,8 +180,8 @@ final class AuthViewModel: ObservableObject {
                 
                 
                 // ユーザー情報を更新
-                try await authRepository.updateUser(
-                    withName: name,
+                try await updateUserUseCase.execute(
+                    name: name,
                     profileImageURL: profileImageURL,
                     bio: bio,
                     location: location,
@@ -257,8 +259,8 @@ final class AuthViewModel: ObservableObject {
             let birthdayString = dateFormatter.string(from: birthDate)
             
             
-            try await authRepository.updateUser(
-                withName: name,
+            try await updateUserUseCase.execute(
+                name: name,
                 profileImageURL: profileImageURL,
                 bio: bio,
                 location: location,

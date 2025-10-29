@@ -11,7 +11,7 @@ class SearchViewModel: ObservableObject {
     @Published var selectedFilter: SearchFilterType = .all
     @Published var showingSearchHistory = false
     
-    @Injected var searchRepository: SearchRepository
+    @Injected var searchUseCase: SearchUseCase
     private let historyManager = SearchHistoryManager.shared
     
     var hasSearchResults: Bool {
@@ -73,7 +73,7 @@ class SearchViewModel: ObservableObject {
         showingSearchHistory = false
         
         do {
-            let (results, _, _) = try await searchRepository.search(
+            let (results, _, _) = try await searchUseCase.execute(
                 query: query,
                 type: selectedFilter,
                 page: 1,

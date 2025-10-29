@@ -8,14 +8,14 @@ class ShopDetailViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    @Injected var shopRepository: ShopRepository
+    @Injected var fetchShopPostsUseCase: FetchShopPostsUseCase
     
     func loadPosts(for shopId: Int) async {
         isLoading = true
         errorMessage = nil
         
         do {
-            posts = try await shopRepository.fetchShopPosts(shopId: shopId)
+            posts = try await fetchShopPostsUseCase.execute(shopId: shopId)
         } catch {
             errorMessage = error.localizedDescription
             print("🚨 お店の投稿取得に失敗: \(error)")

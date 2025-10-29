@@ -36,7 +36,11 @@ class EngagementViewModel: ObservableObject {
     
     // MARK: - Services
     
-    @Injected var engagementRepository: EngagementRepository
+    // UseCases (Domain)
+    @Injected var fetchLikedPostsUseCase: FetchLikedPostsUseCase
+    @Injected var fetchBookmarkedPostsUseCase: FetchBookmarkedPostsUseCase
+    @Injected var toggleLikeUseCase: ToggleLikeUseCase
+    @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
     
     // MARK: - Constants
     
@@ -88,7 +92,7 @@ class EngagementViewModel: ObservableObject {
         print("[EngagementVM] loadLikedPosts start page=\(likedPostsPage) refresh=\(refresh))")
         
         do {
-            let fetchedPosts = try await engagementRepository.fetchLikedPosts(page: likedPostsPage, limit: postsPerPage)
+            let fetchedPosts = try await fetchLikedPostsUseCase.execute(page: likedPostsPage, limit: postsPerPage)
             
             if refresh {
                 likedPosts = fetchedPosts
@@ -161,7 +165,7 @@ class EngagementViewModel: ObservableObject {
         print("[EngagementVM] loadBookmarkedPosts start page=\(bookmarkedPostsPage) refresh=\(refresh))")
         
         do {
-            let fetchedPosts = try await engagementRepository.fetchBookmarkedPosts(page: bookmarkedPostsPage, limit: postsPerPage)
+            let fetchedPosts = try await fetchBookmarkedPostsUseCase.execute(page: bookmarkedPostsPage, limit: postsPerPage)
             
             if refresh {
                 bookmarkedPosts = fetchedPosts
@@ -238,13 +242,10 @@ class EngagementViewModel: ObservableObject {
         print("🔄 いいね最適化更新: 投稿ID \(post.id) - \(newIsLiked ? "いいね" : "いいね解除") (カウント: \(newLikeCount))")
         
         // API call with rollback capability
-        let result = await engagementRepository.optimisticToggleLike(
-            postId: post.id,
-            currentState: originalIsLiked,
-            currentCount: originalLikeCount
-        )
-        
-        if result.success, let response = result.response {
+        let result = await toggleLikeUseCase.execute(postId: post.id, currentState: originalIsLiked, currentCount: originalLikeCount)
+
+        switch result {
+        case .success(let response):
             // Update with server response
             updatePostInCollections(postId: post.id) { post in
                 post.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
@@ -257,16 +258,13 @@ class EngagementViewModel: ObservableObject {
             
             await showSuccess(response.isLiked ? "いいねしました" : "いいねを取り消しました")
             print("✅ いいね更新成功: 投稿ID \(post.id) - \(response.isLiked ? "いいね" : "いいね解除") (サーバーカウント: \(response.likeCount))")
-            
-        } else {
+        case .failure(let error):
             // Rollback on failure
             updatePostInCollections(postId: post.id) { post in
                 post.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
             }
             
-            if let error = result.error {
-                await handleEngagementError(error, context: "いいね切り替え")
-            }
+            await handleEngagementError(error, context: "いいね切り替え")
             print("❌ いいね更新失敗: 投稿ID \(post.id) - ロールバック実行")
         }
         
@@ -302,13 +300,10 @@ class EngagementViewModel: ObservableObject {
         print("🔄 ブックマーク最適化更新: 投稿ID \(post.id) - \(newIsBookmarked ? "ブックマーク" : "ブックマーク解除") (カウント: \(newBookmarkCount))")
         
         // API call with rollback capability
-        let result = await engagementRepository.optimisticToggleBookmark(
-            postId: post.id,
-            currentState: originalIsBookmarked,
-            currentCount: originalBookmarkCount
-        )
+        let result = await toggleBookmarkUseCase.execute(postId: post.id, currentState: originalIsBookmarked, currentCount: originalBookmarkCount)
         
-        if result.success, let response = result.response {
+        switch result {
+        case .success(let response):
             // Update with server response
             updatePostInCollections(postId: post.id) { post in
                 post.updateBookmarkStatus(isBookmarked: response.isBookmarked, bookmarkCount: response.bookmarkCount)
@@ -321,16 +316,13 @@ class EngagementViewModel: ObservableObject {
             
             await showSuccess(response.isBookmarked ? "ブックマークしました" : "ブックマークを取り消しました")
             print("✅ ブックマーク更新成功: 投稿ID \(post.id) - \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))")
-            
-        } else {
+        case .failure(let error):
             // Rollback on failure
             updatePostInCollections(postId: post.id) { post in
                 post.updateBookmarkStatus(isBookmarked: originalIsBookmarked, bookmarkCount: originalBookmarkCount)
             }
             
-            if let error = result.error {
-                await handleEngagementError(error, context: "ブックマーク切り替え")
-            }
+            await handleEngagementError(error, context: "ブックマーク切り替え")
             print("❌ ブックマーク更新失敗: 投稿ID \(post.id) - ロールバック実行")
         }
         
