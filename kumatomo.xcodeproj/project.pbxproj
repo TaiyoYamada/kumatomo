@@ -7,10 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E54643492EB25CD80099ECF4 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E54643482EB25CD80099ECF4 /* Resolver */; };
-		E546434B2EB25CD80099ECF4 /* Resolver-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = E546434A2EB25CD80099ECF4 /* Resolver-Dynamic */; };
-		E546434D2EB25CD80099ECF4 /* Resolver-Static in Frameworks */ = {isa = PBXBuildFile; productRef = E546434C2EB25CD80099ECF4 /* Resolver-Static */; };
+		E5B58B672EB2CF570096C37C /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5B58B662EB2CF570096C37C /* Resolver */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E5BE54692EB2CE470084FF9F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E58F651B2E7841F3002DBE21 /* kumatomo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "kumatomo-Info.plist"; sourceTree = "<group>"; };
@@ -30,9 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E546434B2EB25CD80099ECF4 /* Resolver-Dynamic in Frameworks */,
-				E546434D2EB25CD80099ECF4 /* Resolver-Static in Frameworks */,
-				E54643492EB25CD80099ECF4 /* Resolver in Frameworks */,
+				E5B58B672EB2CF570096C37C /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +75,7 @@
 				E5CD332F2E43698300ACDA82 /* Sources */,
 				E5CD33302E43698300ACDA82 /* Frameworks */,
 				E5CD33312E43698300ACDA82 /* Resources */,
+				E5BE54692EB2CE470084FF9F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -76,9 +86,7 @@
 			);
 			name = kumatomo;
 			packageProductDependencies = (
-				E54643482EB25CD80099ECF4 /* Resolver */,
-				E546434A2EB25CD80099ECF4 /* Resolver-Dynamic */,
-				E546434C2EB25CD80099ECF4 /* Resolver-Static */,
+				E5B58B662EB2CF570096C37C /* Resolver */,
 			);
 			productName = kumatomo;
 			productReference = E5CD33332E43698300ACDA82 /* kumatomo.app */;
@@ -109,7 +117,7 @@
 			mainGroup = E5CD332A2E43698300ACDA82;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */,
+				E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E5CD33342E43698300ACDA82 /* Products */;
@@ -555,7 +563,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */ = {
+		E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Resolver";
 			requirement = {
@@ -566,20 +574,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E54643482EB25CD80099ECF4 /* Resolver */ = {
+		E5B58B662EB2CF570096C37C /* Resolver */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */;
+			package = E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */;
 			productName = Resolver;
-		};
-		E546434A2EB25CD80099ECF4 /* Resolver-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */;
-			productName = "Resolver-Dynamic";
-		};
-		E546434C2EB25CD80099ECF4 /* Resolver-Static */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E54643472EB25CD80099ECF4 /* XCRemoteSwiftPackageReference "Resolver" */;
-			productName = "Resolver-Static";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
