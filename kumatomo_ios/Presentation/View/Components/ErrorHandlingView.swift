@@ -137,6 +137,7 @@ struct ErrorHandlingView: View {
         }
         .sheet(isPresented: $showDiagnostics) {
             NetworkDiagnosticsView(diagnostics: diagnostics)
+                .appSheetStyle()
         }
     }
     

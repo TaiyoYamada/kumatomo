@@ -196,10 +196,12 @@ struct PostDetailView: View {
             }
             .sheet(isPresented: $showImagePicker) {
                 ImagePicker(selectedImage: $commentViewModel.selectedImage)
+                    .appSheetStyle()
             }
             .sheet(isPresented: $showShareSheet) {
                 if let post = viewModel.post {
                     ShareSheet(items: [createShareText(for: post)])
+                        .appSheetStyle()
                 }
             }
             .confirmationDialog("投稿を削除", isPresented: $showDeleteAlert) {

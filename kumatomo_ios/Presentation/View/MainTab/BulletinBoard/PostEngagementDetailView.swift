@@ -196,6 +196,7 @@ struct PostEngagementDetailView: View {
             }
             .sheet(isPresented: $showImagePicker) {
                 ImagePicker(selectedImage: $commentViewModel.selectedImage)
+                    .appSheetStyle()
             }
         }
     }

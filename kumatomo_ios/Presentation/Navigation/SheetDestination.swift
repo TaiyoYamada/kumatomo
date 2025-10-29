@@ -63,19 +63,22 @@ extension View {
                     selectedItem: selectedItem,
                     onDelete: onDelete
                 )
+                .appSheetStyle()
             case .coverImageEdit(let selectedItem, let onDelete):
                 ImageEditSheet(
                     imageType: .cover,
                     selectedItem: selectedItem,
                     onDelete: onDelete
                 )
+                .appSheetStyle()
             case .shopProposal:
                 ShopProposalFormView()
+                    .appSheetStyle()
             case .shopProposalStatus:
                 ShopProposalStatusView()
-			}
-		}
-	}
+                    .appSheetStyle()
+            }
+        }
+    }
 }
-
 
