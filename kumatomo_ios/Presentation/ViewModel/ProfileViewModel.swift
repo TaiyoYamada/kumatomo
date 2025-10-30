@@ -4,83 +4,85 @@ import UIKit
 import Combine
 import PhotosUI
 import Resolver
+import Observation
 
 @MainActor
-class ProfileViewModel: ObservableObject {
+@Observable
+class ProfileViewModel {
     // 表示用プロパティ
-    @Published var profile: User
-    @Published var isLoading = false
-    @Published var errorMessage: String?
-    @Published var showError = false
-    @Published var selectedImage: UIImage?
-    @Published var isImageUploading = false
-    @Published var showSuccessMessage = false
-    @Published var posts: [Post] = []
-    @Published var isLoadingMore: Bool = false
-    @Published var hasMorePosts: Bool = true
+    var profile: User
+    var isLoading = false
+    var errorMessage: String?
+    var showError = false
+    var selectedImage: UIImage?
+    var isImageUploading = false
+    var showSuccessMessage = false
+    var posts: [Post] = []
+    var isLoadingMore: Bool = false
+    var hasMorePosts: Bool = true
 
     // 編集用プロパティ
-    @Published var email: String = ""
-    @Published var name: String = ""
-    @Published var username: String = ""
-    @Published var bio: String = ""
-    @Published var location: String = ""
-    @Published var birthday: Date = Date()
-    @Published var profileImage: UIImage?
-    @Published var coverImage: UIImage?
-    @Published var isProcessing = false
+    var email: String = "" { didSet { debounce(key: "email", delay: 0.3) { [weak self] in self?.validateEmailField(self?.email ?? "") } } }
+    var name: String = "" { didSet { debounce(key: "name", delay: 0.3) { [weak self] in self?.validateNameField(self?.name ?? "") } } }
+    var username: String = "" { didSet { validateUsernameWithAvailability(username) } }
+    var bio: String = "" { didSet { debounce(key: "bio", delay: 0.3) { [weak self] in self?.validateBioField(self?.bio ?? "") } } }
+    var location: String = "" { didSet { debounce(key: "location", delay: 0.3) { [weak self] in self?.validateLocationField(self?.location ?? "") } } }
+    var birthday: Date = Date() { didSet { validateBirthdayField(birthday) } }
+    var profileImage: UIImage?
+    var coverImage: UIImage?
+    var isProcessing = false
     
     // MARK: - Form Validation Properties
-    @Published var emailValidation: ValidationResult = .valid
-    @Published var nameValidation: ValidationResult = .valid
-    @Published var usernameValidation: ValidationResult = .valid
-    @Published var bioValidation: ValidationResult = .valid
-    @Published var locationValidation: ValidationResult = .valid
-    @Published var birthdayValidation: ValidationResult = .valid
+    var emailValidation: ValidationResult = .valid
+    var nameValidation: ValidationResult = .valid
+    var usernameValidation: ValidationResult = .valid
+    var bioValidation: ValidationResult = .valid
+    var locationValidation: ValidationResult = .valid
+    var birthdayValidation: ValidationResult = .valid
     
     // MARK: - Username Availability Properties
-    @Published var isUsernameAvailable: Bool? = nil
-    @Published var isValidatingUsername = false
-    @Published var usernameCheckMessage: String? = nil
+    var isUsernameAvailable: Bool? = nil
+    var isValidatingUsername = false
+    var usernameCheckMessage: String? = nil
     
     // MARK: - Image Upload Properties
-    @Published var profileImageUploadProgress: Double = 0.0
-    @Published var coverImageUploadProgress: Double = 0.0
-    @Published var isProfileImageUploading = false
-    @Published var isCoverImageUploading = false
-    @Published var profileImageUploadError: ProfileError?
-    @Published var coverImageUploadError: ProfileError?
+    var profileImageUploadProgress: Double = 0.0
+    var coverImageUploadProgress: Double = 0.0
+    var isProfileImageUploading = false
+    var isCoverImageUploading = false
+    var profileImageUploadError: ProfileError?
+    var coverImageUploadError: ProfileError?
     
     // MARK: - Enhanced Image State Properties
-    @Published var hasUnsavedProfileImage: Bool = false
-    @Published var hasUnsavedCoverImage: Bool = false
-    @Published var selectedProfileItem: PhotosPickerItem?
-    @Published var selectedCoverItem: PhotosPickerItem?
+    var hasUnsavedProfileImage: Bool = false
+    var hasUnsavedCoverImage: Bool = false
+    var selectedProfileItem: PhotosPickerItem?
+    var selectedCoverItem: PhotosPickerItem?
     
     // MARK: - Enhanced Error Handling Properties
-    @Published var networkStatus: NetworkMonitor.ConnectionType = .unknown
-    @Published var isOffline = false
-    @Published var showNetworkError = false
-    @Published var showValidationErrors = false
-    @Published var validationErrorMessages: [String] = []
-    @Published var showSuccessAlert = false
-    @Published var successMessage = ""
-    @Published var retryAttempts = 0
-    @Published var maxRetryAttempts = 3
-    @Published var isRetrying = false
+    var networkStatus: NetworkMonitor.ConnectionType = .unknown
+    var isOffline = false
+    var showNetworkError = false
+    var showValidationErrors = false
+    var validationErrorMessages: [String] = []
+    var showSuccessAlert = false
+    var successMessage = ""
+    var retryAttempts = 0
+    var maxRetryAttempts = 3
+    var isRetrying = false
     
     // MARK: - Form State Properties
-    @Published var hasUnsavedChanges = false
-    @Published var isFormValid = false
+    var hasUnsavedChanges = false
+    var isFormValid = false
     
     // MARK: - Computed Properties
     var canSaveProfile: Bool {
         return isFormValid && hasUnsavedChanges && !isProcessing && !isValidatingUsername && !isOffline
     }
     
-    @Injected var userAPIService: UserAPIService
-    @Injected var postAPIService: PostAPIService
-    private let imageManager = ProfileImageManager()
+    @ObservationIgnored @Injected var userAPIService: UserAPIService
+    @ObservationIgnored @Injected var postAPIService: PostAPIService
+    @ObservationIgnored private let imageManager = ProfileImageManager()
     private let imageUploadService = ImageUploadService() // 追加: 画像アップロードサービス
     private let errorHandler = ProfileErrorHandler.shared
     private let networkMonitor = NetworkMonitor.shared
@@ -95,6 +97,17 @@ class ProfileViewModel: ObservableObject {
     // MARK: - Debounced Username Validation
     private var usernameValidationWorkItem: DispatchWorkItem?
     private let usernameValidationDelay: TimeInterval = 0.8
+    private var debounceTasks: [String: Task<Void, Never>] = [:]
+
+    private func debounce(key: String, delay: TimeInterval, action: @escaping () -> Void) {
+        debounceTasks[key]?.cancel()
+        debounceTasks[key] = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            action()
+            self.updateFormValidityState()
+            self.checkForUnsavedChanges()
+        }
+    }
     
     init(userID: Int) {
         self.profile = User(
@@ -220,74 +233,19 @@ class ProfileViewModel: ObservableObject {
     
     
     private func setupFieldValidation() {
-        // Real-time validation for email with enhanced feedback
-        $email
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .sink { [weak self] email in
-                self?.validateEmailField(email)
-            }
-            .store(in: &cancellables)
-        
-        // Real-time validation for name with enhanced feedback
-        $name
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .sink { [weak self] name in
-                self?.validateNameField(name)
-            }
-            .store(in: &cancellables)
-        
-        // Real-time validation for bio with character count
-        $bio
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .sink { [weak self] bio in
-                self?.validateBioField(bio)
-            }
-            .store(in: &cancellables)
-        
-        
-        // Real-time validation for location
-        $location
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .sink { [weak self] location in
-                self?.validateLocationField(location)
-            }
-            .store(in: &cancellables)
-        
-        // Real-time validation for birthday with age validation
-        $birthday
-            .sink { [weak self] birthday in
-                self?.validateBirthdayField(birthday)
-            }
-            .store(in: &cancellables)
+        // Observation-based: validations are triggered explicitly in property updates or on demand
     }
     
     private func setupUsernameAvailabilityValidation() {
-        $username
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .sink { [weak self] username in
-                self?.validateUsernameWithAvailability(username)
-            }
-            .store(in: &cancellables)
+        // Observation-based: call validateUsernameWithAvailability from property updates
     }
     
     private func setupFormStateTracking() {
-        Publishers.CombineLatest4($email, $name, $username, $bio)
-            .combineLatest(Publishers.CombineLatest($location, $birthday))
-            .debounce(for: .milliseconds(100), scheduler: RunLoop.main)
-            .sink { [weak self] _, _ in
-                self?.checkForUnsavedChanges()
-            }
-            .store(in: &cancellables)
+        // Observation-based: track in property updates
     }
     
     private func setupValidationResultTracking() {
-        Publishers.CombineLatest4($emailValidation, $nameValidation, $usernameValidation, $bioValidation)
-            .combineLatest(Publishers.CombineLatest($locationValidation, $birthdayValidation))
-            .combineLatest($isUsernameAvailable, $isValidatingUsername)
-            .sink { [weak self] _ in
-                self?.updateFormValidityState()
-            }
-            .store(in: &cancellables)
+        // Observation-based: update form validity when validations are run
     }
     
     // MARK: - Enhanced Field Validation Methods
@@ -826,10 +784,10 @@ class ProfileViewModel: ObservableObject {
     // MARK: - Profile Deletion Logic (Task 3.3)
     
     /// State properties for profile deletion
-    @Published var showDeleteConfirmation = false
-    @Published var isDeletingProfile = false
-    @Published var deleteConfirmationText = ""
-    @Published var isDeleteConfirmationValid = false
+    var showDeleteConfirmation = false
+    var isDeletingProfile = false
+    var deleteConfirmationText = ""
+    var isDeleteConfirmationValid = false
     
     /// Initiates profile deletion with confirmation dialog
     func initiateProfileDeletion() {
@@ -1938,29 +1896,25 @@ class ProfileViewModel: ObservableObject {
     // MARK: - Network Monitoring Setup
     
     private func setupNetworkMonitoring() {
-        // Monitor network connectivity
-        networkMonitor.$isConnected
+        NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isConnected in
-                self?.isOffline = !isConnected
-                if !isConnected {
-                    self?.showNetworkError = true
-                } else {
-                    self?.showNetworkError = false
-                    // Clear network-related errors when connection is restored
-                    if self?.errorMessage?.contains("ネットワーク") == true ||
-                        self?.errorMessage?.contains("インターネット") == true {
-                        self?.clearErrors()
+            .sink { [weak self] note in
+                guard let self = self else { return }
+                if let isConnected = note.userInfo?["isConnected"] as? Bool {
+                    self.isOffline = !isConnected
+                    if !isConnected {
+                        self.showNetworkError = true
+                    } else {
+                        self.showNetworkError = false
+                        if self.errorMessage?.contains("ネットワーク") == true ||
+                            self.errorMessage?.contains("インターネット") == true {
+                            self.clearErrors()
+                        }
                     }
                 }
-            }
-            .store(in: &cancellables)
-        
-        // Monitor connection type
-        networkMonitor.$connectionType
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] connectionType in
-                self?.networkStatus = connectionType
+                if let connectionType = note.userInfo?["connectionType"] as? NetworkMonitor.ConnectionType {
+                    self.networkStatus = connectionType
+                }
             }
             .store(in: &cancellables)
     }

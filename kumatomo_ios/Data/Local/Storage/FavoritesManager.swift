@@ -1,14 +1,20 @@
 import Foundation
 import Combine
+import Observation
 
 @MainActor
-class FavoritesManager: ObservableObject {
+@Observable
+class FavoritesManager {
     static let shared = FavoritesManager()
     
-    @Published var favoriteShops: [Shop] = []
-    @Published var favoriteIds: Set<Int> = []
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+    var favoriteShops: [Shop] = []
+    var favoriteIds: Set<Int> = []
+    var isLoading = false
+    var errorMessage: String? {
+        didSet {
+            NotificationCenter.default.post(name: .FavoritesErrorChanged, object: self, userInfo: ["errorMessage": errorMessage as Any])
+        }
+    }
     
     private let shopAPIService = ShopAPIService.shared
     private var cancellables = Set<AnyCancellable>()
@@ -125,4 +131,9 @@ class FavoritesManager: ObservableObject {
     var isEmpty: Bool {
         return favoriteIds.isEmpty
     }
+}
+
+// MARK: - Notifications
+extension Notification.Name {
+    static let FavoritesErrorChanged = Notification.Name("FavoritesErrorChanged")
 }

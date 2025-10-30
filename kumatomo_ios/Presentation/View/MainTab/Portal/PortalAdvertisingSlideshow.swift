@@ -5,7 +5,7 @@ struct PortalAdvertisingSlideshow: View {
     @State private var currentSlideIndex: Int = 0
     @State private var timer: Timer?
     @State private var hasValidImages: Bool = false
-    @StateObject private var networkMonitor = NetworkMonitor.shared
+    @Environment(NetworkMonitor.self) private var networkMonitor
     
     // MARK: - Configuration
     // ここは管理者画面から登録できるようにする予定

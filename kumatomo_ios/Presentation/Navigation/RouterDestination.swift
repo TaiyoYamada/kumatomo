@@ -43,13 +43,13 @@ extension View {
 				FavoritesListView()
             case .kumamonAI:
                 KumamonAIView()
-                    .environmentObject(CurrentUserManager.shared)
+                    .environment(CurrentUserManager.shared)
 			case .bookmarks:
 				BookmarkedPostsView()
-					.environmentObject(CurrentUserManager.shared)
+					.environment(CurrentUserManager.shared)
 			case .likes:
 				LikedPostsView()
-					.environmentObject(CurrentUserManager.shared)
+					.environment(CurrentUserManager.shared)
 			case .coupons:
 				PlaceholderView(title: "クーポン")
 			case .settings:
@@ -62,18 +62,18 @@ extension View {
 				InitialSetupView()
 			case .postDetail(let postId):
 				PostDetailView(postId: postId)
-					.environmentObject(CurrentUserManager.shared)
+					.environment(CurrentUserManager.shared)
 			case .shopDetail(let shopId):
 				ShopDetailView(shopId: shopId)
 			case .likedPosts:
 				LikedPostsView()
-					.environmentObject(CurrentUserManager.shared)
+					.environment(CurrentUserManager.shared)
 			case .bookmarkedPosts:
 				BookmarkedPostsView()
-					.environmentObject(CurrentUserManager.shared)
+					.environment(CurrentUserManager.shared)
 			case .userProfile(let userId):
 				UserProfileView(userId: userId)
-					.environmentObject(CurrentUserManager.shared)
+					.environment(CurrentUserManager.shared)
 			}
 		}
 	}
@@ -108,4 +108,3 @@ struct PlaceholderView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-

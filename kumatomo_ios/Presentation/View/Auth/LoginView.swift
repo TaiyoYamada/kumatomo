@@ -1,7 +1,8 @@
 import SwiftUI
+import Observation
 
 struct LoginView: View {
-    @StateObject var viewModel = AuthViewModel()
+    @State private var viewModel = AuthViewModel()
     @State private var isShowingSignUp = false
     
     var body: some View {

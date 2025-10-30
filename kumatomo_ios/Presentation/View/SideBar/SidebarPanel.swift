@@ -7,6 +7,7 @@ struct SidebarPanel: View {
     let onClose: () -> Void
     
     let allItems = SidebarMenuItemType.allCases
+    @Environment(AppRouter.self) private var appRouter
     
     var body: some View {
         
@@ -16,7 +17,7 @@ struct SidebarPanel: View {
                 
                 // Header - プロフィールタブへ遷移（確実に遷移するためプログラマティックに切替）
                 Button(action: {
-                    AppRouter.shared.selectedTab = .profile
+                    appRouter.selectedTab = .profile
                     onClose()
                 }) {
                     SidebarHeader(user: user)
@@ -80,7 +81,7 @@ struct SidebarPanel: View {
     // Sidebarメニューの遷移ロジック（AppRouterで確実に遷移）
     private func navigate(using item: SidebarMenuItemType) {
         // Ensure navigation happens on the active tab stack after switching tabs
-        let router = AppRouter.shared
+        let router = appRouter
         print("[Sidebar] navigate item=\(item)")
         router.selectedTab = .portal
         print("[Sidebar] selectedTab -> portal")

@@ -1,18 +1,20 @@
 import Foundation
 import SwiftUI
 import Combine
+import Observation
 
 // MARK: - Error Handling Service for Profile Operations
 
 @MainActor
-class ProfileErrorHandler: ObservableObject {
+@Observable
+class ProfileErrorHandler {
     static let shared = ProfileErrorHandler()
     
-    @Published var currentError: ProfileError?
-    @Published var showErrorAlert = false
-    @Published var showRetryAlert = false
-    @Published var isRetrying = false
-    @Published var retryCount = 0
+    var currentError: ProfileError?
+    var showErrorAlert = false
+    var showRetryAlert = false
+    var isRetrying = false
+    var retryCount = 0
     
     private var retryTimer: Timer?
     private var retryAction: (() async -> Void)?

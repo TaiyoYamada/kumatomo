@@ -144,7 +144,7 @@ extension Shop {
     }
     
 
-    func distanceFromUser(_ userLocation: CLLocation?) -> String? {
+    @MainActor func distanceFromUser(_ userLocation: CLLocation?) -> String? {
         guard let userLocation = userLocation,
               let coordinate = coordinate else { return nil }
         

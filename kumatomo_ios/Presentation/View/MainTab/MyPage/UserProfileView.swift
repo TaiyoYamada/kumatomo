@@ -2,7 +2,7 @@ import SwiftUI
 
 struct UserProfileView: View {
     let userId: Int
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @Environment(CurrentUserManager.self) private var userManager
     @State private var user: User?
     @State private var isLoading = true
     @State private var errorMessage: String?
@@ -124,5 +124,5 @@ struct UserProfileView: View {
 
 #Preview {
     UserProfileView(userId: 1)
-        .environmentObject(CurrentUserManager.shared)
+        .environment(CurrentUserManager.shared)
 }

@@ -1,9 +1,11 @@
 import SwiftUI
+import Observation
 
 /// A view that displays the user's bookmarked posts using the existing post list components
 struct BookmarkedPostsView: View {
-    @StateObject private var engagementViewModel = EngagementViewModel()
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @State private var engagementViewModel = EngagementViewModel()
+    @Environment(CurrentUserManager.self) private var userManager
+    @Environment(AppRouter.self) private var appRouter
     @State private var showToast = false
     @State private var toastMessage = ""
     @State private var toastType: ToastView.ToastType = .info
@@ -37,19 +39,15 @@ struct BookmarkedPostsView: View {
                 PostTimeline(
                     posts: engagementViewModel.bookmarkedPosts,
                     loading: engagementViewModel.isLoadingBookmarkedPosts,
-                    onRefresh: {
-                        Task { await engagementViewModel.refreshBookmarkedPosts() }
-                    },
-                    onLoadMore: {
-                        Task { await engagementViewModel.loadMoreBookmarkedPosts() }
+                    onRefresh: { Task { await engagementViewModel.refreshBookmarkedPosts() } },
+                    onLoadMore: { Task { await engagementViewModel.loadMoreBookmarkedPosts() } },
+                    embedInScrollView: true,
+                    onToggleLike: { (post: Post) async in
+                        await engagementViewModel.toggleLike(for: post)
                     }
-                , embedInScrollView: true,
-                  onToggleLike: { post in
-                    await engagementViewModel.toggleLike(for: post)
-                  }
                 )
                 // Provide a BulletinBoardViewModel to satisfy environment needs
-                .environmentObject(BulletinBoardViewModel())
+                .environment(BulletinBoardViewModel())
             }
             
             // Toast notification
@@ -106,6 +104,7 @@ private struct BookmarkedPostsTimeline: View {
     let onRefresh: () -> Void
     let onLoadMore: () -> Void
     let engagementViewModel: EngagementViewModel
+    @Environment(AppRouter.self) private var appRouter
     
     var body: some View {
         ScrollView {
@@ -116,7 +115,7 @@ private struct BookmarkedPostsTimeline: View {
                         engagementViewModel: engagementViewModel,
                         onTap: { 
                             // Navigate to post detail using AppRouter
-                            AppRouter.shared.navigateToPostDetail(postId: post.id)
+                            appRouter.navigateToPostDetail(postId: post.id)
                         },
                         onAppear: {
                             // Load more when reaching the last post
@@ -192,6 +191,7 @@ private struct BookmarkedPostCardView: View {
 // MARK: - Empty State View
 
 private struct BookmarkedPostsEmptyStateView: View {
+    @Environment(AppRouter.self) private var appRouter
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
     private var adaptiveTitleSize: CGFloat {
@@ -254,7 +254,7 @@ private struct BookmarkedPostsEmptyStateView: View {
             // Navigate to bulletin board button
             Button(action: {
                 // Navigate back to timeline
-                AppRouter.shared.popToRoot()
+                appRouter.popToRoot()
             }) {
                 Text("投稿を見に行く")
                     .font(.system(size: 16, weight: .medium))
@@ -278,5 +278,5 @@ private struct BookmarkedPostsEmptyStateView: View {
 
 #Preview {
     BookmarkedPostsView()
-        .environmentObject(CurrentUserManager.shared)
+        .environment(CurrentUserManager.shared)
 }

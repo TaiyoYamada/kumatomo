@@ -3,19 +3,21 @@ import CoreLocation
 import SwiftUI
 import Combine
 import Resolver
+import Observation
 
 @MainActor
-class ShopListViewModel: ObservableObject {
-    @Published var shops: [Shop] = []
-    @Published var filteredShops: [Shop] = []
-    @Published var isLoading = false
-    @Published var errorMessage: String?
-    @Published var selectedGenres: Set<ShopGenre> = []
-    @Published var showingMap = false
-    @Published var favoritesErrorMessage: String?
-    @Published var selectedShop: Shop?
+@Observable
+class ShopListViewModel {
+    var shops: [Shop] = []
+    var filteredShops: [Shop] = []
+    var isLoading = false
+    var errorMessage: String?
+    var selectedGenres: Set<ShopGenre> = []
+    var showingMap = false
+    var favoritesErrorMessage: String?
+    var selectedShop: Shop?
     
-    @Injected var fetchShopsUseCase: FetchShopsUseCase
+    @ObservationIgnored @Injected var fetchShopsUseCase: FetchShopsUseCase
     private let locationManager = LocationManager.shared
     private let favoritesManager = FavoritesManager.shared
     private var cancellables = Set<AnyCancellable>()
@@ -29,9 +31,8 @@ class ShopListViewModel: ObservableObject {
         // Request location permission on initialization
         locationManager.requestLocationPermission()
         
-        // Observe location updates and reload shops when location is available
-        locationManager.$userLocation
-            .compactMap { $0 }
+        // Observe location updates via NotificationCenter
+        NotificationCenter.default.publisher(for: .LocationUpdated)
             .sink { [weak self] _ in
                 Task { @MainActor in
                     await self?.loadShops()
@@ -39,10 +40,11 @@ class ShopListViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Observe favorites manager errors
-        favoritesManager.$errorMessage
-            .sink { [weak self] errorMessage in
-                self?.favoritesErrorMessage = errorMessage
+        // Observe favorites manager errors via NotificationCenter
+        NotificationCenter.default.publisher(for: .FavoritesErrorChanged)
+            .compactMap { $0.userInfo?["errorMessage"] as? String }
+            .sink { [weak self] message in
+                self?.favoritesErrorMessage = message
             }
             .store(in: &cancellables)
         

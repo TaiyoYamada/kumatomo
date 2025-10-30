@@ -1,46 +1,48 @@
 import Foundation
 import SwiftUI
 import Resolver
+import Observation
 
 @MainActor
-class EngagementViewModel: ObservableObject {
+@Observable
+class EngagementViewModel {
     // MARK: - Published Properties
     
     // Collections
-    @Published var likedPosts: [Post] = []
-    @Published var bookmarkedPosts: [Post] = []
+    var likedPosts: [Post] = []
+    var bookmarkedPosts: [Post] = []
     
     // Loading States
-    @Published var isLoadingLikedPosts: Bool = false
-    @Published var isLoadingBookmarkedPosts: Bool = false
-    @Published var isRefreshingLikedPosts: Bool = false
-    @Published var isRefreshingBookmarkedPosts: Bool = false
+    var isLoadingLikedPosts: Bool = false
+    var isLoadingBookmarkedPosts: Bool = false
+    var isRefreshingLikedPosts: Bool = false
+    var isRefreshingBookmarkedPosts: Bool = false
     
     // Engagement Action States
-    @Published var likingPostIds: Set<Int> = []
-    @Published var bookmarkingPostIds: Set<Int> = []
+    var likingPostIds: Set<Int> = []
+    var bookmarkingPostIds: Set<Int> = []
     
     // Error Handling
-    @Published var errorMessage: String?
-    @Published var showErrorAlert: Bool = false
+    var errorMessage: String?
+    var showErrorAlert: Bool = false
     
     // Success Feedback
-    @Published var successMessage: String = ""
-    @Published var showSuccessMessage: Bool = false
+    var successMessage: String = ""
+    var showSuccessMessage: Bool = false
     
     // Pagination Support
-    @Published var hasMoreLikedPosts: Bool = true
-    @Published var hasMoreBookmarkedPosts: Bool = true
-    @Published var likedPostsPage: Int = 1
-    @Published var bookmarkedPostsPage: Int = 1
+    var hasMoreLikedPosts: Bool = true
+    var hasMoreBookmarkedPosts: Bool = true
+    var likedPostsPage: Int = 1
+    var bookmarkedPostsPage: Int = 1
     
     // MARK: - Services
     
     // UseCases (Domain)
-    @Injected var fetchLikedPostsUseCase: FetchLikedPostsUseCase
-    @Injected var fetchBookmarkedPostsUseCase: FetchBookmarkedPostsUseCase
-    @Injected var toggleLikeUseCase: ToggleLikeUseCase
-    @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
+    @ObservationIgnored @Injected var fetchLikedPostsUseCase: FetchLikedPostsUseCase
+    @ObservationIgnored @Injected var fetchBookmarkedPostsUseCase: FetchBookmarkedPostsUseCase
+    @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
+    @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
     
     // MARK: - Constants
     

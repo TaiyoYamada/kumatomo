@@ -5,8 +5,8 @@ struct ErrorHandlingView: View {
     let onRetry: (() async throws -> Void)?
     let onDismiss: () -> Void
     
-    @StateObject private var networkMonitor = NetworkMonitor.shared
-    @StateObject private var errorManager = ErrorManager.shared
+    @Environment(NetworkMonitor.self) private var networkMonitor
+    @State private var errorManager = ErrorManager.shared
     @State private var isRetrying = false
     @State private var showDiagnostics = false
     @State private var diagnostics: NetworkDiagnostics?

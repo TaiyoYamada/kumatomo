@@ -3,38 +3,40 @@ import PhotosUI
 import SwiftUI
 import Combine
 import Resolver
+import Observation
 
 @MainActor
-final class AuthViewModel: ObservableObject {
-    @Published var isAuthenticated: Bool = false
-    @Published var currentUser: User?
-    @Published var accounts: [User] = []
-    @Published var selectedAccount: User?
+@Observable
+final class AuthViewModel {
+    var isAuthenticated: Bool = false
+    var currentUser: User?
+    var accounts: [User] = []
+    var selectedAccount: User?
     
-    @Published var hasCompletedSetup: Bool? = nil
-    @Published var email = ""
-    @Published var password = ""
-    @Published var name = ""
-    @Published var bio = ""
-    @Published var birthDate: Date =
+    var hasCompletedSetup: Bool? = nil
+    var email = ""
+    var password = ""
+    var name = ""
+    var bio = ""
+    var birthDate: Date =
         Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
-    @Published var location = ""
-    @Published var birthday = Date()
-    @Published var profileImage: UIImage?
-    @Published var selectedImage: PhotosPickerItem?
+    var location = ""
+    var birthday = Date()
+    var profileImage: UIImage?
+    var selectedImage: PhotosPickerItem?
     
-    @Published var errorMessage:String? = ""
-    @Published var isLoading = false
+    var errorMessage:String? = ""
+    var isLoading = false
     
     // - サービス依存性
     
-    @Injected var authRepository: AuthRepository       // 認証・ユーザー取得
-    @Injected var imageUploader: ImageUploadRepository // 画像アップロード
+    @ObservationIgnored @Injected var authRepository: AuthRepository       // 認証・ユーザー取得
+    @ObservationIgnored @Injected var imageUploader: ImageUploadRepository // 画像アップロード
     // Optional: UseCases wrappers
-    @Injected var signInUseCase: SignInUseCase
-    @Injected var signOutUseCase: SignOutUseCase
-    @Injected var createUserUseCase: CreateUserUseCase
-    @Injected var updateUserUseCase: UpdateUserUseCase
+    @ObservationIgnored @Injected var signInUseCase: SignInUseCase
+    @ObservationIgnored @Injected var signOutUseCase: SignOutUseCase
+    @ObservationIgnored @Injected var createUserUseCase: CreateUserUseCase
+    @ObservationIgnored @Injected var updateUserUseCase: UpdateUserUseCase
     
     private var cancellables = Set<AnyCancellable>()
     

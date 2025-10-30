@@ -1,7 +1,8 @@
 import SwiftUI
+import Observation
 
 struct KumamonAIView: View {
-    @StateObject private var viewModel = KumamonAIViewModel()
+    @State private var viewModel = KumamonAIViewModel()
     @FocusState private var isInputFocused: Bool
     
     var body: some View {

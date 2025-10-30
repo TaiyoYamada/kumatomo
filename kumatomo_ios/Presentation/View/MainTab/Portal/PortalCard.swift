@@ -3,7 +3,7 @@ import SwiftUI
 struct PortalCardGrid: View {
     // MARK: - Properties
     let cards: [PortalCardData]
-    @StateObject private var networkMonitor = NetworkMonitor.shared
+    @Environment(NetworkMonitor.self) private var networkMonitor
     
     
     // MARK: - Body
@@ -29,7 +29,7 @@ struct PortalCardView: View {
     @State private var showingError = false
     @State private var errorMessage = ""
     @State private var imageLoadError = false
-    @StateObject private var networkMonitor = NetworkMonitor.shared
+    @Environment(NetworkMonitor.self) private var networkMonitor
     
     // MARK: - Body
     var body: some View {

@@ -1,10 +1,12 @@
 import Foundation
 import SwiftUI
+import Observation
 
 @MainActor
-final class SidebarState: ObservableObject {
+@Observable
+final class SidebarState {
     
-    @Published var isPresented: Bool = false
+    var isPresented: Bool = false
     
     func open() {
         withAnimation(.spring(response: 0.35, dampingFraction: 0.86, blendDuration: 0.2)) {

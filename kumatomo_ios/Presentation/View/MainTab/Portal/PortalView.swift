@@ -1,11 +1,12 @@
 import SwiftUI
+import Observation
 
 
 struct PortalView: View {
     // MARK: - Environment Properties
     @Environment(\.openSidebar) private var openSidebar
-    @EnvironmentObject private var userManager: CurrentUserManager
-    @StateObject private var networkMonitor = NetworkMonitor.shared
+    @Environment(CurrentUserManager.self) private var userManager
+    @Environment(NetworkMonitor.self) private var networkMonitor
     
     // MARK: - State Properties
     @State private var showingNetworkAlert = false

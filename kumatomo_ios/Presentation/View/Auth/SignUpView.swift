@@ -1,9 +1,10 @@
 import SwiftUI
+import Observation
 import PhotosUI
 
 struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var authViewModel: AuthViewModel
+    @Environment(AuthViewModel.self) private var authViewModel
     @State private var showInitialSetup = false
     @State private var navigatetoInitialSetup = false
     
@@ -69,15 +70,16 @@ struct SignUpView: View {
     }
     
     private var inputForm: some View {
-        VStack(spacing: 20) {
-            InputField(text: $authViewModel.email,
+        @Bindable var auth = authViewModel
+        return VStack(spacing: 20) {
+            InputField(text: $auth.email,
                       title: "メールアドレス",
                       placeholder: "your@email.com",
                       systemImage: "envelope")
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
             
-            SecureInputField(text: $authViewModel.password,
+            SecureInputField(text: $auth.password,
                             title: "パスワード",
                             placeholder: "パスワードを入力 (6文字以上)",
                             systemImage: "lock")

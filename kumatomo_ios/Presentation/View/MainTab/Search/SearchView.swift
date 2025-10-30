@@ -1,8 +1,10 @@
 import SwiftUI
+import Observation
 
 struct SearchView: View {
-    @StateObject private var viewModel = SearchViewModel()
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @State private var viewModel = SearchViewModel()
+    @Environment(CurrentUserManager.self) private var userManager
+    @Environment(AppRouter.self) private var appRouter
     @State private var sheetDestination: SheetDestination?
     
     var body: some View {
@@ -195,7 +197,7 @@ struct SearchView: View {
                         
                         ForEach(results.shops) { shop in
                             ShopSearchResultCard(shop: shop) {
-                                AppRouter.shared.navigateToShopDetail(shopId: shop.id)
+                                appRouter.navigateToShopDetail(shopId: shop.id)
                             }
                         }
                     }
@@ -359,7 +361,7 @@ struct SearchView: View {
         let shop: Shop
         let onTap: () -> Void
         
-        @StateObject private var locationManager = LocationManager.shared
+                @Environment(LocationManager.self) private var locationManager
         
         var body: some View {
             HStack(spacing: 12) {

@@ -2,9 +2,9 @@ import SwiftUI
 import MapKit
 
 struct ShopListView: View {
-    @StateObject private var viewModel = ShopListViewModel()
+    @State private var viewModel = ShopListViewModel()
     @State private var sheetDestination: SheetDestination?
-    @EnvironmentObject private var appRouter: AppRouter
+    @Environment(AppRouter.self) private var appRouter
     
     var body: some View {
         VStack(spacing: 0) {
@@ -190,7 +190,7 @@ struct ShopCardView: View {
     let shop: Shop
     let distance: String?
     
-    @StateObject private var favoritesManager = FavoritesManager.shared
+    @Environment(FavoritesManager.self) private var favoritesManager
     @State private var isTogglingFavorite = false
     
     var body: some View {

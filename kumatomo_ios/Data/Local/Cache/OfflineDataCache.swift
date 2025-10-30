@@ -193,7 +193,8 @@ class OfflineDataCache: ObservableObject {
     }
     
     private func setupNetworkMonitoring() {
-        networkMonitor.$isConnected
+        NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
+            .compactMap { $0.userInfo?["isConnected"] as? Bool }
             .removeDuplicates()
             .sink { [weak self] isConnected in
                 if isConnected {

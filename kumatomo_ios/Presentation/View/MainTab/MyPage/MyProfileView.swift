@@ -1,15 +1,15 @@
 import SwiftUI
 
 struct MyProfileView: View {
-    @StateObject private var viewModel = ProfileViewModel(userID: 0)
-    @StateObject private var postviewModel = PostViewModel()
-    @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
+    @State private var viewModel = ProfileViewModel(userID: 0)
+    @State private var postviewModel = PostViewModel()
+    @State private var bulletinBoardViewModel = BulletinBoardViewModel()
     @State private var showingNewPost = false
     @State private var selectedTab = 0
     @State private var sheetDestination: SheetDestination? = nil
     @State private var scrollOffset: CGFloat = 0
     @Environment(\.openSidebar) private var openSidebar
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @Environment(CurrentUserManager.self) private var userManager
     
     var body: some View {
         ScrollView {
@@ -91,7 +91,7 @@ struct MyProfileView: View {
                         }
                     }
                 )
-                .environmentObject(bulletinBoardViewModel)
+                .environment(bulletinBoardViewModel)
         }
         }
         .refreshable {

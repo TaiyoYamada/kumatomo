@@ -6,7 +6,7 @@ struct ShopDetailView: View {
     @State private var shop: Shop?
     @State private var isLoadingShop = false
     @State private var shopErrorMessage: String?
-    @StateObject private var viewModel = ShopDetailViewModel()
+    @State private var viewModel = ShopDetailViewModel()
     
     var body: some View {
             ScrollView {

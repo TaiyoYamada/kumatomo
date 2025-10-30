@@ -4,11 +4,11 @@ import SwiftUI
 struct PostEngagementDetailView: View {
     let postId: Int
     
-    @StateObject private var viewModel = PostDetailViewModel()
-    @StateObject private var commentViewModel = CommentViewModel()
+    @State private var viewModel = PostDetailViewModel()
+    @State private var commentViewModel = CommentViewModel()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @Environment(CurrentUserManager.self) private var userManager
     
     // UI State
     @State private var showImagePicker = false
@@ -870,7 +870,7 @@ private struct ShimmerModifier: ViewModifier {
 // MARK: - Comment Compose Section
 
 struct CommentComposeSection: View {
-    @ObservedObject var viewModel: CommentViewModel
+    @Bindable var viewModel: CommentViewModel
     let currentUser: User?
     let isSubmitting: Bool
     let onSubmit: () -> Void
@@ -1069,5 +1069,5 @@ struct ImagePicker: UIViewControllerRepresentable {
 
 #Preview {
     PostEngagementDetailView(postId: 1)
-        .environmentObject(CurrentUserManager.shared)
+        .environment(CurrentUserManager.shared)
 }

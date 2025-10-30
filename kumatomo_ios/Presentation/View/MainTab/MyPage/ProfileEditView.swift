@@ -4,7 +4,7 @@ import PhotosUI
 typealias ModernProfileEditView = ProfileEditView
 
 struct ProfileEditView: View {
-    @StateObject var viewModel: ProfileViewModel
+    @State var viewModel: ProfileViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var selectedProfileItem: PhotosPickerItem?
     @State private var selectedCoverItem: PhotosPickerItem?
@@ -14,15 +14,15 @@ struct ProfileEditView: View {
     @State private var showValidationErrors = false
     @State private var showNetworkError = false
     
-    @StateObject private var errorHandler = ProfileErrorHandler.shared
-    @StateObject private var networkMonitor = NetworkMonitor.shared
+    @Environment(ProfileErrorHandler.self) private var errorHandler
+    @Environment(NetworkMonitor.self) private var networkMonitor
     
     @State private var sheetDestination: SheetDestination?
     
     var onProfileUpdated: (() -> Void)?
     
     init(user: User, onProfileUpdated: (() -> Void)? = nil) {
-        _viewModel = StateObject(wrappedValue: ProfileViewModel(profile: user))
+        _viewModel = State(wrappedValue: ProfileViewModel(profile: user))
         self.onProfileUpdated = onProfileUpdated
     }
     
@@ -155,7 +155,7 @@ struct ProfileEditView: View {
             } message: {
                 Text("保存されていない変更があります。本当に破棄しますか？")
             }
-            .alert("エラー", isPresented: $errorHandler.showErrorAlert) {
+            .alert("エラー", isPresented: errorAlertBinding) {
                 if errorHandler.currentError?.isRecoverable == true {
                     Button("再試行") {
                         Task {
@@ -268,6 +268,20 @@ struct ProfileEditView: View {
             }
         }
         .withSheetRouter(sheet: $sheetDestination)
+    }
+    
+    // Bridge Observation environment property to a SwiftUI Binding for alerts
+    private var errorAlertBinding: Binding<Bool> {
+        Binding<Bool>(
+            get: { errorHandler.showErrorAlert },
+            set: { newValue in
+                if !newValue {
+                    errorHandler.dismissError()
+                } else {
+                    errorHandler.showErrorAlert = newValue
+                }
+            }
+        )
     }
     
     private var isFormValid: Bool {
@@ -444,7 +458,7 @@ struct ProfileDatePickerRow: View {
 struct ProfileImageEditRow: View {
     @Binding var selectedProfileItem: PhotosPickerItem?
     @Binding var selectedCoverItem: PhotosPickerItem?
-    @ObservedObject var viewModel: ProfileViewModel
+    @Bindable var viewModel: ProfileViewModel
     @Binding var sheetDestination: SheetDestination?
     
     var body: some View {

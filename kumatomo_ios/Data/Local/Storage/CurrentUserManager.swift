@@ -1,12 +1,14 @@
 import Foundation
 import SwiftUI
 import Combine
+import Observation
 
 @MainActor
-class CurrentUserManager: ObservableObject {
+@Observable
+class CurrentUserManager {
     static let shared = CurrentUserManager()
     
-    @Published var currentUser: User?
+    var currentUser: User?
     private var cancellables = Set<AnyCancellable>()
     
     private init() {

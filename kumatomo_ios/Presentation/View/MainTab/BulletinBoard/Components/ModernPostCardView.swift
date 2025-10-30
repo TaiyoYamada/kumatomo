@@ -1,4 +1,5 @@
 import SwiftUI
+import Observation
 
 struct TimelinePostCardView: View {
     let post: Post
@@ -9,7 +10,8 @@ struct TimelinePostCardView: View {
     
     @State private var showingPostDetail = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @Environment(CurrentUserManager.self) private var userManager
+    @Environment(AppRouter.self) private var appRouter
     
     // Engagement state
     @State private var isTogglingLike = false
@@ -216,7 +218,7 @@ struct TimelinePostCardView: View {
     
     /// Navigate to user profile
     private func navigateToUserProfile(userId: Int) {
-        AppRouter.shared.navigateToUserProfile(userId: userId)
+        appRouter.navigateToUserProfile(userId: userId)
     }
 }
 
@@ -269,8 +271,8 @@ struct TimelinePostCardViewPreview: View {
             
             TimelinePostCardView(post: samplePost)
         }
-        .environmentObject(CurrentUserManager.shared)
-        .environmentObject(BulletinBoardViewModel())
+        .environment(CurrentUserManager.shared)
+        .environment(BulletinBoardViewModel())
     }
 }
 

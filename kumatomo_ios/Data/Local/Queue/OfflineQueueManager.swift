@@ -1,16 +1,18 @@
 import Foundation
 import Combine
 import UIKit
+import Observation
 
 // MARK: - Offline Queue Manager for Profile Operations
 
 @MainActor
-class OfflineQueueManager: ObservableObject {
+@Observable
+class OfflineQueueManager {
     static let shared = OfflineQueueManager()
     
-    @Published var pendingOperations: [QueuedOperation] = []
-    @Published var isProcessingQueue = false
-    @Published var queueStatus: QueueStatus = .idle
+    var pendingOperations: [QueuedOperation] = []
+    var isProcessingQueue = false
+    var queueStatus: QueueStatus = .idle
     
     private let networkMonitor = NetworkMonitor.shared
     private let retryManager = RetryManager.shared
@@ -182,13 +184,19 @@ class OfflineQueueManager: ObservableObject {
     // MARK: - Network Monitoring
     
     private func setupNetworkMonitoring() {
-        networkMonitor.$isConnected
+        NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
+            .compactMap { notification in
+                notification.userInfo?["isConnected"] as? Bool
+            }
             .removeDuplicates()
             .sink { [weak self] isConnected in
+                guard let self = self else { return }
                 if isConnected {
                     Task { @MainActor in
-                        await self?.processQueue()
+                        await self.processQueue()
                     }
+                } else {
+                    self.queueStatus = .waiting
                 }
             }
             .store(in: &cancellables)

@@ -46,7 +46,7 @@ extension View {
 			switch destination {
 			case .postDetail(let postId):
 				PostDetailView(postId: postId)
-					.environmentObject(CurrentUserManager.shared)
+					.environment(CurrentUserManager.shared)
 			case .shopPicker(let selectedShop):
 				ShopPickerView(selectedShop: selectedShop)
 			case .profileEdit(let user, let onProfileUpdated):
@@ -81,4 +81,3 @@ extension View {
         }
     }
 }
-

@@ -1,4 +1,5 @@
 import SwiftUI
+import Observation
 
 struct ErrorView: View {
     let error: AppError
@@ -215,7 +216,7 @@ struct ErrorToast: View {
 // MARK: - Error Overlay Modifier
 
 struct ErrorOverlayModifier: ViewModifier {
-    @ObservedObject private var errorManager = ErrorManager.shared
+    @State private var errorManager = ErrorManager.shared
     
     func body(content: Content) -> some View {
         content

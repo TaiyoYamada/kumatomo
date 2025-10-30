@@ -1,4 +1,5 @@
 import SwiftUI
+import Observation
 
 struct PostTimeline: View {
     let posts: [Post]
@@ -9,7 +10,8 @@ struct PostTimeline: View {
     // Optional like toggle handler for callers that own their own posts array
     var onToggleLike: ((Post) async -> Void)? = nil
     
-    @EnvironmentObject private var bulletinBoardViewModel: BulletinBoardViewModel
+    @Environment(BulletinBoardViewModel.self) private var bulletinBoardViewModel
+    @Environment(AppRouter.self) private var appRouter
 
     @ViewBuilder
     private var timelineContent: some View {
@@ -18,7 +20,7 @@ struct PostTimeline: View {
                 PostCell(
                     post: post,
                     onTap: {
-                        AppRouter.shared.navigateToPostDetail(postId: post.id)
+                        appRouter.navigateToPostDetail(postId: post.id)
                     },
                     onAppear: {
                         // 最後の投稿が表示されたら、新しい投稿を読み込みます

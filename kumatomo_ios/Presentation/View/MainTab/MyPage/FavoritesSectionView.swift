@@ -2,8 +2,9 @@ import SwiftUI
 import CoreLocation
 
 struct FavoritesSectionView: View {
-    @StateObject private var favoritesManager = FavoritesManager.shared
-    @StateObject private var locationManager = LocationManager.shared
+    @Environment(FavoritesManager.self) private var favoritesManager
+    @Environment(LocationManager.self) private var locationManager
+    @Environment(AppRouter.self) private var appRouter
     
     
     private let maxDisplayCount = 3 // Show only first 3 favorites in compact view
@@ -53,7 +54,7 @@ struct FavoritesSectionView: View {
                     onShopTapped: { shop in
                         let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                         impactFeedback.impactOccurred()
-                        AppRouter.shared.navigateToShopDetail(shopId: shop.id)
+                        appRouter.navigateToShopDetail(shopId: shop.id)
                     }
                 )
             }
@@ -143,7 +144,7 @@ struct FavoritesCompactCardView: View {
     let distance: String?
     let onTap: () -> Void
     
-    @StateObject private var favoritesManager = FavoritesManager.shared
+    @Environment(FavoritesManager.self) private var favoritesManager
     @State private var isTogglingFavorite = false
     
     var body: some View {

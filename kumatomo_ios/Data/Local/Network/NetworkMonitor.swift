@@ -1,18 +1,20 @@
 import Foundation
 import Network
 import Combine
+import Observation
 
 @MainActor
-class NetworkMonitor: ObservableObject {
+@Observable
+class NetworkMonitor {
     static let shared = NetworkMonitor()
     
-    @Published var isConnected = true
-    @Published var connectionType: ConnectionType = .unknown
-    @Published var isExpensive = false
-    @Published var isConstrained = false
-    @Published var connectionQuality: ConnectionQuality = .good
-    @Published var lastConnectedAt: Date?
-    @Published var connectionHistory: [ConnectionEvent] = []
+    var isConnected = true
+    var connectionType: ConnectionType = .unknown
+    var isExpensive = false
+    var isConstrained = false
+    var connectionQuality: ConnectionQuality = .good
+    var lastConnectedAt: Date?
+    var connectionHistory: [ConnectionEvent] = []
     
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")
@@ -169,6 +171,18 @@ class NetworkMonitor: ObservableObject {
         
         // Log connection changes
         print("Network status changed: Connected=\(isConnected), Type=\(connectionType.displayName), Quality=\(connectionQuality.displayName), Expensive=\(isExpensive), Constrained=\(isConstrained)")
+
+        // Broadcast change for non-View observers
+        NotificationCenter.default.post(
+            name: .NetworkConnectivityChanged,
+            object: self,
+            userInfo: [
+                "isConnected": isConnected,
+                "connectionType": newConnectionType,
+                "isExpensive": isExpensive,
+                "isConstrained": isConstrained
+            ]
+        )
     }
     
     private func calculateConnectionQuality(path: NWPath) -> ConnectionQuality {
@@ -273,6 +287,11 @@ class NetworkMonitor: ObservableObject {
         
         return message
     }
+}
+
+// MARK: - Notifications
+extension Notification.Name {
+    static let NetworkConnectivityChanged = Notification.Name("NetworkConnectivityChanged")
 }
 
 // MARK: - Network Error Handling

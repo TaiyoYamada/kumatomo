@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ShopProposalStatusView: View {
-    @StateObject private var viewModel = ShopProposalStatusViewModel()
+    @State private var viewModel = ShopProposalStatusViewModel()
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -363,14 +363,15 @@ struct ProposalErrorView: View {
 
 // MARK: - View Model
 @MainActor
-class ShopProposalStatusViewModel: ObservableObject {
-    @Published var proposals: [ShopProposal] = []
-    @Published var summary: ProposalSummary?
-    @Published var isLoading = false
-    @Published var errorMessage: String?
-    @Published var showingDeleteSuccessAlert = false
-    @Published var showingErrorAlert = false
-    @Published var alertErrorMessage = ""
+@Observable
+class ShopProposalStatusViewModel {
+    var proposals: [ShopProposal] = []
+    var summary: ProposalSummary?
+    var isLoading = false
+    var errorMessage: String?
+    var showingDeleteSuccessAlert = false
+    var showingErrorAlert = false
+    var alertErrorMessage = ""
     
     private let shopAPIService = ShopAPIService.shared
     

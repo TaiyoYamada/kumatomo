@@ -64,7 +64,7 @@ struct ProfileProgressIndicator: View {
 }
 
 struct ImageUploadProgressView: View {
-    @ObservedObject var viewModel: ProfileViewModel
+    @Bindable var viewModel: ProfileViewModel
     let imageType: ImageUploadType
     
     enum ImageUploadType {

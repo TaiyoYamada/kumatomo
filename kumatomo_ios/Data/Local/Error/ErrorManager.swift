@@ -1,14 +1,16 @@
 import Foundation
 import SwiftUI
 import Combine
+import Observation
 
 @MainActor
-class ErrorManager: ObservableObject {
+@Observable
+class ErrorManager {
     static let shared = ErrorManager()
     
-    @Published var currentError: AppError?
-    @Published var errorHistory: [AppError] = []
-    @Published var isShowingError = false
+    var currentError: AppError?
+    var errorHistory: [AppError] = []
+    var isShowingError = false
     
     private var cancellables = Set<AnyCancellable>()
     private let maxHistoryCount = 50
@@ -18,10 +20,9 @@ class ErrorManager: ObservableObject {
     }
     
     private func setupNetworkMonitoring() {
-        NetworkMonitor.shared.$isConnected
+        NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
+            .compactMap { $0.userInfo?["isConnected"] as? Bool }
             .sink { [weak self] isConnected in
-                // グローバルなオーバーレイは出さない（UI全体を覆ってしまうため）
-                // 各画面（例: Portal のバナーや個別のリスト・詳細のエラービュー）で表現する
                 // ネットワーク復帰時はネットワーク系のエラー表示を明示的に閉じる
                 if isConnected, let error = self?.currentError, error.errorType == .network {
                     self?.dismissError()

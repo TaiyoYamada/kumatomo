@@ -1,13 +1,15 @@
 import SwiftUI
+import Observation
 
 // MARK: - AppRouter for programmatic navigation
 @MainActor
-class AppRouter: ObservableObject {
+@Observable
+class AppRouter {
     // 現在選択中のタブ
-    @Published var selectedTab: TabSelection = .portal
+    var selectedTab: TabSelection = .portal
 
     // タブごとのNavigationPathを保持
-    @Published private(set) var navigationPaths: [TabSelection: NavigationPath] = [
+    private(set) var navigationPaths: [TabSelection: NavigationPath] = [
         .bulletinboard: NavigationPath(),
         .search: NavigationPath(),
         .portal: NavigationPath(),

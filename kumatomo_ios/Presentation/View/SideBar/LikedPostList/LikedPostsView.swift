@@ -1,9 +1,11 @@
 import SwiftUI
+import Observation
 
 /// A view that displays the user's liked posts using the existing post list components
 struct LikedPostsView: View {
-    @StateObject private var engagementViewModel = EngagementViewModel()
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @State private var engagementViewModel = EngagementViewModel()
+    @Environment(CurrentUserManager.self) private var userManager
+    @Environment(AppRouter.self) private var appRouter
     @State private var showToast = false
     @State private var toastMessage = ""
     @State private var toastType: ToastView.ToastType = .info
@@ -37,19 +39,15 @@ struct LikedPostsView: View {
                 PostTimeline(
                     posts: engagementViewModel.likedPosts,
                     loading: engagementViewModel.isLoadingLikedPosts,
-                    onRefresh: {
-                        Task { await engagementViewModel.refreshLikedPosts() }
-                    },
-                    onLoadMore: {
-                        Task { await engagementViewModel.loadMoreLikedPosts() }
+                    onRefresh: { Task { await engagementViewModel.refreshLikedPosts() } },
+                    onLoadMore: { Task { await engagementViewModel.loadMoreLikedPosts() } },
+                    embedInScrollView: true,
+                    onToggleLike: { (post: Post) async in
+                        await engagementViewModel.toggleLike(for: post)
                     }
-                , embedInScrollView: true,
-                  onToggleLike: { post in
-                    await engagementViewModel.toggleLike(for: post)
-                  }
                 )
                 // Provide a BulletinBoardViewModel to satisfy environment needs
-                .environmentObject(BulletinBoardViewModel())
+                .environment(BulletinBoardViewModel())
             }
             
             // Toast notification
@@ -108,6 +106,7 @@ private struct LikedPostsTimeline: View {
     let onRefresh: () -> Void
     let onLoadMore: () -> Void
     let engagementViewModel: EngagementViewModel
+    @Environment(AppRouter.self) private var appRouter
     
     var body: some View {
         ScrollView {
@@ -118,7 +117,7 @@ private struct LikedPostsTimeline: View {
                         engagementViewModel: engagementViewModel,
                         onTap: { 
                             // Navigate to post detail using AppRouter
-                            AppRouter.shared.navigateToPostDetail(postId: post.id)
+                            appRouter.navigateToPostDetail(postId: post.id)
                         },
                         onAppear: {
                             // Load more when reaching the last post
@@ -193,6 +192,7 @@ private struct LikedPostCardView: View {
 // MARK: - Empty State View
 
 private struct LikedPostsEmptyStateView: View {
+    @Environment(AppRouter.self) private var appRouter
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
     private var adaptiveTitleSize: CGFloat {
@@ -254,8 +254,7 @@ private struct LikedPostsEmptyStateView: View {
             
             
             Button(action: {
-            
-                AppRouter.shared.popToRoot()
+                appRouter.popToRoot()
             }) {
                 Text("投稿を見に行く")
                     .font(.system(size: 16, weight: .medium))
@@ -279,5 +278,5 @@ private struct LikedPostsEmptyStateView: View {
 
 #Preview {
     LikedPostsView()
-        .environmentObject(CurrentUserManager.shared)
+        .environment(CurrentUserManager.shared)
 }

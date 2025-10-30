@@ -1,8 +1,9 @@
 import SwiftUI
+import Observation
 import PhotosUI
 
 struct InitialSetupView: View {
-    @EnvironmentObject var viewModel: AuthViewModel
+    @Environment(AuthViewModel.self) var viewModel
     @Environment(\.dismiss) private var dismiss
 
     @State private var username: String = ""

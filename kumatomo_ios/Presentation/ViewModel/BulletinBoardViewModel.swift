@@ -1,38 +1,40 @@
 import Foundation
 import SwiftUI
 import Combine
+import Observation
 import Resolver
 
 @MainActor
-class BulletinBoardViewModel: ObservableObject {
+@Observable
+class BulletinBoardViewModel {
     // MARK: - Published Properties
     
-    @Published var posts: [Post] = []
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
-    @Published var isRefreshing: Bool = false
+    var posts: [Post] = []
+    var isLoading: Bool = false
+    var errorMessage: String?
+    var isRefreshing: Bool = false
     
     // Tab Management
-    @Published var activeTab: TabType = .all
-    @Published var selectedMunicipality: String?
+    var activeTab: TabType = .all
+    var selectedMunicipality: String?
     
     // Pagination
-    @Published var hasMorePosts: Bool = true
-    @Published var isLoadingMore: Bool = false
+    var hasMorePosts: Bool = true
+    var isLoadingMore: Bool = false
     
     // Reaction Management
-    @Published var reactionUpdates: [Int: PostReactions] = [:]
-    @Published var userReactions: [Int: ReactionType] = [:]
-    @Published var bookmarkedPosts: Set<Int> = []
+    var reactionUpdates: [Int: PostReactions] = [:]
+    var userReactions: [Int: ReactionType] = [:]
+    var bookmarkedPosts: Set<Int> = []
     
     // MARK: - Private Properties
     
-    @Injected var fetchAllPostsWithCacheUseCase: FetchAllPostsWithCacheUseCase
-    @Injected var fetchMunicipalityPostsWithCacheUseCase: FetchMunicipalityPostsWithCacheUseCase
-    @Injected var fetchFollowingPostsWithCacheUseCase: FetchFollowingPostsWithCacheUseCase
-    @Injected var toggleLikeUseCase: ToggleLikeUseCase
-    @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
-    @Injected var toggleReactionUseCase: ToggleReactionUseCase
+    @ObservationIgnored @Injected var fetchAllPostsWithCacheUseCase: FetchAllPostsWithCacheUseCase
+    @ObservationIgnored @Injected var fetchMunicipalityPostsWithCacheUseCase: FetchMunicipalityPostsWithCacheUseCase
+    @ObservationIgnored @Injected var fetchFollowingPostsWithCacheUseCase: FetchFollowingPostsWithCacheUseCase
+    @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
+    @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
+    @ObservationIgnored @Injected var toggleReactionUseCase: ToggleReactionUseCase
     private var currentPage = 1
     private let postsPerPage = 20
     private var cancellables = Set<AnyCancellable>()
@@ -139,24 +141,19 @@ class BulletinBoardViewModel: ObservableObject {
     // MARK: - Private Methods
     
     private func setupBindings() {
-        // Monitor network connectivity changes
-        NetworkMonitor.shared.$isConnected
-            .dropFirst() // Skip initial value
-            .sink { [weak self] isConnected in
-                if isConnected {
+        // Monitor connectivity and type changes via NotificationCenter
+        NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
+            .sink { [weak self] note in
+                guard let self = self else { return }
+                if let isConnected = note.userInfo?["isConnected"] as? Bool, isConnected {
                     Task { @MainActor in
-                        self?.handleNetworkConnectivityChange()
+                        self.handleNetworkConnectivityChange()
                     }
                 }
-            }
-            .store(in: &cancellables)
-        
-        // Monitor connection type changes for data usage optimization
-        NetworkMonitor.shared.$connectionType
-            .dropFirst()
-            .sink { [weak self] connectionType in
-                Task { @MainActor in
-                    self?.handleConnectionTypeChange(connectionType)
+                if let connectionType = note.userInfo?["connectionType"] as? NetworkMonitor.ConnectionType {
+                    Task { @MainActor in
+                        self.handleConnectionTypeChange(connectionType)
+                    }
                 }
             }
             .store(in: &cancellables)

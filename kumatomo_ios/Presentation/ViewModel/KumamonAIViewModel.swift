@@ -2,29 +2,30 @@ import Foundation
 import SwiftUI
 import Combine
 import Resolver
+import Observation
 
 @MainActor
-final class KumamonAIViewModel: ObservableObject {
+@Observable
+final class KumamonAIViewModel {
     // MARK: - Published Properties
     
-    @Published var messages: [ChatMessage] = []
+    var messages: [ChatMessage] = []
     
-    @Published var isLoading: Bool = false
+    var isLoading: Bool = false
     
-    @Published var errorMessage: String?
+    var errorMessage: String?
     
-    @Published var inputText: String = ""
+    var isTyping: Bool = false
     
-    @Published var isTyping: Bool = false
+    var serviceState: AIServiceState = .idle
     
-    @Published var serviceState: AIServiceState = .idle
-    
-    @Published var isServiceAvailable: Bool = true
+    var isServiceAvailable: Bool = true
     
     // MARK: - Private Properties
     
-    @Injected var aiService: KumamonAIService
+    @ObservationIgnored @Injected var aiService: KumamonAIService
     private var cancellables = Set<AnyCancellable>()
+    private var inputDebounceTask: Task<Void, Never>?
     
     // MARK: - Computed Properties
     
@@ -54,15 +55,23 @@ final class KumamonAIViewModel: ObservableObject {
     // MARK: - Private Setup Methods
     
     private func setupSubscribers() {
-        // Monitor input text changes for validation
-        $inputText
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .sink { [weak self] text in
-                self?.validateInput(text)
-            }
-            .store(in: &cancellables)
+        // Observation doesn't provide $ publishers. Use a debounced didSet.
+        // Handled via inputText's didSet below.
     }
     
+    // Debounced validation when inputText changes
+    var inputText: String = "" {
+        didSet {
+            inputDebounceTask?.cancel()
+            let current = inputText
+            inputDebounceTask = Task { [weak self] in
+                try? await Task.sleep(nanoseconds: 300_000_000)
+                await MainActor.run {
+                    self?.validateInput(current)
+                }
+            }
+        }
+    }
     private func validateInput(_ text: String) {
         // Clear error if input becomes valid
         if aiService.isValidMessage(text) && errorMessage != nil {

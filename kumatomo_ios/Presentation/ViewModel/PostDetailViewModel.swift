@@ -2,37 +2,39 @@ import Foundation
 import SwiftUI
 import UIKit
 import Resolver
+import Observation
 
 @MainActor
-class PostDetailViewModel: ObservableObject {
+@Observable
+class PostDetailViewModel {
     // MARK: - Published Properties
     
-    @Published var post: Post?
-    @Published var comments: [Comment] = []
-    @Published var isLoading: Bool = false
-    @Published var isLoadingComments: Bool = false
-    @Published var errorMessage: String?
-    @Published var showSuccessMessage: Bool = false
-    @Published var successMessage: String = ""
+    var post: Post?
+    var comments: [Comment] = []
+    var isLoading: Bool = false
+    var isLoadingComments: Bool = false
+    var errorMessage: String?
+    var showSuccessMessage: Bool = false
+    var successMessage: String = ""
     
     // Engagement loading states
-    @Published var isTogglingLike: Bool = false
-    @Published var isTogglingBookmark: Bool = false
-    @Published var isAddingComment: Bool = false
+    var isTogglingLike: Bool = false
+    var isTogglingBookmark: Bool = false
+    var isAddingComment: Bool = false
     
     // Comment composition
-    @Published var commentText: String = ""
-    @Published var selectedCommentImage: UIImage?
-    @Published var showImagePicker: Bool = false
+    var commentText: String = ""
+    var selectedCommentImage: UIImage?
+    var showImagePicker: Bool = false
     
     // MARK: - Services
     
-    @Injected var fetchPostUseCase: FetchPostUseCase
-    @Injected var fetchCommentsUseCase: FetchCommentsUseCase
-    @Injected var createCommentUseCase: CreateCommentUseCase
-    @Injected var toggleLikeUseCase: ToggleLikeUseCase
-    @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
-    @Injected var authRepository: AuthRepository
+    @ObservationIgnored @Injected var fetchPostUseCase: FetchPostUseCase
+    @ObservationIgnored @Injected var fetchCommentsUseCase: FetchCommentsUseCase
+    @ObservationIgnored @Injected var createCommentUseCase: CreateCommentUseCase
+    @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
+    @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
+    @ObservationIgnored @Injected var authRepository: AuthRepository
     
     // MARK: - Computed Properties
     

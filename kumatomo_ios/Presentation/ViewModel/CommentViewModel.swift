@@ -2,22 +2,24 @@ import Foundation
 import SwiftUI
 import UIKit
 import Resolver
+import Observation
 
 @MainActor
-class CommentViewModel: ObservableObject {
+@Observable
+class CommentViewModel {
     // MARK: - Published Properties
     
-    @Published var commentText: String = ""
-    @Published var selectedImage: UIImage?
-    @Published var isSubmitting: Bool = false
-    @Published var errorMessage: String?
-    @Published var showSuccessMessage: Bool = false
-    @Published var successMessage: String = ""
-    @Published var showImagePicker: Bool = false
+    var commentText: String = ""
+    var selectedImage: UIImage?
+    var isSubmitting: Bool = false
+    var errorMessage: String?
+    var showSuccessMessage: Bool = false
+    var successMessage: String = ""
+    var showImagePicker: Bool = false
     
     // Validation states
-    @Published var isValidating: Bool = false
-    @Published var validationError: String?
+    var isValidating: Bool = false
+    var validationError: String?
     
     // MARK: - Constants
     
@@ -27,7 +29,11 @@ class CommentViewModel: ObservableObject {
     
     // MARK: - Services
     
-    @Injected var createCommentUseCase: CreateCommentUseCase
+    @ObservationIgnored let createCommentUseCase: CreateCommentUseCase
+
+    init(createCommentUseCase: CreateCommentUseCase = Resolver.resolve()) {
+        self.createCommentUseCase = createCommentUseCase
+    }
     
     // MARK: - Computed Properties
     

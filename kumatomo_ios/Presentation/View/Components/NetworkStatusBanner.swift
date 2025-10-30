@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct NetworkStatusBanner: View {
-    @StateObject private var networkMonitor = NetworkMonitor.shared
+    @Environment(NetworkMonitor.self) private var networkMonitor
     
     var body: some View {
         if !networkMonitor.isConnected {

@@ -1,9 +1,10 @@
 import SwiftUI
+import Observation
 
 struct SidebarButtonToolbarModifier: ViewModifier {
     @Environment(\.openSidebar) private var openSidebar
-    @EnvironmentObject private var userManager: CurrentUserManager
-    @EnvironmentObject private var sidebarState: SidebarState
+    @Environment(CurrentUserManager.self) private var userManager
+    @Environment(SidebarState.self) private var sidebarState
     let show: Bool
 
     func body(content: Content) -> some View {
@@ -24,4 +25,3 @@ extension View {
         self.modifier(SidebarButtonToolbarModifier(show: show))
     }
 }
-

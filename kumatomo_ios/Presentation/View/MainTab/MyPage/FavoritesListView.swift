@@ -2,8 +2,9 @@ import SwiftUI
 import CoreLocation
 
 struct FavoritesListView: View {
-    @StateObject private var favoritesManager = FavoritesManager.shared
-    @StateObject private var locationManager = LocationManager.shared
+    @Environment(FavoritesManager.self) private var favoritesManager
+    @Environment(LocationManager.self) private var locationManager
+    @Environment(AppRouter.self) private var appRouter
     
     
     var body: some View {
@@ -21,7 +22,7 @@ struct FavoritesListView: View {
                             // Add haptic feedback for better UX
                             let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                             impactFeedback.impactOccurred()
-                            AppRouter.shared.navigateToShopDetail(shopId: shop.id)
+                            appRouter.navigateToShopDetail(shopId: shop.id)
                         },
                         onRefresh: {
                             Task {
@@ -111,7 +112,7 @@ struct FavoriteShopCardView: View {
     let distance: String?
     let onTap: () -> Void
     
-    @StateObject private var favoritesManager = FavoritesManager.shared
+    @Environment(FavoritesManager.self) private var favoritesManager
     @State private var isTogglingFavorite = false
     
     var body: some View {

@@ -1,16 +1,19 @@
 import Foundation
 import CoreLocation
 import Combine
+import Observation
 
 
-class LocationManager: NSObject, ObservableObject {
+@MainActor
+@Observable
+class LocationManager: NSObject {
     static let shared = LocationManager()
     
     // MARK: - Published Properties
-    @Published var userLocation: CLLocation?
-    @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
-    @Published var isLocationEnabled: Bool = false
-    @Published var locationError: LocationError?
+    var userLocation: CLLocation?
+    var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    var isLocationEnabled: Bool = false
+    var locationError: LocationError?
     
     // MARK: - Private Properties
     private let locationManager = CLLocationManager()
@@ -53,6 +56,7 @@ class LocationManager: NSObject, ObservableObject {
         locationManager.startUpdatingLocation()
         isLocationEnabled = true
         locationError = nil
+        NotificationCenter.default.post(name: .LocationAuthorizationChanged, object: self, userInfo: ["status": authorizationStatus])
     }
     
 
@@ -130,6 +134,7 @@ extension LocationManager: CLLocationManagerDelegate {
         
         userLocation = location
         locationError = nil
+        NotificationCenter.default.post(name: .LocationUpdated, object: self, userInfo: ["userLocation": location])
         
         // Complete one-time location request if pending
         if let completion = locationUpdateCompletion {
@@ -158,6 +163,7 @@ extension LocationManager: CLLocationManagerDelegate {
         }
         
         self.locationError = locationError
+        NotificationCenter.default.post(name: .LocationErrorChanged, object: self, userInfo: ["error": locationError])
         
         // Complete one-time location request with error if pending
         if let completion = locationUpdateCompletion {
@@ -168,6 +174,7 @@ extension LocationManager: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         authorizationStatus = status
+        NotificationCenter.default.post(name: .LocationAuthorizationChanged, object: self, userInfo: ["status": status])
         
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
@@ -181,6 +188,13 @@ extension LocationManager: CLLocationManagerDelegate {
             locationError = .unknown
         }
     }
+}
+
+// MARK: - Notifications
+extension Notification.Name {
+    static let LocationUpdated = Notification.Name("LocationUpdated")
+    static let LocationAuthorizationChanged = Notification.Name("LocationAuthorizationChanged")
+    static let LocationErrorChanged = Notification.Name("LocationErrorChanged")
 }
 
 // MARK: - LocationError

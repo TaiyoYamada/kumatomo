@@ -1,9 +1,10 @@
 import SwiftUI
+import Observation
 import PhotosUI
 
 /// A Twitter-style comment composition interface
 struct CommentComposeView: View {
-    @ObservedObject var viewModel: CommentViewModel
+    @Bindable var viewModel: CommentViewModel
     let onSubmit: () async -> Void
     
     // MARK: - State Properties

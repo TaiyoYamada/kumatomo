@@ -5,11 +5,12 @@ import UIKit
 struct PostDetailView: View {
     let postId: Int
     
-    @StateObject private var viewModel = PostDetailViewModel()
-    @StateObject private var commentViewModel = CommentViewModel()
+    @State private var viewModel = PostDetailViewModel()
+    @State private var commentViewModel = CommentViewModel()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @Environment(CurrentUserManager.self) private var userManager
+    @Environment(AppRouter.self) private var appRouter
     
     // UI State
     @State private var showImagePicker = false
@@ -38,7 +39,7 @@ struct PostDetailView: View {
                                     onProfileTap: {
                                         // Navigate to user profile using AppRouter
                                         if let userId = post.userId {
-                                            AppRouter.shared.navigateToUserProfile(userId: userId)
+                                            appRouter.navigateToUserProfile(userId: userId)
                                         }
                                     }
                                 )
@@ -76,7 +77,7 @@ struct PostDetailView: View {
                                         }
                                     },
                                     onUserTap: { userId in
-                                        AppRouter.shared.navigateToUserProfile(userId: userId)
+                                        appRouter.navigateToUserProfile(userId: userId)
                                     },
                                     onImageTap: { imageUrl in
                                         // TODO: Implement image viewer
@@ -270,7 +271,7 @@ struct PostDetailView: View {
 
 #Preview {
     PostDetailView(postId: 1)
-        .environmentObject(CurrentUserManager.shared)
+        .environment(CurrentUserManager.shared)
 }
 
 // MARK: - Supporting Views

@@ -1,7 +1,8 @@
 import SwiftUI
+import Observation
 
 struct PostEditView: View {
-    @ObservedObject var viewModel: PostViewModel
+    @Bindable var viewModel: PostViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var sheetDestination: SheetDestination?
     
@@ -405,7 +406,7 @@ private struct UpdateButton: View {
 
 // MARK: - Overlay Content
 private struct OverlayContent: View {
-    @ObservedObject var viewModel: PostViewModel
+    @Bindable var viewModel: PostViewModel
     let onDismiss: () -> Void
     
     var body: some View {

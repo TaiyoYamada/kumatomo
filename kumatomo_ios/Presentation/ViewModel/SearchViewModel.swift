@@ -1,17 +1,19 @@
 import Foundation
 import SwiftUI
 import Resolver
+import Observation
 
 @MainActor
-class SearchViewModel: ObservableObject {
-    @Published var searchText = ""
-    @Published var searchResults: SearchResult?
-    @Published var isLoading = false
-    @Published var errorMessage: String?
-    @Published var selectedFilter: SearchFilterType = .all
-    @Published var showingSearchHistory = false
+@Observable
+class SearchViewModel {
+    var searchText = ""
+    var searchResults: SearchResult?
+    var isLoading = false
+    var errorMessage: String?
+    var selectedFilter: SearchFilterType = .all
+    var showingSearchHistory = false
     
-    @Injected var searchUseCase: SearchUseCase
+    @ObservationIgnored @Injected var searchUseCase: SearchUseCase
     private let historyManager = SearchHistoryManager.shared
     
     var hasSearchResults: Bool {

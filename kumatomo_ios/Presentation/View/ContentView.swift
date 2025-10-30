@@ -1,7 +1,9 @@
 import SwiftUI
 
+import Observation
+
 struct ContentView: View {
-    @StateObject var viewModel = AuthViewModel()
+    @State private var viewModel = AuthViewModel()
     @State private var isSplashFinished = false
 
     var body: some View {
@@ -18,10 +20,10 @@ struct ContentView: View {
             } else if viewModel.isAuthenticated {
                 if let done = viewModel.hasCompletedSetup {
                     if done {
-                        MainTabView(viewModel: viewModel)
+                        MainTabView()
                     } else {
                         InitialSetupView()
-                            .environmentObject(viewModel)
+                            .environment(viewModel)
                     }
                 } else {
                     // 認証済みだがユーザー情報のロードが未完了。フリッカー防止の待機画面。
@@ -29,8 +31,9 @@ struct ContentView: View {
                 }
             } else {
                 LoginView()
-                    .environmentObject(viewModel)
+                    .environment(viewModel)
             }
         }
+        .environment(viewModel)
     }
 }

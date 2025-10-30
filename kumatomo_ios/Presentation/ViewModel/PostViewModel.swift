@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import Combine
 import Resolver
+import Observation
 
 // MARK: - Validation State
 struct ValidationState {
@@ -53,49 +54,50 @@ enum TagValidationState: Equatable {
 }
 
 @MainActor
-class PostViewModel: ObservableObject {
-    @Published var postContent: String = ""
-    @Published var selectedImage: UIImage? // Deprecated: use selectedImages instead
-    @Published var selectedImages: [UIImage] = []
-    @Published var selectedShop: Shop?
-    @Published var imageURL: String?
-    @Published var tags: [String] = [] // Deprecated: use selectedTags instead
-    @Published var tagInput: String = ""
+@Observable
+class PostViewModel {
+    var postContent: String = ""
+    var selectedImage: UIImage? // Deprecated: use selectedImages instead
+    var selectedImages: [UIImage] = []
+    var selectedShop: Shop?
+    var imageURL: String?
+    var tags: [String] = [] // Deprecated: use selectedTags instead
+    var tagInput: String = ""
     
     // New tag functionality
-    @Published var selectedTags: Set<String> = ["熊本県全体"]
+    var selectedTags: Set<String> = ["熊本県全体"]
     var availableTags: [String] { ["熊本県全体"] + City.allCases.map { $0.displayName } }
     
-    @Published var posts: [Post] = []
-    @Published var userPosts: [Post] = []
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
-    @Published var showSuccessModal: Bool = false
-    @Published var isSubmitting: Bool = false
+    var posts: [Post] = []
+    var userPosts: [Post] = []
+    var isLoading: Bool = false
+    var errorMessage: String?
+    var showSuccessModal: Bool = false
+    var isSubmitting: Bool = false
     
     // Bulletin Board specific properties
-    @Published var activeTab: TabType = .all
-    @Published var selectedMunicipality: String?
+    var activeTab: TabType = .all
+    var selectedMunicipality: String?
     
     // Edit/Delete related properties
-    @Published var isEditing: Bool = false
-    @Published var editingPost: Post?
-    @Published var showDeleteConfirmation: Bool = false
-    @Published var postToDelete: Post?
-    @Published var isDeleting: Bool = false
-    @Published var isUpdating: Bool = false
+    var isEditing: Bool = false
+    var editingPost: Post?
+    var showDeleteConfirmation: Bool = false
+    var postToDelete: Post?
+    var isDeleting: Bool = false
+    var isUpdating: Bool = false
     
     // UseCases
-    @Injected var fetchAllPostsUseCase: FetchAllPostsUseCase
-    @Injected var fetchUserPostsUseCase: FetchUserPostsUseCase
-    @Injected var fetchMunicipalityPostsUseCase: FetchMunicipalityPostsUseCase
-    @Injected var fetchFollowingPostsUseCase: FetchFollowingPostsUseCase
-    @Injected var fetchPostUseCase: FetchPostUseCase
-    @Injected var createPostUseCase: CreatePostUseCase
-    @Injected var createPostWithMultipleImagesUseCase: CreatePostWithMultipleImagesUseCase
-    @Injected var updatePostUseCase: UpdatePostUseCase
-    @Injected var deletePostUseCase: DeletePostUseCase
-    @Injected var authRepository: AuthRepository
+    @ObservationIgnored @Injected var fetchAllPostsUseCase: FetchAllPostsUseCase
+    @ObservationIgnored @Injected var fetchUserPostsUseCase: FetchUserPostsUseCase
+    @ObservationIgnored @Injected var fetchMunicipalityPostsUseCase: FetchMunicipalityPostsUseCase
+    @ObservationIgnored @Injected var fetchFollowingPostsUseCase: FetchFollowingPostsUseCase
+    @ObservationIgnored @Injected var fetchPostUseCase: FetchPostUseCase
+    @ObservationIgnored @Injected var createPostUseCase: CreatePostUseCase
+    @ObservationIgnored @Injected var createPostWithMultipleImagesUseCase: CreatePostWithMultipleImagesUseCase
+    @ObservationIgnored @Injected var updatePostUseCase: UpdatePostUseCase
+    @ObservationIgnored @Injected var deletePostUseCase: DeletePostUseCase
+    @ObservationIgnored @Injected var authRepository: AuthRepository
     
     // MARK: - Validation
     

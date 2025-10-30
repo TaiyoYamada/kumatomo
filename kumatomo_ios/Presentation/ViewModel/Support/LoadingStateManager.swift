@@ -1,37 +1,33 @@
 import Foundation
 import SwiftUI
 import Combine
+import Observation
 
 @MainActor
-class LoadingStateManager: ObservableObject {
+@Observable
+class LoadingStateManager {
     static let shared = LoadingStateManager()
     
-    @Published var activeOperations: [String: LoadingOperation] = [:]
-    @Published var globalLoadingState: GlobalLoadingState = .idle
-    @Published var loadingHistory: [LoadingHistoryEntry] = []
+    var activeOperations: [String: LoadingOperation] = [:]
+    var globalLoadingState: GlobalLoadingState = .idle
+    var loadingHistory: [LoadingHistoryEntry] = []
     
     private var cancellables = Set<AnyCancellable>()
     private let maxHistoryEntries = 100
     
-    private init() {
-        setupGlobalStateMonitoring()
-    }
+    private init() {}
     
-    private func setupGlobalStateMonitoring() {
-        $activeOperations
-            .map { operations in
-                if operations.isEmpty {
-                    return GlobalLoadingState.idle
-                } else if operations.values.contains(where: { $0.priority == .critical }) {
-                    return GlobalLoadingState.critical
-                } else if operations.values.contains(where: { $0.priority == .high }) {
-                    return GlobalLoadingState.busy
-                } else {
-                    return GlobalLoadingState.loading
-                }
-            }
-            .assign(to: \.globalLoadingState, on: self)
-            .store(in: &cancellables)
+    private func recomputeGlobalState() {
+        let operations = activeOperations
+        if operations.isEmpty {
+            globalLoadingState = .idle
+        } else if operations.values.contains(where: { $0.priority == .critical }) {
+            globalLoadingState = .critical
+        } else if operations.values.contains(where: { $0.priority == .high }) {
+            globalLoadingState = .busy
+        } else {
+            globalLoadingState = .loading
+        }
     }
     
     // MARK: - Loading Operation Management
@@ -57,6 +53,7 @@ class LoadingStateManager: ObservableObject {
         )
         
         activeOperations[id] = operation
+        recomputeGlobalState()
         
         logLoadingEvent(.started, operation: operation)
         
@@ -88,6 +85,7 @@ class LoadingStateManager: ObservableObject {
         
         operation.lastUpdated = Date()
         activeOperations[id] = operation
+        recomputeGlobalState()
         
         logLoadingEvent(.updated, operation: operation)
     }
@@ -103,6 +101,7 @@ class LoadingStateManager: ObservableObject {
         completedOperation.endTime = Date()
         
         activeOperations.removeValue(forKey: id)
+        recomputeGlobalState()
         
         logLoadingEvent(.completed, operation: completedOperation)
         addToHistory(completedOperation)
@@ -119,6 +118,7 @@ class LoadingStateManager: ObservableObject {
         cancelledOperation.endTime = Date()
         
         activeOperations.removeValue(forKey: id)
+        recomputeGlobalState()
         
         logLoadingEvent(.cancelled, operation: cancelledOperation)
         addToHistory(cancelledOperation)

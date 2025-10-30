@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct BulletinBoardView: View {
-    @EnvironmentObject private var viewModel: BulletinBoardViewModel
+    @Environment(BulletinBoardViewModel.self) private var viewModel
     @State private var showToast = false
     @State private var toastMessage = ""
     @State private var toastType: ToastView.ToastType = .info
     @State private var showPostModal = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.openSidebar) private var openSidebar
-    @EnvironmentObject private var userManager: CurrentUserManager
+    @Environment(CurrentUserManager.self) private var userManager
     
     var body: some View {
 //        NavigationStack { // AppRouterで管理するため削除
@@ -42,7 +42,7 @@ struct BulletinBoardView: View {
                                 onRefresh: viewModel.refreshPosts,
                                 onLoadMore: viewModel.loadMorePosts
                             )
-                            .environmentObject(viewModel)
+                            .environment(viewModel)
                         }
                     }
                 }
@@ -95,7 +95,7 @@ struct BulletinBoardView: View {
                     // Refresh the bulletin board feed after successful posting
                     viewModel.refreshPosts()
                 })
-                .environmentObject(userManager)
+                .environment(userManager)
             }
             
 //        }

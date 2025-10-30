@@ -3,7 +3,7 @@ import Resolver
 
 @main
 struct kumatomoApp: App {
-    @StateObject var authViewModel = AuthViewModel()
+    @State private var authViewModel = AuthViewModel()
     
     @MainActor
     init() {
@@ -15,7 +15,12 @@ struct kumatomoApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(authViewModel)
+                .environment(authViewModel)
+                .environment(AppRouter.shared)
+                .environment(NetworkMonitor.shared)
+                .environment(LocationManager.shared)
+                .environment(FavoritesManager.shared)
+                .environment(ProfileErrorHandler.shared)
                 .environment(\.font, .custom("HelveticaNeue-RoundedBold", size: 16))
         }
     }

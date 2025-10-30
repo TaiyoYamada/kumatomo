@@ -1,14 +1,16 @@
 import Foundation
 import SwiftUI
+import Observation
 import Resolver
 
 @MainActor
-class ShopDetailViewModel: ObservableObject {
-    @Published var posts: [Post] = []
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+@Observable
+class ShopDetailViewModel {
+    var posts: [Post] = []
+    var isLoading = false
+    var errorMessage: String?
     
-    @Injected var fetchShopPostsUseCase: FetchShopPostsUseCase
+    @ObservationIgnored @Injected var fetchShopPostsUseCase: FetchShopPostsUseCase
     
     func loadPosts(for shopId: Int) async {
         isLoading = true

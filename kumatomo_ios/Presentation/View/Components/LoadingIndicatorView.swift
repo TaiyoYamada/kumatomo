@@ -4,7 +4,7 @@ struct LoadingIndicatorView: View {
     let operation: LoadingOperation
     let style: LoadingStyle
     
-    @StateObject private var loadingManager = LoadingStateManager.shared
+    @State private var loadingManager = LoadingStateManager.shared
     @State private var animationOffset: CGFloat = 0
     
     init(operation: LoadingOperation, style: LoadingStyle = .standard) {
@@ -122,7 +122,7 @@ struct StandardLoadingView: View {
 
 struct DetailedLoadingView: View {
     let operation: LoadingOperation
-    @StateObject private var loadingManager = LoadingStateManager.shared
+    @State private var loadingManager = LoadingStateManager.shared
     
     var body: some View {
         VStack(spacing: 20) {
@@ -321,7 +321,7 @@ struct PriorityBadge: View {
 // MARK: - Global Loading Overlay
 
 struct GlobalLoadingOverlay: View {
-    @StateObject private var loadingManager = LoadingStateManager.shared
+    @State private var loadingManager = LoadingStateManager.shared
     
     var body: some View {
         ZStack {
@@ -366,7 +366,7 @@ struct GlobalLoadingOverlay: View {
 
 struct FloatingLoadingIndicator: View {
     let operation: LoadingOperation
-    @StateObject private var loadingManager = LoadingStateManager.shared
+    @State private var loadingManager = LoadingStateManager.shared
     
     var body: some View {
         HStack(spacing: 12) {

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ShopProposalFormView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = ShopProposalFormViewModel()
+    @State private var viewModel = ShopProposalFormViewModel()
     
     var body: some View {
         NavigationStack {
@@ -185,16 +185,17 @@ struct ProposalTextFieldStyle: TextFieldStyle {
 
 // MARK: - View Model
 @MainActor
-class ShopProposalFormViewModel: ObservableObject {
-    @Published var shopName = ""
-    @Published var address = ""
-    @Published var selectedGenre: ShopGenre?
-    @Published var description = ""
+@Observable
+class ShopProposalFormViewModel {
+    var shopName = ""
+    var address = ""
+    var selectedGenre: ShopGenre?
+    var description = ""
     
-    @Published var isSubmitting = false
-    @Published var showingSuccessAlert = false
-    @Published var showingErrorAlert = false
-    @Published var errorMessage = ""
+    var isSubmitting = false
+    var showingSuccessAlert = false
+    var showingErrorAlert = false
+    var errorMessage = ""
     
     private let shopAPIService = ShopAPIService.shared
     

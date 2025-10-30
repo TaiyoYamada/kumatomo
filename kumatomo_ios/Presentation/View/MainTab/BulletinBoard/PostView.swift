@@ -4,7 +4,7 @@ import PhotosUI
 struct PostView: View {
     let onPostSuccess: (() -> Void)?
     
-    @StateObject private var viewModel = PostViewModel()
+    @State private var viewModel = PostViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var showingCancelAlert = false
@@ -538,7 +538,7 @@ private struct ActionButtonsRow: View {
 
 // MARK: - Overlay Content
 private struct OverlayContent: View {
-    @ObservedObject var viewModel: PostViewModel
+    @Bindable var viewModel: PostViewModel
     let onDismiss: () -> Void
     
     var body: some View {
@@ -691,6 +691,4 @@ private struct LoadingOverlay: View {
             .animation(.easeInOut(duration: 0.3), value: true)
     }
 }
-
-
 

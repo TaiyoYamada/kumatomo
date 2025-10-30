@@ -3,12 +3,12 @@ import SwiftUI
 struct ShopPickerView: View {
     @Binding var selectedShop: Shop?
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel: ShopListViewModel
+    @State private var viewModel: ShopListViewModel
     @State private var searchText = ""
     
     init(selectedShop: Binding<Shop?>) {
         self._selectedShop = selectedShop
-        self._viewModel = StateObject(wrappedValue: ShopListViewModel())
+        self._viewModel = State(wrappedValue: ShopListViewModel())
     }
     
     var filteredShops: [Shop] {

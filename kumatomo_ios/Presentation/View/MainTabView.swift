@@ -1,20 +1,21 @@
 import SwiftUI
+import Observation
 
 struct MainTabView: View {
-    @ObservedObject var viewModel: AuthViewModel
-    @StateObject private var bulletinBoardViewModel = BulletinBoardViewModel()
-    @StateObject private var userManager = CurrentUserManager.shared
-    @StateObject private var sidebarState = SidebarState()
-    @StateObject private var appRouter = AppRouter.shared
+    @Environment(AuthViewModel.self) private var viewModel
+    @State private var bulletinBoardViewModel = BulletinBoardViewModel()
+    @State private var userManager = CurrentUserManager.shared
+    @State private var sidebarState = SidebarState()
+    @State private var appRouter = AppRouter.shared
 
     var body: some View {
         SidebarContainer(isPresented: $sidebarState.isPresented, user: userManager.currentUser) {
             TabView(selection: $appRouter.selectedTab) {
                 NavigationStack(path: appRouter.pathBinding(for: .bulletinboard)) {
                     BulletinBoardView()
-                        .environmentObject(bulletinBoardViewModel)
-                        .environmentObject(userManager)
-                        .environmentObject(sidebarState)
+                        .environment(bulletinBoardViewModel)
+                        .environment(userManager)
+                        .environment(sidebarState)
                         .environment(\.openSidebar, sidebarState.open)
                         .withAppRouter()
                         .navigationTitle("ホーム")
@@ -28,8 +29,8 @@ struct MainTabView: View {
                 
                 NavigationStack(path: appRouter.pathBinding(for: .search)) {
                     SearchView()
-                        .environmentObject(userManager)
-                        .environmentObject(sidebarState)
+                        .environment(userManager)
+                        .environment(sidebarState)
                         .environment(\.openSidebar, sidebarState.open)
                         .withAppRouter()
                         .navigationTitle("検索")
@@ -47,8 +48,8 @@ struct MainTabView: View {
                     // ★ navigationTitleとtoolbarはここでは設定しない
                 }
                 .appNavigationStyle()
-                .environmentObject(userManager)
-                .environmentObject(sidebarState)
+                .environment(userManager)
+                .environment(sidebarState)
                 .environment(\.openSidebar, sidebarState.open)
                 .tabItem {
                     Image(systemName: "rectangle.grid.2x2")
@@ -59,13 +60,14 @@ struct MainTabView: View {
                 // お店一覧タブ
                 NavigationStack(path: appRouter.pathBinding(for: .shop)) {
                     ShopListView()
-                        .environmentObject(userManager)
-                        .environmentObject(sidebarState)
+                        .environment(userManager)
+                        .environment(sidebarState)
                         .environment(\.openSidebar, sidebarState.open)
                         .withAppRouter()
                         .navigationTitle("お店一覧")
                         .appNavigationStyle()
                 }
+                .environment(appRouter)
                 .tabItem {
                     Image(systemName: "storefront.fill")
                     Text("お店")
@@ -74,8 +76,8 @@ struct MainTabView: View {
                 
                 NavigationStack(path: appRouter.pathBinding(for: .profile)) {
                     MyProfileView()
-                        .environmentObject(userManager)
-                        .environmentObject(sidebarState)
+                        .environment(userManager)
+                        .environment(sidebarState)
                         .environment(\.openSidebar, sidebarState.open)
                         .withAppRouter()
                         .navigationTitle("プロフィール")
