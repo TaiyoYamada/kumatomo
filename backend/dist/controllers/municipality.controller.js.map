@@ -1,0 +1,1 @@
+{"version":3,"file":"municipality.controller.js","sourceRoot":"","sources":["../../src/controllers/municipality.controller.ts"],"names":[],"mappings":";;AAYA,sBAEC;AAZD,wDAAwD;AACxD,MAAM,cAAc,GAAG;IACrB,KAAK;IACL,QAAQ;IACR,OAAO;IACP,OAAO;IACP,OAAO;IACP,OAAO;CACR,CAAC;AAEK,KAAK,UAAU,KAAK,CAAC,IAAa,EAAE,GAAa;IACtD,OAAO,GAAG,CAAC,IAAI,CAAC,cAAc,CAAC,CAAC;AAClC,CAAC"}

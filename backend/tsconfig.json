@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    // --- ファイル構成 ---
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // --- 環境設定 ---
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ],
+
+    // --- 出力オプション ---
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // --- 型チェック強化 ---
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // --- スタイル ---
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+
+    // --- その他 ---
+    "esModuleInterop": true,
+    "isolatedModules": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
