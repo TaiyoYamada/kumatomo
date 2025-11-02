@@ -154,17 +154,17 @@ services:
         networks:
             - sail
 
-    # ollama:
-    #     image: 'ollama/ollama:latest'
-    #     # ports:
-    #     #     - '${FORWARD_OLLAMA_PORT:-11434}:11434'
-    #     volumes:
-    #         - 'sail-ollama:/root/.ollama'
-    #     networks:
-    #         - sail
-    #     environment:
-    #         - OLLAMA_HOST=0.0.0.0
-    #         - OLLAMA_ORIGINS=*
+    ollama:
+        image: 'ollama/ollama:latest'
+        # ports:
+        #     - '${FORWARD_OLLAMA_PORT:-11434}:11434'
+        volumes:
+            - 'sail-ollama:/root/.ollama'
+        networks:
+            - sail
+        environment:
+            - OLLAMA_HOST=0.0.0.0
+            - OLLAMA_ORIGINS=*
         # healthcheck:
         #     test:
         #         - CMD
@@ -174,41 +174,24 @@ services:
         #     retries: 3
         #     timeout: 10s
         #     interval: 30s
-        # restart: unless-stopped
+        restart: unless-stopped
 
-    # ollama-init:
-    #     image: 'ollama/ollama:latest'
-    #     volumes:
-    #         - 'sail-ollama:/root/.ollama'
-    #         - './docker/ollama/init-ollama.sh:/init-ollama.sh'
-    #     networks:
-    #         - sail
-    #     environment:
-    #         - OLLAMA_HOST=ollama:11434
-    #         - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma3:4b}
-    #     depends_on:
-    #         ollama:
-    #             condition: service_started
-    #             # condition: service_healthy # こっちがいいけど、コンテナ作れなくなるから一旦やめる
-    #     command: ["/bin/bash", "/init-ollama.sh"]
-    #     restart: "no" 
-
-    postgres:
-        image: postgres:15
-        container_name: kumatomo-postgres
-        restart: always
-        environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: kumatomo
-        ports:
-            - "5432:5432"
+    ollama-init:
+        image: 'ollama/ollama:latest'
         volumes:
-            - postgres_data:/var/lib/postgresql/data
+            - 'sail-ollama:/root/.ollama'
+            - './docker/ollama/init-ollama.sh:/init-ollama.sh'
         networks:
             - sail
-
-
+        environment:
+            - OLLAMA_HOST=ollama:11434
+            - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma3:4b}
+        depends_on:
+            ollama:
+                condition: service_started
+                # condition: service_healthy # こっちがいいけど、コンテナ作れなくなるから一旦やめる
+        command: ["/bin/bash", "/init-ollama.sh"]
+        restart: "no" 
 networks:
     sail:
         driver: bridge
@@ -220,6 +203,4 @@ volumes:
     sail-meilisearch:
         driver: local
     sail-ollama:
-        driver: local
-    postgres_data:
         driver: local
