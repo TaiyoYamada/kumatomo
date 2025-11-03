@@ -78,6 +78,16 @@ class FavoritesManager {
     func loadFavorites() async {
         isLoading = true
         errorMessage = nil
+
+        // Skip network call when not authenticated
+        if AuthTokenManager.shared.token == nil {
+            print("🔑 認証トークンを取得します")
+            print("🔑 現在の認証トークン: nil")
+            favoriteShops.removeAll()
+            favoriteIds.removeAll()
+            isLoading = false
+            return
+        }
         
         do {
             let favorites = try await shopAPIService.fetchFavorites()
@@ -96,7 +106,7 @@ class FavoritesManager {
             errorMessage = "お気に入りの読み込みに失敗しました: \(error.localizedDescription)"
             print("🚨 Failed to load favorites: \(error)")
         }
-        
+
         isLoading = false
     }
     

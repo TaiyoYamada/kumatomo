@@ -5,6 +5,10 @@ class APISession: NSObject, URLSessionDelegate {
     
     lazy var session: URLSession = {
         let configuration = URLSessionConfiguration.default
+        // Ensure API returns JSON (including error responses)
+        var headers = configuration.httpAdditionalHeaders ?? [:]
+        headers["Accept"] = "application/json"
+        configuration.httpAdditionalHeaders = headers
         return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }()
     
