@@ -6,17 +6,16 @@ class ImageLoader: ObservableObject {
     @Published var image: UIImage?
     @Published var isLoading: Bool = false
     @Published var error: Error?
-    
+
     private var cancellable: AnyCancellable?
     private var cache: URLCache
     private var urlString: String?
-    
+
     init(cache: URLCache = .shared) {
         self.cache = cache
     }
-    
+
     func loadImage(from url: URL) {
-        // すでに同じURLを読み込み中ならスキップ
         if self.urlString == url.absoluteString { return }
 
         self.urlString = url.absoluteString
@@ -60,7 +59,7 @@ class ImageLoader: ObservableObject {
         cancellable?.cancel()
         isLoading = false
     }
-    
+
     func cleanup() {
         cancel()
         image = nil

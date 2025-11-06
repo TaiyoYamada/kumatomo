@@ -1,6 +1,5 @@
 import SwiftUI
 
-// MARK: - Tag Selection State
 private enum TagSelectionState: Equatable {
     case noTagsSelected
     case maxTagsReached
@@ -12,7 +11,7 @@ struct TagSelectionView: View {
     let availableTags: [String]
     let maxSelection: Int = 5
     let minSelection: Int = 1
-    
+
     private var validationState: TagSelectionState {
         if selectedTags.isEmpty {
             return .noTagsSelected
@@ -22,7 +21,7 @@ struct TagSelectionView: View {
             return .valid
         }
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
         }
@@ -42,15 +41,13 @@ struct TagSelectionView: View {
         )
         .animation(.easeInOut(duration: 0.2), value: validationState)
     }
-    
+
     private func toggleTag(_ tag: String) {
         if selectedTags.contains(tag) {
-            // Prevent removing the last tag (minimum 1 requirement)
             if selectedTags.count > minSelection {
                 selectedTags.remove(tag)
             }
         } else {
-            // Prevent selecting more than maximum allowed tags
             if selectedTags.count < maxSelection {
                 selectedTags.insert(tag)
             }
@@ -58,20 +55,19 @@ struct TagSelectionView: View {
     }
 }
 
-// MARK: - Enhanced Tag Chip
 private struct EnhancedTagChip: View {
     let text: String
     let isSelected: Bool
     let isDisabled: Bool
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 4) {
                 Text(text)
                     .font(.subheadline)
                     .fontWeight(.medium)
-                
+
                 if isSelected {
                     Image(systemName: "checkmark")
                         .font(.caption)
@@ -111,12 +107,11 @@ private struct EnhancedTagChip: View {
     }
 }
 
-// MARK: - Tag Validation Feedback
 private struct TagValidationFeedback: View {
     let validationState: TagSelectionState
     let selectedCount: Int
     let maxCount: Int
-    
+
     var body: some View {
         Group {
             switch validationState {
@@ -127,7 +122,7 @@ private struct TagValidationFeedback: View {
                     suggestion: "投稿に関連するタグを選択してください",
                     color: .red
                 )
-                
+
             case .maxTagsReached:
                 ValidationMessage(
                     icon: "exclamationmark.triangle",
@@ -135,7 +130,7 @@ private struct TagValidationFeedback: View {
                     suggestion: "不要なタグを削除してから新しいタグを選択してください",
                     color: .orange
                 )
-                
+
             case .valid:
                 ValidationMessage(
                     icon: "checkmark.circle.fill",
@@ -153,32 +148,31 @@ private struct TagValidationFeedback: View {
     }
 }
 
-// MARK: - Validation Message
 private struct ValidationMessage: View {
     let icon: String
     let message: String
     let suggestion: String
     let color: Color
-    
+
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.caption)
                 .foregroundColor(color)
                 .frame(width: 14, height: 14)
-            
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(message)
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(color)
-                
+
                 Text(suggestion)
                     .font(.caption2)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
             }
-            
+
             Spacer()
         }
         .padding(.horizontal, 10)
@@ -194,25 +188,24 @@ private struct ValidationMessage: View {
 
 #Preview {
     @Previewable @State var selectedTags: Set<String> = ["熊本県全体"]
-    
+
     let availableTags = ["熊本県全体"] + City.allCases.map { $0.displayName }
-    
+
     return VStack(spacing: 20) {
         Text("TagSelectionView Preview")
             .font(.headline)
             .padding()
-        
+
         TagSelectionView(
             selectedTags: $selectedTags,
             availableTags: availableTags
         )
-        
-        // Debug info
+
         VStack(alignment: .leading, spacing: 4) {
             Text("Selected Tags:")
                 .font(.caption)
                 .fontWeight(.bold)
-            
+
             ForEach(Array(selectedTags), id: \.self) { tag in
                 Text("• \(tag)")
                     .font(.caption)
@@ -222,7 +215,7 @@ private struct ValidationMessage: View {
         .background(Color.gray.opacity(0.1))
         .cornerRadius(8)
         .padding(.horizontal)
-        
+
         Spacer()
     }
 }

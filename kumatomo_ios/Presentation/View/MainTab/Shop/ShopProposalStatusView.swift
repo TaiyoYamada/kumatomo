@@ -3,7 +3,7 @@ import SwiftUI
 struct ShopProposalStatusView: View {
     @State private var viewModel = ShopProposalStatusViewModel()
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -17,10 +17,8 @@ struct ShopProposalStatusView: View {
                             }
                         }
                     } else {
-                        // Summary cards
                         SummaryCardsView(summary: viewModel.summary)
-                        
-                        // Proposals list
+
                         if !viewModel.proposals.isEmpty {
                             ProposalsListView(
                                 proposals: viewModel.proposals,
@@ -46,7 +44,7 @@ struct ShopProposalStatusView: View {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         Task {
@@ -78,17 +76,16 @@ struct ShopProposalStatusView: View {
     }
 }
 
-// MARK: - Summary Cards View
 struct SummaryCardsView: View {
     let summary: ProposalSummary?
-    
+
     var body: some View {
         if let summary = summary {
             VStack(spacing: 12) {
                 Text("提案状況")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 HStack(spacing: 12) {
                     SummaryCard(
                         title: "承認待ち",
@@ -96,14 +93,14 @@ struct SummaryCardsView: View {
                         color: .orange,
                         icon: "clock.fill"
                     )
-                    
+
                     SummaryCard(
                         title: "承認済み",
                         count: summary.approved,
                         color: .green,
                         icon: "checkmark.circle.fill"
                     )
-                    
+
                     SummaryCard(
                         title: "却下",
                         count: summary.rejected,
@@ -121,22 +118,22 @@ struct SummaryCard: View {
     let count: Int
     let color: Color
     let icon: String
-    
+
     var body: some View {
         VStack(spacing: 8) {
             HStack {
                 Image(systemName: icon)
                     .foregroundColor(color)
                     .font(.system(size: 16))
-                
+
                 Spacer()
-                
+
                 Text("\(count)")
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(color)
             }
-            
+
             Text(title)
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -148,16 +145,15 @@ struct SummaryCard: View {
     }
 }
 
-// MARK: - Proposals List View
 struct ProposalsListView: View {
     let proposals: [ShopProposal]
     let onDelete: (ShopProposal) -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("提案履歴")
                 .font(.headline)
-            
+
             LazyVStack(spacing: 12) {
                 ForEach(proposals) { proposal in
                     ProposalCardView(
@@ -173,29 +169,27 @@ struct ProposalsListView: View {
 struct ProposalCardView: View {
     let proposal: ShopProposal
     let onDelete: () -> Void
-    
+
     @State private var showingDeleteAlert = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header with status
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(proposal.name)
                         .font(.headline)
                         .lineLimit(1)
-                    
+
                     Text(DateFormatter.proposalDate.string(from: proposal.createdAt))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 StatusBadge(status: proposal.status)
             }
-            
-            // Details
+
             if let address = proposal.address {
                 HStack {
                     Image(systemName: "location")
@@ -207,7 +201,7 @@ struct ProposalCardView: View {
                         .lineLimit(1)
                 }
             }
-            
+
             if let genre = proposal.genre {
                 Text(genre.displayName)
                     .font(.caption)
@@ -217,22 +211,21 @@ struct ProposalCardView: View {
                     .foregroundColor(genre.color)
                     .cornerRadius(6)
             }
-            
+
             if let description = proposal.description, !description.isEmpty {
                 Text(description)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
             }
-            
-            // Admin notes for rejected proposals
+
             if proposal.status == .rejected, let adminNotes = proposal.adminNotes {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("却下理由:")
                         .font(.caption)
                         .fontWeight(.semibold)
                         .foregroundColor(.red)
-                    
+
                     Text(adminNotes)
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -241,12 +234,11 @@ struct ProposalCardView: View {
                         .cornerRadius(6)
                 }
             }
-            
-            // Actions for pending proposals
+
             if proposal.status == .pending {
                 HStack {
                     Spacer()
-                    
+
                     Button("削除", action: {
                         showingDeleteAlert = true
                     })
@@ -272,7 +264,7 @@ struct ProposalCardView: View {
 
 struct StatusBadge: View {
     let status: ProposalStatus
-    
+
     var body: some View {
         Text(status.displayName)
             .font(.caption)
@@ -283,7 +275,7 @@ struct StatusBadge: View {
             .foregroundColor(foregroundColor)
             .cornerRadius(8)
     }
-    
+
     private var backgroundColor: Color {
         switch status {
         case .pending:
@@ -294,7 +286,7 @@ struct StatusBadge: View {
             return .red.opacity(0.2)
         }
     }
-    
+
     private var foregroundColor: Color {
         switch status {
         case .pending:
@@ -307,18 +299,17 @@ struct StatusBadge: View {
     }
 }
 
-// MARK: - Empty State View
 struct EmptyProposalsView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "doc.text")
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
-            
+
             Text("提案履歴がありません")
                 .font(.headline)
                 .foregroundColor(.secondary)
-            
+
             Text("新しい店舗を提案して、地域のお店情報を充実させましょう！")
                 .font(.body)
                 .foregroundColor(.secondary)
@@ -329,26 +320,25 @@ struct EmptyProposalsView: View {
     }
 }
 
-// MARK: - Error View
 struct ProposalErrorView: View {
     let message: String
     let onRetry: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 48))
                 .foregroundColor(.orange)
-            
+
             Text("エラーが発生しました")
                 .font(.headline)
-            
+
             Text(message)
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
-            
+
             Button("再試行", action: onRetry)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.white)
@@ -361,7 +351,6 @@ struct ProposalErrorView: View {
     }
 }
 
-// MARK: - View Model
 @MainActor
 @Observable
 class ShopProposalStatusViewModel {
@@ -372,13 +361,13 @@ class ShopProposalStatusViewModel {
     var showingDeleteSuccessAlert = false
     var showingErrorAlert = false
     var alertErrorMessage = ""
-    
+
     private let shopAPIService = ShopAPIService.shared
-    
+
     func loadProposalStatus() async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             let response = try await shopAPIService.fetchProposalStatus()
             proposals = response.data
@@ -386,18 +375,16 @@ class ShopProposalStatusViewModel {
         } catch {
             errorMessage = "提案状況の読み込み中にエラーが発生しました。"
         }
-        
+
         isLoading = false
     }
-    
+
     func deleteProposal(_ proposal: ShopProposal) async {
         do {
             try await shopAPIService.deleteShopProposal(id: proposal.id)
-            
-            // Remove from local array
+
             proposals.removeAll { $0.id == proposal.id }
-            
-            // Update summary
+
             if let currentSummary = summary {
                 summary = ProposalSummary(
                     pending: max(0, currentSummary.pending - 1),
@@ -405,9 +392,9 @@ class ShopProposalStatusViewModel {
                     rejected: currentSummary.rejected
                 )
             }
-            
+
             showingDeleteSuccessAlert = true
-            
+
         } catch {
             alertErrorMessage = "提案の削除中にエラーが発生しました。"
             showingErrorAlert = true
@@ -415,7 +402,6 @@ class ShopProposalStatusViewModel {
     }
 }
 
-// MARK: - Date Formatter Extension
 extension DateFormatter {
     static let proposalDate: DateFormatter = {
         let formatter = DateFormatter()
@@ -426,7 +412,6 @@ extension DateFormatter {
     }()
 }
 
-// MARK: - Preview
 struct ShopProposalStatusView_Previews: PreviewProvider {
     static var previews: some View {
         ShopProposalStatusView()

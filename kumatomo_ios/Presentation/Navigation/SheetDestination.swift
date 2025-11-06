@@ -1,8 +1,6 @@
 import SwiftUI
 import PhotosUI
 
-// MARK: - モーダル表示用のDestination enum
-// 統合済み: 全てのシート・モーダル表示はこのenumで管理
 enum SheetDestination: Identifiable {
 	case postDetail(Int)                                                           // 投稿詳細モーダル
 	case shopPicker(selectedShop: Binding<Shop?>)                                  // // 投稿プレビューモーダル
@@ -13,7 +11,7 @@ enum SheetDestination: Identifiable {
     case coverImageEdit(selectedItem: Binding<PhotosPickerItem?>, onDelete: () -> Void)   // プロフィール背景画像編集モーダル
     case shopProposal                                                              // 店舗提案フォーム
     case shopProposalStatus                                                        // 店舗提案状況
-    
+
 
 	var id: String {
 		switch self {
@@ -26,7 +24,6 @@ enum SheetDestination: Identifiable {
 		case .municipalityPicker:
 			return "municipalityPicker"
 		case .postEdit(let viewModel):
-			// Avoid touching MainActor-isolated properties here
 			return "postEdit"
 		case .profileImageEdit:
 			return "profileImageEdit"

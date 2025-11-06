@@ -6,9 +6,9 @@ extension Int {
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 1
         formatter.minimumFractionDigits = 0
-        
+
         let absValue = abs(self)
-        
+
         switch absValue {
         case 0..<1000:
             return "\(self)"

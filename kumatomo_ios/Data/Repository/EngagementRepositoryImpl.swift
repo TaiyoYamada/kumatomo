@@ -1,6 +1,5 @@
 import Foundation
 
-// Data adapter wrapping EngagementAPIService
 final class EngagementRepositoryImpl: EngagementRepository {
     private let service: EngagementAPIService
 
@@ -9,7 +8,6 @@ final class EngagementRepositoryImpl: EngagementRepository {
     }
 
     func fetchLikedPosts(page: Int?, limit: Int?) async throws -> [Post] {
-        // Current API does not support page/limit in the service methods used in VM; call a simple fetch
         return try await service.fetchLikedPosts()
     }
 

@@ -6,24 +6,24 @@ enum CategoryType: String, Codable, CaseIterable {
     case event = "イベント"
     case emergency = "緊急"
     case other = "その他"
-    
+
     var displayName: String {
         return self.rawValue
     }
-    
+
     var color: Color {
         switch self {
         case .gourmet:
-            return Color(hex: "10B981") // Green
+            return Color(hex: "10B981")
         case .event:
-            return Color(hex: "F59E0B") // Orange
+            return Color(hex: "F59E0B")
         case .emergency:
-            return Color(hex: "EF4444") // Red
+            return Color(hex: "EF4444")
         case .other:
-            return Color(hex: "8B5CF6") // Purple
+            return Color(hex: "8B5CF6")
         }
     }
-    
+
     var icon: String {
         switch self {
         case .gourmet:

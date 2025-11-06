@@ -5,14 +5,14 @@ struct AIResponse: Codable, Equatable {
     let timestamp: String
     let provider: String
     let success: Bool
-    
+
     enum CodingKeys: String, CodingKey {
         case message
         case timestamp
         case provider
         case success
     }
-    
+
     init(message: String, timestamp: String, provider: String, success: Bool = true) {
         self.message = message
         self.timestamp = timestamp
@@ -21,13 +21,12 @@ struct AIResponse: Codable, Equatable {
     }
 }
 
-// MARK: - Error Response
 struct AIErrorResponse: Codable, Equatable {
     let error: Bool
     let message: String
     let code: String?
     let timestamp: String
-    
+
     enum CodingKeys: String, CodingKey {
         case error
         case message

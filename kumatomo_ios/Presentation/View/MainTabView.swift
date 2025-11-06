@@ -26,7 +26,7 @@ struct MainTabView: View {
                     Text("ホーム")
                 }
                 .tag(TabSelection.bulletinboard)
-                
+
                 NavigationStack(path: appRouter.pathBinding(for: .search)) {
                     SearchView()
                         .environment(userManager)
@@ -41,11 +41,10 @@ struct MainTabView: View {
                     Text("検索")
                 }
                 .tag(TabSelection.search)
-                
+
                 NavigationStack(path: appRouter.pathBinding(for: .portal)) {
                     PortalView()
-                        .withAppRouter() // Attach destination to stack content to ensure resolution
-                    // ★ navigationTitleとtoolbarはここでは設定しない
+                        .withAppRouter()
                 }
                 .appNavigationStyle()
                 .environment(userManager)
@@ -56,7 +55,7 @@ struct MainTabView: View {
                     Text("ポータル")
                 }
                 .tag(TabSelection.portal)
-                
+
                 // お店一覧タブ
                 NavigationStack(path: appRouter.pathBinding(for: .shop)) {
                     ShopListView()
@@ -73,7 +72,7 @@ struct MainTabView: View {
                     Text("お店")
                 }
                 .tag(TabSelection.shop)
-                
+
                 NavigationStack(path: appRouter.pathBinding(for: .profile)) {
                     MyProfileView()
                         .environment(userManager)

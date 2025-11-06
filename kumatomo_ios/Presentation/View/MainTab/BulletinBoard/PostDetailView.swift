@@ -1,50 +1,43 @@
 import SwiftUI
 import UIKit
 
-/// A comprehensive post detail view with engagement features, comments, and interaction capabilities
 struct PostDetailView: View {
     let postId: Int
-    
+
     @State private var viewModel = PostDetailViewModel()
     @State private var commentViewModel = CommentViewModel()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(CurrentUserManager.self) private var userManager
     @Environment(AppRouter.self) private var appRouter
-    
-    // UI State
+
     @State private var showImagePicker = false
     @State private var keyboardHeight: CGFloat = 0
     @State private var showShareSheet = false
     @State private var showDeleteAlert = false
     @State private var showReportSheet = false
     @FocusState private var isCommentFocused: Bool
-    
+
     var body: some View {
         ZStack {
                 Color(.systemBackground)
                     .ignoresSafeArea()
-                
+
                 if viewModel.isLoading && viewModel.post == nil {
-                    // Loading state
                     PostDetailLoadingView()
                 } else if let post = viewModel.post {
-                    // Main content
                     ScrollViewReader { proxy in
                         ScrollView {
                             LazyVStack(spacing: 0) {
-                                // Post content section
                                 PostContentSection(
                                     post: post,
                                     onProfileTap: {
-                                        // Navigate to user profile using AppRouter
                                         if let userId = post.userId {
                                             appRouter.navigateToUserProfile(userId: userId)
                                         }
                                     }
                                 )
-                                
-                                // Engagement buttons section
+
                                 EngagementSection(
                                     post: post,
                                     isTogglingLike: viewModel.isTogglingLike,
@@ -63,11 +56,10 @@ struct PostDetailView: View {
                                         isCommentFocused = true
                                     }
                                 )
-                                
+
                                 Divider()
                                     .padding(.horizontal, 16)
-                                
-                                // Comments section
+
                                 CommentsSection(
                                     comments: viewModel.comments,
                                     isLoading: viewModel.isLoadingComments,
@@ -80,12 +72,10 @@ struct PostDetailView: View {
                                         appRouter.navigateToUserProfile(userId: userId)
                                     },
                                     onImageTap: { imageUrl in
-                                        // TODO: Implement image viewer
                                         print("Image tapped: \(imageUrl)")
                                     }
                                 )
-                                
-                                // Bottom spacer so last comment isn't hidden by composer
+
                                 Rectangle()
                                     .fill(Color.clear)
                                     .frame(height: 100)
@@ -96,7 +86,6 @@ struct PostDetailView: View {
                         }
                     }
                 } else if let errorMessage = viewModel.errorMessage {
-                    // Error state
                     PostDetailErrorView(
                         error: errorMessage,
                         onRetry: {
@@ -105,9 +94,8 @@ struct PostDetailView: View {
                             }
                         }
                     )
-                }        
-        
-                // Success/Error messages overlay
+                }
+
                 VStack {
                     if viewModel.showSuccessMessage {
                         ToastView(
@@ -117,7 +105,7 @@ struct PostDetailView: View {
                         )
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
-                    
+
                     if let errorMessage = viewModel.errorMessage, !viewModel.isLoading {
                         ToastView(
                             message: errorMessage,
@@ -129,7 +117,7 @@ struct PostDetailView: View {
                             viewModel.errorMessage = nil
                         }
                     }
-                    
+
                     Spacer()
                 }
                 .zIndex(1)
@@ -144,7 +132,7 @@ struct PostDetailView: View {
                         }) {
                             Label("シェア", systemImage: "square.and.arrow.up")
                         }
-                        
+
                         if viewModel.isCurrentUserPostOwner {
                             Button(role: .destructive, action: {
                                 showDeleteAlert = true
@@ -207,7 +195,6 @@ struct PostDetailView: View {
             }
             .confirmationDialog("投稿を削除", isPresented: $showDeleteAlert) {
                 Button("削除", role: .destructive) {
-                    // TODO: Implement post deletion when delete functionality is available
                     print("Delete post: \(postId)")
                 }
                 Button("キャンセル", role: .cancel) {}
@@ -216,11 +203,9 @@ struct PostDetailView: View {
             }
             .confirmationDialog("投稿を報告", isPresented: $showReportSheet) {
                 Button("不適切なコンテンツ") {
-                    // TODO: Implement report functionality
                     print("Report post as inappropriate: \(postId)")
                 }
                 Button("スパム") {
-                    // TODO: Implement report functionality
                     print("Report post as spam: \(postId)")
                 }
                 Button("キャンセル", role: .cancel) {}
@@ -228,19 +213,18 @@ struct PostDetailView: View {
                 Text("この投稿を報告する理由を選択してください")
             }
     }
-    
-    // MARK: - Private Methods
-    
+
+
     private func loadAllData() async {
         await viewModel.loadPostDetail(postId: postId)
         await viewModel.loadComments(postId: postId)
     }
-    
+
     private func refreshAllData() async {
         await viewModel.refreshPostDetail()
         await viewModel.refreshComments()
     }
-    
+
     private func handleKeyboardShow(_ notification: Notification) {
         if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
@@ -249,13 +233,13 @@ struct PostDetailView: View {
             }
         }
     }
-    
+
     private func handleKeyboardHide() {
         withAnimation(.easeInOut(duration: 0.3)) {
             keyboardHeight = 0
         }
     }
-    
+
     private func createShareText(for post: Post) -> String {
         let userName = post.user?.name ?? "ユーザー"
         let content = post.content.prefix(100)
@@ -267,22 +251,20 @@ struct PostDetailView: View {
 
 
 
-// MARK: - Preview
 
 #Preview {
     PostDetailView(postId: 1)
         .environment(CurrentUserManager.shared)
 }
 
-// MARK: - Supporting Views
 
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
-    
+
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
         return controller
     }
-    
+
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

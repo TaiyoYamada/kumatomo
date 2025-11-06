@@ -3,15 +3,12 @@ import Observation
 
 
 struct PortalView: View {
-    // MARK: - Environment Properties
     @Environment(\.openSidebar) private var openSidebar
     @Environment(CurrentUserManager.self) private var userManager
     @Environment(NetworkMonitor.self) private var networkMonitor
-    
-    // MARK: - State Properties
+
     @State private var showingNetworkAlert = false
-    
-    // MARK: - Body
+
     var body: some View {
         ScrollView {
                 LazyVStack(spacing: 24) {
@@ -19,9 +16,8 @@ struct PortalView: View {
                         PortalAdvertisingSlideshow()
                     }
                     .padding(.top, 8)
-                    
+
                     VStack(spacing: 10) {
-                        // Section header
                         HStack {
                             Text("サービス一覧")
                                 .font(.title2)
@@ -30,10 +26,9 @@ struct PortalView: View {
                             Spacer()
                         }
                         .padding(.horizontal, 16)
-                        // Cards grid component
                         PortalCardGrid(cards: samplePortalCards)
                     }
-                    
+
                     VStack {
                         HStack {
                             Text("おすすめのお店")
@@ -43,7 +38,7 @@ struct PortalView: View {
                             Spacer()
                         }
                         .padding(.horizontal, 16)
-                        
+
                         RecommendedShopCarouselView(shops: sampleShops)
                     }
                 }
@@ -60,9 +55,7 @@ struct PortalView: View {
                     action: { openSidebar() }
                 )
             }
-            
-            // MARK: - Network Status Indicator
-            // Shows network connectivity status in toolbar
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !networkMonitor.isConnected {
                     Button {
@@ -80,38 +73,33 @@ struct PortalView: View {
             Text(networkMonitor.getNetworkStatusMessage())
         }
         .safeAreaInset(edge: .bottom) {
-            // MARK: - Network Status Banner (safe area)
-            // Insert banner in safe area so content isn't obscured
             if !networkMonitor.isConnected {
                 networkStatusBanner
             } else {
-                // Maintain a small, consistent bottom inset for spacing
                 Color.clear.frame(height: 8)
             }
         }
     }
-    
-    // MARK: - Network Status Banner
-    
+
+
     private var networkStatusBanner: some View {
         HStack(spacing: 12) {
             Image(systemName: "wifi.slash")
                 .foregroundColor(.white)
-            
+
             VStack(alignment: .leading, spacing: 2) {
                 Text("オフライン")
                     .font(.headline)
                     .foregroundColor(.white)
-                
+
                 Text("インターネット接続を確認してください")
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.9))
             }
-            
+
             Spacer()
-            
+
             Button("設定") {
-                // Open system settings for network configuration
                 if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(settingsURL)
                 }

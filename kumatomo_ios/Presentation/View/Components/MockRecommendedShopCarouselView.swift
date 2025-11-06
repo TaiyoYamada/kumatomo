@@ -1,6 +1,5 @@
 import SwiftUI
 
-// MARK: - Shop Data Model
 struct ShopData: Identifiable {
     let id = UUID()
     let name: String
@@ -8,18 +7,14 @@ struct ShopData: Identifiable {
     let imageName: String
 }
 
-// MARK: - User-driven Infinite Carousel
 struct RecommendedShopCarouselView: View {
-    // Data
     let shops: [ShopData]
 
-    // Layout
     private let cardWidth: CGFloat = 280
     private let spacing: CGFloat = 16
     private let rowHeight: CGFloat = 320
     private let horizontalPadding: CGFloat = 16
 
-    // Large virtual range to simulate infinite scrolling
     // 中央から開始し、ユーザー操作のみで無限に流せるようにする
     private let loopSpan: Int = 500
     private var loopRange: ClosedRange<Int> { (-loopSpan)...loopSpan }
@@ -54,7 +49,6 @@ struct RecommendedShopCarouselView: View {
         }
     }
 
-    // MARK: - Helpers
     private func positiveMod(_ a: Int, _ m: Int) -> Int {
         guard m > 0 else { return 0 }
         let r = a % m
@@ -79,7 +73,6 @@ struct RecommendedShopCarouselView: View {
     }
 }
 
-// MARK: - Mock Shop Card View
 struct MockShopCardView: View {
     let shop: ShopData
 

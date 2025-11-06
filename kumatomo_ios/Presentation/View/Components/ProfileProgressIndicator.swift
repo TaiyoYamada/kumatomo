@@ -1,21 +1,19 @@
 import SwiftUI
 
-// MARK: - Profile Progress Indicator Components
 
 struct ProfileProgressIndicator: View {
     let progress: Double
     let isUploading: Bool
     let uploadType: String
     let onCancel: (() -> Void)?
-    
+
     var body: some View {
         VStack(spacing: 16) {
-            // Progress Circle
             ZStack {
                 Circle()
                     .stroke(Color.secondary.opacity(0.3), lineWidth: 8)
                     .frame(width: 80, height: 80)
-                
+
                 Circle()
                     .trim(from: 0, to: progress)
                     .stroke(
@@ -29,26 +27,24 @@ struct ProfileProgressIndicator: View {
                     .frame(width: 80, height: 80)
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut(duration: 0.3), value: progress)
-                
+
                 Text("\(Int(progress * 100))%")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)
             }
-            
-            // Status Text
+
             VStack(spacing: 4) {
                 Text(isUploading ? "\(uploadType)をアップロード中..." : "処理中...")
                     .font(.headline)
                     .foregroundColor(.primary)
-                
+
                 if isUploading {
                     Text("しばらくお待ちください")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
             }
-            
-            // Cancel Button
+
             if let onCancel = onCancel {
                 Button("キャンセル") {
                     onCancel()
@@ -66,11 +62,11 @@ struct ProfileProgressIndicator: View {
 struct ImageUploadProgressView: View {
     @Bindable var viewModel: ProfileViewModel
     let imageType: ImageUploadType
-    
+
     enum ImageUploadType {
         case profile
         case cover
-        
+
         var displayName: String {
             switch self {
             case .profile:
@@ -79,18 +75,16 @@ struct ImageUploadProgressView: View {
                 return "カバー画像"
             }
         }
-        
+
         var progress: Double {
-            // This would be implemented based on your upload progress tracking
             return 0.0
         }
-        
+
         var isUploading: Bool {
-            // This would be implemented based on your upload state
             return false
         }
     }
-    
+
     var body: some View {
         if imageType.isUploading {
             ProfileProgressIndicator(
@@ -98,7 +92,6 @@ struct ImageUploadProgressView: View {
                 isUploading: true,
                 uploadType: imageType.displayName,
                 onCancel: {
-                    // Cancel upload logic
                     switch imageType {
                     case .profile:
                         viewModel.cancelProfileImageUpload()
@@ -111,44 +104,40 @@ struct ImageUploadProgressView: View {
     }
 }
 
-// MARK: - Success Feedback Components
 
 struct ProfileSuccessIndicator: View {
     let message: String
     let onDismiss: () -> Void
-    
+
     @State private var scale: CGFloat = 0.8
     @State private var opacity: Double = 0.0
-    
+
     var body: some View {
         VStack(spacing: 16) {
-            // Success Icon
             ZStack {
                 Circle()
                     .fill(Color.green.opacity(0.1))
                     .frame(width: 80, height: 80)
-                
+
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 40))
                     .foregroundColor(.green)
             }
             .scaleEffect(scale)
-            
-            // Success Message
+
             VStack(spacing: 8) {
                 Text("保存完了")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
+
                 Text(message)
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
             }
             .opacity(opacity)
-            
-            // Dismiss Button
+
             Button("OK") {
                 onDismiss()
             }
@@ -173,37 +162,33 @@ struct ProfileSuccessIndicator: View {
     }
 }
 
-// MARK: - Enhanced Network Status Indicator (removed duplicate - using NetworkStatusBanner.swift)
 
-// MARK: - Validation Error Display
 
 struct ValidationErrorView: View {
     let errors: [String]
     let onDismiss: () -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Header
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.title2)
                     .foregroundColor(.orange)
-                
+
                 Text("入力エラー")
                     .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
+
                 Spacer()
-                
+
                 Button(action: onDismiss) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title2)
                         .foregroundColor(.secondary)
                 }
             }
-            
-            // Error List
+
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(errors, id: \.self) { error in
                     HStack(alignment: .top, spacing: 8) {
@@ -211,18 +196,17 @@ struct ValidationErrorView: View {
                             .fill(Color.red)
                             .frame(width: 6, height: 6)
                             .padding(.top, 6)
-                        
+
                         Text(error)
                             .font(.body)
                             .foregroundColor(.primary)
                             .fixedSize(horizontal: false, vertical: true)
-                        
+
                         Spacer()
                     }
                 }
             }
-            
-            // Action Button
+
             Button("修正する") {
                 onDismiss()
             }
@@ -238,12 +222,11 @@ struct ValidationErrorView: View {
     }
 }
 
-// MARK: - Loading State Overlay
 
 struct ProfileLoadingOverlay: View {
     let isLoading: Bool
     let message: String
-    
+
     var body: some View {
         if isLoading {
             Color.black.opacity(0.4)
@@ -253,7 +236,7 @@ struct ProfileLoadingOverlay: View {
                         ProgressView()
                             .scaleEffect(1.5)
                             .tint(.white)
-                        
+
                         Text(message)
                             .font(.headline)
                             .foregroundColor(.white)
@@ -268,7 +251,6 @@ struct ProfileLoadingOverlay: View {
     }
 }
 
-// MARK: - Preview Helpers
 
 #if DEBUG
 struct ProfileProgressIndicator_Previews: PreviewProvider {
@@ -280,12 +262,12 @@ struct ProfileProgressIndicator_Previews: PreviewProvider {
                 uploadType: "プロフィール画像",
                 onCancel: {}
             )
-            
+
             ProfileSuccessIndicator(
                 message: "プロフィールが正常に更新されました",
                 onDismiss: {}
             )
-            
+
             ValidationErrorView(
                 errors: [
                     "名前を入力してください",

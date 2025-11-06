@@ -2,19 +2,18 @@ import SwiftUI
 
 struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
-    
+
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }
 }
 
-// MARK: - Scroll Offset Reader
 
 struct ScrollOffsetReader<Content: View>: View {
     let coordinateSpace: String
     let onOffsetChange: (CGFloat) -> Void
     let content: () -> Content
-    
+
     init(
         coordinateSpace: String = "scroll",
         onOffsetChange: @escaping (CGFloat) -> Void,
@@ -24,7 +23,7 @@ struct ScrollOffsetReader<Content: View>: View {
         self.onOffsetChange = onOffsetChange
         self.content = content
     }
-    
+
     var body: some View {
         ScrollView {
             content()
@@ -45,7 +44,6 @@ struct ScrollOffsetReader<Content: View>: View {
     }
 }
 
-// MARK: - Scroll Offset Modifier
 
 extension View {
     func onScrollOffsetChange(

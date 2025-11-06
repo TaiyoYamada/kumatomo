@@ -4,19 +4,18 @@ struct GenreFilterView: View {
     let selectedGenres: Set<ShopGenre>
     let onGenreToggled: (ShopGenre) -> Void
     let onClearAll: () -> Void
-    
+
     private let allGenres = ShopGenre.allGenres
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Header with clear button
             HStack {
                 Text("ジャンルで絞り込み")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)
-                
+
                 Spacer()
-                
+
                 if !selectedGenres.isEmpty {
                     Button("クリア", action: onClearAll)
                         .font(.system(size: 14, weight: .medium))
@@ -27,8 +26,7 @@ struct GenreFilterView: View {
             .padding(.horizontal, 16)
             .padding(.top, 12)
             .padding(.bottom, 8)
-            
-            // Scrollable genre chips
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(allGenres, id: \.self) { genre in
@@ -66,7 +64,7 @@ struct GenreFilterView: View {
                 print("Clear all genres")
             }
         )
-        
+
         Spacer()
     }
 }

@@ -1,6 +1,5 @@
 import Foundation
 
-// Data adapter wrapping PostAPIService, conforming to Domain's PostRepository
 final class PostRepositoryImpl: PostRepository {
     private let service: PostAPIService
 

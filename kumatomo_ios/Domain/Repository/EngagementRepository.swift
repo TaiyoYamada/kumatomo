@@ -1,6 +1,5 @@
 import Foundation
 
-// Domain layer protocol for engagement (likes/bookmarks, lists)
 protocol EngagementRepository {
     func fetchLikedPosts(page: Int?, limit: Int?) async throws -> [Post]
     func fetchBookmarkedPosts(page: Int?, limit: Int?) async throws -> [Post]

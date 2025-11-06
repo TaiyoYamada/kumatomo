@@ -20,7 +20,6 @@ enum ImageDebugLogger {
         let task = URLSession.shared.dataTask(with: request) { _, response, error in
             if let error = error {
                 print("🧩 [ImageDebug] context=\(context) HEAD error=\(error.localizedDescription)")
-                // Try GET as fallback to capture status code
                 var getReq = URLRequest(url: url)
                 getReq.httpMethod = "GET"
                 getReq.timeoutInterval = 6

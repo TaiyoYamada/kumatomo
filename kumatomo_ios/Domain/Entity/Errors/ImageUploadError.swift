@@ -14,7 +14,7 @@ enum ImageUploadError: LocalizedError {
     case timeout
     case insufficientStorage
     case imageTooLarge(width: Int, height: Int, maxWidth: Int, maxHeight: Int)
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidImageData:
@@ -43,7 +43,7 @@ enum ImageUploadError: LocalizedError {
             return "画像サイズが大きすぎます (\(width)x\(height)px, 最大: \(maxWidth)x\(maxHeight)px)"
         }
     }
-    
+
     var recoverySuggestion: String? {
         switch self {
         case .invalidImageData:
@@ -72,7 +72,7 @@ enum ImageUploadError: LocalizedError {
             return "画像のサイズを小さくしてから再試行してください"
         }
     }
-    
+
     var failureReason: String? {
         switch self {
         case .invalidImageData:
@@ -102,7 +102,7 @@ enum ImageUploadError: LocalizedError {
             return "画像の解像度が制限を超えています"
         }
     }
-    
+
     private func formatFileSize(_ bytes: Int) -> String {
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useKB, .useMB]

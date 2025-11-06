@@ -5,12 +5,12 @@ struct ShopPickerView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: ShopListViewModel
     @State private var searchText = ""
-    
+
     init(selectedShop: Binding<Shop?>) {
         self._selectedShop = selectedShop
         self._viewModel = State(wrappedValue: ShopListViewModel())
     }
-    
+
     var filteredShops: [Shop] {
         if searchText.isEmpty {
             return viewModel.shops
@@ -22,15 +22,14 @@ struct ShopPickerView: View {
             }
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Search Bar
                 SearchBar(text: $searchText)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                
+
                 if viewModel.isLoading {
                     ShopLoadingView()
                 } else if filteredShops.isEmpty {
@@ -53,7 +52,7 @@ struct ShopPickerView: View {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("クリア") {
                         selectedShop = nil
@@ -84,18 +83,17 @@ struct ShopPickerView: View {
     }
 }
 
-// MARK: - Search Bar
 private struct SearchBar: View {
     @Binding var text: String
-    
+
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
-            
+
             TextField("お店名、住所、ジャンルで検索", text: $text)
                 .textFieldStyle(PlainTextFieldStyle())
-            
+
             if !text.isEmpty {
                 Button(action: { text = "" }) {
                     Image(systemName: "xmark.circle.fill")
@@ -110,13 +108,12 @@ private struct SearchBar: View {
     }
 }
 
-// MARK: - Shop Loading View
 private struct ShopLoadingView: View {
     var body: some View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.2)
-            
+
             Text("お店を読み込み中...")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -125,22 +122,21 @@ private struct ShopLoadingView: View {
     }
 }
 
-// MARK: - Shop Empty State View
 private struct ShopEmptyStateView: View {
     let searchText: String
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: searchText.isEmpty ? "storefront" : "magnifyingglass")
                 .font(.system(size: 48))
                 .foregroundStyle(.secondary)
-            
+
             Text(searchText.isEmpty ? "お店が登録されていません" : "検索結果が見つかりません")
                 .font(.headline)
                 .foregroundStyle(.primary)
-            
-            Text(searchText.isEmpty ? 
-                 "管理者によってお店が登録されるまでお待ちください" : 
+
+            Text(searchText.isEmpty ?
+                 "管理者によってお店が登録されるまでお待ちください" :
                  "別のキーワードで検索してみてください")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -151,12 +147,11 @@ private struct ShopEmptyStateView: View {
     }
 }
 
-// MARK: - Shop Picker List
 private struct ShopPickerList: View {
     let shops: [Shop]
     @Binding var selectedShop: Shop?
     let onShopSelected: () -> Void
-    
+
     var body: some View {
         List(shops) { shop in
             ShopPickerRow(
@@ -174,16 +169,14 @@ private struct ShopPickerList: View {
     }
 }
 
-// MARK: - Shop Picker Row
 private struct ShopPickerRow: View {
     let shop: Shop
     let isSelected: Bool
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 12) {
-                // Shop Image or Placeholder
                 AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
                     image
                         .resizable()
@@ -204,21 +197,20 @@ private struct ShopPickerRow: View {
                     ImageDebugLogger.logImage(shop.imageUrl, context: "ShopPicker:shopId=\(shop.id)")
                     #endif
                 }
-                
-                // Shop Info
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(shop.name)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.primary)
                         .lineLimit(1)
-                    
+
                     if let address = shop.address {
                         Text(address)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
                     }
-                    
+
                     HStack {
                         if let genre = shop.genre {
                             Text(genre.displayName)
@@ -229,14 +221,13 @@ private struct ShopPickerRow: View {
                                 .background(Color.orange.opacity(0.1))
                                 .cornerRadius(4)
                         }
-                        
+
                         Spacer()
                     }
                 }
-                
+
                 Spacer()
-                
-                // Selection Indicator
+
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.title2)
@@ -260,12 +251,11 @@ private struct ShopPickerRow: View {
     }
 }
 
-// MARK: - Shop Picker Error Overlay
 private struct ShopPickerErrorOverlay: View {
     let message: String
     let onRetry: () -> Void
     let onClose: () -> Void
-    
+
     var body: some View {
         Color.black.opacity(0.4)
             .ignoresSafeArea()
@@ -274,24 +264,24 @@ private struct ShopPickerErrorOverlay: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.system(size: 32))
                         .foregroundStyle(Color.red)
-                    
+
                     Text("エラーが発生しました")
                         .font(.headline.weight(.medium))
                         .foregroundStyle(.primary)
-                    
+
                     Text(message)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
-                    
+
                     HStack(spacing: 12) {
                         Button("再試行") {
                             onClose()
                             onRetry()
                         }
                         .buttonStyle(.borderedProminent)
-                        
+
                         Button("閉じる") {
                             onClose()
                         }

@@ -4,9 +4,9 @@ struct GenreChip: View {
     let genre: ShopGenre
     let isSelected: Bool
     let onTap: () -> Void
-    
+
     @State private var isPressed = false
-    
+
     var body: some View {
         Button(action: onTap) {
             Text(genre.displayName)
@@ -43,32 +43,32 @@ struct GenreChip: View {
         Text("GenreChip Preview")
             .font(.headline)
             .padding()
-        
+
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
                 GenreChip(genre: .cafe, isSelected: true) {
                     print("Cafe selected")
                 }
-                
+
                 GenreChip(genre: .ramen, isSelected: false) {
                     print("Ramen selected")
                 }
-                
+
                 GenreChip(genre: .restaurant, isSelected: true) {
                     print("Restaurant selected")
                 }
-                
+
                 GenreChip(genre: .izakaya, isSelected: false) {
                     print("Izakaya selected")
                 }
-                
+
                 GenreChip(genre: .sweets, isSelected: false) {
                     print("Sweets selected")
                 }
             }
             .padding(.horizontal, 16)
         }
-        
+
         Spacer()
     }
 }

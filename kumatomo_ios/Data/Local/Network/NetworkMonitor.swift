@@ -7,7 +7,7 @@ import Observation
 @Observable
 class NetworkMonitor {
     static let shared = NetworkMonitor()
-    
+
     var isConnected = true
     var connectionType: ConnectionType = .unknown
     var isExpensive = false
@@ -15,19 +15,19 @@ class NetworkMonitor {
     var connectionQuality: ConnectionQuality = .good
     var lastConnectedAt: Date?
     var connectionHistory: [ConnectionEvent] = []
-    
+
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")
     private var connectionStartTime: Date?
     private var cancellables = Set<AnyCancellable>()
     private let maxHistoryEntries = 100
-    
+
     enum ConnectionType {
         case wifi
         case cellular
         case ethernet
         case unknown
-        
+
         var displayName: String {
             switch self {
             case .wifi:
@@ -40,7 +40,7 @@ class NetworkMonitor {
                 return "不明"
             }
         }
-        
+
         var isReliable: Bool {
             switch self {
             case .wifi, .ethernet:
@@ -50,13 +50,13 @@ class NetworkMonitor {
             }
         }
     }
-    
+
     enum ConnectionQuality {
         case excellent
         case good
         case poor
         case unavailable
-        
+
         var displayName: String {
             switch self {
             case .excellent:
@@ -69,7 +69,7 @@ class NetworkMonitor {
                 return "利用不可"
             }
         }
-        
+
         var color: String {
             switch self {
             case .excellent:
@@ -83,7 +83,7 @@ class NetworkMonitor {
             }
         }
     }
-    
+
     struct ConnectionEvent {
         let id = UUID()
         let timestamp: Date
@@ -91,7 +91,7 @@ class NetworkMonitor {
         let connectionType: ConnectionType
         let quality: ConnectionQuality
         let duration: TimeInterval?
-        
+
         enum ConnectionEventType {
             case connected
             case disconnected
@@ -99,16 +99,16 @@ class NetworkMonitor {
             case typeChanged
         }
     }
-    
+
     private init() {
         startMonitoring()
         setupQualityMonitoring()
     }
-    
+
     deinit {
         stopMonitoring()
     }
-    
+
     private func startMonitoring() {
         monitor.pathUpdateHandler = { [weak self] path in
             Task { @MainActor in
@@ -117,21 +117,20 @@ class NetworkMonitor {
         }
         monitor.start(queue: queue)
     }
-    
+
     nonisolated private func stopMonitoring() {
         monitor.cancel()
     }
-    
+
     private func updateConnectionStatus(_ path: NWPath) {
         let wasConnected = isConnected
         let previousType = connectionType
         let previousQuality = connectionQuality
-        
+
         isConnected = path.status == .satisfied
         isExpensive = path.isExpensive
         isConstrained = path.isConstrained
-        
-        // Determine connection type
+
         let newConnectionType: ConnectionType
         if path.usesInterfaceType(.wifi) {
             newConnectionType = .wifi
@@ -142,37 +141,30 @@ class NetworkMonitor {
         } else {
             newConnectionType = .unknown
         }
-        
-        // Update connection quality
+
         let newQuality = calculateConnectionQuality(path: path)
-        
-        // Record connection events
+
         if !wasConnected && isConnected {
-            // Connection established
             connectionStartTime = Date()
             lastConnectedAt = Date()
             addConnectionEvent(.connected, type: newConnectionType, quality: newQuality)
         } else if wasConnected && !isConnected {
-            // Connection lost
             let duration = connectionStartTime.map { Date().timeIntervalSince($0) }
             addConnectionEvent(.disconnected, type: previousType, quality: .unavailable, duration: duration)
             connectionStartTime = nil
         } else if isConnected {
-            // Connection type or quality changed
             if previousType != newConnectionType {
                 addConnectionEvent(.typeChanged, type: newConnectionType, quality: newQuality)
             } else if previousQuality != newQuality {
                 addConnectionEvent(.qualityChanged, type: newConnectionType, quality: newQuality)
             }
         }
-        
+
         connectionType = newConnectionType
         connectionQuality = newQuality
-        
-        // Log connection changes
+
         print("Network status changed: Connected=\(isConnected), Type=\(connectionType.displayName), Quality=\(connectionQuality.displayName), Expensive=\(isExpensive), Constrained=\(isConstrained)")
 
-        // Broadcast change for non-View observers
         NotificationCenter.default.post(
             name: .NetworkConnectivityChanged,
             object: self,
@@ -184,15 +176,14 @@ class NetworkMonitor {
             ]
         )
     }
-    
+
     private func calculateConnectionQuality(path: NWPath) -> ConnectionQuality {
         if path.status != .satisfied {
             return .unavailable
         }
-        
-        // Base quality on connection type and constraints
+
         var quality: ConnectionQuality
-        
+
         switch connectionType {
         case .wifi, .ethernet:
             quality = isConstrained ? .good : .excellent
@@ -201,10 +192,10 @@ class NetworkMonitor {
         case .unknown:
             quality = .poor
         }
-        
+
         return quality
     }
-    
+
     private func addConnectionEvent(
         _ eventType: ConnectionEvent.ConnectionEventType,
         type: ConnectionType,
@@ -218,16 +209,15 @@ class NetworkMonitor {
             quality: quality,
             duration: duration
         )
-        
+
         connectionHistory.insert(event, at: 0)
-        
+
         if connectionHistory.count > maxHistoryEntries {
             connectionHistory = Array(connectionHistory.prefix(maxHistoryEntries))
         }
     }
-    
+
     private func setupQualityMonitoring() {
-        // Monitor connection quality changes over time
         Timer.publish(every: 30, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
@@ -235,66 +225,60 @@ class NetworkMonitor {
             }
             .store(in: &cancellables)
     }
-    
+
     private func performQualityCheck() {
         guard isConnected else { return }
-        
-        // In a real implementation, this could perform network speed tests
-        // or ping tests to determine actual connection quality
-        
-        // For now, we'll update quality based on current constraints
+
+
         let currentPath = monitor.currentPath
         let newQuality = calculateConnectionQuality(path: currentPath)
-        
+
         if newQuality != connectionQuality {
             connectionQuality = newQuality
             addConnectionEvent(.qualityChanged, type: connectionType, quality: newQuality)
         }
     }
-    
-    // MARK: - Public Methods
-    
+
+
     func checkConnectivity() -> Bool {
         return isConnected
     }
-    
+
     func getConnectionInfo() -> (isConnected: Bool, type: ConnectionType, isExpensive: Bool, isConstrained: Bool) {
         return (isConnected, connectionType, isExpensive, isConstrained)
     }
-    
+
     func shouldShowOfflineMessage() -> Bool {
         return !isConnected
     }
-    
+
     func shouldLimitDataUsage() -> Bool {
         return isExpensive || isConstrained
     }
-    
+
     func getNetworkStatusMessage() -> String {
         if !isConnected {
             return "インターネット接続がありません"
         }
-        
+
         var message = "\(connectionType.displayName)で接続中"
-        
+
         if isExpensive {
             message += "（従量制課金）"
         }
-        
+
         if isConstrained {
             message += "（制限あり）"
         }
-        
+
         return message
     }
 }
 
-// MARK: - Notifications
 extension Notification.Name {
     static let NetworkConnectivityChanged = Notification.Name("NetworkConnectivityChanged")
 }
 
-// MARK: - Network Error Handling
 
 extension NetworkMonitor {
     func isNetworkError(_ error: Error) -> Bool {
@@ -314,7 +298,7 @@ extension NetworkMonitor {
         }
         return false
     }
-    
+
     func getNetworkErrorMessage(_ error: Error) -> String {
         if let urlError = error as? URLError {
             switch urlError.code {
@@ -338,7 +322,7 @@ extension NetworkMonitor {
         }
         return "ネットワークエラーが発生しました"
     }
-    
+
     func shouldRetryNetworkRequest(_ error: Error) -> Bool {
         if let urlError = error as? URLError {
             switch urlError.code {
@@ -355,35 +339,30 @@ extension NetworkMonitor {
         }
         return false
     }
-    
+
     func getRetryDelay(for error: Error, attempt: Int) -> TimeInterval {
         let baseDelay: TimeInterval = 2.0
         let maxDelay: TimeInterval = 30.0
-        
-        // Exponential backoff with jitter
+
         let delay = min(baseDelay * pow(2.0, Double(attempt - 1)), maxDelay)
         let jitter = Double.random(in: 0...1)
-        
+
         return delay + jitter
     }
-    
-    // MARK: - Enhanced Network Diagnostics
-    
+
+
     func performNetworkDiagnostics() async -> NetworkDiagnostics {
         let startTime = Date()
-        
-        // Test basic connectivity
+
         let connectivityResult = await testConnectivity()
-        
-        // Test DNS resolution
+
         let dnsResult = await testDNSResolution()
-        
-        // Test server reachability
+
         let serverResult = await testServerReachability()
-        
+
         let endTime = Date()
         let totalTime = endTime.timeIntervalSince(startTime)
-        
+
         return NetworkDiagnostics(
             isConnected: isConnected,
             connectionType: connectionType,
@@ -397,7 +376,7 @@ extension NetworkMonitor {
             timestamp: Date()
         )
     }
-    
+
     private func testConnectivity() async -> DiagnosticResult {
         guard isConnected else {
             return DiagnosticResult(
@@ -407,16 +386,16 @@ extension NetworkMonitor {
                 error: "No network connection"
             )
         }
-        
+
         let startTime = Date()
-        
+
         do {
             let url = URL(string: "https://www.google.com")!
             let request = URLRequest(url: url, timeoutInterval: 5.0)
             let (_, response) = try await URLSession.shared.data(for: request)
-            
+
             let responseTime = Date().timeIntervalSince(startTime)
-            
+
             if let httpResponse = response as? HTTPURLResponse,
                httpResponse.statusCode == 200 {
                 return DiagnosticResult(
@@ -443,18 +422,17 @@ extension NetworkMonitor {
             )
         }
     }
-    
+
     private func testDNSResolution() async -> DiagnosticResult {
         let startTime = Date()
-        
+
         do {
-            let host = "api.example.com" // Replace with actual API host
+            let host = "api.example.com"
             let url = URL(string: "https://\(host)")!
             let request = URLRequest(url: url, timeoutInterval: 3.0)
-            
-            // Just test DNS resolution, don't need full request
+
             _ = try await URLSession.shared.data(for: request)
-            
+
             let responseTime = Date().timeIntervalSince(startTime)
             return DiagnosticResult(
                 success: true,
@@ -472,19 +450,18 @@ extension NetworkMonitor {
             )
         }
     }
-    
+
     private func testServerReachability() async -> DiagnosticResult {
         let startTime = Date()
-        
+
         do {
-            // Test API server health endpoint
             let baseURL = APIConfig.shared.baseURLString
             let healthURL = URL(string: "\(baseURL)/health")!
             let request = URLRequest(url: healthURL, timeoutInterval: 10.0)
-            
+
             let (_, response) = try await URLSession.shared.data(for: request)
             let responseTime = Date().timeIntervalSince(startTime)
-            
+
             if let httpResponse = response as? HTTPURLResponse,
                200...299 ~= httpResponse.statusCode {
                 return DiagnosticResult(
@@ -513,7 +490,6 @@ extension NetworkMonitor {
     }
 }
 
-// MARK: - Network Diagnostics Types
 
 struct NetworkDiagnostics {
     let isConnected: Bool
@@ -526,14 +502,14 @@ struct NetworkDiagnostics {
     let serverTest: DiagnosticResult
     let totalDiagnosticTime: TimeInterval
     let timestamp: Date
-    
+
     var overallHealth: NetworkHealth {
         if !isConnected {
             return .offline
         }
-        
+
         let allTestsPassed = connectivityTest.success && dnsTest.success && serverTest.success
-        
+
         if allTestsPassed {
             return connectionQuality == .excellent ? .excellent : .good
         } else if connectivityTest.success {
@@ -542,34 +518,34 @@ struct NetworkDiagnostics {
             return .poor
         }
     }
-    
+
     var recommendations: [String] {
         var suggestions: [String] = []
-        
+
         if !isConnected {
             suggestions.append("ネットワーク接続を確認してください")
         }
-        
+
         if isExpensive {
             suggestions.append("従量制課金接続を使用中です。データ使用量にご注意ください")
         }
-        
+
         if isConstrained {
             suggestions.append("制限された接続を使用中です。一部機能が制限される場合があります")
         }
-        
+
         if !connectivityTest.success {
             suggestions.append("インターネット接続に問題があります")
         }
-        
+
         if !dnsTest.success {
             suggestions.append("DNS設定を確認してください")
         }
-        
+
         if !serverTest.success {
             suggestions.append("APIサーバーが利用できません。しばらく時間をおいてから再試行してください")
         }
-        
+
         return suggestions
     }
 }
@@ -587,7 +563,7 @@ enum NetworkHealth {
     case degraded
     case poor
     case offline
-    
+
     var displayName: String {
         switch self {
         case .excellent:
@@ -602,7 +578,7 @@ enum NetworkHealth {
             return "オフライン"
         }
     }
-    
+
     var color: String {
         switch self {
         case .excellent:

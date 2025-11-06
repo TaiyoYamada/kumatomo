@@ -4,14 +4,13 @@ import Resolver
 @main
 struct kumatomoApp: App {
     @State private var authViewModel = AuthViewModel()
-    
+
     @MainActor
     init() {
-        // Register dependencies
         Resolver.registerAllServices()
         print("👉 現在のAPI_BASE_URL:", APIConfig.shared.baseURLString)
     }
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()

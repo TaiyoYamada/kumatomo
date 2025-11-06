@@ -17,7 +17,7 @@ enum KumamonAIError: LocalizedError {
     case emptyMessage
     case invalidMessage
     case providerError(String)
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidURL:
@@ -54,7 +54,7 @@ enum KumamonAIError: LocalizedError {
             return "AIプロバイダーエラー: \(message)"
         }
     }
-    
+
     var recoverySuggestion: String? {
         switch self {
         case .invalidURL:
@@ -91,7 +91,7 @@ enum KumamonAIError: LocalizedError {
             return "しばらく時間をおいてから再試行してください"
         }
     }
-    
+
     var failureReason: String? {
         switch self {
         case .networkError:
@@ -126,7 +126,7 @@ enum KumamonAIError: LocalizedError {
             return nil
         }
     }
-    
+
     private func getDecodingErrorMessage(from error: DecodingError) -> String {
         switch error {
         case .keyNotFound(let key, _):
@@ -143,14 +143,13 @@ enum KumamonAIError: LocalizedError {
     }
 }
 
-// MARK: - AI Service State
 enum AIServiceState: Equatable {
     case idle
     case loading
     case typing
     case error(KumamonAIError)
     case success
-    
+
     static func == (lhs: AIServiceState, rhs: AIServiceState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle), (.loading, .loading), (.typing, .typing), (.success, .success):

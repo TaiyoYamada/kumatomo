@@ -1,9 +1,8 @@
 import Foundation
 
-// MARK: - Sidebar Menu Item Type
 enum SidebarMenuItemType: CaseIterable {
     case kumamonAI, bookmarks, likes, favoriteShops, coupons, notifications, help, contact, settings, logout
-    
+
     var icon: String {
         switch self {
         case .kumamonAI: return "bubble.left.and.bubble.right"
@@ -18,7 +17,7 @@ enum SidebarMenuItemType: CaseIterable {
         case .logout: return "rectangle.portrait.and.arrow.right"
         }
     }
-    
+
     var title: String {
         switch self {
         case .kumamonAI: return "くまモンAI"
@@ -33,7 +32,7 @@ enum SidebarMenuItemType: CaseIterable {
         case .logout: return "ログアウト"
         }
     }
-    
+
     var subtitle: String? {
         switch self {
         case .kumamonAI: return "AIに相談する"
@@ -46,21 +45,21 @@ enum SidebarMenuItemType: CaseIterable {
         case .notifications, .help, .contact: return nil
         }
     }
-    
+
     var isExternalLink: Bool {
         switch self {
         case .notifications, .help, .contact: return true
         default: return false
         }
     }
-    
+
     var externalURL: String? {
         switch self {
         case .notifications, .help, .contact: return "https://www.notion.so/274db424e42280019ed4d3cbbcd9540d"
         default: return nil
         }
     }
-    
+
     var isPrimarySection: Bool {
         switch self {
         case .kumamonAI, .bookmarks, .likes, .favoriteShops, .coupons: return true
@@ -70,7 +69,6 @@ enum SidebarMenuItemType: CaseIterable {
 }
 
 
-// MARK: - Extensions
 extension SidebarMenuItemType: Identifiable {
     var id: String { title }
 }

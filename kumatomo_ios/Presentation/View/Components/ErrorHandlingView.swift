@@ -4,47 +4,42 @@ struct ErrorHandlingView: View {
     let error: AppError
     let onRetry: (() async throws -> Void)?
     let onDismiss: () -> Void
-    
+
     @Environment(NetworkMonitor.self) private var networkMonitor
     @State private var errorManager = ErrorManager.shared
     @State private var isRetrying = false
     @State private var showDiagnostics = false
     @State private var diagnostics: NetworkDiagnostics?
-    
+
     var body: some View {
         VStack(spacing: 20) {
-            // Error Icon
             Image(systemName: errorIconName)
                 .font(.system(size: 48))
                 .foregroundColor(errorColor)
                 .padding(.top)
-            
-            // Error Title
+
             Text(error.title)
                 .font(.title2)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
-            
-            // Error Message
+
             Text(error.message)
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-            
-            // Network Status Banner (if network error)
+
             if error.errorType == .network {
                 NetworkStatusBanner()
                     .padding(.horizontal)
             }
-            
-            // Recovery Suggestion
+
             if let suggestion = error.recoverySuggestion {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("解決方法", systemImage: "lightbulb")
                         .font(.headline)
                         .foregroundColor(.orange)
-                    
+
                     Text(suggestion)
                         .font(.body)
                         .foregroundColor(.secondary)
@@ -54,10 +49,8 @@ struct ErrorHandlingView: View {
                 .cornerRadius(12)
                 .padding(.horizontal)
             }
-            
-            // Action Buttons
+
             VStack(spacing: 12) {
-                // Retry Button
                 if error.isRetryable, let onRetry = onRetry {
                     Button(action: {
                         Task {
@@ -83,8 +76,7 @@ struct ErrorHandlingView: View {
                     .disabled(isRetrying)
                     .padding(.horizontal)
                 }
-                
-                // Network Diagnostics Button (for network errors)
+
                 if error.errorType == .network {
                     Button(action: {
                         Task {
@@ -103,8 +95,7 @@ struct ErrorHandlingView: View {
                     }
                     .padding(.horizontal)
                 }
-                
-                // Dismiss Button
+
                 Button(action: onDismiss) {
                     Text("閉じる")
                         .frame(maxWidth: .infinity)
@@ -115,14 +106,13 @@ struct ErrorHandlingView: View {
                 }
                 .padding(.horizontal)
             }
-            
-            // Error Details (expandable)
+
             DisclosureGroup("エラー詳細") {
                 VStack(alignment: .leading, spacing: 8) {
                     ErrorDetailRow(title: "エラータイプ", value: error.errorType.displayName)
                     ErrorDetailRow(title: "発生時刻", value: DateFormatter.localizedString(from: error.timestamp, dateStyle: .short, timeStyle: .medium))
                     ErrorDetailRow(title: "コンテキスト", value: error.context.isEmpty ? "なし" : error.context)
-                    
+
                     if let underlyingError = error.underlyingError {
                         ErrorDetailRow(title: "詳細エラー", value: underlyingError.localizedDescription)
                     }
@@ -132,7 +122,7 @@ struct ErrorHandlingView: View {
                 .cornerRadius(8)
             }
             .padding(.horizontal)
-            
+
             Spacer()
         }
         .sheet(isPresented: $showDiagnostics) {
@@ -140,7 +130,7 @@ struct ErrorHandlingView: View {
                 .appSheetStyle()
         }
     }
-    
+
     private var errorIconName: String {
         switch error.errorType {
         case .network:
@@ -159,7 +149,7 @@ struct ErrorHandlingView: View {
             return "questionmark.circle"
         }
     }
-    
+
     private var errorColor: Color {
         switch error.errorType {
         case .network:
@@ -176,22 +166,21 @@ struct ErrorHandlingView: View {
             return .gray
         }
     }
-    
+
     private func performRetry() async {
         guard let onRetry = onRetry else { return }
-        
+
         isRetrying = true
-        
+
         do {
             try await onRetry()
         } catch {
-            // Handle retry failure
             errorManager.handleError(error, context: "Retry failed")
         }
-        
+
         isRetrying = false
     }
-    
+
     private func runDiagnostics() async {
         showDiagnostics = true
         diagnostics = await networkMonitor.performNetworkDiagnostics()
@@ -201,16 +190,16 @@ struct ErrorHandlingView: View {
 struct ErrorDetailRow: View {
     let title: String
     let value: String
-    
+
     var body: some View {
         HStack {
             Text(title)
                 .font(.caption)
                 .fontWeight(.medium)
                 .foregroundColor(.secondary)
-            
+
             Spacer()
-            
+
             Text(value)
                 .font(.caption)
                 .foregroundColor(.primary)
@@ -221,28 +210,27 @@ struct ErrorDetailRow: View {
 struct NetworkDiagnosticsView: View {
     let diagnostics: NetworkDiagnostics?
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     if let diagnostics = diagnostics {
-                        // Overall Health
                         VStack(alignment: .leading, spacing: 12) {
                             Text("ネットワーク状態")
                                 .font(.headline)
-                            
+
                             HStack {
                                 Circle()
                                     .fill(Color(diagnostics.overallHealth.color))
                                     .frame(width: 12, height: 12)
-                                
+
                                 Text(diagnostics.overallHealth.displayName)
                                     .font(.body)
                                     .fontWeight(.medium)
-                                
+
                                 Spacer()
-                                
+
                                 Text(diagnostics.connectionType.displayName)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
@@ -251,22 +239,21 @@ struct NetworkDiagnosticsView: View {
                         .padding()
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(12)
-                        
-                        // Test Results
+
                         VStack(alignment: .leading, spacing: 16) {
                             Text("診断結果")
                                 .font(.headline)
-                            
+
                             DiagnosticResultView(
                                 title: "インターネット接続",
                                 result: diagnostics.connectivityTest
                             )
-                            
+
                             DiagnosticResultView(
                                 title: "DNS解決",
                                 result: diagnostics.dnsTest
                             )
-                            
+
                             DiagnosticResultView(
                                 title: "APIサーバー",
                                 result: diagnostics.serverTest
@@ -275,19 +262,18 @@ struct NetworkDiagnosticsView: View {
                         .padding()
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(12)
-                        
-                        // Recommendations
+
                         if !diagnostics.recommendations.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("推奨事項")
                                     .font(.headline)
-                                
+
                                 ForEach(diagnostics.recommendations, id: \.self) { recommendation in
                                     HStack(alignment: .top) {
                                         Image(systemName: "lightbulb")
                                             .foregroundColor(.orange)
                                             .font(.caption)
-                                        
+
                                         Text(recommendation)
                                             .font(.body)
                                             .foregroundColor(.secondary)
@@ -298,12 +284,11 @@ struct NetworkDiagnosticsView: View {
                             .background(Color.orange.opacity(0.1))
                             .cornerRadius(12)
                         }
-                        
-                        // Technical Details
+
                         VStack(alignment: .leading, spacing: 12) {
                             Text("技術詳細")
                                 .font(.headline)
-                            
+
                             VStack(alignment: .leading, spacing: 8) {
                                 DetailRow(title: "接続タイプ", value: diagnostics.connectionType.displayName)
                                 DetailRow(title: "接続品質", value: diagnostics.connectionQuality.displayName)
@@ -339,28 +324,28 @@ struct NetworkDiagnosticsView: View {
 struct DiagnosticResultView: View {
     let title: String
     let result: DiagnosticResult
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Image(systemName: result.success ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .foregroundColor(result.success ? .green : .red)
-                
+
                 Text(title)
                     .font(.body)
                     .fontWeight(.medium)
-                
+
                 Spacer()
-                
+
                 Text(String(format: "%.0fms", result.responseTime * 1000))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            
+
             Text(result.message)
                 .font(.caption)
                 .foregroundColor(.secondary)
-            
+
             if let error = result.error {
                 Text("エラー: \(error)")
                     .font(.caption)
@@ -376,15 +361,15 @@ struct DiagnosticResultView: View {
 struct DetailRow: View {
     let title: String
     let value: String
-    
+
     var body: some View {
         HStack {
             Text(title)
                 .font(.caption)
                 .foregroundColor(.secondary)
-            
+
             Spacer()
-            
+
             Text(value)
                 .font(.caption)
                 .fontWeight(.medium)
@@ -392,7 +377,6 @@ struct DetailRow: View {
     }
 }
 
-// MARK: - Error Type Extension
 
 extension AppError.ErrorType {
     var displayName: String {
@@ -415,7 +399,6 @@ extension AppError.ErrorType {
     }
 }
 
-// MARK: - Preview
 
 struct ErrorHandlingView_Previews: PreviewProvider {
     static var previews: some View {
@@ -431,7 +414,7 @@ struct ErrorHandlingView_Previews: PreviewProvider {
                 onDismiss: {}
             )
             .previewDisplayName("Network Error")
-            
+
             ErrorHandlingView(
                 error: AppError.validationError(
                     "入力された情報に問題があります",

@@ -1,6 +1,5 @@
 import Foundation
 
-// Data adapter wrapping ShopAPIService
 final class ShopRepositoryImpl: ShopRepository {
     private let service: ShopAPIService
 

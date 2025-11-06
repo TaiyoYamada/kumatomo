@@ -7,18 +7,18 @@ import Observation
 @Observable
 class ErrorManager {
     static let shared = ErrorManager()
-    
+
     var currentError: AppError?
     var errorHistory: [AppError] = []
     var isShowingError = false
-    
+
     private var cancellables = Set<AnyCancellable>()
     private let maxHistoryCount = 50
-    
+
     private init() {
         setupNetworkMonitoring()
     }
-    
+
     private func setupNetworkMonitoring() {
         NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
             .compactMap { $0.userInfo?["isConnected"] as? Bool }
@@ -30,58 +30,51 @@ class ErrorManager {
             }
             .store(in: &cancellables)
     }
-    
-    // MARK: - Error Handling
-    
+
+
     func handleError(_ error: Error, context: String = "") {
         let appError = AppError.from(error, context: context)
-        
-        // Log error
+
         logError(appError)
-        
-        // Add to history
+
         addToHistory(appError)
-        
-        // Show error if it's user-facing
+
         if appError.shouldShowToUser {
             showError(appError)
         }
     }
-    
+
     func handleError(_ error: AppError, context: String = "") {
-        // Log error
         logError(error)
-        
-        // Add to history
+
         addToHistory(error)
-        
-        // Show error if it's user-facing
+
         if error.shouldShowToUser {
             showError(error)
         }
     }
-    
+
     func handleAPIError(_ error: APIError, context: String = "") {
         let appError = AppError.apiError(error, context: context)
         handleError(appError)
     }
-    
+
     func showError(_ error: AppError) {
         currentError = error
         isShowingError = true
     }
-    
+
     func dismissError() {
         currentError = nil
         isShowingError = false
     }
-    
+
     func retryLastOperation() async {
         guard let error = currentError,
               let retryAction = error.retryAction else {
             return
         }
-        
+
         do {
             try await retryAction()
             dismissError()
@@ -89,24 +82,21 @@ class ErrorManager {
             handleError(error, context: "Retry failed")
         }
     }
-    
-    // MARK: - Error History
-    
+
+
     private func addToHistory(_ error: AppError) {
         errorHistory.insert(error, at: 0)
-        
-        // Limit history size
+
         if errorHistory.count > maxHistoryCount {
             errorHistory = Array(errorHistory.prefix(maxHistoryCount))
         }
     }
-    
+
     func clearHistory() {
         errorHistory.removeAll()
     }
-    
-    // MARK: - Logging
-    
+
+
     private func logError(_ error: AppError) {
         let logMessage = """
         [ERROR] \(error.title)
@@ -117,26 +107,23 @@ class ErrorManager {
         Recovery: \(error.recoverySuggestion ?? "None")
         Retryable: \(error.isRetryable)
         """
-        
+
         print(logMessage)
-        
-        // In production, you might want to send this to a logging service
+
         #if DEBUG
-        // Additional debug information
         if let underlyingError = error.underlyingError {
             print("Underlying error: \(underlyingError)")
         }
         #endif
     }
-    
-    // MARK: - Error Analytics
-    
+
+
     func getErrorStatistics() -> ErrorStatistics {
         let totalErrors = errorHistory.count
         let networkErrors = errorHistory.filter { $0.errorType == .network }.count
         let apiErrors = errorHistory.filter { $0.errorType == .api }.count
         let validationErrors = errorHistory.filter { $0.errorType == .validation }.count
-        
+
         return ErrorStatistics(
             totalErrors: totalErrors,
             networkErrors: networkErrors,
@@ -147,7 +134,6 @@ class ErrorManager {
     }
 }
 
-// MARK: - AppError Definition
 
 struct AppError: Identifiable, Equatable {
     let id = UUID()
@@ -161,7 +147,7 @@ struct AppError: Identifiable, Equatable {
     let shouldShowToUser: Bool
     let underlyingError: Error?
     let retryAction: (() async throws -> Void)?
-    
+
     enum ErrorType {
         case network
         case api
@@ -171,29 +157,28 @@ struct AppError: Identifiable, Equatable {
         case fileSystem
         case unknown
     }
-    
+
     static func == (lhs: AppError, rhs: AppError) -> Bool {
         lhs.id == rhs.id
     }
-    
-    // MARK: - Factory Methods
-    
+
+
     static func from(_ error: Error, context: String = "") -> AppError {
         if let apiError = error as? APIError {
             return AppError.apiError(apiError, context: context)
         }
-        
+
         if let urlError = error as? URLError {
             return AppError.networkError(urlError, context: context)
         }
-        
+
         if let authError = error as? AuthError {
             return AppError.authenticationError(authError, context: context)
         }
-        
+
         return AppError.unknownError(error, context: context)
     }
-    
+
     static func apiError(_ error: APIError, context: String = "") -> AppError {
         return AppError(
             title: "APIエラー",
@@ -208,7 +193,7 @@ struct AppError: Identifiable, Equatable {
             retryAction: nil
         )
     }
-    
+
     static func networkError(_ error: URLError, context: String = "") -> AppError {
         return AppError(
             title: "ネットワークエラー",
@@ -223,7 +208,7 @@ struct AppError: Identifiable, Equatable {
             retryAction: nil
         )
     }
-    
+
     private static func getNetworkErrorMessage(_ error: URLError) -> String {
         switch error.code {
         case .notConnectedToInternet:
@@ -238,7 +223,7 @@ struct AppError: Identifiable, Equatable {
             return "ネットワークエラーが発生しました"
         }
     }
-    
+
     private static func shouldRetryNetworkRequest(_ error: URLError) -> Bool {
         switch error.code {
         case .timedOut, .networkConnectionLost, .notConnectedToInternet:
@@ -249,7 +234,7 @@ struct AppError: Identifiable, Equatable {
             return false
         }
     }
-    
+
     static func authenticationError(_ error: AuthError, context: String = "") -> AppError {
         return AppError(
             title: "認証エラー",
@@ -264,7 +249,7 @@ struct AppError: Identifiable, Equatable {
             retryAction: nil
         )
     }
-    
+
     static func validationError(_ message: String, context: String = "") -> AppError {
         return AppError(
             title: "入力エラー",
@@ -279,7 +264,7 @@ struct AppError: Identifiable, Equatable {
             retryAction: nil
         )
     }
-    
+
     static func unknownError(_ error: Error, context: String = "") -> AppError {
         return AppError(
             title: "予期しないエラー",
@@ -294,9 +279,8 @@ struct AppError: Identifiable, Equatable {
             retryAction: nil
         )
     }
-    
-    // MARK: - Helper Methods
-    
+
+
     private static func isRetryableAPIError(_ error: APIError) -> Bool {
         switch error {
         case .networkError, .timeout, .serverError:
@@ -311,7 +295,7 @@ struct AppError: Identifiable, Equatable {
             return false
         }
     }
-    
+
     private static func getNetworkRecoverySuggestion(_ error: URLError) -> String {
         switch error.code {
         case .notConnectedToInternet:
@@ -326,7 +310,6 @@ struct AppError: Identifiable, Equatable {
     }
 }
 
-// MARK: - Error Statistics
 
 struct ErrorStatistics {
     let totalErrors: Int
@@ -334,39 +317,38 @@ struct ErrorStatistics {
     let apiErrors: Int
     let validationErrors: Int
     let lastError: AppError?
-    
+
     var networkErrorRate: Double {
         guard totalErrors > 0 else { return 0 }
         return Double(networkErrors) / Double(totalErrors)
     }
-    
+
     var apiErrorRate: Double {
         guard totalErrors > 0 else { return 0 }
         return Double(apiErrors) / Double(totalErrors)
     }
 }
 
-// MARK: - Error Retry Manager
 
 class ErrorRetryManager {
     private var retryAttempts: [String: Int] = [:]
     private let maxRetryAttempts = 3
-    
+
     func canRetry(for errorId: String) -> Bool {
         let attempts = retryAttempts[errorId] ?? 0
         return attempts < maxRetryAttempts
     }
-    
+
     func incrementRetryCount(for errorId: String) {
         retryAttempts[errorId] = (retryAttempts[errorId] ?? 0) + 1
     }
-    
+
     func resetRetryCount(for errorId: String) {
         retryAttempts.removeValue(forKey: errorId)
     }
-    
+
     func getRetryDelay(for errorId: String) -> TimeInterval {
         let attempts = retryAttempts[errorId] ?? 0
-        return min(pow(2.0, Double(attempts)), 30.0) // Exponential backoff, max 30 seconds
+        return min(pow(2.0, Double(attempts)), 30.0)
     }
 }

@@ -7,8 +7,7 @@ import Observation
 @MainActor
 @Observable
 class PostDetailViewModel {
-    // MARK: - Published Properties
-    
+
     var post: Post?
     var comments: [Comment] = []
     var isLoading: Bool = false
@@ -16,50 +15,43 @@ class PostDetailViewModel {
     var errorMessage: String?
     var showSuccessMessage: Bool = false
     var successMessage: String = ""
-    
-    // Engagement loading states
+
     var isTogglingLike: Bool = false
     var isTogglingBookmark: Bool = false
     var isAddingComment: Bool = false
-    
-    // Comment composition
+
     var commentText: String = ""
     var selectedCommentImage: UIImage?
     var showImagePicker: Bool = false
-    
-    // MARK: - Services
-    
+
+
     @ObservationIgnored @Injected var fetchPostUseCase: FetchPostUseCase
     @ObservationIgnored @Injected var fetchCommentsUseCase: FetchCommentsUseCase
     @ObservationIgnored @Injected var createCommentUseCase: CreateCommentUseCase
     @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
     @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
     @ObservationIgnored @Injected var authRepository: AuthRepository
-    
-    // MARK: - Computed Properties
-    
+
+
     var canAddComment: Bool {
         let hasText = !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let hasImage = selectedCommentImage != nil
         return (hasText || hasImage) && !isAddingComment
     }
-    
+
     var commentCharacterCount: Int {
         return commentText.count
     }
-    
+
     var isCommentOverLimit: Bool {
         return commentText.count > 500
     }
-    
-    // MARK: - Post Detail Loading
-    
-    /// Load post details with engagement data
-    /// - Parameter postId: The ID of the post to load
+
+
     func loadPostDetail(postId: Int) async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             let fetchedPost = try await fetchPostUseCase.execute(postId: postId)
             post = fetchedPost
@@ -70,24 +62,20 @@ class PostDetailViewModel {
         } catch {
             await handleGenericError(error, context: "投稿詳細読み込み")
         }
-        
+
         isLoading = false
     }
-    
-    /// Refresh post details
+
     func refreshPostDetail() async {
         guard let currentPost = post else { return }
         await loadPostDetail(postId: currentPost.id)
     }
-    
-    // MARK: - Comments Loading
-    
-    /// Load comments for the current post
-    /// - Parameter postId: The ID of the post to load comments for
+
+
     func loadComments(postId: Int) async {
         isLoadingComments = true
         errorMessage = nil
-        
+
         do {
             let fetchedComments = try await fetchCommentsUseCase.execute(postId: postId)
             comments = fetchedComments.sorted { $0.createdAt < $1.createdAt }
@@ -97,214 +85,175 @@ class PostDetailViewModel {
         } catch {
             await handleGenericError(error, context: "コメント読み込み")
         }
-        
+
         isLoadingComments = false
     }
-    
-    /// Refresh comments for the current post
+
     func refreshComments() async {
         guard let currentPost = post else { return }
         await loadComments(postId: currentPost.id)
     }
-    
-    // MARK: - Like Functionality
-    
-    /// Toggle like status with optimistic updates
+
+
     func toggleLike() async {
         guard var currentPost = post else {
             errorMessage = "投稿が見つかりません"
             return
         }
-        
-        // Prevent multiple simultaneous requests
+
         guard !isTogglingLike else { return }
-        
+
         isTogglingLike = true
         errorMessage = nil
-        
-        // Store original values for rollback
+
         let originalIsLiked = currentPost.isLikedByCurrentUser ?? false
         let originalLikeCount = currentPost.likeCount ?? 0
-        
-        // Optimistic update
+
         let newIsLiked = !originalIsLiked
         let newLikeCount = originalIsLiked ? max(0, originalLikeCount - 1) : originalLikeCount + 1
-        
+
         currentPost.updateLikeStatus(isLiked: newIsLiked, likeCount: newLikeCount)
         post = currentPost
-        
+
         print("🔄 いいね最適化更新: \(newIsLiked ? "いいね" : "いいね解除") (カウント: \(newLikeCount))")
-        
-        // API call with rollback capability via UseCase
+
         let result = await toggleLikeUseCase.execute(postId: currentPost.id, currentState: originalIsLiked, currentCount: originalLikeCount)
         switch result {
         case .success(let response):
-            // Update with server response
             currentPost.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
             post = currentPost
             print("✅ いいね更新成功: \(response.isLiked ? "いいね" : "いいね解除") (サーバーカウント: \(response.likeCount))")
         case .failure(let error):
-            // Rollback on failure
             currentPost.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
             post = currentPost
             await handleEngagementError(error, context: "いいね切り替え")
             print("❌ いいね更新失敗 - ロールバック実行")
         }
-        
+
         isTogglingLike = false
     }
-    
-    // MARK: - Bookmark Functionality
-    
-    /// Toggle bookmark status with optimistic updates
+
+
     func toggleBookmark() async {
         guard var currentPost = post else {
             errorMessage = "投稿が見つかりません"
             return
         }
-        
-        // Prevent multiple simultaneous requests
+
         guard !isTogglingBookmark else { return }
-        
+
         isTogglingBookmark = true
         errorMessage = nil
-        
-        // Store original values for rollback
+
         let originalIsBookmarked = currentPost.isBookmarkedByCurrentUser ?? false
         let originalBookmarkCount = currentPost.bookmarkCount ?? 0
-        
-        // Optimistic update
+
         let newIsBookmarked = !originalIsBookmarked
         let newBookmarkCount = originalIsBookmarked ? max(0, originalBookmarkCount - 1) : originalBookmarkCount + 1
-        
+
         currentPost.updateBookmarkStatus(isBookmarked: newIsBookmarked, bookmarkCount: newBookmarkCount)
         post = currentPost
-        
+
         print("🔄 ブックマーク最適化更新: \(newIsBookmarked ? "ブックマーク" : "ブックマーク解除") (カウント: \(newBookmarkCount))")
-        
-        // API call with rollback capability via UseCase
+
         let result = await toggleBookmarkUseCase.execute(postId: currentPost.id, currentState: originalIsBookmarked, currentCount: originalBookmarkCount)
         switch result {
         case .success(let response):
-            // Update with server response
             currentPost.updateBookmarkStatus(isBookmarked: response.isBookmarked, bookmarkCount: response.bookmarkCount)
             post = currentPost
             print("✅ ブックマーク更新成功: \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))")
         case .failure(let error):
-            // Rollback on failure
             currentPost.updateBookmarkStatus(isBookmarked: originalIsBookmarked, bookmarkCount: originalBookmarkCount)
             post = currentPost
             await handleEngagementError(error, context: "ブックマーク切り替え")
             print("❌ ブックマーク更新失敗 - ロールバック実行")
         }
-        
+
         isTogglingBookmark = false
     }
-    
-    // MARK: - Comment Functionality
-    
-    /// Add a new comment with text and/or image
-    /// - Parameters:
-    ///   - text: The comment text content
-    ///   - image: Optional image to attach to the comment
+
+
     func addComment(_ text: String, image: UIImage? = nil) async {
         guard let currentPost = post else {
             errorMessage = "投稿が見つかりません"
             return
         }
-        
-        // Validate input
+
         let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedText.isEmpty || image != nil else {
             errorMessage = "コメント内容または画像を入力してください"
             return
         }
-        
+
         guard trimmedText.count <= 500 else {
             errorMessage = "コメントが長すぎます（500文字以内）"
             return
         }
-        
-        // Prevent multiple simultaneous requests
+
         guard !isAddingComment else { return }
-        
+
         isAddingComment = true
         errorMessage = nil
-        
+
         do {
             let imageData = image?.jpegData(compressionQuality: 0.8)
             let newComment = try await createCommentUseCase.execute(postId: currentPost.id, content: trimmedText, imageData: imageData)
-            
-            // Add comment to local list
+
             comments.append(newComment)
             comments.sort { $0.createdAt < $1.createdAt }
-            
-            // Update post comment count
+
             var updatedPost = currentPost
             updatedPost.commentCount = (updatedPost.commentCount ?? 0) + 1
             post = updatedPost
-            
-            // Clear form
+
             clearCommentForm()
-            
-            // Show success message
+
             await showSuccess("コメントを投稿しました")
-            
+
             print("✅ コメント追加成功: ID \(newComment.id)")
-            
+
         } catch let error as CommentError {
             await handleCommentError(error, context: "コメント投稿")
         } catch {
             await handleGenericError(error, context: "コメント投稿")
         }
-        
+
         isAddingComment = false
     }
-    
-    /// Add comment using current form state
+
     func submitComment() async {
         await addComment(commentText, image: selectedCommentImage)
     }
-    
-    /// Clear comment composition form
+
     func clearCommentForm() {
         commentText = ""
         selectedCommentImage = nil
     }
-    
-    /// Remove comment image
+
     func removeCommentImage() {
         selectedCommentImage = nil
     }
-    
-    /// Set comment image
-    /// - Parameter image: The image to set
+
     func setCommentImage(_ image: UIImage) {
         selectedCommentImage = image
     }
-    
-    // MARK: - Validation
-    
-    /// Validate comment content
-    /// - Parameter content: The content to validate
-    /// - Returns: Validation result with error message if invalid
+
+
     func validateCommentContent(_ content: String) -> (isValid: Bool, errorMessage: String?) {
         let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         if trimmedContent.isEmpty && selectedCommentImage == nil {
             return (false, "コメント内容を入力してください")
         }
-        
+
         if trimmedContent.count > 500 {
             return (false, "コメントが長すぎます（500文字以内）")
         }
-        
+
         return (true, nil)
     }
-    
-    // MARK: - Utility Methods
-    
-    /// Reset all state
+
+
     func reset() {
         post = nil
         comments = []
@@ -318,24 +267,20 @@ class PostDetailViewModel {
         isAddingComment = false
         clearCommentForm()
     }
-    
-    /// Show success message
-    /// - Parameter message: The success message to show
+
     private func showSuccess(_ message: String) async {
         successMessage = message
         showSuccessMessage = true
-        
-        // Auto-hide after 2 seconds
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.showSuccessMessage = false
         }
     }
-    
-    // MARK: - Error Handling
-    
+
+
     private func handlePostAPIError(_ error: PostAPIError, context: String) async {
         let message: String
-        
+
         switch error {
         case .invalidURL:
             message = "無効なURLです"
@@ -373,42 +318,37 @@ class PostDetailViewModel {
         case .insufficientPermissions:
             message = "権限が不足しています"
         }
-        
+
         errorMessage = "\(context)エラー: \(message)"
         print("🚨 [\(context)] PostAPIError: \(message)")
     }
-    
+
     private func handleCommentError(_ error: CommentError, context: String) async {
         errorMessage = "\(context)エラー: \(error.localizedDescription)"
         print("🚨 [\(context)] CommentError: \(error.localizedDescription)")
     }
-    
+
     private func handleEngagementError(_ error: EngagementError, context: String) async {
         errorMessage = "\(context)エラー: \(error.localizedDescription)"
         print("🚨 [\(context)] EngagementError: \(error.localizedDescription)")
     }
-    
+
     private func handleGenericError(_ error: Error, context: String) async {
         errorMessage = "\(context)エラー: \(error.localizedDescription)"
         print("🚨 [\(context)] GenericError: \(error.localizedDescription)")
     }
 }
 
-// MARK: - Extensions
 
 extension PostDetailViewModel {
-    /// Get formatted engagement counts for display
     var formattedEngagementCounts: (likes: String, comments: String, bookmarks: String) {
         let likes = formatCount(post?.likeCount ?? 0)
         let comments = formatCount(post?.commentCount ?? 0)
         let bookmarks = formatCount(post?.bookmarkCount ?? 0)
-        
+
         return (likes: likes, comments: comments, bookmarks: bookmarks)
     }
-    
-    /// Format count for display (e.g., 1200 -> "1.2K")
-    /// - Parameter count: The count to format
-    /// - Returns: Formatted string
+
     private func formatCount(_ count: Int) -> String {
         if count >= 1000000 {
             return String(format: "%.1fM", Double(count) / 1000000.0)
@@ -418,8 +358,7 @@ extension PostDetailViewModel {
             return "\(count)"
         }
     }
-    
-    /// Check if current user is the post owner
+
     var isCurrentUserPostOwner: Bool {
         guard let post = post,
               let currentUser = authRepository.currentUser else {
@@ -427,8 +366,7 @@ extension PostDetailViewModel {
         }
         return post.userId == currentUser.id
     }
-    
-    /// Get engagement summary text
+
     var engagementSummary: String {
         guard let post = post else { return "" }
         return post.engagementSummary

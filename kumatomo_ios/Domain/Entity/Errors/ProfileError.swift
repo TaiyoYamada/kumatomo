@@ -11,8 +11,7 @@ enum ProfileError: LocalizedError {
     case profileLoadFailed(Error)
     case unauthorized
     case serverError(statusCode: Int, message: String)
-    
-    // Enhanced error cases for comprehensive error handling
+
     case offlineError
     case imageCompressionFailed
     case imageSelectionFailed
@@ -26,8 +25,7 @@ enum ProfileError: LocalizedError {
     case connectionTimeout
     case slowConnection
     case dataCorrupted
-    
-    // Additional comprehensive error types
+
     case profileCreationFailed(Error)
     case profileDeletionFailed(Error)
     case profileNotFound
@@ -72,7 +70,7 @@ enum ProfileError: LocalizedError {
     case securityViolation
     case fraudDetected
     case suspiciousActivity
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidInput(let field, let message):
@@ -211,7 +209,7 @@ enum ProfileError: LocalizedError {
             return "疑わしい活動が検出されました"
         }
     }
-    
+
     var recoverySuggestion: String? {
         switch self {
         case .invalidInput:
@@ -350,7 +348,7 @@ enum ProfileError: LocalizedError {
             return "アカウントのセキュリティを確認してください"
         }
     }
-    
+
     var failureReason: String? {
         switch self {
         case .invalidInput:
@@ -489,10 +487,8 @@ enum ProfileError: LocalizedError {
             return "疑わしい活動パターンが検出されました"
         }
     }
-    
-    // MARK: - Error Classification
-    
-    /// Indicates if this error is recoverable through user action
+
+
     var isRecoverable: Bool {
         switch self {
         case .invalidInput, .usernameNotAvailable, .imageSelectionFailed, .imageTooLarge, .unsupportedImageFormat:
@@ -535,14 +531,13 @@ enum ProfileError: LocalizedError {
             return false
         }
     }
-    
-    /// Indicates if this error should trigger an automatic retry
+
     var shouldAutoRetry: Bool {
         switch self {
         case .networkError, .connectionTimeout, .uploadTimeout, .slowConnection:
             return true
         case .serverError(let statusCode, _):
-            return statusCode >= 500 // Only retry server errors, not client errors
+            return statusCode >= 500
         case .serviceUnavailable, .technicalDifficulties, .temporaryServiceIssue:
             return true
         case .dependencyFailure, .thirdPartyServiceError:
@@ -552,13 +547,12 @@ enum ProfileError: LocalizedError {
         case .dataIntegrityError, .syncConflict:
             return true
         case .backgroundTaskExpired:
-            return false // Should be handled differently
+            return false
         default:
             return false
         }
     }
-    
-    /// Returns the appropriate retry delay for this error
+
     var retryDelay: TimeInterval {
         switch self {
         case .networkError, .connectionTimeout:
@@ -570,7 +564,7 @@ enum ProfileError: LocalizedError {
         case .serverError(let statusCode, _):
             return statusCode >= 500 ? 10.0 : 0.0
         case .rateLimitExceeded:
-            return 300.0 // 5 minutes
+            return 300.0
         case .serviceUnavailable, .technicalDifficulties:
             return 15.0
         case .temporaryServiceIssue:
@@ -578,7 +572,7 @@ enum ProfileError: LocalizedError {
         case .dependencyFailure, .thirdPartyServiceError:
             return 20.0
         case .resourceExhausted:
-            return 60.0 // 1 minute
+            return 60.0
         case .operationTimeout:
             return 10.0
         case .dataIntegrityError, .syncConflict:
@@ -587,8 +581,7 @@ enum ProfileError: LocalizedError {
             return 0.0
         }
     }
-    
-    /// Returns the maximum number of retry attempts for this error
+
     var maxRetryAttempts: Int {
         switch self {
         case .networkError, .connectionTimeout, .uploadTimeout:
@@ -613,9 +606,8 @@ enum ProfileError: LocalizedError {
             return 0
         }
     }
-    
-    // MARK: - Advanced Error Classification
-    
+
+
     var errorCategory: ErrorCategory {
         switch self {
         case .networkError, .offlineError, .connectionTimeout, .slowConnection, .uploadTimeout:
@@ -644,8 +636,7 @@ enum ProfileError: LocalizedError {
             return .system
         }
     }
-    
-    /// Indicates the severity level of the error
+
     var severity: ErrorSeverity {
         switch self {
         case .invalidInput, .usernameNotAvailable, .imageSelectionFailed, .operationCancelled:
@@ -660,8 +651,7 @@ enum ProfileError: LocalizedError {
             return .medium
         }
     }
-    
-    /// Indicates if the error requires immediate user attention
+
     var requiresImmediateAttention: Bool {
         switch self {
         case .accountSuspended, .accountDeleted, .securityViolation, .fraudDetected:
@@ -674,8 +664,7 @@ enum ProfileError: LocalizedError {
             return false
         }
     }
-    
-    /// Indicates if the error should be logged for analytics
+
     var shouldLog: Bool {
         switch self {
         case .operationCancelled, .uploadCancelled:
@@ -686,8 +675,7 @@ enum ProfileError: LocalizedError {
             return true
         }
     }
-    
-    /// Returns the appropriate user action for this error
+
     var suggestedUserAction: UserAction {
         switch self {
         case .offlineError, .networkError, .connectionTimeout:
@@ -710,7 +698,6 @@ enum ProfileError: LocalizedError {
     }
 }
 
-// MARK: - Supporting Enums
 
 enum ErrorCategory: String, CaseIterable {
     case network = "network"
@@ -732,7 +719,7 @@ enum ErrorSeverity: String, CaseIterable {
     case medium = "medium"
     case high = "high"
     case critical = "critical"
-    
+
     var priority: Int {
         switch self {
         case .low: return 1

@@ -28,7 +28,7 @@ struct Shop: Identifiable, Codable, Equatable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
-    
+
     private enum AltCodingKeys: String, CodingKey {
         case imageUrlCamel = "imageUrl"
         case imageURLCaps = "imageURL"
@@ -37,24 +37,20 @@ struct Shop: Identifiable, Codable, Equatable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        // Required
         id = try container.decode(Int.self, forKey: .id)
         name = (try? container.decode(String.self, forKey: .name)) ?? ""
 
-        // Optionals
         description = try? container.decode(String.self, forKey: .description)
         address = try? container.decode(String.self, forKey: .address)
         phone = try? container.decode(String.self, forKey: .phone)
         businessHours = try? container.decode(String.self, forKey: .businessHours)
 
-        // Genre as raw string -> enum
         if let genreString = try? container.decode(String.self, forKey: .genre) {
             genre = ShopGenre(rawValue: genreString)
         } else {
             genre = nil
         }
 
-        // Flexible number decoding (string or number)
         func decodeDoubleFlexible(_ key: CodingKeys) -> Double? {
             if let d = try? container.decode(Double.self, forKey: key) { return d }
             if let s = try? container.decode(String.self, forKey: key) { return Double(s) }
@@ -66,13 +62,11 @@ struct Shop: Identifiable, Codable, Equatable {
         if let url = try? container.decode(String.self, forKey: .imageUrl) {
             imageUrl = url
         } else {
-            // Fallback to camelCase variants for robustness
             let alt = try? decoder.container(keyedBy: AltCodingKeys.self)
             imageUrl = (try? alt?.decodeIfPresent(String.self, forKey: .imageUrlCamel))
                 ?? (try? alt?.decodeIfPresent(String.self, forKey: .imageURLCaps))
         }
 
-        // Defaults when missing
         if let b = try? container.decode(Bool.self, forKey: .hasTryBenefit) {
             hasTryBenefit = b
         } else if let i = try? container.decode(Int.self, forKey: .hasTryBenefit) {
@@ -99,7 +93,6 @@ struct Shop: Identifiable, Codable, Equatable {
             isApproved = true
         }
 
-        // Dates (use decoder's strategy first; fallback to manual)
         if let d = try? container.decode(Date.self, forKey: .createdAt) {
             createdAt = d
         } else if let s = try? container.decode(String.self, forKey: .createdAt) {
@@ -136,24 +129,24 @@ extension Shop {
         self.createdAt = Date()
         self.updatedAt = Date()
     }
-    
+
 
     var coordinate: CLLocationCoordinate2D? {
         guard let lat = latitude, let lng = longitude else { return nil }
         return CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
-    
+
 
     @MainActor func distanceFromUser(_ userLocation: CLLocation?) -> String? {
         guard let userLocation = userLocation,
               let coordinate = coordinate else { return nil }
-        
+
         let shopLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         let distance = userLocation.distance(from: shopLocation)
-        
+
         return LocationManager.formatDistance(distance)
     }
-    
+
 
     @MainActor
     var distanceFromCurrentUser: String? {

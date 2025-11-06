@@ -2,14 +2,14 @@ import Foundation
 
 class SearchAPIService {
     static let shared = SearchAPIService()
-    
+
     private let baseURL = APIConfig.shared.baseURLString
-    
+
     // 認証トークンの取得
     private func getAuthToken() -> String {
         return AuthTokenManager.shared.token ?? ""
     }
-    
+
     // 統合検索を実行する
     func search(query: String, type: SearchFilterType = .all, page: Int = 1, perPage: Int = 10) async throws -> (SearchResult, String, SearchFilterType) {
         var urlComponents = URLComponents(string: "\(baseURL)/search")!
@@ -19,44 +19,43 @@ class SearchAPIService {
             URLQueryItem(name: "page", value: String(page)),
             URLQueryItem(name: "per_page", value: String(perPage))
         ]
-        
+
         urlComponents.queryItems = queryItems
-        
+
         guard let url = urlComponents.url else {
             print("🚨 無効なURL: \(urlComponents)")
             throw APIError.invalidURL
         }
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        
+
         // 認証トークンを設定
         let token = getAuthToken()
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        
+
         print("📡 GET リクエスト: \(url.absoluteString)")
         print("📡 ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
-        
+
         do {
             let (data, response) = try await APISession.shared.session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.invalidResponse
             }
-            
+
             print("📡 ステータスコード: \(httpResponse.statusCode)")
-            
+
             // レスポンスボディをデバッグ出力
             if let jsonString = String(data: data, encoding: .utf8) {
                 print("📡 レスポンスJSON: \(jsonString)")
             }
-            
+
             if httpResponse.statusCode == 200 {
                 let decoder = APIHelper.makeDecoder()
-                
+
                 do {
-                    // APIレスポンスの構造に合わせて解析
                     let apiResponse = try decoder.decode(SearchAPIResponse.self, from: data)
                     return (apiResponse.data, apiResponse.query, SearchFilterType(rawValue: apiResponse.type) ?? .all)
                 } catch let decodingError as DecodingError {
@@ -90,7 +89,6 @@ class SearchAPIService {
     }
 }
 
-// APIレスポンスの構造
 private struct SearchAPIResponse: Codable {
     let data: SearchResult
     let query: String

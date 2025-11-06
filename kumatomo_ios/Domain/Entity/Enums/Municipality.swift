@@ -7,7 +7,7 @@ enum Municipality: String, CaseIterable, Codable {
     case kumamotoNishi = "熊本市西区"
     case kumamotoMinami = "熊本市南区"
     case kumamotoKita = "熊本市北区"
-    
+
     // 市
     case yatsushiro = "八代市"
     case hitoyoshi = "人吉市"
@@ -22,7 +22,7 @@ enum Municipality: String, CaseIterable, Codable {
     case aso = "阿蘇市"
     case amakusa = "天草市"
     case goshi = "合志市"
-    
+
     // 町村
     case misato = "美里町"
     case gyokuto = "玉東町"
@@ -55,11 +55,11 @@ enum Municipality: String, CaseIterable, Codable {
     case kuma = "球磨村"
     case asagiri = "あさぎり町"
     case reihoku = "苓北町"
-    
+
     var displayName: String {
         return self.rawValue
     }
-    
+
     var region: Region {
         switch self {
         case .kumamotoChuo, .kumamotoHigashi, .kumamotoNishi, .kumamotoMinami, .kumamotoKita:
@@ -94,7 +94,7 @@ enum Region: String, CaseIterable {
     case aso = "阿蘇地域"
     case amakusa = "天草地域"
     case other = "その他"
-    
+
     var municipalities: [Municipality] {
         return Municipality.allCases.filter { $0.region == self }
     }

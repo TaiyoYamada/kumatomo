@@ -1,7 +1,6 @@
 import Foundation
 import UIKit
 
-// Data adapter wrapping ImageUploadService, conforming to Domain's ImageUploadRepository
 final class ImageUploadRepositoryImpl: ImageUploadRepository {
     private let service: ImageUploadService
 

@@ -16,7 +16,7 @@ struct InitialSetupView: View {
     @State private var alertMessage = ""
 
     let locations: [String] = City.allCases.map { $0.displayName }
-    
+
     // フォームが有効かチェック
     var isFormValid: Bool {
         !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !selectedLocation.isEmpty
@@ -26,7 +26,7 @@ struct InitialSetupView: View {
         NavigationStack {
             ZStack {
                 Color(UIColor.systemGroupedBackground).edgesIgnoringSafeArea(.all)
-                
+
                 ScrollView {
                     VStack(spacing: 24) {
                         // ヘッダー
@@ -34,12 +34,8 @@ struct InitialSetupView: View {
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .padding(.top, 20)
-                        
-//                        Text("基本情報を設定して、アプリを始めましょう")
-//                            .font(.subheadline)
-//                            .foregroundColor(.secondary)
-//                            .padding(.bottom, 10)
-                        
+
+
                         // プロフィール画像セクション
                         VStack(spacing: 16) {
                             ZStack {
@@ -63,13 +59,13 @@ struct InitialSetupView: View {
                                                 .foregroundColor(.gray)
                                         )
                                 }
-                                
+
                                 PhotosPicker(selection: $selectedImage, matching: .images) {
                                     ZStack {
                                         Circle()
                                             .fill(Color.orange)
                                             .frame(width: 36, height: 36)
-                                        
+
                                         Image(systemName: "camera.fill")
                                             .font(.system(size: 18))
                                             .foregroundColor(.white)
@@ -79,12 +75,12 @@ struct InitialSetupView: View {
                                 .offset(x: 55, y: 40)
                             }
                             .padding(.top, 10)
-                            
+
                             Text("プロフィール画像")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         // フォームセクション
                         VStack(spacing: 20) {
                             // ユーザー名
@@ -94,7 +90,7 @@ struct InitialSetupView: View {
                                 placeholder: "ニックネームを入力",
                                 text: $username
                             )
-                            
+
                             // 住んでいる市
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
@@ -102,11 +98,11 @@ struct InitialSetupView: View {
                                         .foregroundColor(.orange)
                                         .font(.title3)
                                         .frame(width: 24)
-                                    
+
                                     Text("お住まいの市町村")
                                         .font(.headline)
                                 }
-                                
+
                                 Menu {
                                     ForEach(locations, id: \.self) { location in
                                         Button(action: {
@@ -119,9 +115,9 @@ struct InitialSetupView: View {
                                     HStack {
                                         Text(selectedLocation.isEmpty ? "市町村を選択" : selectedLocation)
                                             .foregroundColor(selectedLocation.isEmpty ? .gray : .primary)
-                                        
+
                                         Spacer()
-                                        
+
                                         Image(systemName: "chevron.down")
                                             .font(.caption)
                                             .foregroundColor(.gray)
@@ -132,7 +128,7 @@ struct InitialSetupView: View {
                                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                                 }
                             }
-                            
+
                             // 生年月日
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
@@ -140,11 +136,11 @@ struct InitialSetupView: View {
                                         .foregroundColor(.orange)
                                         .font(.title3)
                                         .frame(width: 24)
-                                    
+
                                     Text("生年月日")
                                         .font(.headline)
                                 }
-                                
+
                                 DatePicker("", selection: $birthday, displayedComponents: .date)
                                     .datePickerStyle(.compact)
                                     .labelsHidden()
@@ -155,7 +151,7 @@ struct InitialSetupView: View {
                             }
                         }
                         .padding(.horizontal, 20)
-                        
+
                         // 送信ボタン
                         Button(action: handleSubmit) {
                             if isSubmitting {
@@ -175,12 +171,12 @@ struct InitialSetupView: View {
                         .padding(.top, 10)
                         .shadow(color: isFormValid ? Color.orange.opacity(0.3) : Color.clear, radius: 5)
                         .disabled(!isFormValid || isSubmitting)
-                        
+
                         Spacer().frame(height: 30)
                     }
                     .padding(.bottom, 40)
                 }
-                
+
                 // ローディングオーバーレイ
                 if viewModel.isLoading {
                     Color.black.opacity(0.4)
@@ -190,7 +186,7 @@ struct InitialSetupView: View {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                     .scaleEffect(1.5)
-                                
+
                                 Text("保存しています...")
                                     .font(.headline)
                                     .foregroundColor(.white)
@@ -212,7 +208,7 @@ struct InitialSetupView: View {
             }
         }
     }
-    
+
     private func loadSelectedImage() {
         Task {
             if let selectedImage = selectedImage,
@@ -225,25 +221,22 @@ struct InitialSetupView: View {
             }
         }
     }
-    
+
     private func handleSubmit() {
         guard isFormValid else { return }
         isSubmitting = true
-        
-        // AuthViewModelに値を設定
+
         viewModel.name = username
         viewModel.location = selectedLocation
         viewModel.birthDate = birthday
-        // プロフィール画像はloadSelectedImageメソッドで既にセット済み
-        
+
         Task {
             let success = await viewModel.saveInitialSetup()
-            
+
             await MainActor.run {
                 isSubmitting = false
-                
+
                 if success {
-                    // 成功したらMainTabViewに遷移するよう状態を更新
                     print("✅ 初期設定保存成功")
                     // 掲示板の市町村初期値をユーザーの選択に設定
                     UserDefaults.standard.set(selectedLocation, forKey: "selectedMunicipality")
@@ -270,7 +263,7 @@ struct FormField: View {
     let title: String
     let placeholder: String
     @Binding var text: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -278,11 +271,11 @@ struct FormField: View {
                     .foregroundColor(.orange)
                     .font(.title3)
                     .frame(width: 24)
-                
+
                 Text(title)
                     .font(.headline)
             }
-            
+
             TextField(placeholder, text: $text)
                 .padding()
                 .background(Color.white)

@@ -2,54 +2,43 @@ import SwiftUI
 import Observation
 import PhotosUI
 
-/// A Twitter-style comment composition interface
 struct CommentComposeView: View {
     @Bindable var viewModel: CommentViewModel
     let onSubmit: () async -> Void
-    
-    // MARK: - State Properties
-    
+
+
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showImagePicker = false
     @State private var textFieldHeight: CGFloat = 40
     @FocusState private var isTextFieldFocused: Bool
-    
-    // MARK: - Constants
-    
+
+
     private let maxTextFieldHeight: CGFloat = 120
     private let minTextFieldHeight: CGFloat = 40
     private let profileImageSize: CGFloat = 40
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Main compose area
             HStack(alignment: .top, spacing: 12) {
-                // User profile image
                 profileImageView
-                
-                // Content area
+
                 VStack(spacing: 12) {
-                    // Text input area
                     textInputArea
-                    
-                    // Selected image preview
+
                     if let selectedImage = viewModel.selectedImage {
                         selectedImagePreview(selectedImage)
                     }
-                    
-                    // Action buttons row
+
                     actionButtonsRow
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            
-            // Error message
+
             if let errorMessage = viewModel.errorMessage {
                 errorMessageView(errorMessage)
             }
-            
-            // Success message
+
             if viewModel.showSuccessMessage {
                 successMessageView
             }
@@ -61,15 +50,13 @@ struct CommentComposeView: View {
             handlePhotoSelection(newItem)
         }
         .onTapGesture {
-            // Dismiss keyboard when tapping outside
             if isTextFieldFocused {
                 isTextFieldFocused = false
             }
         }
     }
-    
-    // MARK: - Profile Image View
-    
+
+
     private var profileImageView: some View {
         AsyncImage(url: URL(string: CurrentUserManager.shared.currentUser?.profileImageURL ?? "")) { image in
             image
@@ -88,14 +75,11 @@ struct CommentComposeView: View {
         .clipShape(Circle())
         .accessibilityLabel("プロフィール画像")
     }
-    
-    // MARK: - Text Input Area
-    
+
+
     private var textInputArea: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Text field with dynamic height
             ZStack(alignment: .topLeading) {
-                // Background for proper sizing
                 Text(viewModel.commentText.isEmpty ? "コメントを追加..." : viewModel.commentText)
                     .font(.system(size: 16))
                     .foregroundColor(.clear)
@@ -112,8 +96,7 @@ struct CommentComposeView: View {
                                 }
                         }
                     )
-                
-                // Actual text field
+
                 TextField("コメントを追加...", text: $viewModel.commentText, axis: .vertical)
                     .font(.system(size: 16))
                     .foregroundColor(.primary)
@@ -139,17 +122,14 @@ struct CommentComposeView: View {
                             )
                     )
             )
-            
-            // Character count and validation
+
             characterCountView
         }
     }
-    
-    // MARK: - Character Count View
-    
+
+
     private var characterCountView: some View {
         HStack {
-            // Validation status indicator
             if viewModel.isValidating {
                 HStack(spacing: 4) {
                     ProgressView()
@@ -169,10 +149,9 @@ struct CommentComposeView: View {
                         .lineLimit(2)
                 }
             }
-            
+
             Spacer()
-            
-            // Character count
+
             if !viewModel.characterCountText.isEmpty {
                 Text(viewModel.characterCountText)
                     .font(.caption)
@@ -181,18 +160,17 @@ struct CommentComposeView: View {
             }
         }
     }
-    
-    // MARK: - Selected Image Preview
-    
+
+
     private func selectedImagePreview(_ image: UIImage) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("添付画像")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                
+
                 Spacer()
-                
+
                 Button("削除") {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         viewModel.removeSelectedImage()
@@ -202,7 +180,7 @@ struct CommentComposeView: View {
                 .foregroundColor(.red)
                 .accessibilityLabel("画像を削除")
             }
-            
+
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -216,12 +194,10 @@ struct CommentComposeView: View {
         }
         .transition(.opacity.combined(with: .scale))
     }
-    
-    // MARK: - Action Buttons Row
-    
+
+
     private var actionButtonsRow: some View {
         HStack(spacing: 16) {
-            // Image picker button
             PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                 Image(systemName: "photo")
                     .font(.system(size: 18, weight: .medium))
@@ -230,16 +206,14 @@ struct CommentComposeView: View {
             }
             .accessibilityLabel("画像を選択")
             .accessibilityHint("フォトライブラリから画像を選択します")
-            
+
             Spacer()
-            
-            // Submit button
+
             submitButton
         }
     }
-    
-    // MARK: - Submit Button
-    
+
+
     private var submitButton: some View {
         Button {
             Task {
@@ -270,7 +244,7 @@ struct CommentComposeView: View {
         .accessibilityHint("コメントを投稿します")
         .accessibilityAddTraits(.isButton)
     }
-    
+
     private var submitButtonColor: Color {
         if viewModel.canSubmit {
             return .primaryOrange
@@ -278,20 +252,19 @@ struct CommentComposeView: View {
             return Color.gray
         }
     }
-    
-    // MARK: - Error Message View
-    
+
+
     private func errorMessageView(_ message: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.caption)
                 .foregroundColor(.red)
-            
+
             Text(message)
                 .font(.caption)
                 .foregroundColor(.red)
                 .multilineTextAlignment(.leading)
-            
+
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -301,19 +274,18 @@ struct CommentComposeView: View {
         .padding(.horizontal, 16)
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
-    
-    // MARK: - Success Message View
-    
+
+
     private var successMessageView: some View {
         HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.caption)
                 .foregroundColor(.green)
-            
+
             Text(viewModel.successMessage)
                 .font(.caption)
                 .foregroundColor(.green)
-            
+
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -323,9 +295,8 @@ struct CommentComposeView: View {
         .padding(.horizontal, 16)
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
-    
-    // MARK: - Helper Methods
-    
+
+
     private func updateTextFieldHeight(_ newHeight: CGFloat) {
         let calculatedHeight = max(minTextFieldHeight, min(newHeight, maxTextFieldHeight))
         if abs(textFieldHeight - calculatedHeight) > 1 {
@@ -334,10 +305,10 @@ struct CommentComposeView: View {
             }
         }
     }
-    
+
     private func handlePhotoSelection(_ item: PhotosPickerItem?) {
         guard let item = item else { return }
-        
+
         Task {
             do {
                 if let data = try await item.loadTransferable(type: Data.self),
@@ -353,31 +324,23 @@ struct CommentComposeView: View {
             }
         }
     }
-    
+
     private func handleSubmit() async {
-        // Dismiss keyboard
         isTextFieldFocused = false
-        
-        // Add haptic feedback
+
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.impactOccurred()
-        
-        // Call the submit handler
+
         await onSubmit()
     }
 }
 
-// MARK: - Keyboard Handling Extension
 
 extension CommentComposeView {
-    /// Handles keyboard appearance and dismissal
     private func handleKeyboardEvents() {
-        // This would be implemented if we need custom keyboard handling
-        // For now, SwiftUI's built-in keyboard handling is sufficient
     }
 }
 
-// MARK: - Preview
 
 #Preview("Default State") {
     VStack {
@@ -388,7 +351,7 @@ extension CommentComposeView {
             }
         )
         .padding()
-        
+
         Spacer()
     }
     .background(Color(.systemGroupedBackground))
@@ -407,7 +370,7 @@ extension CommentComposeView {
             }
         )
         .padding()
-        
+
         Spacer()
     }
     .background(Color(.systemGroupedBackground))
@@ -418,7 +381,7 @@ extension CommentComposeView {
         CommentComposeView(
             viewModel: {
                 let vm = CommentViewModel()
-                vm.commentText = String(repeating: "あ", count: 600) // Over limit
+                vm.commentText = String(repeating: "あ", count: 600)
                 vm.validateContent()
                 return vm
             }(),
@@ -427,7 +390,7 @@ extension CommentComposeView {
             }
         )
         .padding()
-        
+
         Spacer()
     }
     .background(Color(.systemGroupedBackground))
@@ -447,7 +410,7 @@ extension CommentComposeView {
             }
         )
         .padding()
-        
+
         Spacer()
     }
     .background(Color(.systemGroupedBackground))

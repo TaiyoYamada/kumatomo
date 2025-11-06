@@ -5,27 +5,24 @@ struct PostEditView: View {
     @Bindable var viewModel: PostViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var sheetDestination: SheetDestination?
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(UIColor.systemGroupedBackground).ignoresSafeArea()
-                
+
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Content Input Section
                         ContentEditCard(
                             content: $viewModel.postContent,
                             characterCount: viewModel.postContent.count
                         )
-                        
-                        // Shop Selection Section
+
                         ShopEditCard(
                             selectedShop: $viewModel.selectedShop,
                             onPickShop: { sheetDestination = .shopPicker(selectedShop: $viewModel.selectedShop) }
                         )
-                        
-                        // Tags Section
+
                         TagsEditCard(
                             tags: $viewModel.tags,
                             tagInput: $viewModel.tagInput,
@@ -37,8 +34,7 @@ struct PostEditView: View {
                             },
                             onRemoveTag: viewModel.removeTag
                         )
-                        
-                        // Note about images
+
                         ImageEditNote()
                     }
                     .padding(.horizontal, 16)
@@ -54,7 +50,7 @@ struct PostEditView: View {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     UpdateButton(
                         isEnabled: canUpdate,
@@ -74,7 +70,6 @@ struct PostEditView: View {
     }
 }
 
-// MARK: - Computed Properties
 private extension PostEditView {
     var canUpdate: Bool {
         !viewModel.postContent.isEmpty &&
@@ -83,7 +78,6 @@ private extension PostEditView {
     }
 }
 
-// MARK: - Actions
 private extension PostEditView {
     func handleUpdate() {
         Task {
@@ -95,24 +89,23 @@ private extension PostEditView {
     }
 }
 
-// MARK: - Content Edit Card
 private struct ContentEditCard: View {
     @Binding var content: String
     let characterCount: Int
-    
+
     private var isOverLimit: Bool {
         characterCount > 300
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("投稿内容")
                     .font(.headline.weight(.medium))
                     .foregroundStyle(.primary)
-                
+
                 Spacer()
-                
+
                 Text("必須")
                     .font(.caption)
                     .foregroundStyle(.white)
@@ -121,7 +114,7 @@ private struct ContentEditCard: View {
                     .background(Color.red)
                     .cornerRadius(4)
             }
-            
+
             TextEditor(text: $content)
                 .font(.body)
                 .padding(.horizontal, 12)
@@ -139,7 +132,7 @@ private struct ContentEditCard: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(isOverLimit ? Color.red : Color.clear, lineWidth: 1)
                 )
-            
+
             CharacterCounter(
                 count: characterCount,
                 maxCount: 300,
@@ -157,20 +150,19 @@ private struct ContentEditCard: View {
     }
 }
 
-// MARK: - Shop Edit Card
 private struct ShopEditCard: View {
     @Binding var selectedShop: Shop?
     let onPickShop: () -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("お店")
                     .font(.headline.weight(.medium))
                     .foregroundStyle(.primary)
-                
+
                 Spacer()
-                
+
                 Text("任意")
                     .font(.caption)
                     .foregroundStyle(.white)
@@ -179,7 +171,7 @@ private struct ShopEditCard: View {
                     .background(Color.secondary)
                     .cornerRadius(4)
             }
-            
+
             Button(action: { onPickShop() }) {
                 HStack {
                     if let shop = selectedShop {
@@ -187,14 +179,14 @@ private struct ShopEditCard: View {
                             Text(shop.name)
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
-                            
+
                             if let address = shop.address {
                                 Text(address)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
                             }
-                            
+
                             if let genre = shop.genre {
                                 Text(genre.displayName)
                                     .font(.caption)
@@ -209,14 +201,14 @@ private struct ShopEditCard: View {
                         HStack {
                             Image(systemName: "magnifyingglass")
                                 .foregroundStyle(.secondary)
-                            
+
                             Text("お店を検索・選択")
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    
+
                     Spacer()
-                    
+
                     if selectedShop != nil {
                         Button(action: { selectedShop = nil }) {
                             Image(systemName: "xmark.circle.fill")
@@ -246,22 +238,21 @@ private struct ShopEditCard: View {
     }
 }
 
-// MARK: - Tags Edit Card
 private struct TagsEditCard: View {
     @Binding var tags: [String]
     @Binding var tagInput: String
     let onAddTag: () -> Void
     let onRemoveTag: (String) -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("タグ")
                     .font(.headline.weight(.medium))
                     .foregroundStyle(.primary)
-                
+
                 Spacer()
-                
+
                 Text("任意")
                     .font(.caption)
                     .foregroundStyle(.white)
@@ -270,22 +261,20 @@ private struct TagsEditCard: View {
                     .background(Color.secondary)
                     .cornerRadius(4)
             }
-            
-            // Tag Input
+
             HStack {
                 TextField("タグを入力", text: $tagInput)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .onSubmit {
                         onAddTag()
                     }
-                
+
                 Button("追加") {
                     onAddTag()
                 }
                 .disabled(tagInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || tags.count >= 5)
             }
-            
-            // Current Tags
+
             if !tags.isEmpty {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 8) {
                     ForEach(tags, id: \.self) { tag in
@@ -293,9 +282,9 @@ private struct TagsEditCard: View {
                             Text("#\(tag)")
                                 .font(.caption)
                                 .foregroundStyle(.orange)
-                            
+
                             Spacer()
-                            
+
                             Button(action: { onRemoveTag(tag) }) {
                                 Image(systemName: "xmark.circle.fill")
                                     .font(.caption)
@@ -309,12 +298,12 @@ private struct TagsEditCard: View {
                     }
                 }
             }
-            
+
             HStack {
                 Image(systemName: "info.circle")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                
+
                 Text("最大5個まで追加できます (\(tags.count)/5)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -331,7 +320,6 @@ private struct TagsEditCard: View {
     }
 }
 
-// MARK: - Image Edit Note
 private struct ImageEditNote: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -339,12 +327,12 @@ private struct ImageEditNote: View {
                 Image(systemName: "info.circle")
                     .font(.subheadline)
                     .foregroundStyle(.orange)
-                
+
                 Text("画像について")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
             }
-            
+
             Text("現在、投稿の編集では画像の変更はできません。画像を変更したい場合は、投稿を削除して新しく作成してください。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -360,26 +348,25 @@ private struct ImageEditNote: View {
     }
 }
 
-// MARK: - Character Counter
 private struct CharacterCounter: View {
     let count: Int
     let maxCount: Int
     let isOverLimit: Bool
-    
+
     var body: some View {
         HStack {
             if isOverLimit {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.caption)
                     .foregroundStyle(Color.red)
-                
+
                 Text("文字数制限を超えています")
                     .font(.caption)
                     .foregroundStyle(Color.red)
             }
-            
+
             Spacer()
-            
+
             Text("\(count)/\(maxCount)")
                 .font(.caption)
                 .foregroundStyle(isOverLimit ? Color.red : Color.secondary)
@@ -388,12 +375,11 @@ private struct CharacterCounter: View {
     }
 }
 
-// MARK: - Update Button
 private struct UpdateButton: View {
     let isEnabled: Bool
     let isLoading: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button("更新", action: action)
             .disabled(!isEnabled)
@@ -404,11 +390,10 @@ private struct UpdateButton: View {
     }
 }
 
-// MARK: - Overlay Content
 private struct OverlayContent: View {
     @Bindable var viewModel: PostViewModel
     let onDismiss: () -> Void
-    
+
     var body: some View {
         Group {
             if let errorMessage = viewModel.errorMessage {
@@ -419,11 +404,11 @@ private struct OverlayContent: View {
                     }
                 )
             }
-            
+
             if viewModel.showSuccessModal {
                 SuccessOverlay(onDismiss: onDismiss)
             }
-            
+
             if viewModel.isLoading {
                 LoadingOverlay()
             }
@@ -431,11 +416,10 @@ private struct OverlayContent: View {
     }
 }
 
-// MARK: - Error Overlay
 private struct ErrorOverlay: View {
     let message: String
     let onClose: () -> Void
-    
+
     var body: some View {
         Color.black.opacity(0.4)
             .ignoresSafeArea()
@@ -444,13 +428,13 @@ private struct ErrorOverlay: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.system(size: 32))
                         .foregroundStyle(Color.red)
-                    
+
                     Text(message)
                         .font(.headline.weight(.medium))
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
-                    
+
                     Button("閉じる") {
                         onClose()
                     }
@@ -470,11 +454,10 @@ private struct ErrorOverlay: View {
     }
 }
 
-// MARK: - Success Overlay
 private struct SuccessOverlay: View {
     let onDismiss: () -> Void
     @State private var checkmarkScale: CGFloat = 0
-    
+
     var body: some View {
         Color.black.opacity(0.4)
             .ignoresSafeArea()
@@ -484,18 +467,18 @@ private struct SuccessOverlay: View {
                         Circle()
                             .fill(Color.green.opacity(0.1))
                             .frame(width: 80, height: 80)
-                        
+
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 40))
                             .foregroundStyle(Color.green)
                             .scaleEffect(checkmarkScale)
                     }
-                    
+
                     VStack(spacing: 8) {
                         Text("更新しました！")
                             .font(.title3.weight(.semibold))
                             .foregroundStyle(.primary)
-                        
+
                         Text("変更が反映されました")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -510,7 +493,7 @@ private struct SuccessOverlay: View {
                 withAnimation(.interpolatingSpring(stiffness: 300, damping: 30).delay(0.1)) {
                     checkmarkScale = 1.0
                 }
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     onDismiss()
                 }
@@ -522,7 +505,6 @@ private struct SuccessOverlay: View {
     }
 }
 
-// MARK: - Loading Overlay
 private struct LoadingOverlay: View {
     var body: some View {
         Color.black.opacity(0.4)
@@ -532,7 +514,7 @@ private struct LoadingOverlay: View {
                     ProgressView()
                         .scaleEffect(1.2)
                         .tint(.white)
-                    
+
                     Text("更新中...")
                         .font(.subheadline)
                         .foregroundStyle(.white)

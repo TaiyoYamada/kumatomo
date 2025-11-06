@@ -6,13 +6,13 @@ class AuthService: ObservableObject {
     @Published var currentUser: User?
 
     static let shared = AuthService()
-    
+
     private var cancellables = Set<AnyCancellable>()
     private let baseURL = APIConfig.shared.baseURLString
 
     init() {
         print("🚀 AuthService init called")
-        
+
         if AuthTokenManager.shared.token != nil {
             self.isAuthenticated = true
             Task { [weak self] in
@@ -40,16 +40,16 @@ class AuthService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let credentials = ["email": email, "password": password]
         request.httpBody = try JSONEncoder().encode(credentials)
-        
+
         let (data, response) = try await APISession.shared.session.data(for: request)
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }
-        
+
         if httpResponse.statusCode != 200 {
             // エラーレスポンスの解析
             if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
@@ -57,21 +57,21 @@ class AuthService: ObservableObject {
             }
             throw AuthError.invalidCredentials
         }
-        
+
         // レスポンスからトークンを抽出
         guard let authResponse = try? JSONDecoder().decode(AuthResponse.self, from: data) else {
             throw AuthError.invalidResponse
         }
-        
+
         // トークンを保存
         AuthTokenManager.shared.token = authResponse.access_token
-        
+
         self.isAuthenticated = true
-        
+
         // ユーザー情報の取得
         try await fetchCurrentUser()
     }
-    
+
     @MainActor
     func signOut() async throws {
         guard AuthTokenManager.shared.token != nil else {
@@ -80,21 +80,21 @@ class AuthService: ObservableObject {
             self.currentUser = nil
             return
         }
-        
+
         let url = URL(string: "\(baseURL)/logout")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         // 認証トークンをヘッダーに追加
         AuthTokenManager.shared.authorizedRequest(&request)
-        
+
         do {
             let (_, response) = try await APISession.shared.session.data(for: request)
-            
+
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw URLError(.badServerResponse)
             }
-            
+
             if httpResponse.statusCode != 200 && httpResponse.statusCode != 204 {
                 throw AuthError.logoutFailed
             }
@@ -102,21 +102,19 @@ class AuthService: ObservableObject {
             print("⚠️ ログアウト中にエラー発生: \(error.localizedDescription)")
             // エラーが発生してもトークンは削除する
         }
-        
+
         // トークンをクリア
         AuthTokenManager.shared.clearToken()
-        
+
         self.isAuthenticated = false
         self.currentUser = nil
     }
 
-    /// Attempts to refresh authentication state using the existing token
     @MainActor
     func refreshToken() async throws {
         guard AuthTokenManager.shared.token != nil else {
             throw AuthError.unauthorized
         }
-        // Minimal implementation: re-fetch current user to validate token
         try await fetchCurrentUser()
     }
 
@@ -128,18 +126,12 @@ class AuthService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         var registrationData: [String: Any] = [
             "email": email,
             "password": password,
         ]
-        
-        // birthDateなどの追加項目があればここに記述
-    //    if let birthDate = birthDate {
-    //        let formatter = DateFormatter()
-    //        formatter.dateFormat = "yyyy-MM-dd"
-    //        registrationData["birth_date"] = formatter.string(from: birthDate)
-    //    }
+
 
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: registrationData)
@@ -187,69 +179,65 @@ class AuthService: ObservableObject {
             throw error
         }
     }
-    
+
     @MainActor
     func updateUser(withName name: String?, profileImageURL: String?, bio: String?, location: String?, birthday: Date?, hasCompletedSetup: Bool?) async throws {
         guard AuthTokenManager.shared.token != nil else {
             throw AuthError.unauthorized
         }
-        
+
         let url = URL(string: "\(baseURL)/user/update")!
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         // 認証トークンをヘッダーに追加
         AuthTokenManager.shared.authorizedRequest(&request)
-        
-        // 更新するデータを準備（nilでない値のみ含める）
+
         var updateData: [String: Any] = [:]
-        
+
         if let name = name {
             updateData["name"] = name
         }
-        
+
         if let profileImageURL = profileImageURL {
-            // Use camelCase to align with API
             updateData["profileImageURL"] = profileImageURL
         }
-        
+
         if let bio = bio {
             updateData["bio"] = bio
         }
-        
+
         if let location = location {
             updateData["location"] = location
         }
-        
+
         if let birthday = birthday {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd"
             updateData["birthday"] = formatter.string(from: birthday)
         }
-        
+
         if let hasCompletedSetup = hasCompletedSetup {
-            // Use camelCase to align with API
             updateData["hasCompletedSetup"] = hasCompletedSetup
             print("🔄 hasCompletedSetup送信: \(hasCompletedSetup)")
         }
-        
+
         print("🔄 送信データ: \(updateData)")
         request.httpBody = try JSONSerialization.data(withJSONObject: updateData)
-        
+
         let (data, response) = try await APISession.shared.session.data(for: request)
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }
-        
+
         if httpResponse.statusCode == 401 {
             // 認証エラー
-//            AuthTokenManager.shared.clearToken()
             self.isAuthenticated = false
             throw AuthError.unauthorized
         }
-        
+
         if httpResponse.statusCode != 200 {
             // エラーレスポンスの解析
             if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
@@ -257,12 +245,12 @@ class AuthService: ObservableObject {
             }
             throw AuthError.updateProfileFailed
         }
-        
+
         // 成功したら最新のユーザー情報を取得
         try await fetchCurrentUser()
         print("🔄 ユーザー更新後のhasCompletedSetup: \(self.currentUser?.hasCompletedSetup ?? false)")
     }
-        
+
 
     @MainActor
     func fetchCurrentUser() async throws {
@@ -274,7 +262,6 @@ class AuthService: ObservableObject {
         // トークンの内容を確認（デバッグ用）
         print("🔑 現在のトークン: \(token)")
 
-        // Laravelの標準的な認証済みユーザー取得エンドポイント /api/user に変更
         let url = URL(string: "\(baseURL)/user")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -316,13 +303,11 @@ class AuthService: ObservableObject {
                 throw AuthError.fetchUserFailed
             }
 
-            // JSONデコーダーの設定
             let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase // snake_case から camelCase へ変換
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
             decoder.dateDecodingStrategy = .iso8601
 
             do {
-                // APIレスポンスは "data" キーでラップされているため、UserResponse.self を使用
                 let userResponse = try decoder.decode(UserResponse.self, from: data)
                 self.currentUser = userResponse.data
                 self.isAuthenticated = true
@@ -341,51 +326,49 @@ class AuthService: ObservableObject {
         }
     }
 
-    
+
     @MainActor
     func updateProfileImage(withImageUrl url: String) async throws {
         guard AuthTokenManager.shared.token != nil else {
             throw AuthError.unauthorized
         }
-        
+
         guard var user = currentUser else {
             throw AuthError.userNotFound
         }
-        
+
         user.profileImageURL = url
-        
+
         let apiUrl = URL(string: "\(baseURL)/user/profile")!
         var request = URLRequest(url: apiUrl)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         // 認証トークンをヘッダーに追加
         AuthTokenManager.shared.authorizedRequest(&request)
-        
-        // プロフィール更新データ（camelCase）
+
         let profileData = ["profileImageURL": url]
         request.httpBody = try JSONEncoder().encode(profileData)
-        
+
         let (data, response) = try await APISession.shared.session.data(for: request)
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }
-        
+
         if httpResponse.statusCode == 401 {
             // 認証エラー
-//            AuthTokenManager.shared.clearToken()
             self.isAuthenticated = false
             throw AuthError.unauthorized
         }
-        
+
         if httpResponse.statusCode != 200 {
             if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
                 throw AuthError.serverError(message: errorResponse.message)
             }
             throw AuthError.updateProfileFailed
         }
-        
+
         // 成功したら最新のユーザー情報を取得
         try await fetchCurrentUser()
     }

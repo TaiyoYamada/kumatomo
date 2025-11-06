@@ -15,7 +15,7 @@ enum APIError: LocalizedError {
     case rateLimitExceeded
     case invalidResponse
     case userNotFound
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidURL:
@@ -48,7 +48,7 @@ enum APIError: LocalizedError {
             return "ユーザーが見つかりません"
         }
     }
-    
+
     var recoverySuggestion: String? {
         switch self {
         case .invalidURL:
@@ -81,7 +81,7 @@ enum APIError: LocalizedError {
             return "ユーザーIDを確認してください"
         }
     }
-    
+
     var failureReason: String? {
         switch self {
         case .networkError:
@@ -112,7 +112,7 @@ enum APIError: LocalizedError {
             return nil
         }
     }
-    
+
     private func getDecodingErrorMessage(from error: DecodingError) -> String {
         switch error {
         case .keyNotFound(let key, _):

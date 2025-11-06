@@ -8,7 +8,7 @@ enum ShopAPIError: Error {
     case shopNotFound
     case serverError(String)
     case timeout
-    
+
     var localizedDescription: String {
         switch self {
         case .invalidURL:

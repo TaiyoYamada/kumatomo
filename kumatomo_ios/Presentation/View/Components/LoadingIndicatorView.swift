@@ -3,15 +3,15 @@ import SwiftUI
 struct LoadingIndicatorView: View {
     let operation: LoadingOperation
     let style: LoadingStyle
-    
+
     @State private var loadingManager = LoadingStateManager.shared
     @State private var animationOffset: CGFloat = 0
-    
+
     init(operation: LoadingOperation, style: LoadingStyle = .standard) {
         self.operation = operation
         self.style = style
     }
-    
+
     var body: some View {
         Group {
             switch style {
@@ -31,7 +31,7 @@ struct LoadingIndicatorView: View {
             startAnimation()
         }
     }
-    
+
     private func startAnimation() {
         withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
             animationOffset = 10
@@ -39,7 +39,6 @@ struct LoadingIndicatorView: View {
     }
 }
 
-// MARK: - Loading Styles
 
 enum LoadingStyle {
     case minimal
@@ -49,16 +48,15 @@ enum LoadingStyle {
     case inline
 }
 
-// MARK: - Minimal Loading View
 
 struct MinimalLoadingView: View {
     let operation: LoadingOperation
-    
+
     var body: some View {
         HStack(spacing: 8) {
             ProgressView()
                 .scaleEffect(0.8)
-            
+
             if !operation.title.isEmpty {
                 Text(operation.title)
                     .font(.caption)
@@ -68,19 +66,17 @@ struct MinimalLoadingView: View {
     }
 }
 
-// MARK: - Standard Loading View
 
 struct StandardLoadingView: View {
     let operation: LoadingOperation
-    
+
     var body: some View {
         VStack(spacing: 16) {
-            // Loading Animation
             ZStack {
                 Circle()
                     .stroke(Color.gray.opacity(0.3), lineWidth: 4)
                     .frame(width: 60, height: 60)
-                
+
                 if operation.showProgress {
                     Circle()
                         .trim(from: 0, to: operation.estimatedProgress)
@@ -93,20 +89,19 @@ struct StandardLoadingView: View {
                         .scaleEffect(1.2)
                 }
             }
-            
-            // Title and Message
+
             VStack(spacing: 8) {
                 Text(operation.title)
                     .font(.headline)
                     .multilineTextAlignment(.center)
-                
+
                 if let message = operation.message {
                     Text(message)
                         .font(.body)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
-                
+
                 if operation.showProgress {
                     Text("\(Int(operation.estimatedProgress * 100))%")
                         .font(.caption)
@@ -118,19 +113,17 @@ struct StandardLoadingView: View {
     }
 }
 
-// MARK: - Detailed Loading View
 
 struct DetailedLoadingView: View {
     let operation: LoadingOperation
     @State private var loadingManager = LoadingStateManager.shared
-    
+
     var body: some View {
         VStack(spacing: 20) {
-            // Priority Indicator
             HStack {
                 PriorityBadge(priority: operation.priority)
                 Spacer()
-                
+
                 if operation.isCancellable {
                     Button("キャンセル") {
                         loadingManager.cancelLoading(id: operation.id)
@@ -139,30 +132,25 @@ struct DetailedLoadingView: View {
                     .foregroundColor(.red)
                 }
             }
-            
-            // Main Loading Content
+
             StandardLoadingView(operation: operation)
-            
-            // Progress Details
+
             if operation.showProgress {
                 VStack(spacing: 12) {
-                    // Progress Bar
                     ProgressView(value: operation.estimatedProgress)
                         .progressViewStyle(LinearProgressViewStyle(tint: priorityColor(operation.priority)))
-                    
-                    // Current Step
+
                     if let currentStep = operation.currentStep {
                         Text(currentStep)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    
-                    // Time Information
+
                     HStack {
                         Text("経過時間: \(formatDuration(Date().timeIntervalSince(operation.startTime)))")
-                        
+
                         Spacer()
-                        
+
                         if let estimatedDuration = operation.estimatedDuration {
                             let remaining = max(0, estimatedDuration - Date().timeIntervalSince(operation.startTime))
                             Text("残り: \(formatDuration(remaining))")
@@ -172,12 +160,11 @@ struct DetailedLoadingView: View {
                     .foregroundColor(.secondary)
                 }
             }
-            
-            // Operation Details
+
             VStack(alignment: .leading, spacing: 8) {
                 DetailRow(title: "操作ID", value: String(operation.id.prefix(8)))
                 DetailRow(title: "開始時刻", value: DateFormatter.localizedString(from: operation.startTime, dateStyle: .none, timeStyle: .medium))
-                
+
                 if let estimatedDuration = operation.estimatedDuration {
                     DetailRow(title: "予想時間", value: formatDuration(estimatedDuration))
                 }
@@ -188,7 +175,7 @@ struct DetailedLoadingView: View {
         }
         .padding()
     }
-    
+
     private func priorityColor(_ priority: LoadingPriority) -> Color {
         switch priority {
         case .low:
@@ -201,11 +188,11 @@ struct DetailedLoadingView: View {
             return .red
         }
     }
-    
+
     private func formatDuration(_ duration: TimeInterval) -> String {
         let minutes = Int(duration) / 60
         let seconds = Int(duration) % 60
-        
+
         if minutes > 0 {
             return "\(minutes)分\(seconds)秒"
         } else {
@@ -214,18 +201,15 @@ struct DetailedLoadingView: View {
     }
 }
 
-// MARK: - Overlay Loading View
 
 struct OverlayLoadingView: View {
     let operation: LoadingOperation
-    
+
     var body: some View {
         ZStack {
-            // Background Overlay
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
-            
-            // Loading Content
+
             VStack(spacing: 20) {
                 StandardLoadingView(operation: operation)
             }
@@ -237,20 +221,18 @@ struct OverlayLoadingView: View {
     }
 }
 
-// MARK: - Inline Loading View
 
 struct InlineLoadingView: View {
     let operation: LoadingOperation
-    
+
     var body: some View {
         HStack(spacing: 12) {
-            // Loading Indicator
             if operation.showProgress {
                 ZStack {
                     Circle()
                         .stroke(Color.gray.opacity(0.3), lineWidth: 2)
                         .frame(width: 20, height: 20)
-                    
+
                     Circle()
                         .trim(from: 0, to: operation.estimatedProgress)
                         .stroke(Color.blue, style: StrokeStyle(lineWidth: 2, lineCap: .round))
@@ -262,37 +244,35 @@ struct InlineLoadingView: View {
                 ProgressView()
                     .scaleEffect(0.8)
             }
-            
-            // Text Content
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(operation.title)
                     .font(.body)
                     .fontWeight(.medium)
-                
+
                 if let message = operation.message {
                     Text(message)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
+
                 if operation.showProgress {
                     Text("\(Int(operation.estimatedProgress * 100))%")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Spacer()
         }
         .padding(.vertical, 8)
     }
 }
 
-// MARK: - Supporting Views
 
 struct PriorityBadge: View {
     let priority: LoadingPriority
-    
+
     var body: some View {
         Text(priority.displayName)
             .font(.caption2)
@@ -303,7 +283,7 @@ struct PriorityBadge: View {
             .foregroundColor(priorityColor)
             .cornerRadius(8)
     }
-    
+
     private var priorityColor: Color {
         switch priority {
         case .low:
@@ -318,11 +298,10 @@ struct PriorityBadge: View {
     }
 }
 
-// MARK: - Global Loading Overlay
 
 struct GlobalLoadingOverlay: View {
     @State private var loadingManager = LoadingStateManager.shared
-    
+
     var body: some View {
         ZStack {
             if loadingManager.hasActiveOperations() {
@@ -330,31 +309,29 @@ struct GlobalLoadingOverlay: View {
                     .overlay(
                         VStack {
                             Spacer()
-                            
+
                             HStack {
                                 Spacer()
-                                
-                                // Show critical operations as overlay
+
                                 if let criticalOperation = loadingManager.getCriticalOperations().first {
                                     OverlayLoadingView(operation: criticalOperation)
                                 }
-                                // Show high priority operations as floating indicator
                                 else if let highPriorityOperation = loadingManager.getHighPriorityOperations().first {
                                     VStack {
                                         Spacer()
-                                        
+
                                         HStack {
                                             Spacer()
-                                            
+
                                             FloatingLoadingIndicator(operation: highPriorityOperation)
                                                 .padding()
                                         }
                                     }
                                 }
-                                
+
                                 Spacer()
                             }
-                            
+
                             Spacer()
                         }
                     )
@@ -367,7 +344,7 @@ struct GlobalLoadingOverlay: View {
 struct FloatingLoadingIndicator: View {
     let operation: LoadingOperation
     @State private var loadingManager = LoadingStateManager.shared
-    
+
     var body: some View {
         HStack(spacing: 12) {
             if operation.showProgress {
@@ -375,7 +352,7 @@ struct FloatingLoadingIndicator: View {
                     Circle()
                         .stroke(Color.gray.opacity(0.3), lineWidth: 3)
                         .frame(width: 30, height: 30)
-                    
+
                     Circle()
                         .trim(from: 0, to: operation.estimatedProgress)
                         .stroke(Color.blue, style: StrokeStyle(lineWidth: 3, lineCap: .round))
@@ -387,19 +364,19 @@ struct FloatingLoadingIndicator: View {
                 ProgressView()
                     .scaleEffect(0.9)
             }
-            
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(operation.title)
                     .font(.caption)
                     .fontWeight(.medium)
-                
+
                 if let message = operation.message {
                     Text(message)
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             if operation.isCancellable {
                 Button(action: {
                     loadingManager.cancelLoading(id: operation.id)
@@ -418,7 +395,6 @@ struct FloatingLoadingIndicator: View {
     }
 }
 
-// MARK: - Convenience View Modifiers
 
 extension View {
     func loadingOverlay(
@@ -441,7 +417,7 @@ extension View {
             }
         )
     }
-    
+
     func loadingState(_ loadingManager: LoadingStateManager, operationId: String) -> some View {
         self.overlay(
             Group {
@@ -453,7 +429,6 @@ extension View {
     }
 }
 
-// MARK: - Preview
 
 struct LoadingIndicatorView_Previews: PreviewProvider {
     static var previews: some View {
@@ -468,7 +443,7 @@ struct LoadingIndicatorView_Previews: PreviewProvider {
                 style: .standard
             )
             .previewDisplayName("Standard")
-            
+
             LoadingIndicatorView(
                 operation: LoadingOperation(
                     id: "preview2",
@@ -483,7 +458,7 @@ struct LoadingIndicatorView_Previews: PreviewProvider {
                 style: .detailed
             )
             .previewDisplayName("Detailed with Progress")
-            
+
             LoadingIndicatorView(
                 operation: LoadingOperation(
                     id: "preview3",

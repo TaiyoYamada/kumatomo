@@ -7,9 +7,8 @@ struct PostTimeline: View {
     let onRefresh: () -> Void
     let onLoadMore: () -> Void
     var embedInScrollView: Bool = true
-    // Optional like toggle handler for callers that own their own posts array
     var onToggleLike: ((Post) async -> Void)? = nil
-    
+
     @Environment(BulletinBoardViewModel.self) private var bulletinBoardViewModel
     @Environment(AppRouter.self) private var appRouter
 
@@ -32,7 +31,6 @@ struct PostTimeline: View {
                         if let handler = onToggleLike {
                             await handler(post)
                         } else {
-                            // Default to bulletin board VM when no handler provided
                             bulletinBoardViewModel.toggleLike(for: post)
                         }
                     }
@@ -72,11 +70,9 @@ private struct PostCell: View {
     let onTap: () -> Void
     let onAppear: () -> Void
     let onToggleLike: (Post) async -> Void
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Pass tap handler into the card so it can
-            // attach the gesture only to non-button areas.
             TimelinePostCardView(
                 post: post,
                 onPostTap: onTap,
@@ -95,7 +91,7 @@ private struct PostCell: View {
 
 struct BulletinEmptyStateView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var adaptiveTitleSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -114,7 +110,7 @@ struct BulletinEmptyStateView: View {
             return 18
         }
     }
-    
+
     private var adaptiveSubtitleSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -133,19 +129,19 @@ struct BulletinEmptyStateView: View {
             return 14
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "message.circle")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "6B7280"))
                 .accessibilityHidden(true)
-            
+
             Text("まだ投稿がありません")
                 .font(.system(size: adaptiveTitleSize, weight: .medium))
                 .foregroundColor(Color(hex: "1A1A1A"))
                 .multilineTextAlignment(.center)
-            
+
             Text("最初の投稿をしてみませんか？")
                 .font(.system(size: adaptiveSubtitleSize))
                 .foregroundColor(Color(hex: "6B7280"))

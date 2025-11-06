@@ -2,26 +2,23 @@ import Foundation
 import SwiftUI
 import Combine
 
-// MARK: - Error Recovery Manager
 
 @MainActor
 class ErrorRecoveryManager: ObservableObject {
     static let shared = ErrorRecoveryManager()
-    
+
     @Published var recoveryActions: [String: RecoveryAction] = [:]
     @Published var recoveryHistory: [RecoveryHistoryEntry] = []
     @Published var isRecovering = false
-    
+
     private var cancellables = Set<AnyCancellable>()
     private let maxHistoryEntries = 50
-    
+
     private init() {
         setupDefaultRecoveryActions()
     }
-    
-    // MARK: - Recovery Action Management
-    
-    /// Registers a recovery action for a specific error type
+
+
     func registerRecoveryAction(
         for errorType: String,
         action: @escaping () async throws -> Void,
@@ -36,28 +33,27 @@ class ErrorRecoveryManager: ObservableObject {
             action: action,
             registeredAt: Date()
         )
-        
+
         recoveryActions[errorType] = recoveryAction
     }
-    
-    /// Attempts to recover from the given error
+
     func attemptRecovery(from error: ProfileError) async -> RecoveryResult {
         let errorType = String(describing: error.errorCategory)
-        
+
         guard let recoveryAction = recoveryActions[errorType] else {
             return .noRecoveryAvailable
         }
-        
+
         isRecovering = true
         let startTime = Date()
-        
+
         defer {
             isRecovering = false
         }
-        
+
         do {
             try await recoveryAction.action()
-            
+
             let historyEntry = RecoveryHistoryEntry(
                 errorType: errorType,
                 recoveryDescription: recoveryAction.description,
@@ -65,10 +61,10 @@ class ErrorRecoveryManager: ObservableObject {
                 timestamp: Date(),
                 duration: Date().timeIntervalSince(startTime)
             )
-            
+
             addToHistory(historyEntry)
             return .success
-            
+
         } catch {
             let historyEntry = RecoveryHistoryEntry(
                 errorType: errorType,
@@ -77,90 +73,74 @@ class ErrorRecoveryManager: ObservableObject {
                 timestamp: Date(),
                 duration: Date().timeIntervalSince(startTime)
             )
-            
+
             addToHistory(historyEntry)
             return .failed(error)
         }
     }
-    
-    /// Gets available recovery actions for an error
+
     func getRecoveryActions(for error: ProfileError) -> [RecoveryAction] {
         let errorType = String(describing: error.errorCategory)
-        
+
         if let action = recoveryActions[errorType] {
             return [action]
         }
-        
-        // Return generic recovery actions based on error characteristics
+
         return getGenericRecoveryActions(for: error)
     }
-    
-    // MARK: - Default Recovery Actions
-    
+
+
     private func setupDefaultRecoveryActions() {
-        // Network error recovery
         registerRecoveryAction(
             for: "network",
             action: {
-                // Attempt to refresh network connection
-                try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
-                // In a real implementation, this might trigger network diagnostics
+                try await Task.sleep(nanoseconds: 1_000_000_000)
             },
             description: "ネットワーク接続を再確認",
             priority: .high
         )
-        
-        // Authentication error recovery
+
         registerRecoveryAction(
             for: "authentication",
             action: {
-                // Attempt to refresh authentication token
                 try await AuthService.shared.refreshToken()
             },
             description: "認証情報を更新",
             priority: .high
         )
-        
-        // Data error recovery
+
         registerRecoveryAction(
             for: "data",
             action: {
-                // Clear corrupted cache and reload
                 await ProfileCache.shared.clearCache()
                 try await ProfileCache.shared.reloadFromServer()
             },
             description: "データを再同期",
             priority: .medium
         )
-        
-        // Media error recovery
+
         registerRecoveryAction(
             for: "media",
             action: {
-                // Clear image cache
                 await ImageCache.shared.clearCache()
             },
             description: "画像キャッシュをクリア",
             priority: .low
         )
-        
-        // Server error recovery
+
         registerRecoveryAction(
             for: "server",
             action: {
-                // Wait and check server status
-                try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
-                // In a real implementation, this might ping server health endpoint
+                try await Task.sleep(nanoseconds: 5_000_000_000)
             },
             description: "サーバー状態を確認",
             priority: .medium
         )
     }
-    
+
     private func getGenericRecoveryActions(for error: ProfileError) -> [RecoveryAction] {
         var actions: [RecoveryAction] = []
-        
-        // Add generic retry action for recoverable errors
+
         if error.isRecoverable {
             let retryAction = RecoveryAction(
                 id: "generic-retry",
@@ -168,15 +148,13 @@ class ErrorRecoveryManager: ObservableObject {
                 description: "操作を再試行",
                 priority: .medium,
                 action: {
-                    // Generic retry - caller should implement specific retry logic
                     throw RecoveryError.genericRetryNotImplemented
                 },
                 registeredAt: Date()
             )
             actions.append(retryAction)
         }
-        
-        // Add app restart action for critical errors
+
         if error.severity == .critical {
             let restartAction = RecoveryAction(
                 id: "app-restart",
@@ -184,44 +162,41 @@ class ErrorRecoveryManager: ObservableObject {
                 description: "アプリを再起動",
                 priority: .low,
                 action: {
-                    // In a real implementation, this might trigger app restart
                     throw RecoveryError.appRestartRequired
                 },
                 registeredAt: Date()
             )
             actions.append(restartAction)
         }
-        
+
         return actions
     }
-    
-    // MARK: - History Management
-    
+
+
     private func addToHistory(_ entry: RecoveryHistoryEntry) {
         recoveryHistory.insert(entry, at: 0)
-        
+
         if recoveryHistory.count > maxHistoryEntries {
             recoveryHistory = Array(recoveryHistory.prefix(maxHistoryEntries))
         }
     }
-    
+
     func clearHistory() {
         recoveryHistory.removeAll()
     }
-    
-    // MARK: - Statistics
-    
+
+
     func getRecoveryStatistics() -> RecoveryStatistics {
         let totalAttempts = recoveryHistory.count
         let successfulAttempts = recoveryHistory.filter { $0.result.isSuccess }.count
         let failedAttempts = totalAttempts - successfulAttempts
-        
-        let averageDuration = recoveryHistory.isEmpty ? 0 : 
+
+        let averageDuration = recoveryHistory.isEmpty ? 0 :
             recoveryHistory.reduce(0) { $0 + $1.duration } / Double(totalAttempts)
-        
+
         let errorTypeFrequency = Dictionary(grouping: recoveryHistory, by: { $0.errorType })
             .mapValues { $0.count }
-        
+
         return RecoveryStatistics(
             totalAttempts: totalAttempts,
             successfulAttempts: successfulAttempts,
@@ -233,7 +208,6 @@ class ErrorRecoveryManager: ObservableObject {
     }
 }
 
-// MARK: - Supporting Types
 
 struct RecoveryAction {
     let id: String
@@ -249,7 +223,7 @@ enum RecoveryPriority: Int, CaseIterable {
     case medium = 2
     case high = 3
     case critical = 4
-    
+
     var description: String {
         switch self {
         case .low: return "低"
@@ -264,7 +238,7 @@ enum RecoveryResult {
     case success
     case failed(Error)
     case noRecoveryAvailable
-    
+
     var isSuccess: Bool {
         if case .success = self {
             return true
@@ -296,7 +270,7 @@ enum RecoveryError: LocalizedError {
     case appRestartRequired
     case recoveryActionNotFound
     case recoveryTimeout
-    
+
     var errorDescription: String? {
         switch self {
         case .genericRetryNotImplemented:
@@ -311,18 +285,13 @@ enum RecoveryError: LocalizedError {
     }
 }
 
-// MARK: - Mock Services for Recovery Actions (using existing services)
 
-// Note: Using existing AuthService, ProfileCache, and ImageCache classes
-// from their respective files to avoid duplication
 
-// MARK: - SwiftUI Integration
 
 extension ErrorRecoveryManager {
-    /// Creates a recovery action sheet for SwiftUI views
     func recoveryActionSheet(for error: ProfileError) -> ActionSheet {
         let actions = getRecoveryActions(for: error)
-        
+
         var buttons: [ActionSheet.Button] = actions.map { action in
             .default(Text(action.description)) {
                 Task {
@@ -330,17 +299,16 @@ extension ErrorRecoveryManager {
                 }
             }
         }
-        
+
         buttons.append(.cancel(Text("キャンセル")))
-        
+
         return ActionSheet(
             title: Text("復旧オプション"),
             message: Text("以下の復旧方法を試すことができます"),
             buttons: buttons
         )
     }
-    
-    /// Creates a recovery button for SwiftUI views
+
     func recoveryButton(for error: ProfileError) -> some View {
         Button("復旧を試行") {
             Task {

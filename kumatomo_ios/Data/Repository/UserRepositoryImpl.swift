@@ -2,7 +2,6 @@ import Foundation
 import Combine
 @MainActor
 
-// Data adapter wrapping UserAPIService
 final class UserRepositoryImpl: UserRepository {
     private let service: UserAPIService
 

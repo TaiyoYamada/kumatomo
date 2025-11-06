@@ -6,7 +6,7 @@ struct UserProfileView: View {
     @State private var user: User?
     @State private var isLoading = true
     @State private var errorMessage: String?
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -16,7 +16,6 @@ struct UserProfileView: View {
                 } else if let user = user {
                     ScrollView {
                         VStack(spacing: 16) {
-                            // Profile header
                             VStack(spacing: 12) {
                                 AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
                                     image
@@ -28,17 +27,17 @@ struct UserProfileView: View {
                                 }
                                 .frame(width: 80, height: 80)
                                 .clipShape(Circle())
-                                
+
                                 VStack(spacing: 4) {
                                     Text(user.name ?? "name")
                                         .font(.title2)
                                         .fontWeight(.semibold)
-                                    
+
                                     Text("@\(user.username)")
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }
-                                
+
                                 if let bio = user.bio, !bio.isEmpty {
                                     Text(bio)
                                         .font(.body)
@@ -47,14 +46,13 @@ struct UserProfileView: View {
                                 }
                             }
                             .padding()
-                            
+
                             Divider()
-                            
-                            // TODO: Add user's posts when PostListView component is available
+
                             Text("ユーザーの投稿")
                                 .font(.headline)
                                 .padding()
-                            
+
                             Text("投稿一覧は開発中です")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
@@ -65,16 +63,16 @@ struct UserProfileView: View {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.system(size: 48))
                             .foregroundColor(.secondary)
-                        
+
                         Text("エラーが発生しました")
                             .font(.title2)
                             .fontWeight(.semibold)
-                        
+
                         Text(errorMessage)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
-                        
+
                         Button("再試行") {
                             loadUserProfile()
                         }
@@ -91,23 +89,20 @@ struct UserProfileView: View {
             }
         }
     }
-    
+
     private func loadUserProfile() {
         isLoading = true
         errorMessage = nil
-        
-        // TODO: Implement actual user profile loading when UserAPIService is available
-        // For now, create a placeholder user
+
         Task {
             try? await Task.sleep(nanoseconds: 1_000_000_000)
-            
+
             await MainActor.run {
                 if userId > 0 {
                     user = User(
                         id: userId,
                         name: "ユーザー \(userId)",
                         username: "user\(userId)",
-//                        email: "user\(userId)@example.com",
                         profileImageURL: nil,
                         coverImageURL: nil,
                         bio: "これはサンプルのプロフィールです。",

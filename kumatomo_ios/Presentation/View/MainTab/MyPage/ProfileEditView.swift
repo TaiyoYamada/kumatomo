@@ -13,19 +13,19 @@ struct ProfileEditView: View {
     @State private var showErrorAlert = false
     @State private var showValidationErrors = false
     @State private var showNetworkError = false
-    
+
     @Environment(ProfileErrorHandler.self) private var errorHandler
     @Environment(NetworkMonitor.self) private var networkMonitor
-    
+
     @State private var sheetDestination: SheetDestination?
-    
+
     var onProfileUpdated: (() -> Void)?
-    
+
     init(user: User, onProfileUpdated: (() -> Void)? = nil) {
         _viewModel = State(wrappedValue: ProfileViewModel(profile: user))
         self.onProfileUpdated = onProfileUpdated
     }
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -39,7 +39,7 @@ struct ProfileEditView: View {
                 }
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.clear)
-                
+
                 Section("基本情報") {
                     ProfileFormRow(
                         title: "メールアドレス",
@@ -48,14 +48,14 @@ struct ProfileEditView: View {
                         validation: viewModel.emailValidation,
                         keyboardType: .emailAddress
                     )
-                    
+
                     ProfileFormRow(
                         title: "名前",
                         text: $viewModel.name,
                         placeholder: "名前を入力してください",
                         validation: viewModel.nameValidation
                     )
-                    
+
                     VStack(alignment: .leading, spacing: 8) {
                         ProfileFormRow(
                             title: "ユーザーネーム",
@@ -64,7 +64,7 @@ struct ProfileEditView: View {
                             validation: viewModel.usernameValidation,
                             prefix: "@"
                         )
-                        
+
                         if viewModel.isValidatingUsername {
                             HStack(spacing: 8) {
                                 ProgressView()
@@ -78,7 +78,7 @@ struct ProfileEditView: View {
                                 Image(systemName: viewModel.isUsernameAvailable == true ? "checkmark.circle.fill" : "xmark.circle.fill")
                                     .foregroundColor(viewModel.isUsernameAvailable == true ? .green : .red)
                                     .font(.caption)
-                                
+
                                 Text(message)
                                     .font(.caption)
                                     .foregroundColor(viewModel.isUsernameAvailable == true ? .green : .red)
@@ -86,26 +86,26 @@ struct ProfileEditView: View {
                         }
                     }
                 }
-                
+
                 Section("追加情報") {
                     ProfileBioRow(
                         text: $viewModel.bio,
                         validation: viewModel.bioValidation
                     )
-                    
+
                     ProfileFormRow(
                         title: "出身地",
                         text: $viewModel.location,
                         placeholder: "出身地を入力してください",
                         validation: viewModel.locationValidation
                     )
-                    
+
                     ProfileDatePickerRow(
                         title: "生年月日",
                         date: $viewModel.birthday
                     )
                 }
-                
+
                 if let errorMessage = viewModel.errorMessage {
                     Section {
                         Text(errorMessage)
@@ -125,7 +125,7 @@ struct ProfileEditView: View {
                     }
                     .foregroundColor(.secondary)
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("保存") {
                         Task {
@@ -252,7 +252,7 @@ struct ProfileEditView: View {
                         )
                         .padding(.horizontal, 20)
                     }
-                    
+
                     if viewModel.isCoverImageUploading {
                         ProfileProgressIndicator(
                             progress: viewModel.coverImageUploadProgress,
@@ -269,8 +269,7 @@ struct ProfileEditView: View {
         }
         .withSheetRouter(sheet: $sheetDestination)
     }
-    
-    // Bridge Observation environment property to a SwiftUI Binding for alerts
+
     private var errorAlertBinding: Binding<Bool> {
         Binding<Bool>(
             get: { errorHandler.showErrorAlert },
@@ -283,11 +282,11 @@ struct ProfileEditView: View {
             }
         )
     }
-    
+
     private var isFormValid: Bool {
         return viewModel.isFormValid && networkMonitor.isConnected
     }
-    
+
     private func handleCancelTapped() {
         if viewModel.hasUnsavedChanges {
             showCancelAlert = true
@@ -295,27 +294,27 @@ struct ProfileEditView: View {
             dismiss()
         }
     }
-    
+
     private func handleSaveProfile() async {
         guard networkMonitor.isConnected else {
             errorHandler.handleError(ProfileError.offlineError)
             return
         }
-        
+
         guard viewModel.hasUnsavedChanges else {
             viewModel.showSuccessMessage("変更がありません")
             return
         }
-        
+
         let success = await viewModel.updateProfile()
-        
+
         if success {
             print("✅ Profile save completed successfully - images and data updated")
         } else {
             print("❌ Profile save failed - check ViewModel error state")
         }
     }
-    
+
     private func getLoadingMessage() -> String {
         if viewModel.isProfileImageUploading && viewModel.isCoverImageUploading {
             return "画像をアップロード中..."
@@ -331,7 +330,6 @@ struct ProfileEditView: View {
     }
 }
 
-// MARK: - Profile Form Row Components
 
 struct ProfileFormRow: View {
     let title: String
@@ -340,7 +338,7 @@ struct ProfileFormRow: View {
     let validation: ValidationResult
     var keyboardType: UIKeyboardType = .default
     var prefix: String? = nil
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -349,20 +347,20 @@ struct ProfileFormRow: View {
                     .foregroundColor(.primary)
                 Spacer()
             }
-            
+
             HStack {
                 if let prefix = prefix {
                     Text(prefix)
                         .foregroundColor(.secondary)
                         .font(.body)
                 }
-                
+
                 TextField(placeholder, text: $text)
                     .keyboardType(keyboardType)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
             }
-            
+
             if !validation.isValid, let errorMessage = validation.errorMessage {
                 Text(errorMessage)
                     .font(.caption)
@@ -376,7 +374,7 @@ struct ProfileFormRow: View {
 struct ProfileBioRow: View {
     @Binding var text: String
     let validation: ValidationResult
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -386,10 +384,10 @@ struct ProfileBioRow: View {
                 Spacer()
                 Text("\(text.count)/500")
                     .font(.caption)
-                
+
                     .foregroundColor(.secondary)
             }
-            
+
             TextEditor(text: $text)
                 .frame(minHeight: 80)
                 .padding(8)
@@ -415,7 +413,7 @@ struct ProfileBioRow: View {
                         }
                     }
                 )
-            
+
             if !validation.isValid, let errorMessage = validation.errorMessage {
                 Text(errorMessage)
                     .font(.caption)
@@ -429,7 +427,7 @@ struct ProfileBioRow: View {
 struct ProfileDatePickerRow: View {
     let title: String
     @Binding var date: Date
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -438,7 +436,7 @@ struct ProfileDatePickerRow: View {
                     .foregroundColor(.primary)
                 Spacer()
             }
-            
+
             DatePicker(
                 "",
                 selection: $date,
@@ -446,7 +444,7 @@ struct ProfileDatePickerRow: View {
             )
             .datePickerStyle(.compact)
             .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             Text("この情報は公開されません。年齢に基づいてよりよいコンテンツを表示するために使用されます。")
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -460,7 +458,7 @@ struct ProfileImageEditRow: View {
     @Binding var selectedCoverItem: PhotosPickerItem?
     @Bindable var viewModel: ProfileViewModel
     @Binding var sheetDestination: SheetDestination?
-    
+
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -493,12 +491,12 @@ struct ProfileImageEditRow: View {
                     }
                 }
                 .allowsHitTesting(false)
-                
+
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
-                        
+
                         Button(action: {
                             sheetDestination = .coverImageEdit(
                                 selectedItem: $selectedCoverItem,
@@ -523,7 +521,7 @@ struct ProfileImageEditRow: View {
                     }
                 }
             }
-            
+
             HStack {
                 ZStack(alignment: .bottomTrailing) {
                     ZStack {
@@ -531,7 +529,7 @@ struct ProfileImageEditRow: View {
                             .fill(.ultraThinMaterial)
                             .frame(width: 80, height: 80)
                             .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
-                        
+
                         if let profileImage = viewModel.profileImage {
                             Image(uiImage: profileImage)
                                 .resizable()
@@ -561,7 +559,7 @@ struct ProfileImageEditRow: View {
                         }
                     }
                     .allowsHitTesting(false)
-                    
+
                     Button(action: {
                         sheetDestination = .profileImageEdit(
                             selectedItem: $selectedProfileItem,
@@ -570,7 +568,7 @@ struct ProfileImageEditRow: View {
                             }
                         )
                     }) {
-                        
+
                         Circle()
                             .fill(Color.orange)
                             .frame(width: 28, height: 28)
@@ -583,7 +581,7 @@ struct ProfileImageEditRow: View {
                     .buttonStyle(PlainButtonStyle())
                     .offset(x: 4, y: 4)
                 }
-                
+
                 Spacer()
             }
             .padding(.horizontal, 16)
@@ -597,7 +595,7 @@ struct ProfileImageEditRow: View {
             handleCoverImageSelection(newItem)
         }
     }
-    
+
     private var defaultCoverImageGradient: some View {
         LinearGradient(
             gradient: Gradient(colors: [
@@ -609,30 +607,30 @@ struct ProfileImageEditRow: View {
         )
         .frame(height: min(120, UIScreen.main.bounds.height * 0.15))
     }
-    
+
     private var defaultProfileIcon: some View {
         Image(systemName: "person.fill")
             .font(.system(size: 32))
             .foregroundColor(.secondary)
     }
-    
+
     private func handleProfileImageSelection(_ newItem: PhotosPickerItem?) {
         guard let newItem = newItem else {
             return
         }
-        
+
         Task {
             do {
                 if let data = try await newItem.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
-                    
+
                     guard validateImageForProfile(uiImage, type: .profile) else {
                         await MainActor.run {
                             selectedProfileItem = nil
                         }
                         return
                     }
-                    
+
                     await MainActor.run {
                         viewModel.updateProfileImage(uiImage)
                         selectedProfileItem = nil
@@ -646,24 +644,24 @@ struct ProfileImageEditRow: View {
             }
         }
     }
-    
+
     private func handleCoverImageSelection(_ newItem: PhotosPickerItem?) {
         guard let newItem = newItem else {
             return
         }
-        
+
         Task {
             do {
                 if let data = try await newItem.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
-                    
+
                     guard validateImageForProfile(uiImage, type: .cover) else {
                         await MainActor.run {
                             selectedCoverItem = nil
                         }
                         return
                     }
-                    
+
                     await MainActor.run {
                         viewModel.updateCoverImage(uiImage)
                         selectedCoverItem = nil
@@ -677,26 +675,26 @@ struct ProfileImageEditRow: View {
             }
         }
     }
-    
+
     private func validateImageForProfile(_ image: UIImage, type: ImageEditSheet.ImageType) -> Bool {
         let maxDimension: CGFloat = type == .profile ? 1024 : 2048
         let imageSize = max(image.size.width, image.size.height)
-        
+
         if imageSize > maxDimension {
             return true
         }
-        
+
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             return false
         }
-        
+
         let fileSizeMB = Double(imageData.count) / (1024 * 1024)
         let maxFileSizeMB: Double = 10.0
-        
+
         if fileSizeMB > maxFileSizeMB {
             return true
         }
-        
+
         return true
     }
 }

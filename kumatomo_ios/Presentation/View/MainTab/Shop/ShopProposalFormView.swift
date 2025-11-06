@@ -3,17 +3,16 @@ import SwiftUI
 struct ShopProposalFormView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel = ShopProposalFormViewModel()
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    // Header section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("新しい店舗を提案")
                             .font(.title2)
                             .fontWeight(.bold)
-                        
+
                         Text("地域にある素敵なお店を皆さんと共有しませんか？提案いただいた店舗は管理者による確認後、アプリに追加されます。")
                             .font(.body)
                             .foregroundColor(.secondary)
@@ -21,10 +20,8 @@ struct ShopProposalFormView: View {
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
-                    
-                    // Form fields
+
                     VStack(spacing: 20) {
-                        // Shop name field
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("店舗名")
@@ -32,32 +29,30 @@ struct ShopProposalFormView: View {
                                 Text("*")
                                     .foregroundColor(.red)
                             }
-                            
+
                             TextField("例: 熊本ラーメン 太郎", text: $viewModel.shopName)
                                 .textFieldStyle(ProposalTextFieldStyle())
                                 .accessibilityIdentifier("ShopNameField")
                         }
-                        
-                        // Address field
+
                         VStack(alignment: .leading, spacing: 8) {
                             Text("住所")
                                 .font(.headline)
-                            
+
                             TextField("例: 熊本市中央区○○町1-2-3", text: $viewModel.address)
                                 .textFieldStyle(ProposalTextFieldStyle())
                                 .accessibilityIdentifier("AddressField")
                         }
-                        
-                        // Genre selection
+
                         VStack(alignment: .leading, spacing: 8) {
                             Text("ジャンル")
                                 .font(.headline)
-                            
+
                             Menu {
                                 Button("選択なし") {
                                     viewModel.selectedGenre = nil
                                 }
-                                
+
                                 ForEach(ShopGenre.allCases, id: \.self) { genre in
                                     Button(genre.displayName) {
                                         viewModel.selectedGenre = genre
@@ -79,16 +74,15 @@ struct ShopProposalFormView: View {
                             }
                             .accessibilityIdentifier("GenreSelector")
                         }
-                        
-                        // Description field
+
                         VStack(alignment: .leading, spacing: 8) {
                             Text("説明・おすすめポイント")
                                 .font(.headline)
-                            
+
                             Text("この店舗の魅力や特徴を教えてください（任意）")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            
+
                             TextEditor(text: $viewModel.description)
                                 .frame(minHeight: 100)
                                 .padding(12)
@@ -96,8 +90,7 @@ struct ShopProposalFormView: View {
                                 .cornerRadius(8)
                                 .accessibilityIdentifier("DescriptionField")
                         }
-                        
-                        // Character count for description
+
                         HStack {
                             Spacer()
                             Text("\(viewModel.description.count)/1000")
@@ -106,8 +99,7 @@ struct ShopProposalFormView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                    
-                    // Submit button
+
                     VStack(spacing: 12) {
                         Button(action: {
                             Task {
@@ -135,8 +127,7 @@ struct ShopProposalFormView: View {
                         }
                         .disabled(!viewModel.canSubmit || viewModel.isSubmitting)
                         .accessibilityIdentifier("SubmitButton")
-                        
-                        // Guidelines text
+
                         Text("※ 提案された店舗は管理者による確認後、アプリに追加されます。虚偽の情報や不適切な内容は削除される場合があります。")
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -172,7 +163,6 @@ struct ShopProposalFormView: View {
     }
 }
 
-// MARK: - Custom Text Field Style
 struct ProposalTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
@@ -183,7 +173,6 @@ struct ProposalTextFieldStyle: TextFieldStyle {
     }
 }
 
-// MARK: - View Model
 @MainActor
 @Observable
 class ShopProposalFormViewModel {
@@ -191,43 +180,41 @@ class ShopProposalFormViewModel {
     var address = ""
     var selectedGenre: ShopGenre?
     var description = ""
-    
+
     var isSubmitting = false
     var showingSuccessAlert = false
     var showingErrorAlert = false
     var errorMessage = ""
-    
+
     private let shopAPIService = ShopAPIService.shared
-    
+
     var canSubmit: Bool {
         !shopName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         shopName.count <= 100 &&
         address.count <= 255 &&
         description.count <= 1000
     }
-    
+
     func submitProposal() async {
         guard canSubmit else { return }
-        
+
         isSubmitting = true
-        
+
         do {
             let trimmedName = shopName.trimmingCharacters(in: .whitespacesAndNewlines)
             let trimmedAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
             let trimmedDescription = description.trimmingCharacters(in: .whitespacesAndNewlines)
-            
+
             _ = try await shopAPIService.submitShopProposal(
                 name: trimmedName,
                 address: trimmedAddress.isEmpty ? nil : trimmedAddress,
                 genre: selectedGenre,
                 description: trimmedDescription.isEmpty ? nil : trimmedDescription
             )
-            
-            // Success
+
             showingSuccessAlert = true
-            
+
         } catch {
-            // Handle specific error cases
             if let apiError = error as? APIError {
                 switch apiError {
                 case .rateLimitExceeded:
@@ -240,15 +227,14 @@ class ShopProposalFormViewModel {
             } else {
                 errorMessage = "提案の送信中にエラーが発生しました。もう一度お試しください。"
             }
-            
+
             showingErrorAlert = true
         }
-        
+
         isSubmitting = false
     }
 }
 
-// MARK: - Preview
 struct ShopProposalFormView_Previews: PreviewProvider {
     static var previews: some View {
         ShopProposalFormView()

@@ -9,9 +9,8 @@ struct BulletinBoardView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.openSidebar) private var openSidebar
     @Environment(CurrentUserManager.self) private var userManager
-    
+
     var body: some View {
-//        NavigationStack { // AppRouterで管理するため削除
             ZStack {
                 VStack(spacing: 0) {
                     TabNavigationHeader(
@@ -20,9 +19,8 @@ struct BulletinBoardView: View {
                         onTabChange: viewModel.changeTab,
                         onMunicipalityChange: viewModel.changeMunicipality
                     )
-                    
+
                     ZStack {
-                        // Main content
                         if viewModel.isLoading && viewModel.posts.isEmpty {
                             SkeletonLoadingView()
                         } else if let errorMessage = viewModel.errorMessage, viewModel.posts.isEmpty {
@@ -46,20 +44,18 @@ struct BulletinBoardView: View {
                         }
                     }
                 }
-                
-                // Toast notification
+
                 VStack {
                     ToastView(
                         message: toastMessage,
                         type: toastType,
                         isShowing: $showToast
                     )
-                    
+
                     Spacer()
                 }
                 .zIndex(1)
-                
-                // Floating Action Button
+
                 VStack {
                     Spacer()
                     HStack {
@@ -92,15 +88,13 @@ struct BulletinBoardView: View {
             }
             .fullScreenCover(isPresented: $showPostModal) {
                 PostView(onPostSuccess: {
-                    // Refresh the bulletin board feed after successful posting
                     viewModel.refreshPosts()
                 })
                 .environment(userManager)
             }
-            
-//        }
+
     }
-    
+
     private func showToastMessage(_ message: String, type: ToastView.ToastType) {
         toastMessage = message
         toastType = type

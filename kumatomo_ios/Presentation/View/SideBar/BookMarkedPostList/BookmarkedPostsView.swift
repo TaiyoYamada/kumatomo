@@ -1,7 +1,6 @@
 import SwiftUI
 import Observation
 
-/// A view that displays the user's bookmarked posts using the existing post list components
 struct BookmarkedPostsView: View {
     @State private var engagementViewModel = EngagementViewModel()
     @Environment(CurrentUserManager.self) private var userManager
@@ -9,15 +8,12 @@ struct BookmarkedPostsView: View {
     @State private var showToast = false
     @State private var toastMessage = ""
     @State private var toastType: ToastView.ToastType = .info
-    
+
     var body: some View {
         ZStack {
-            // Main content
             if engagementViewModel.isLoadingBookmarkedPosts && engagementViewModel.bookmarkedPosts.isEmpty {
-                // Loading state for initial load
                 SkeletonLoadingView()
             } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.bookmarkedPosts.isEmpty {
-                // Error state when no posts are loaded
                 if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
                     NetworkErrorView {
                         Task {
@@ -32,10 +28,8 @@ struct BookmarkedPostsView: View {
                     }
                 }
             } else if engagementViewModel.bookmarkedPosts.isEmpty {
-                // Empty state
                 BookmarkedPostsEmptyStateView()
             } else {
-                // Reuse the common PostTimeline view for consistency
                 PostTimeline(
                     posts: engagementViewModel.bookmarkedPosts,
                     loading: engagementViewModel.isLoadingBookmarkedPosts,
@@ -46,18 +40,16 @@ struct BookmarkedPostsView: View {
                         await engagementViewModel.toggleLike(for: post)
                     }
                 )
-                // Provide a BulletinBoardViewModel to satisfy environment needs
                 .environment(BulletinBoardViewModel())
             }
-            
-            // Toast notification
+
             VStack {
                 ToastView(
                     message: toastMessage,
                     type: toastType,
                     isShowing: $showToast
                 )
-                
+
                 Spacer()
             }
             .zIndex(1)
@@ -68,7 +60,6 @@ struct BookmarkedPostsView: View {
             print("[BookmarkedPostsView] onAppear")
         }
         .task {
-            // Load bookmarked posts when view appears
             if engagementViewModel.bookmarkedPosts.isEmpty {
                 print("[BookmarkedPostsView] task start -> loadBookmarkedPosts")
                 await engagementViewModel.loadBookmarkedPosts()
@@ -96,7 +87,6 @@ struct BookmarkedPostsView: View {
     }
 }
 
-// MARK: - Bookmarked Posts Timeline
 
 private struct BookmarkedPostsTimeline: View {
     let posts: [Post]
@@ -105,7 +95,7 @@ private struct BookmarkedPostsTimeline: View {
     let onLoadMore: () -> Void
     let engagementViewModel: EngagementViewModel
     @Environment(AppRouter.self) private var appRouter
-    
+
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
@@ -113,12 +103,10 @@ private struct BookmarkedPostsTimeline: View {
                     BookmarkedPostCell(
                         post: post,
                         engagementViewModel: engagementViewModel,
-                        onTap: { 
-                            // Navigate to post detail using AppRouter
+                        onTap: {
                             appRouter.navigateToPostDetail(postId: post.id)
                         },
                         onAppear: {
-                            // Load more when reaching the last post
                             if post.id == posts.last?.id {
                                 onLoadMore()
                             }
@@ -126,7 +114,6 @@ private struct BookmarkedPostsTimeline: View {
                     )
                 }
 
-                // Loading indicator for pagination
                 if loading && !posts.isEmpty {
                     PaginationLoadingView()
                 }
@@ -142,14 +129,13 @@ private struct BookmarkedPostsTimeline: View {
     }
 }
 
-// MARK: - Bookmarked Post Cell
 
 private struct BookmarkedPostCell: View {
     let post: Post
     let engagementViewModel: EngagementViewModel
     let onTap: () -> Void
     let onAppear: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 0) {
             BookmarkedPostCardView(
@@ -160,7 +146,6 @@ private struct BookmarkedPostCell: View {
             .contentShape(Rectangle())
             .onAppear(perform: onAppear)
 
-            // Divider between posts
             Rectangle()
                 .fill(Color(hex: "E5E7EB"))
                 .frame(height: 1)
@@ -169,7 +154,6 @@ private struct BookmarkedPostCell: View {
     }
 }
 
-// MARK: - Bookmarked Post Card View
 
 private struct BookmarkedPostCardView: View {
     let post: Post
@@ -177,7 +161,6 @@ private struct BookmarkedPostCardView: View {
     let onPostTap: (() -> Void)?
 
     var body: some View {
-        // Reuse the exact same timeline post card as the main list
         TimelinePostCardView(
             post: post,
             onPostTap: onPostTap,
@@ -188,12 +171,11 @@ private struct BookmarkedPostCardView: View {
     }
 }
 
-// MARK: - Empty State View
 
 private struct BookmarkedPostsEmptyStateView: View {
     @Environment(AppRouter.self) private var appRouter
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var adaptiveTitleSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -212,7 +194,7 @@ private struct BookmarkedPostsEmptyStateView: View {
             return 18
         }
     }
-    
+
     private var adaptiveSubtitleSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -231,29 +213,27 @@ private struct BookmarkedPostsEmptyStateView: View {
             return 14
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "bookmark")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "6B7280"))
                 .accessibilityHidden(true)
-            
+
             VStack(spacing: 8) {
                 Text("ブックマークした投稿がありません")
                     .font(.system(size: adaptiveTitleSize, weight: .medium))
                     .foregroundColor(Color(hex: "1A1A1A"))
                     .multilineTextAlignment(.center)
-                
+
                 Text("後で読みたい投稿をブックマークしてみましょう")
                     .font(.system(size: adaptiveSubtitleSize))
                     .foregroundColor(Color(hex: "6B7280"))
                     .multilineTextAlignment(.center)
             }
-            
-            // Navigate to bulletin board button
+
             Button(action: {
-                // Navigate back to timeline
                 appRouter.popToRoot()
             }) {
                 Text("投稿を見に行く")
@@ -274,7 +254,6 @@ private struct BookmarkedPostsEmptyStateView: View {
     }
 }
 
-// MARK: - Preview
 
 #Preview {
     BookmarkedPostsView()

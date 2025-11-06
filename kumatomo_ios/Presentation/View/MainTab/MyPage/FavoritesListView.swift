@@ -5,8 +5,8 @@ struct FavoritesListView: View {
     @Environment(FavoritesManager.self) private var favoritesManager
     @Environment(LocationManager.self) private var locationManager
     @Environment(AppRouter.self) private var appRouter
-    
-    
+
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -19,7 +19,6 @@ struct FavoritesListView: View {
                         shops: favoritesManager.getFavoriteShopsSorted(),
                         userLocation: locationManager.userLocation,
                         onShopTapped: { shop in
-                            // Add haptic feedback for better UX
                             let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                             impactFeedback.impactOccurred()
                             appRouter.navigateToShopDetail(shopId: shop.id)
@@ -31,8 +30,7 @@ struct FavoritesListView: View {
                         }
                     )
                 }
-                
-                // Error banner
+
                 if let errorMessage = favoritesManager.errorMessage {
                     FavoritesErrorBanner(
                         message: errorMessage,
@@ -57,7 +55,6 @@ struct FavoritesListView: View {
                     .disabled(favoritesManager.isLoading)
                 }
             }
-            // Shop詳細はNavigationStack遷移に変更
             .onAppear {
                 Task {
                     await favoritesManager.loadFavorites()
@@ -67,13 +64,12 @@ struct FavoritesListView: View {
     }
 }
 
-// MARK: - Favorites Content View
 struct FavoritesContentView: View {
     let shops: [Shop]
     let userLocation: CLLocation?
     let onShopTapped: (Shop) -> Void
     let onRefresh: () -> Void
-    
+
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
@@ -94,31 +90,29 @@ struct FavoritesContentView: View {
         }
         .accessibilityIdentifier("FavoritesScrollView")
     }
-    
+
     private func distanceFromUser(_ shop: Shop) -> String? {
         guard let userLocation = userLocation,
               let coordinate = shop.coordinate else { return nil }
-        
+
         let shopLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         let distance = userLocation.distance(from: shopLocation)
-        
+
         return LocationManager.formatDistance(distance)
     }
 }
 
-// MARK: - Favorite Shop Card View
 struct FavoriteShopCardView: View {
     let shop: Shop
     let distance: String?
     let onTap: () -> Void
-    
+
     @Environment(FavoritesManager.self) private var favoritesManager
     @State private var isTogglingFavorite = false
-    
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 12) {
-                // 店舗画像 with favorite button overlay
                 ZStack(alignment: .topTrailing) {
                     AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
                         image
@@ -141,8 +135,7 @@ struct FavoriteShopCardView: View {
                         ImageDebugLogger.logImage(shop.imageUrl, context: "FavoritesList:shopId=\(shop.id)")
                         #endif
                     }
-                    
-                    // Favorite star button - always filled since this is favorites list
+
                     Button(action: {
                         Task {
                             await toggleFavorite()
@@ -152,7 +145,7 @@ struct FavoriteShopCardView: View {
                             Circle()
                                 .fill(Color.black.opacity(0.3))
                                 .frame(width: 36, height: 36)
-                            
+
                             if isTogglingFavorite {
                                 ProgressView()
                                     .scaleEffect(0.8)
@@ -170,7 +163,7 @@ struct FavoriteShopCardView: View {
                     .accessibilityLabel("お気に入りから削除")
                     .disabled(isTogglingFavorite)
                 }
-                
+
                 // 店舗情報
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
@@ -178,9 +171,9 @@ struct FavoriteShopCardView: View {
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.primary)
                             .lineLimit(1)
-                        
+
                         Spacer()
-                        
+
                         if let distance = distance {
                             Text(distance)
                                 .font(.system(size: 12, weight: .medium))
@@ -191,7 +184,7 @@ struct FavoriteShopCardView: View {
                                 .cornerRadius(8)
                         }
                     }
-                    
+
                     if let genre = shop.genre {
                         Text(genre.displayName)
                             .font(.system(size: 12, weight: .medium))
@@ -201,7 +194,7 @@ struct FavoriteShopCardView: View {
                             .background(Color.primaryOrange.opacity(0.1))
                             .cornerRadius(6)
                     }
-                    
+
                     if let address = shop.address {
                         HStack {
                             Image(systemName: "location")
@@ -213,15 +206,14 @@ struct FavoriteShopCardView: View {
                                 .lineLimit(1)
                         }
                     }
-                    
+
                     if let description = shop.description {
                         Text(description)
                             .font(.system(size: 14))
                             .foregroundColor(.secondary)
                             .lineLimit(2)
                     }
-                    
-                    // Show Try特典 badge if available
+
                     if shop.hasTryBenefit {
                         HStack {
                             Image(systemName: "gift")
@@ -246,7 +238,7 @@ struct FavoriteShopCardView: View {
         }
         .buttonStyle(ShopCardButtonStyle())
     }
-    
+
     private func toggleFavorite() async {
         isTogglingFavorite = true
         await favoritesManager.toggleFavorite(shop: shop)
@@ -254,7 +246,6 @@ struct FavoriteShopCardView: View {
     }
 }
 
-// MARK: - Favorites Loading View
 struct FavoritesLoadingView: View {
     var body: some View {
         VStack(spacing: 16) {
@@ -269,36 +260,32 @@ struct FavoritesLoadingView: View {
     }
 }
 
-// MARK: - Favorites Empty State View
 struct FavoritesEmptyStateView: View {
     var body: some View {
         VStack(spacing: 24) {
-            // Icon
             ZStack {
                 Circle()
                     .fill(Color.primaryOrange.opacity(0.1))
                     .frame(width: 100, height: 100)
-                
+
                 Image(systemName: "star")
                     .font(.system(size: 40))
                     .foregroundColor(.primaryOrange)
             }
-            
-            // Message
+
             VStack(spacing: 12) {
                 Text("お気に入りがありません")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
+
                 Text("気になるお店を見つけたら、\n⭐️ボタンでお気に入りに追加しましょう")
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
             }
-            
-            // Action button
+
             NavigationLink(value: RouterDestination.shopList) {
                 HStack {
                     Image(systemName: "magnifyingglass")
@@ -319,7 +306,6 @@ struct FavoritesEmptyStateView: View {
     }
 }
 
-// MARK: - Button Style
 /// カード押下時の軽いフィードバックを与える共通ボタンスタイル。
 struct ShopCardButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {

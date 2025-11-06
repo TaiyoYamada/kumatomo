@@ -10,7 +10,7 @@ enum AuthError: Error, LocalizedError {
     case updateProfileFailed
     case userNotFound
     case serverError(message: String)
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidCredentials:

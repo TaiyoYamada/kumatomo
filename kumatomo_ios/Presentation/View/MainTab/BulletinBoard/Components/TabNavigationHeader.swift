@@ -5,10 +5,10 @@ struct TabNavigationHeader: View {
     let selectedMunicipality: String?
     let onTabChange: (TabType) -> Void
     let onMunicipalityChange: (String) -> Void
-    
+
     @State private var sheetDestination: SheetDestination?
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var adaptiveHeaderHeight: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small, .medium:
@@ -25,7 +25,7 @@ struct TabNavigationHeader: View {
             return 48
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
@@ -35,7 +35,7 @@ struct TabNavigationHeader: View {
                     isActive: activeTab == .all,
                     action: { onTabChange(.all) }
                 )
-                
+
                 // 市町村タブ
                 TabButton(
                     title: selectedMunicipality ?? "市町村",
@@ -48,7 +48,7 @@ struct TabNavigationHeader: View {
                         }
                     }
                 )
-                
+
                 // フォロー中タブ
                 TabButton(
                     title: "フォロー中",
@@ -57,8 +57,7 @@ struct TabNavigationHeader: View {
                 )
             }
             .frame(height: adaptiveHeaderHeight)
-            
-            // Bottom border
+
             Rectangle()
                 .fill(Color(hex: "E5E7EB"))
                 .frame(height: 1)
@@ -76,7 +75,7 @@ struct TabButton: View {
     let isActive: Bool
     let action: () -> Void
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var adaptiveFontSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -95,7 +94,7 @@ struct TabButton: View {
             return 15
         }
     }
-    
+
     private var adaptiveHeight: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small, .medium:
@@ -112,7 +111,7 @@ struct TabButton: View {
             return 46
         }
     }
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 0) {
@@ -123,15 +122,14 @@ struct TabButton: View {
                     .frame(height: adaptiveHeight)
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
-                
-                // Active indicator
+
                 Rectangle()
                     .fill(isActive ? Color(hex: "1DA1F2") : Color.clear)
                     .frame(height: 2)
             }
         }
         .buttonStyle(PlainButtonStyle())
-        .frame(minHeight: 44) // Ensure minimum touch target
+        .frame(minHeight: 44)
         .accessibilityLabel(title)
         .accessibilityHint(isActive ? "選択中のタブ" : "タップして\(title)タブに切り替え")
         .accessibilityAddTraits(isActive ? .isSelected : [])
@@ -174,16 +172,15 @@ struct MunicipalityPickerView: View {
             return 16
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Search bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                         .accessibilityHidden(true)
-                    
+
                     TextField("市町村を検索", text: $searchText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .font(.system(size: adaptiveFontSize))
@@ -197,8 +194,7 @@ struct MunicipalityPickerView: View {
                 .cornerRadius(8)
                 .padding(.horizontal)
                 .padding(.top)
-                
-                // City list (ScrollView + LazyVStack) to avoid List/gesture quirks
+
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(filteredCities, id: \.self) { city in
@@ -223,11 +219,9 @@ struct MunicipalityPickerView: View {
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 onSelection(city)
-                                // Proactively dismiss to avoid any stale overlays
                                 dismiss()
                             }
 
-                            // Row divider
                             Rectangle()
                                 .fill(Color(hex: "E5E7EB"))
                                 .frame(height: 1)
@@ -255,7 +249,7 @@ struct RegionFilterButton: View {
     let isSelected: Bool
     let action: () -> Void
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var adaptiveFontSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -274,7 +268,7 @@ struct RegionFilterButton: View {
             return 14
         }
     }
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -288,6 +282,6 @@ struct RegionFilterButton: View {
                 .lineLimit(1)
         }
         .buttonStyle(PlainButtonStyle())
-        .frame(minHeight: 44) // Ensure minimum touch target
+        .frame(minHeight: 44)
     }
 }

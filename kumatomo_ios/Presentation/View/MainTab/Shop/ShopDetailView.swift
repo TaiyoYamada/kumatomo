@@ -7,7 +7,7 @@ struct ShopDetailView: View {
     @State private var isLoadingShop = false
     @State private var shopErrorMessage: String?
     @State private var viewModel = ShopDetailViewModel()
-    
+
     var body: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
@@ -46,14 +46,14 @@ struct ShopDetailView: View {
                         ImageDebugLogger.logImage(shop.imageUrl, context: "ShopDetail:shopId=\(shop.id)")
                         #endif
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 16) {
                         // 店舗名とジャンル
                         VStack(alignment: .leading, spacing: 8) {
                             Text(shop.name)
                                 .font(.system(size: 28, weight: .bold))
                                 .foregroundColor(.primary)
-                            
+
                             if let genre = shop.genre {
                                 Text(genre.displayName)
                                     .font(.system(size: 14, weight: .medium))
@@ -64,7 +64,7 @@ struct ShopDetailView: View {
                                     .cornerRadius(8)
                             }
                         }
-                        
+
                         // 説明
                         if let description = shop.description {
                             Text(description)
@@ -72,14 +72,14 @@ struct ShopDetailView: View {
                                 .foregroundColor(.secondary)
                                 .lineLimit(nil)
                         }
-                        
+
                         Divider()
-                        
+
                         // 店舗情報
                         VStack(alignment: .leading, spacing: 12) {
                             Text("店舗情報")
                                 .font(.system(size: 20, weight: .semibold))
-                            
+
                             if let address = shop.address {
                                 InfoRow(
                                     icon: "location",
@@ -87,7 +87,7 @@ struct ShopDetailView: View {
                                     content: address
                                 )
                             }
-                            
+
                             if let phone = shop.phone {
                                 InfoRow(
                                     icon: "phone",
@@ -95,7 +95,7 @@ struct ShopDetailView: View {
                                     content: phone
                                 )
                             }
-                            
+
                             if let businessHours = shop.businessHours {
                                 InfoRow(
                                     icon: "clock",
@@ -104,7 +104,7 @@ struct ShopDetailView: View {
                                 )
                             }
                         }
-                        
+
                         // アクションボタン
                         VStack(spacing: 12) {
                             if let phone = shop.phone {
@@ -123,7 +123,7 @@ struct ShopDetailView: View {
                                     .cornerRadius(12)
                                 }
                             }
-                            
+
                             if shop.latitude != nil && shop.longitude != nil {
                                 Button(action: openInMaps) {
                                     HStack {
@@ -139,9 +139,9 @@ struct ShopDetailView: View {
                                 }
                             }
                         }
-                        
+
                         Divider()
-                        
+
                         // 投稿セクション
                         ShopPostsSection(
                             posts: viewModel.posts,
@@ -153,7 +153,7 @@ struct ShopDetailView: View {
                                 }
                             }
                         )
-                        
+
                         Spacer(minLength: 20)
                     }
                     .padding(.horizontal, 20)
@@ -187,8 +187,6 @@ struct ShopDetailView: View {
                     }
                 }
             }
-//            .navigationTitle(shop?.name ?? "お店詳細")
-//            .navigationBarTitleDisplayMode(.large)
             .task {
                 await withTaskGroup(of: Void.self) { group in
                     group.addTask { await loadShop() }
@@ -206,23 +204,23 @@ struct ShopDetailView: View {
                 }
             }
     }
-    
+
     private func makePhoneCall(to phoneNumber: String) {
         // 電話番号から不要な文字を除去
         let cleanedPhoneNumber = phoneNumber.replacingOccurrences(of: "[^0-9+]", with: "", options: .regularExpression)
-        
+
         if let url = URL(string: "tel:\(cleanedPhoneNumber)") {
             if UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
         }
     }
-    
+
     private func openInMaps() {
         guard let shop = shop,
               let latitude = shop.latitude,
               let longitude = shop.longitude else { return }
-        
+
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         let placemark = MKPlacemark(coordinate: coordinate)
         let mapItem = MKMapItem(placemark: placemark)
@@ -231,7 +229,7 @@ struct ShopDetailView: View {
             MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
         ])
     }
-    
+
     @MainActor
     private func loadShop() async {
         isLoadingShop = true
@@ -246,29 +244,28 @@ struct ShopDetailView: View {
     }
 }
 
-// MARK: - Info Row
 struct InfoRow: View {
     let icon: String
     let title: String
     let content: String
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .foregroundColor(.orange)
                 .font(.system(size: 16))
                 .frame(width: 20)
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.secondary)
-                
+
                 Text(content)
                     .font(.system(size: 16))
                     .foregroundColor(.primary)
             }
-            
+
             Spacer()
         }
     }

@@ -1,7 +1,6 @@
 import SwiftUI
 import Observation
 
-/// A view that displays the user's liked posts using the existing post list components
 struct LikedPostsView: View {
     @State private var engagementViewModel = EngagementViewModel()
     @Environment(CurrentUserManager.self) private var userManager
@@ -9,15 +8,12 @@ struct LikedPostsView: View {
     @State private var showToast = false
     @State private var toastMessage = ""
     @State private var toastType: ToastView.ToastType = .info
-    
+
     var body: some View {
         ZStack {
-            // Main content
             if engagementViewModel.isLoadingLikedPosts && engagementViewModel.likedPosts.isEmpty {
-                // Loading state for initial load
                 SkeletonLoadingView()
             } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.likedPosts.isEmpty {
-                // Error state when no posts are loaded
                 if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
                     NetworkErrorView {
                         Task {
@@ -32,10 +28,8 @@ struct LikedPostsView: View {
                     }
                 }
             } else if engagementViewModel.likedPosts.isEmpty {
-                // Empty state
                 LikedPostsEmptyStateView()
             } else {
-                // Reuse the common PostTimeline view for consistency
                 PostTimeline(
                     posts: engagementViewModel.likedPosts,
                     loading: engagementViewModel.isLoadingLikedPosts,
@@ -46,18 +40,16 @@ struct LikedPostsView: View {
                         await engagementViewModel.toggleLike(for: post)
                     }
                 )
-                // Provide a BulletinBoardViewModel to satisfy environment needs
                 .environment(BulletinBoardViewModel())
             }
-            
-            // Toast notification
+
             VStack {
                 ToastView(
                     message: toastMessage,
                     type: toastType,
                     isShowing: $showToast
                 )
-                
+
                 Spacer()
             }
             .zIndex(1)
@@ -68,7 +60,6 @@ struct LikedPostsView: View {
             print("[LikedPostsView] onAppear")
         }
         .task {
-            // Load liked posts when view appears
             if engagementViewModel.likedPosts.isEmpty {
                 print("[LikedPostsView] task start -> loadLikedPosts")
                 await engagementViewModel.loadLikedPosts()
@@ -87,18 +78,17 @@ struct LikedPostsView: View {
             }
         }
     }
-    
+
     private func showToastMessage(_ message: String, type: ToastView.ToastType) {
         toastMessage = message
         toastType = type
         withAnimation {
             showToast = true
         }
-        
+
     }
 }
 
-// MARK: - Liked Posts Timeline
 
 private struct LikedPostsTimeline: View {
     let posts: [Post]
@@ -107,7 +97,7 @@ private struct LikedPostsTimeline: View {
     let onLoadMore: () -> Void
     let engagementViewModel: EngagementViewModel
     @Environment(AppRouter.self) private var appRouter
-    
+
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
@@ -115,12 +105,10 @@ private struct LikedPostsTimeline: View {
                     LikedPostCell(
                         post: post,
                         engagementViewModel: engagementViewModel,
-                        onTap: { 
-                            // Navigate to post detail using AppRouter
+                        onTap: {
                             appRouter.navigateToPostDetail(postId: post.id)
                         },
                         onAppear: {
-                            // Load more when reaching the last post
                             if post.id == posts.last?.id {
                                 onLoadMore()
                             }
@@ -128,7 +116,6 @@ private struct LikedPostsTimeline: View {
                     )
                 }
 
-                // Loading indicator for pagination
                 if loading && !posts.isEmpty {
                     PaginationLoadingView()
                 }
@@ -144,14 +131,13 @@ private struct LikedPostsTimeline: View {
     }
 }
 
-// MARK: - Liked Post Cell
 
 private struct LikedPostCell: View {
     let post: Post
     let engagementViewModel: EngagementViewModel
     let onTap: () -> Void
     let onAppear: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 0) {
             LikedPostCardView(
@@ -162,7 +148,6 @@ private struct LikedPostCell: View {
             .contentShape(Rectangle())
             .onAppear(perform: onAppear)
 
-            // Divider between posts
             Rectangle()
                 .fill(Color(hex: "E5E7EB"))
                 .frame(height: 1)
@@ -171,7 +156,6 @@ private struct LikedPostCell: View {
     }
 }
 
-// MARK: - Liked Post Card View
 
 private struct LikedPostCardView: View {
     let post: Post
@@ -189,12 +173,11 @@ private struct LikedPostCardView: View {
     }
 }
 
-// MARK: - Empty State View
 
 private struct LikedPostsEmptyStateView: View {
     @Environment(AppRouter.self) private var appRouter
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var adaptiveTitleSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -213,7 +196,7 @@ private struct LikedPostsEmptyStateView: View {
             return 18
         }
     }
-    
+
     private var adaptiveSubtitleSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -232,27 +215,27 @@ private struct LikedPostsEmptyStateView: View {
             return 14
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "heart")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "6B7280"))
                 .accessibilityHidden(true)
-            
+
             VStack(spacing: 8) {
                 Text("いいねした投稿がありません")
                     .font(.system(size: adaptiveTitleSize, weight: .medium))
                     .foregroundColor(Color(hex: "1A1A1A"))
                     .multilineTextAlignment(.center)
-                
+
                 Text("気に入った投稿にいいねしてみましょう")
                     .font(.system(size: adaptiveSubtitleSize))
                     .foregroundColor(Color(hex: "6B7280"))
                     .multilineTextAlignment(.center)
             }
-            
-            
+
+
             Button(action: {
                 appRouter.popToRoot()
             }) {
@@ -274,7 +257,6 @@ private struct LikedPostsEmptyStateView: View {
     }
 }
 
-// MARK: - Preview
 
 #Preview {
     LikedPostsView()

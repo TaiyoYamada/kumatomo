@@ -5,23 +5,23 @@ struct ShopPostsSection: View {
     let isLoading: Bool
     let errorMessage: String?
     let onRefresh: () -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // セクションヘッダー
             HStack {
                 Text("このお店の投稿")
                     .font(.system(size: 20, weight: .semibold))
-                
+
                 Spacer()
-                
+
                 if !posts.isEmpty {
                     Text("\(posts.count)件")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             if isLoading {
                 // ローディング状態
                 HStack {
@@ -37,16 +37,16 @@ struct ShopPostsSection: View {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.system(size: 24))
                         .foregroundColor(.orange)
-                    
+
                     Text("投稿の読み込みに失敗しました")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
-                    
+
                     Text(errorMessage)
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
-                    
+
                     Button("再試行") {
                         onRefresh()
                     }
@@ -65,11 +65,11 @@ struct ShopPostsSection: View {
                     Image(systemName: "photo.on.rectangle")
                         .font(.system(size: 24))
                         .foregroundColor(.gray)
-                    
+
                     Text("まだ投稿がありません")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
-                    
+
                     Text("このお店での体験を最初に投稿してみませんか？")
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
@@ -89,11 +89,10 @@ struct ShopPostsSection: View {
     }
 }
 
-// MARK: - Post Card Component
 struct PostCard: View {
     let post: Post
     @State private var selectedImageIndex = 0
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // ユーザー情報
@@ -114,28 +113,28 @@ struct PostCard: View {
                 }
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text(post.user?.name ?? "匿名ユーザー")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.primary)
-                    
+
                     if let createdAt = post.createdAt {
                         Text(formatDate(createdAt))
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 Spacer()
             }
-            
+
             // 投稿内容
             Text(post.content)
                 .font(.system(size: 16))
                 .foregroundColor(.primary)
                 .lineLimit(nil)
-            
+
             // 画像ギャラリー
             if let images = post.images, !images.isEmpty {
                 PostImageGallery(images: images)
@@ -156,7 +155,7 @@ struct PostCard: View {
                 .clipped()
                 .cornerRadius(12)
             }
-            
+
             // タグ表示
             if let tags = post.tags, !tags.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -180,7 +179,7 @@ struct PostCard: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
-    
+
     private func formatDate(_ date: Date) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
@@ -188,11 +187,10 @@ struct PostCard: View {
     }
 }
 
-// MARK: - Post Image Gallery Component
 struct PostImageGallery: View {
     let images: [PostImage]
     @State private var selectedImageIndex = 0
-    
+
     var body: some View {
         VStack(spacing: 8) {
             // メイン画像表示
@@ -217,7 +215,7 @@ struct PostImageGallery: View {
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .frame(height: 200)
-            
+
             // 画像インジケーター（複数画像の場合のみ表示）
             if images.count > 1 {
                 HStack(spacing: 8) {
@@ -234,7 +232,7 @@ struct PostImageGallery: View {
                 }
                 .padding(.top, 4)
             }
-            
+
             // 画像カウンター（複数画像の場合のみ表示）
             if images.count > 1 {
                 HStack {

@@ -7,7 +7,7 @@ struct Favorite: Identifiable, Codable, Equatable {
     let shop: Shop?
     let createdAt: Date
     let updatedAt: Date?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case userId = "user_id"

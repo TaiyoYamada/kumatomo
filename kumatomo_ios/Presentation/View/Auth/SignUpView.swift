@@ -7,23 +7,23 @@ struct SignUpView: View {
     @Environment(AuthViewModel.self) private var authViewModel
     @State private var showInitialSetup = false
     @State private var navigatetoInitialSetup = false
-    
+
     var body: some View {
         VStack(spacing: 30) {
             // ヘッダー
             header
-            
+
             // 入力フォーム
             inputForm
-            
+
             // エラーメッセージ
             errorMessage
-            
+
             // 登録ボタン
             signUpButton
-            
+
             Spacer()
-            
+
             NavigationLink(
                 destination: InitialSetupView(),
                 isActive: $navigatetoInitialSetup,
@@ -41,9 +41,8 @@ struct SignUpView: View {
             }
         }
     }
-    
-    // MARK: - Components
-    
+
+
     private var header: some View {
         HStack {
             Button {
@@ -53,22 +52,22 @@ struct SignUpView: View {
                     .font(.title2)
                     .foregroundColor(.primary)
             }
-            
+
             Spacer()
-            
+
             Text("アカウント作成")
                 .font(.title3)
                 .fontWeight(.semibold)
-            
+
             Spacer()
-            
+
             // バランスを取るための透明ボタン
             Color.clear
                 .frame(width: 22, height: 22) // 左側のボタンと同じサイズ
         }
         .padding(.horizontal)
     }
-    
+
     private var inputForm: some View {
         @Bindable var auth = authViewModel
         return VStack(spacing: 20) {
@@ -78,7 +77,7 @@ struct SignUpView: View {
                       systemImage: "envelope")
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
-            
+
             SecureInputField(text: $auth.password,
                             title: "パスワード",
                             placeholder: "パスワードを入力 (6文字以上)",
@@ -86,7 +85,7 @@ struct SignUpView: View {
         }
         .padding(.horizontal)
     }
-    
+
     private var errorMessage: some View {
         Group {
             if let errorMessage = authViewModel.errorMessage, !errorMessage.isEmpty {
@@ -101,7 +100,7 @@ struct SignUpView: View {
             }
         }
     }
-    
+
     private var signUpButton: some View {
         Button {
             Task { await authViewModel.createUser() }
@@ -110,7 +109,7 @@ struct SignUpView: View {
             HStack {
                 Text("登録する")
                     .fontWeight(.semibold)
-                
+
                 if authViewModel.isLoading {
                     ProgressView()
                         .padding(.leading, 4)
@@ -126,7 +125,7 @@ struct SignUpView: View {
             )
             .foregroundColor(.white)
         }
-        
+
         .padding(.horizontal)
         .disabled(authViewModel.isLoading)
     }

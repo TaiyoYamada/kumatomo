@@ -5,7 +5,7 @@ struct ShopListView: View {
     @State private var viewModel = ShopListViewModel()
     @State private var sheetDestination: SheetDestination?
     @Environment(AppRouter.self) private var appRouter
-    
+
     var body: some View {
         VStack(spacing: 0) {
                 // ジャンルフィルター
@@ -18,13 +18,13 @@ struct ShopListView: View {
                         viewModel.clearAllGenres()
                     }
                 )
-                
+
                 // マップ/リスト切り替えボタン
                 ViewToggleButtons(
                     showingMap: viewModel.showingMap,
                     onToggle: viewModel.toggleMapView
                 )
-                
+
                 // メインコンテンツ
                 if viewModel.showingMap {
                     ShopMapView(
@@ -35,7 +35,6 @@ struct ShopListView: View {
                             viewModel.selectShopFromMap(shop)
                         },
                         onPinTapped: { shop in
-                            // Add haptic feedback for map pin taps
                             let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                             impactFeedback.impactOccurred()
                             appRouter.navigateToShopDetail(shopId: shop.id)
@@ -69,7 +68,7 @@ struct ShopListView: View {
                         .foregroundColor(.orange)
                 }
             }
-            
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 16) {
                     Button(action: {
@@ -78,7 +77,7 @@ struct ShopListView: View {
                         Image(systemName: "doc.text")
                             .foregroundColor(.primary)
                     }
-                    
+
                     Button(action: {
                         sheetDestination = .shopProposal
                     }) {
@@ -93,11 +92,10 @@ struct ShopListView: View {
     }
 }
 
-// MARK: - View Toggle Buttons
 struct ViewToggleButtons: View {
     let showingMap: Bool
     let onToggle: () -> Void
-    
+
     var body: some View {
         HStack(spacing: 0) {
             Button(action: onToggle) {
@@ -114,7 +112,7 @@ struct ViewToggleButtons: View {
                         .fill(showingMap ? Color.clear : Color.primaryOrange.opacity(0.1))
                 )
             }
-            
+
             Button(action: onToggle) {
                 HStack {
                     Image(systemName: "map")
@@ -136,7 +134,6 @@ struct ViewToggleButtons: View {
         .padding(.bottom, 8)
     }
 }
-// MARK: - Shop List Content View
 struct ShopListContentView: View {
     let shops: [Shop]
     let isLoading: Bool
@@ -146,7 +143,7 @@ struct ShopListContentView: View {
     let onRefresh: () -> Void
     let onDismissFavoritesError: () -> Void
     let distanceFromUser: (Shop) -> String?
-    
+
     var body: some View {
         ZStack {
             if isLoading && shops.isEmpty {
@@ -169,8 +166,7 @@ struct ShopListContentView: View {
                 }
                 .accessibilityIdentifier("ShopListScrollView")
             }
-            
-            // Favorites error banner
+
             if let favoritesErrorMessage = favoritesErrorMessage {
                 VStack {
                     FavoritesErrorBanner(
@@ -185,18 +181,16 @@ struct ShopListContentView: View {
         }
     }
 }
-// MARK: - Shop Card View
 struct ShopCardView: View {
     let shop: Shop
     let distance: String?
-    
+
     @Environment(FavoritesManager.self) private var favoritesManager
     @State private var isTogglingFavorite = false
-    
+
     var body: some View {
         NavigationLink(value: RouterDestination.shopDetail(shopId: shop.id)) {
             VStack(alignment: .leading, spacing: 12) {
-                // 店舗画像 with favorite button overlay
                 ZStack(alignment: .topTrailing) {
                     AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
                         image
@@ -219,8 +213,7 @@ struct ShopCardView: View {
                         ImageDebugLogger.logImage(shop.imageUrl, context: "ShopList:shopId=\(shop.id)")
                         #endif
                     }
-                    
-                    // Favorite star button
+
                     Button(action: {
                         Task {
                             await toggleFavorite()
@@ -230,7 +223,7 @@ struct ShopCardView: View {
                             Circle()
                                 .fill(Color.black.opacity(0.3))
                                 .frame(width: 36, height: 36)
-                            
+
                             if isTogglingFavorite {
                                 ProgressView()
                                     .scaleEffect(0.8)
@@ -248,7 +241,7 @@ struct ShopCardView: View {
                     .accessibilityLabel(favoritesManager.isFavorite(shopId: shop.id) ? "お気に入りから削除" : "お気に入りに追加")
                     .disabled(isTogglingFavorite)
                 }
-                
+
                 // 店舗情報
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
@@ -256,9 +249,9 @@ struct ShopCardView: View {
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.primary)
                             .lineLimit(1)
-                        
+
                         Spacer()
-                        
+
                         if let distance = distance {
                             Text(distance)
                                 .font(.system(size: 12, weight: .medium))
@@ -269,7 +262,7 @@ struct ShopCardView: View {
                                 .cornerRadius(8)
                         }
                     }
-                    
+
                     if let genre = shop.genre {
                         Text(genre.displayName)
                             .font(.system(size: 12, weight: .medium))
@@ -279,7 +272,7 @@ struct ShopCardView: View {
                             .background(Color.primaryOrange.opacity(0.1))
                             .cornerRadius(6)
                     }
-                    
+
                     if let address = shop.address {
                         HStack {
                             Image(systemName: "location")
@@ -291,7 +284,7 @@ struct ShopCardView: View {
                                 .lineLimit(1)
                         }
                     }
-                    
+
                     if let description = shop.description {
                         Text(description)
                             .font(.system(size: 14))
@@ -308,14 +301,13 @@ struct ShopCardView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     private func toggleFavorite() async {
         isTogglingFavorite = true
         await favoritesManager.toggleFavorite(shop: shop)
         isTogglingFavorite = false
     }
 }
-// MARK: - Loading View
 struct LoadingView: View {
     var body: some View {
         VStack(spacing: 16) {
@@ -329,22 +321,20 @@ struct LoadingView: View {
     }
 }
 
-// MARK: - Shop Error View
 struct ShopErrorView: View {
     let message: String
     let onRetry: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 16) {
-            // 開発環境でAPIが未設定の場合は工具アイコンを表示
             if !APIConfig.shared.isConfigured {
                 Image(systemName: "wrench.and.screwdriver")
                     .font(.system(size: 48))
                     .foregroundColor(.primaryOrange)
-                
+
                 Text("開発モード")
                     .font(.system(size: 18, weight: .semibold))
-                
+
                 Text("APIが未設定のため、モックデータを表示しています")
                     .font(.system(size: 14))
                     .foregroundColor(.secondary)
@@ -354,16 +344,16 @@ struct ShopErrorView: View {
                 Image(systemName: "wifi.slash")
                     .font(.system(size: 48))
                     .foregroundColor(.primaryOrange)
-                
+
                 Text("接続エラー")
                     .font(.system(size: 18, weight: .semibold))
-                
+
                 Text(message)
                     .font(.system(size: 14))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
-                
+
                 Button("再試行", action: onRetry)
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.white)
@@ -377,16 +367,15 @@ struct ShopErrorView: View {
     }
 }
 
-// MARK: - Refreshable Scroll View
 struct RefreshableScrollView<Content: View>: View {
     let onRefresh: () -> Void
     let content: Content
-    
+
     init(onRefresh: @escaping () -> Void, @ViewBuilder content: () -> Content) {
         self.onRefresh = onRefresh
         self.content = content()
     }
-    
+
     var body: some View {
         ScrollView {
             content
@@ -399,24 +388,23 @@ struct RefreshableScrollView<Content: View>: View {
 
 
 
-// MARK: - Favorites Error Banner
 struct FavoritesErrorBanner: View {
     let message: String
     let onDismiss: () -> Void
-    
+
     var body: some View {
         HStack {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundColor(.orange)
                 .font(.system(size: 16))
-            
+
             Text(message)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.primary)
                 .lineLimit(2)
-            
+
             Spacer()
-            
+
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
                     .foregroundColor(.secondary)

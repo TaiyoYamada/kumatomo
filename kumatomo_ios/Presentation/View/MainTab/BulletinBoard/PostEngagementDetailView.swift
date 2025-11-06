@@ -1,44 +1,36 @@
 import SwiftUI
 
-/// A detailed view for displaying a single post with comments and engagement features
 struct PostEngagementDetailView: View {
     let postId: Int
-    
+
     @State private var viewModel = PostDetailViewModel()
     @State private var commentViewModel = CommentViewModel()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(CurrentUserManager.self) private var userManager
-    
-    // UI State
+
     @State private var showImagePicker = false
     @State private var keyboardHeight: CGFloat = 0
     @FocusState private var isCommentFocused: Bool
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(.systemBackground)
                     .ignoresSafeArea()
-                
+
                 if viewModel.isLoading && viewModel.post == nil {
-                    // Loading state
                     PostDetailLoadingView()
                 } else if let post = viewModel.post {
-                    // Main content
                     ScrollViewReader { proxy in
                         ScrollView {
                             LazyVStack(spacing: 0) {
-                                // Post content section
                                 PostContentSection(
                                     post: post,
                                     onProfileTap: {
-                                        // Navigate to user profile
-                                        // TODO: Implement profile navigation
                                     }
                                 )
-                                
-                                // Engagement buttons section
+
                                 EngagementSection(
                                     post: post,
                                     isTogglingLike: viewModel.isTogglingLike,
@@ -60,11 +52,10 @@ struct PostEngagementDetailView: View {
                                         }
                                     }
                                 )
-                                
+
                                 Divider()
                                     .padding(.horizontal, 16)
-                                
-                                // Comments section
+
                                 CommentsSection(
                                     comments: viewModel.comments,
                                     isLoading: viewModel.isLoadingComments,
@@ -74,8 +65,7 @@ struct PostEngagementDetailView: View {
                                         }
                                     }
                                 )
-                                
-                                // Comment compose section
+
                                 CommentComposeSection(
                                     viewModel: commentViewModel,
                                     currentUser: userManager.currentUser,
@@ -84,7 +74,6 @@ struct PostEngagementDetailView: View {
                                         Task {
                                             let success = await commentViewModel.submitComment(postId: postId)
                                             if success {
-                                                // Refresh comments after successful submission
                                                 await viewModel.refreshComments()
                                                 isCommentFocused = false
                                             }
@@ -96,8 +85,7 @@ struct PostEngagementDetailView: View {
                                 )
                                 .id("comment-compose")
                                 .focused($isCommentFocused)
-                                
-                                // Bottom padding for keyboard
+
                                 Rectangle()
                                     .fill(Color.clear)
                                     .frame(height: keyboardHeight)
@@ -109,7 +97,6 @@ struct PostEngagementDetailView: View {
                         }
                     }
                 } else if let errorMessage = viewModel.errorMessage {
-                    // Error state
                     PostDetailErrorView(
                         error: errorMessage,
                         onRetry: {
@@ -120,8 +107,7 @@ struct PostEngagementDetailView: View {
                         }
                     )
                 }
-                
-                // Success/Error messages overlay
+
                 VStack {
                     if viewModel.showSuccessMessage {
                         ToastView(
@@ -131,7 +117,7 @@ struct PostEngagementDetailView: View {
                         )
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
-                    
+
                     if let errorMessage = viewModel.errorMessage {
                         ToastView(
                             message: errorMessage,
@@ -140,7 +126,7 @@ struct PostEngagementDetailView: View {
                         )
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
-                    
+
                     Spacer()
                 }
                 .zIndex(1)
@@ -153,24 +139,21 @@ struct PostEngagementDetailView: View {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button(action: {
-                            // Share post
                         }) {
                             Label("シェア", systemImage: "square.and.arrow.up")
                         }
-                        
+
                         if viewModel.isCurrentUserPostOwner {
                             Button(role: .destructive, action: {
-                                // Delete post
                             }) {
                                 Label("削除", systemImage: "trash")
                             }
                         } else {
                             Button(action: {
-                                // Report post
                             }) {
                                 Label("報告", systemImage: "exclamationmark.triangle")
                             }
@@ -202,14 +185,13 @@ struct PostEngagementDetailView: View {
     }
 }
 
-// MARK: - Post Content Section
 
 struct PostContentSection: View {
     let post: Post
     let onProfileTap: () -> Void
-    
+
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var formattedDateLine: String {
         guard let createdAt = post.createdAt else { return "" }
         let timeFormatter = DateFormatter()
@@ -220,10 +202,9 @@ struct PostContentSection: View {
         dateFormatter.dateFormat = "yyyy/MM/dd"
         return "\(timeFormatter.string(from: createdAt)) ・ \(dateFormatter.string(from: createdAt))"
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header (avatar, name, username)
             HStack(alignment: .top, spacing: 12) {
                 Button(action: onProfileTap) {
                     AsyncImage(url: URL(string: post.user?.profileImageURL ?? "")) { image in
@@ -262,13 +243,11 @@ struct PostContentSection: View {
                 Spacer()
             }
 
-            // Content text
             Text(post.content)
                 .font(.system(size: 18))
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
-            
-            // Post images
+
             if let images = post.images, !images.isEmpty {
                 PostImagesGridView(images: images)
             } else if let imageUrl = post.imageUrl, !imageUrl.isEmpty {
@@ -287,7 +266,6 @@ struct PostContentSection: View {
                 .cornerRadius(12)
             }
 
-            // Timestamp line
             if !formattedDateLine.isEmpty {
                 Text(formattedDateLine)
                     .font(.system(size: 14))
@@ -299,7 +277,6 @@ struct PostContentSection: View {
     }
 }
 
-// MARK: - Engagement Section
 
 struct EngagementSection: View {
     let post: Post
@@ -308,10 +285,9 @@ struct EngagementSection: View {
     let onLike: () -> Void
     let onBookmark: () -> Void
     let onComment: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Counts row like Twitter
             if (post.likeCount ?? 0) > 0 || (post.bookmarkCount ?? 0) > 0 {
                 HStack(spacing: 16) {
                     if let likeCount = post.likeCount, likeCount > 0 {
@@ -340,9 +316,7 @@ struct EngagementSection: View {
                 .padding(.vertical, 12)
             }
 
-//            Divider()
 
-            // Action buttons row
             EngagementButtonsView.detail(
                 post: post,
                 onLike: {
@@ -357,27 +331,22 @@ struct EngagementSection: View {
     }
 }
 
-// MARK: - Comments Section
 
 struct CommentsSection: View {
-    // MARK: - Properties
-    
+
     let comments: [Comment]
     let isLoading: Bool
     let onRefresh: () -> Void
     let onUserTap: ((Int) -> Void)?
     let onImageTap: ((String) -> Void)?
-    
-    // MARK: - State Properties
-    
+
+
     @State private var expandedComments: Set<Int> = []
-    
-    // MARK: - Constants
-    
+
+
     private let maxContentLines: Int = 3
-    
-    // MARK: - Initializer
-    
+
+
     init(
         comments: [Comment],
         isLoading: Bool,
@@ -391,13 +360,11 @@ struct CommentsSection: View {
         self.onUserTap = onUserTap
         self.onImageTap = onImageTap
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Section header
             sectionHeader
-            
-            // Comments content
+
             if isLoading && comments.isEmpty {
                 loadingView
             } else if comments.isEmpty {
@@ -409,23 +376,22 @@ struct CommentsSection: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("コメントセクション、\(comments.count)件のコメント")
     }
-    
-    // MARK: - Section Header
-    
+
+
     private var sectionHeader: some View {
         HStack {
             Text("コメント")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.primary)
-            
+
             if !comments.isEmpty {
                 Text("(\(comments.count))")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             if isLoading && !comments.isEmpty {
                 ProgressView()
                     .scaleEffect(0.8)
@@ -436,9 +402,8 @@ struct CommentsSection: View {
         .padding(.vertical, 12)
         .background(Color(.systemBackground))
     }
-    
-    // MARK: - Loading View
-    
+
+
     private var loadingView: some View {
         VStack(spacing: 16) {
             ForEach(0..<3, id: \.self) { _ in
@@ -449,66 +414,47 @@ struct CommentsSection: View {
         .padding(.vertical, 12)
         .accessibilityLabel("コメントを読み込み中")
     }
-    
+
     private var commentSkeletonView: some View {
         HStack(alignment: .top, spacing: 12) {
-            // Profile image skeleton
             Circle()
                 .fill(Color(.systemGray5))
                 .frame(width: 36, height: 36)
                 .shimmer()
-            
+
             VStack(alignment: .leading, spacing: 8) {
-                // Username skeleton
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color(.systemGray5))
                     .frame(width: 80, height: 14)
                     .shimmer()
-                
-                // Content skeleton
+
                 VStack(alignment: .leading, spacing: 4) {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color(.systemGray5))
                         .frame(height: 14)
                         .shimmer()
-                    
+
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color(.systemGray5))
                         .frame(width: 200, height: 14)
                         .shimmer()
                 }
             }
-            
+
             Spacer()
         }
     }
-    
-    // MARK: - Empty State View
-    
+
+
     private var emptyStateView: some View {
         VStack(spacing: 16) {
-//            Image(systemName: "bubble.left")
-//                .font(.system(size: 48, weight: .light))
-//                .foregroundColor(.secondary)
-//            
-//            VStack(spacing: 8) {
-//                Text("まだコメントがありません")
-//                    .font(.system(size: 16, weight: .medium))
-//                    .foregroundColor(.primary)
-//                
-//                Text("最初にコメントしてみませんか？")
-//                    .font(.system(size: 14))
-//                    .foregroundColor(.secondary)
-//                    .multilineTextAlignment(.center)
-//            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
 
     }
-    
-    // MARK: - Comments List View
-    
+
+
     private var commentsListView: some View {
         LazyVStack(alignment: .leading, spacing: 0) {
             ForEach(comments) { comment in
@@ -529,33 +475,31 @@ struct CommentsSection: View {
                     }
                 )
                 .id(comment.id)
-                
+
                 if comment.id != comments.last?.id {
                     Divider()
-                        .padding(.leading, 64) // Align with content
+                        .padding(.leading, 64)
                 }
             }
         }
     }
 }
 
-// MARK: - Comment Item View
 
 struct CommentItemView: View {
     let comment: Comment
-    
+
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var relativeTimeString: String {
         let formatter = RelativeDateTimeFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
         formatter.unitsStyle = .abbreviated
         return formatter.localizedString(for: comment.createdAt, relativeTo: Date())
     }
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            // User profile image
             AsyncImage(url: URL(string: comment.user?.profileImageURL ?? "")) { image in
                 image
                     .resizable()
@@ -571,31 +515,28 @@ struct CommentItemView: View {
             }
             .frame(width: 36, height: 36)
             .clipShape(Circle())
-            
+
             VStack(alignment: .leading, spacing: 8) {
-                // User info and timestamp
                 HStack(spacing: 8) {
                     Text(comment.user?.name ?? "ユーザー")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
-                    
+
                     Text(relativeTimeString)
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    
+
                     Spacer()
                 }
-                
-                // Comment content
+
                 if !comment.content.isEmpty {
                     Text(comment.content)
                         .font(.body)
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                
-                // Comment image
+
                 if let imageUrl = comment.imageUrl, !imageUrl.isEmpty {
                     AsyncImage(url: URL(string: imageUrl)) { image in
                         image
@@ -619,45 +560,37 @@ struct CommentItemView: View {
     }
 }
 
-// MARK: - Enhanced Comment Item View
 
 struct EnhancedCommentItemView: View {
-    // MARK: - Properties
-    
+
     let comment: Comment
     let isExpanded: Bool
     let maxContentLines: Int
     let onUserTap: ((Int) -> Void)?
     let onImageTap: ((String) -> Void)?
     let onExpandToggle: () -> Void
-    
-    // MARK: - Constants
-    
+
+
     private let profileImageSize: CGFloat = 36
     private let imageMaxHeight: CGFloat = 200
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
-                // Profile image
                 profileImageView
-                
-                // Comment content
+
                 VStack(alignment: .leading, spacing: 8) {
-                    // User info and timestamp
                     userInfoView
-                    
-                    // Comment text content
+
                     if comment.hasContent {
                         commentContentView
                     }
-                    
-                    // Comment image
+
                     if comment.hasImage {
                         commentImageView
                     }
                 }
-                
+
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, 16)
@@ -667,9 +600,8 @@ struct EnhancedCommentItemView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(commentAccessibilityLabel)
     }
-    
-    // MARK: - Profile Image View
-    
+
+
     private var profileImageView: some View {
         Button {
             if let userId = comment.user?.id {
@@ -685,12 +617,10 @@ struct EnhancedCommentItemView: View {
         .accessibilityLabel("ユーザープロフィール: \(comment.user?.name ?? "不明なユーザー")")
         .accessibilityHint("タップしてプロフィールを表示")
     }
-    
-    // MARK: - User Info View
-    
+
+
     private var userInfoView: some View {
         HStack(spacing: 8) {
-            // Username
             Button {
                 if let userId = comment.user?.id {
                     onUserTap?(userId)
@@ -702,37 +632,34 @@ struct EnhancedCommentItemView: View {
                     .lineLimit(1)
             }
             .buttonStyle(PlainButtonStyle())
-            
-            // Username handle
+
             if let username = comment.user?.username {
                 Text("@\(username)")
                     .font(.system(size: 14))
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }
-            
-            // Timestamp
+
             Text("・")
                 .font(.system(size: 14))
                 .foregroundColor(.secondary)
-            
+
             Text(comment.relativeTimeString)
                 .font(.system(size: 14))
                 .foregroundColor(.secondary)
                 .lineLimit(1)
-            
+
             Spacer()
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(comment.user?.name ?? "不明なユーザー")、\(comment.relativeTimeString)")
     }
-    
-    // MARK: - Comment Content View
-    
+
+
     private var commentContentView: some View {
         VStack(alignment: .leading, spacing: 8) {
             let shouldShowExpandButton = comment.content.components(separatedBy: .newlines).count > maxContentLines
-            
+
             Text(comment.content)
                 .font(.system(size: 15))
                 .foregroundColor(.primary)
@@ -740,8 +667,7 @@ struct EnhancedCommentItemView: View {
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityLabel("コメント内容: \(comment.content)")
-            
-            // Expand/Collapse button
+
             if shouldShowExpandButton {
                 Button {
                     onExpandToggle()
@@ -755,9 +681,8 @@ struct EnhancedCommentItemView: View {
             }
         }
     }
-    
-    // MARK: - Comment Image View
-    
+
+
     private var commentImageView: some View {
         Group {
             if let imageUrl = comment.imageUrl, !imageUrl.isEmpty {
@@ -809,25 +734,23 @@ struct EnhancedCommentItemView: View {
             }
         }
     }
-    
-    // MARK: - Helper Methods
-    
+
+
     private var commentAccessibilityLabel: String {
         var label = "\(comment.user?.name ?? "不明なユーザー")のコメント、\(comment.relativeTimeString)"
-        
+
         if comment.hasContent {
             label += "、内容: \(comment.content)"
         }
-        
+
         if comment.hasImage {
             label += "、画像付き"
         }
-        
+
         return label
     }
 }
 
-// MARK: - Shimmer Effect Extension
 
 extension View {
     func shimmer() -> some View {
@@ -837,7 +760,7 @@ extension View {
 
 private struct ShimmerModifier: ViewModifier {
     @State private var isAnimating = false
-    
+
     func body(content: Content) -> some View {
         content
             .overlay(
@@ -867,7 +790,6 @@ private struct ShimmerModifier: ViewModifier {
     }
 }
 
-// MARK: - Comment Compose Section
 
 struct CommentComposeSection: View {
     @Bindable var viewModel: CommentViewModel
@@ -875,16 +797,15 @@ struct CommentComposeSection: View {
     let isSubmitting: Bool
     let onSubmit: () -> Void
     let onImagePicker: () -> Void
-    
+
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     var body: some View {
         VStack(spacing: 0) {
             Divider()
-            
+
             VStack(spacing: 12) {
                 HStack(alignment: .top, spacing: 12) {
-                    // Current user profile image
                     AsyncImage(url: URL(string: currentUser?.profileImageURL ?? "")) { image in
                         image
                             .resizable()
@@ -900,15 +821,13 @@ struct CommentComposeSection: View {
                     }
                     .frame(width: 36, height: 36)
                     .clipShape(Circle())
-                    
+
                     VStack(spacing: 8) {
-                        // Text input
                         TextField("コメントを追加...", text: $viewModel.commentText, axis: .vertical)
                             .textFieldStyle(PlainTextFieldStyle())
                             .lineLimit(1...6)
                             .disabled(isSubmitting)
-                        
-                        // Selected image preview
+
                         if let selectedImage = viewModel.selectedImage {
                             HStack {
                                 Image(uiImage: selectedImage)
@@ -916,7 +835,7 @@ struct CommentComposeSection: View {
                                     .aspectRatio(contentMode: .fit)
                                     .frame(maxHeight: 120)
                                     .cornerRadius(8)
-                                
+
                                 VStack {
                                     Button(action: viewModel.removeSelectedImage) {
                                         Image(systemName: "xmark.circle.fill")
@@ -924,31 +843,27 @@ struct CommentComposeSection: View {
                                             .background(Color.white)
                                             .clipShape(Circle())
                                     }
-                                    
+
                                     Spacer()
                                 }
                             }
                         }
-                        
-                        // Action buttons
+
                         HStack {
-                            // Image picker button
                             Button(action: onImagePicker) {
                                 Image(systemName: "photo")
                                     .foregroundColor(.blue)
                             }
                             .disabled(isSubmitting)
-                            
+
                             Spacer()
-                            
-                            // Character count
+
                             if !viewModel.commentText.isEmpty {
                                 Text(viewModel.characterCountText)
                                     .font(.caption)
                                     .foregroundColor(viewModel.characterCountColor)
                             }
-                            
-                            // Submit button
+
                             Button("投稿") {
                                 onSubmit()
                             }
@@ -957,17 +872,16 @@ struct CommentComposeSection: View {
                         }
                     }
                 }
-                
-                // Validation error
+
                 if let validationError = viewModel.validationError {
                     HStack {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(.orange)
-                        
+
                         Text(validationError)
                             .font(.caption)
                             .foregroundColor(.orange)
-                        
+
                         Spacer()
                     }
                 }
@@ -978,14 +892,13 @@ struct CommentComposeSection: View {
     }
 }
 
-// MARK: - Loading and Error States
 
 struct PostDetailLoadingView: View {
     var body: some View {
         VStack(spacing: 20) {
             ProgressView()
                 .scaleEffect(1.2)
-            
+
             Text("投稿を読み込み中...")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
@@ -997,23 +910,23 @@ struct PostDetailLoadingView: View {
 struct PostDetailErrorView: View {
     let error: String
     let onRetry: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 64))
                 .foregroundColor(.orange)
-            
+
             Text("投稿の読み込みに失敗しました")
                 .font(.headline)
                 .multilineTextAlignment(.center)
-            
+
             Text(error)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
-            
+
             Button("再試行", action: onRetry)
                 .buttonStyle(.borderedProminent)
         }
@@ -1022,12 +935,11 @@ struct PostDetailErrorView: View {
     }
 }
 
-// MARK: - Image Picker
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
     @Environment(\.dismiss) private var dismiss
-    
+
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
@@ -1035,37 +947,36 @@ struct ImagePicker: UIViewControllerRepresentable {
         picker.allowsEditing = true
         return picker
     }
-    
+
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-    
+
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
+
     class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         let parent: ImagePicker
-        
+
         init(_ parent: ImagePicker) {
             self.parent = parent
         }
-        
+
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let editedImage = info[.editedImage] as? UIImage {
                 parent.selectedImage = editedImage
             } else if let originalImage = info[.originalImage] as? UIImage {
                 parent.selectedImage = originalImage
             }
-            
+
             parent.dismiss()
         }
-        
+
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             parent.dismiss()
         }
     }
 }
 
-// MARK: - Preview
 
 #Preview {
     PostEngagementDetailView(postId: 1)

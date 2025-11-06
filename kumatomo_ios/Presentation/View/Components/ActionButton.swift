@@ -7,7 +7,7 @@ struct ActionButton: View {
     let activeColor: Color
     var isActive: Bool = false
     var action: (() -> Void)? = nil
-    
+
     init(
         icon: String,
         count: Int = 0,
@@ -23,7 +23,7 @@ struct ActionButton: View {
         self.isActive = isActive
         self.action = action
     }
-    
+
     var body: some View {
         Button(action: {
             action?()
@@ -32,7 +32,7 @@ struct ActionButton: View {
                 Image(systemName: icon)
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(isActive ? activeColor : color)
-                
+
                 if count > 0 {
                     Text(formatCount(count))
                         .font(.system(size: 14, weight: .medium))
@@ -44,7 +44,7 @@ struct ActionButton: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     private func formatCount(_ count: Int) -> String {
         if count >= 1000000 {
             return String(format: "%.1fM", Double(count) / 1000000.0)
@@ -56,13 +56,12 @@ struct ActionButton: View {
     }
 }
 
-// MARK: - Specialized Action Buttons
 
 struct LikeButton: View {
     let count: Int
     let isLiked: Bool
     let onTap: () -> Void
-    
+
     var body: some View {
         ActionButton(
             icon: isLiked ? "heart.fill" : "heart",
@@ -78,7 +77,7 @@ struct LikeButton: View {
 struct CommentButton: View {
     let count: Int
     let onTap: () -> Void
-    
+
     var body: some View {
         ActionButton(
             icon: "message",
@@ -94,7 +93,7 @@ struct ShareButton: View {
     let count: Int
     let isShared: Bool
     let onTap: () -> Void
-    
+
     var body: some View {
         ActionButton(
             icon: "arrow.2.squarepath",
@@ -110,7 +109,7 @@ struct ShareButton: View {
 struct BookmarkButton: View {
     let isBookmarked: Bool
     let onTap: () -> Void
-    
+
     var body: some View {
         ActionButton(
             icon: isBookmarked ? "bookmark.fill" : "bookmark",

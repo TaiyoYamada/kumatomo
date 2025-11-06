@@ -1,7 +1,6 @@
 import Foundation
 import UIKit
 
-// Data adapter wrapping CommentAPIService
 final class CommentRepositoryImpl: CommentRepository {
     private let service: CommentAPIService
 

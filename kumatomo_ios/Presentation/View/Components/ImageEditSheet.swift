@@ -3,16 +3,16 @@ import PhotosUI
 
 struct ImageEditSheet: View {
     let imageType: ImageType
-    
+
     @Binding var selectedItem: PhotosPickerItem?
     let onDelete: () -> Void
-    
+
     @Environment(\.dismiss) private var dismiss
-    
+
     enum ImageType {
         case profile
         case cover
-        
+
         var displayName: String {
             switch self {
             case .profile:
@@ -21,7 +21,7 @@ struct ImageEditSheet: View {
                 return "カバー画像"
             }
         }
-        
+
         var icon: String {
             switch self {
             case .profile:
@@ -31,7 +31,7 @@ struct ImageEditSheet: View {
             }
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -39,9 +39,9 @@ struct ImageEditSheet: View {
                     Text(imageType.displayName)
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.primary)
-                    
+
                     Spacer()
-                    
+
                     Button("完了") {
                         dismiss()
                     }
@@ -51,8 +51,7 @@ struct ImageEditSheet: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
                 .padding(.bottom, 16)
-                
-                // Action buttons
+
                 VStack(spacing: 0) {
 
                     PhotosPicker(selection: $selectedItem, matching: .images) {
@@ -62,13 +61,13 @@ struct ImageEditSheet: View {
                                 .font(.system(size: 20, weight: .medium))
                                 .foregroundColor(.accentColor)
                                 .frame(width: 24)
-                            
+
                             Text("写真から選択")
                                 .font(.system(size: 17, weight: .regular))
                                 .foregroundColor(.primary)
-                            
+
                             Spacer()
-                            
+
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.secondary)
@@ -79,12 +78,10 @@ struct ImageEditSheet: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(PlainButtonStyle())
-                    
-                    // Divider
+
                     Divider()
                         .padding(.leading, 60)
-                    
-                    // Delete button (ここは変更なし)
+
                     Button(action: {
                         onDelete()
                         dismiss()
@@ -94,11 +91,11 @@ struct ImageEditSheet: View {
                                 .font(.system(size: 20, weight: .medium))
                                 .foregroundColor(.red)
                                 .frame(width: 24)
-                            
+
                             Text("削除")
                                 .font(.system(size: 17, weight: .regular))
                                 .foregroundColor(.red)
-                            
+
                             Spacer()
                         }
                         .padding(.horizontal, 20)
@@ -108,7 +105,7 @@ struct ImageEditSheet: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
-                
+
                 Spacer()
             }
             .background(Color(.systemGroupedBackground))

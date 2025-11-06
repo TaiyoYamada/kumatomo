@@ -15,7 +15,7 @@ enum PostValidationError: LocalizedError {
     case duplicateTag(tagName: String)
     case invalidTagCharacters(tagName: String, invalidChars: [Character])
     case reservedTag(tagName: String)
-    
+
     var errorDescription: String? {
         switch self {
         case .contentEmpty:
@@ -48,7 +48,7 @@ enum PostValidationError: LocalizedError {
             return "タグ「\(tagName)」は予約語のため使用できません"
         }
     }
-    
+
     var recoverySuggestion: String? {
         switch self {
         case .contentEmpty:
@@ -81,7 +81,7 @@ enum PostValidationError: LocalizedError {
             return "別のタグ名を入力してください"
         }
     }
-    
+
     var failureReason: String? {
         switch self {
         case .contentEmpty, .titleEmpty, .tagEmpty:

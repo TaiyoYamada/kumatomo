@@ -4,37 +4,31 @@ import Observation
 struct TimelinePostCardView: View {
     let post: Post
     let onPostTap: (() -> Void)?
-    // Optional custom engagement handler for like. When nil, fallback to
-    // BulletinBoardViewModel's default like toggle.
     let customOnLike: ((Post) async -> Void)?
-    
+
     @State private var showingPostDetail = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(CurrentUserManager.self) private var userManager
     @Environment(AppRouter.self) private var appRouter
-    
-    // Engagement state
+
     @State private var isTogglingLike = false
     @State private var isTogglingBookmark = false
-    
-    // Navigation
+
     @Environment(\.openURL) private var openURL
-    
-    // MARK: - Initializers
-    
+
+
     init(post: Post, onPostTap: (() -> Void)? = nil, customOnLike: ((Post) async -> Void)? = nil) {
         self.post = post
         self.onPostTap = onPostTap
         self.customOnLike = customOnLike
     }
-    
-    // Date formatter
+
     private var formattedDate: String {
         guard let createdAt = post.createdAt else { return "" }
-        
+
         let now = Date()
         let timeInterval = now.timeIntervalSince(createdAt)
-        
+
         if timeInterval < 60 {
             return "今"
         } else if timeInterval < 3600 {
@@ -48,8 +42,7 @@ struct TimelinePostCardView: View {
             return formatter.string(from: createdAt)
         }
     }
-    
-    // Dynamic type sizes
+
     private var adaptiveUserNameSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -68,7 +61,7 @@ struct TimelinePostCardView: View {
             return 15
         }
     }
-    
+
     private var adaptiveTimestampSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -87,7 +80,7 @@ struct TimelinePostCardView: View {
             return 13
         }
     }
-    
+
     private var adaptivePadding: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small, .medium:
@@ -104,13 +97,11 @@ struct TimelinePostCardView: View {
             return 12
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
-                // Profile Icon (Left side)
                 Button(action: {
-                    // Navigate to user profile
                     if let userId = post.user?.id {
                         navigateToUserProfile(userId: userId)
                     }
@@ -131,12 +122,9 @@ struct TimelinePostCardView: View {
                     .clipShape(Circle())
                 }
                 .buttonStyle(PlainButtonStyle())
-                
-                // Content Area (Right side)
+
                 VStack(alignment: .leading, spacing: 8) {
-                    // Tappable content (header + text + media + tags)
                     VStack(alignment: .leading, spacing: 8) {
-                        // User Info Header (Twitter-like: Name, @username · time)
                         HStack(spacing: 6) {
                             Text(post.user?.name ?? "ユーザー")
                                 .font(.system(size: adaptiveUserNameSize, weight: .semibold))
@@ -163,36 +151,30 @@ struct TimelinePostCardView: View {
 
                         Spacer()
                         }
-                        
-                        // Post Content with hashtags
+
                         PostContentView(content: post.content)
-                        
-                        // Post Media
+
                         if let images = post.images, !images.isEmpty {
                             PostMediaView(images: images)
                         } else if let imageUrl = post.imageUrl, !imageUrl.isEmpty {
                             PostMediaView(imageUrl: imageUrl)
                         }
-                        
-                    // Category Tags (display as inline hashtags)
+
                     if let tags = post.tags, !tags.isEmpty {
                         CategoryTagsView(tags: tags)
                     }
                     }
-                    // Make only this upper content tappable to open details
                     .contentShape(Rectangle())
                     .onTapGesture {
                         onPostTap?()
                     }
-                    
-                    // Engagement Buttons (Timeline version - no bookmark count)
+
                     EngagementButtonsView.timeline(
                         post: post,
                         onLike: { @MainActor in
                             if let handler = customOnLike {
                                 await handler(post)
                             } else {
-                                // No-op fallback to avoid unexpected dependencies
                                 print("ℹ️ No custom like handler provided")
                             }
                         },
@@ -213,10 +195,9 @@ struct TimelinePostCardView: View {
         .accessibilityIdentifier("post_item_\(post.id)")
 
     }
-    
 
-    
-    /// Navigate to user profile
+
+
     private func navigateToUserProfile(userId: Int) {
         appRouter.navigateToUserProfile(userId: userId)
     }
@@ -224,7 +205,6 @@ struct TimelinePostCardView: View {
 
 
 
-// MARK: - Preview
 
 #Preview {
     TimelinePostCardViewPreview()
@@ -237,7 +217,7 @@ struct TimelinePostCardViewPreview: View {
             userId: 1,
             content: "これはサンプル投稿です。#テスト #SwiftUI"
         )
-        
+
         var engagedPost = samplePost
         engagedPost.likeCount = 42
         engagedPost.commentCount = 7
@@ -261,14 +241,14 @@ struct TimelinePostCardViewPreview: View {
             joinedDate: nil
         )
         engagedPost.tags = ["グルメ", "イベント"]
-        
+
         return VStack(spacing: 0) {
             TimelinePostCardView(post: engagedPost)
-            
+
             Rectangle()
                 .fill(Color.gray.opacity(0.3))
                 .frame(height: 1)
-            
+
             TimelinePostCardView(post: samplePost)
         }
         .environment(CurrentUserManager.shared)
@@ -276,12 +256,11 @@ struct TimelinePostCardViewPreview: View {
     }
 }
 
-// MARK: - Supporting Views
 
 struct PostContentView: View {
     let content: String
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     private var adaptiveContentSize: CGFloat {
         switch dynamicTypeSize {
         case .xSmall, .small:
@@ -300,7 +279,7 @@ struct PostContentView: View {
             return 16
         }
     }
-    
+
     var body: some View {
         Text(attributedContent)
             .font(.system(size: adaptiveContentSize))
@@ -310,15 +289,14 @@ struct PostContentView: View {
             .accessibilityLabel(content)
             .accessibilityIdentifier("post_content")
     }
-    
+
     private var attributedContent: AttributedString {
         var attributedString = AttributedString(content)
-        
-        // Find hashtags and make them blue
+
         let hashtagPattern = #"#\w+"#
         if let regex = try? NSRegularExpression(pattern: hashtagPattern) {
             let matches = regex.matches(in: content, range: NSRange(content.startIndex..., in: content))
-            
+
             for match in matches.reversed() {
                 if let range = Range(match.range, in: content) {
                     if let attributedRange = Range(match.range, in: attributedString) {
@@ -327,7 +305,7 @@ struct PostContentView: View {
                 }
             }
         }
-        
+
         return attributedString
     }
 }
@@ -335,17 +313,17 @@ struct PostContentView: View {
 struct PostMediaView: View {
     let images: [PostImage]?
     let imageUrl: String?
-    
+
     init(images: [PostImage]) {
         self.images = images
         self.imageUrl = nil
     }
-    
+
     init(imageUrl: String) {
         self.images = nil
         self.imageUrl = imageUrl
     }
-    
+
     var body: some View {
         if let images = images, !images.isEmpty {
             AsyncImage(url: URL(string: images.first!.imageUrl)) { image in
@@ -391,9 +369,8 @@ struct PostMediaView: View {
 
 struct CategoryTagsView: View {
     let tags: [String]
-    
+
     var body: some View {
-        // Render as simple inline hashtags, wrapping across lines as needed
         Text(tags.map { "#\($0)" }.joined(separator: " "))
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(.orange)

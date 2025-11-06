@@ -3,7 +3,7 @@ import SwiftUI
 struct FloatingActionButton: View {
     let action: () -> Void
     @State private var isPressed = false
-    
+
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus")
@@ -35,7 +35,7 @@ struct FloatingActionButton: View {
     ZStack {
         Color.gray.opacity(0.1)
             .ignoresSafeArea()
-        
+
         VStack {
             Spacer()
             HStack {

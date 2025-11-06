@@ -4,36 +4,32 @@ struct RegionalTagSelectionView: View {
     @Binding var selectedTags: Set<String>
     let availableTags: [String]
     @Environment(\.dismiss) private var dismiss
-    
-    // Regional tags (Kumamoto) using shared City enum
-    // Exclude the prefecture-wide tag from selection options
+
     private var regionalTags: [String] {
         City.allCases.map { $0.displayName }
     }
 
-    // Count only visible (non-prefecture-wide) selected tags for UI display
     private var visibleSelectedCount: Int {
         selectedTags.filter { $0 != "熊本県全体" }.count
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Header
                 HStack {
                     Button("キャンセル") {
                         dismiss()
                     }
                     .foregroundColor(.primary)
-                    
+
                     Spacer()
-                    
+
                     Text("地域タグを選択")
                         .font(.headline)
                         .fontWeight(.semibold)
-                    
+
                     Spacer()
-                    
+
                     Button("完了") {
                         dismiss()
                     }
@@ -49,15 +45,14 @@ struct RegionalTagSelectionView: View {
                         .foregroundColor(Color(UIColor.separator)),
                     alignment: .bottom
                 )
-                
-                // Selected tags count (exclude prefecture-wide default)
+
                 HStack {
                     Text("選択中: \(visibleSelectedCount)個")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    
+
                     Spacer()
-                    
+
                     if visibleSelectedCount >= 5 {
                         Text("最大5個まで選択可能")
                             .font(.caption)
@@ -66,8 +61,7 @@ struct RegionalTagSelectionView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                
-                // Tag list
+
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(regionalTags, id: \.self) { tag in
@@ -89,15 +83,13 @@ struct RegionalTagSelectionView: View {
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
     }
-    
+
     private func toggleTag(_ tag: String) {
         if selectedTags.contains(tag) {
-            // Prevent removing last tag - minimum 1 tag required
             if selectedTags.count > 1 {
                 selectedTags.remove(tag)
             }
         } else {
-            // Prevent selecting more than 5 tags
             if selectedTags.filter({ $0 != "熊本県全体" }).count < 5 {
                 selectedTags.insert(tag)
             }
@@ -105,14 +97,13 @@ struct RegionalTagSelectionView: View {
     }
 }
 
-// MARK: - Regional Tag Row
 private struct RegionalTagRow: View {
     let tag: String
     let isSelected: Bool
     let canSelect: Bool
     let canDeselect: Bool
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: {
             if isSelected && canDeselect {
@@ -122,7 +113,6 @@ private struct RegionalTagRow: View {
             }
         }) {
             HStack(spacing: 12) {
-                // Selection indicator
                 ZStack {
                     Circle()
                         .stroke(
@@ -130,23 +120,21 @@ private struct RegionalTagRow: View {
                             lineWidth: 2
                         )
                         .frame(width: 20, height: 20)
-                    
+
                     if isSelected {
                         Circle()
                             .fill(Color.orange)
                             .frame(width: 12, height: 12)
                     }
                 }
-                
-                // Tag name
+
                 Text(tag)
                     .font(.body)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.leading)
-                
+
                 Spacer()
-                
-                // Status indicator
+
                 if isSelected && !canDeselect {
                     Image(systemName: "lock.fill")
                         .font(.caption)

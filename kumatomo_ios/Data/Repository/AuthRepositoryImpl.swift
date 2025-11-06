@@ -1,7 +1,6 @@
 import Foundation
 import Combine
 
-// Data adapter wrapping AuthService
 final class AuthRepositoryImpl: AuthRepository {
     private let service: AuthService
 

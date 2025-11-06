@@ -16,7 +16,7 @@ enum PostError: LocalizedError {
     case noImageContent
     case noTagsSelected
     case noContent
-    
+
     var errorDescription: String? {
         switch self {
         case .contentEmpty:
@@ -51,7 +51,7 @@ enum PostError: LocalizedError {
             return "テキストまたは画像を入力してください。"
         }
     }
-    
+
     var failureReason: String? {
         switch self {
         case .contentEmpty:
@@ -86,7 +86,7 @@ enum PostError: LocalizedError {
             return "テキストまたは画像のどちらも入力されていません"
         }
     }
-    
+
     var recoverySuggestion: String? {
         switch self {
         case .contentEmpty:

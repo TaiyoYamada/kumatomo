@@ -4,18 +4,15 @@ import Observation
 struct KumamonAIView: View {
     @State private var viewModel = KumamonAIViewModel()
     @FocusState private var isInputFocused: Bool
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Chat Messages Area
             chatMessagesView
-            
-            // Input Area
+
             messageInputView
         }
         .navigationTitle("くまモンAI")
         .navigationBarTitleDisplayMode(.inline)
-//        .sidebarButton()
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 clearButton
@@ -29,9 +26,8 @@ struct KumamonAIView: View {
             viewModel.checkServiceAvailability()
         }
     }
-    
-    // MARK: - Chat Messages View
-    
+
+
     private var chatMessagesView: some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -44,14 +40,12 @@ struct KumamonAIView: View {
                                 .id(message.id)
                         }
                     }
-                    
-                    // Typing indicator
+
                     if viewModel.isTyping {
                         TypingIndicatorView()
                             .id("typing")
                     }
-                    
-                    // Bottom spacer for proper scrolling
+
                     Color.clear
                         .frame(height: 1)
                         .id("bottom")
@@ -79,12 +73,10 @@ struct KumamonAIView: View {
             }
         }
     }
-    
-    // MARK: - Message Input View
-    
+
+
     private var messageInputView: some View {
         VStack(spacing: 8) {
-            // Error message
             if let errorMessage = viewModel.errorMessage {
                 ErrorMessageView(
                     message: errorMessage,
@@ -98,8 +90,7 @@ struct KumamonAIView: View {
                     }
                 )
             }
-            
-            // Service unavailable warning (only when API is properly configured)
+
             if !viewModel.isServiceAvailable && APIConfig.shared.isConfigured {
                 ServiceUnavailableView {
                     Task {
@@ -107,7 +98,6 @@ struct KumamonAIView: View {
                     }
                 }
             } else if !APIConfig.shared.isConfigured && viewModel.messages.isEmpty {
-                // Development mode hint when API endpoint is not set
                 VStack(spacing: 8) {
                     HStack {
                         Image(systemName: "wrench.and.screwdriver")
@@ -128,10 +118,8 @@ struct KumamonAIView: View {
                 .cornerRadius(8)
                 .padding(.horizontal)
             }
-            
-            // Input field and send button
+
             HStack(alignment: .bottom, spacing: 12) {
-                // Text input
                 VStack(alignment: .leading, spacing: 4) {
                     TextField("メッセージを入力...", text: $viewModel.inputText, axis: .vertical)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -142,8 +130,7 @@ struct KumamonAIView: View {
                                 sendMessage()
                             }
                         }
-                    
-                    // Character count
+
                     if viewModel.inputCharacterCount > 0 {
                         HStack {
                             Spacer()
@@ -153,8 +140,7 @@ struct KumamonAIView: View {
                         }
                     }
                 }
-                
-                // Send button
+
                 Button(action: sendMessage) {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.title2)
@@ -166,41 +152,33 @@ struct KumamonAIView: View {
             .padding(.vertical, 12)
         }
         .background(Color(.systemBackground))
-//        .overlay(
-//            Rectangle()
-//                .frame(height: 0.5)
-//                .foregroundColor(Color(.separator)),
-//            alignment: .top
-//        )
     }
-    
-    // MARK: - Empty State View
-    
+
+
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Spacer()
-            
+
             Image(systemName: "bubble.left.and.bubble.right")
                 .font(.system(size: 60))
                 .foregroundColor(.secondary)
-            
+
             Text("くまモンAI")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
+
             Text("何でも聞いてください！\nくまモンがお答えします。")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
-            
+
             Spacer()
         }
         .padding(.horizontal, 32)
     }
-    
-    // MARK: - Clear Button
-    
+
+
     private var clearButton: some View {
         Button("クリア") {
             viewModel.clearChat()
@@ -209,24 +187,22 @@ struct KumamonAIView: View {
         .accessibilityLabel("チャットクリア")
         .accessibilityHint("すべてのメッセージを削除します")
     }
-    
-    // MARK: - Helper Methods
-    
+
+
     private func sendMessage() {
         isInputFocused = false
         Task {
             await viewModel.sendMessage()
         }
     }
-    
+
 
 }
 
-// MARK: - Message Bubble View
 
 struct MessageBubbleView: View {
     let message: ChatMessage
-    
+
     var body: some View {
         HStack {
             if message.isFromUser {
@@ -238,7 +214,7 @@ struct MessageBubbleView: View {
             }
         }
     }
-    
+
     private var userMessageBubble: some View {
         VStack(alignment: .trailing, spacing: 4) {
             Text(message.content)
@@ -252,7 +228,7 @@ struct MessageBubbleView: View {
                         .stroke(Color.orange.opacity(0.3), lineWidth: 1)
                 )
                 .accessibilityLabel("あなたのメッセージ: \(message.content)")
-            
+
             Text(formatTime(message.timestamp))
                 .font(.caption2)
                 .foregroundColor(.secondary)
@@ -260,16 +236,15 @@ struct MessageBubbleView: View {
                 .accessibilityLabel("送信時刻: \(formatTime(message.timestamp))")
         }
     }
-    
+
     private var aiMessageBubble: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .top, spacing: 8) {
-                // Kumamon avatar
                 Image(systemName: "bear.fill")
                     .font(.title3)
                     .foregroundColor(.orange)
                     .frame(width: 24, height: 24)
-                
+
                 Text(message.content)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -282,14 +257,14 @@ struct MessageBubbleView: View {
                     )
                     .accessibilityLabel("くまモンの返答: \(message.content)")
             }
-            
+
             Text(formatTime(message.timestamp))
                 .font(.caption2)
                 .foregroundColor(.secondary)
                 .padding(.leading, 32)
         }
     }
-    
+
     private func formatTime(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -298,20 +273,18 @@ struct MessageBubbleView: View {
     }
 }
 
-// MARK: - Typing Indicator View
 
 struct TypingIndicatorView: View {
     @State private var animationPhase = 0
-    
+
     var body: some View {
         HStack {
             HStack(alignment: .top, spacing: 8) {
-                // Kumamon avatar
                 Image(systemName: "bear.fill")
                     .font(.title3)
                     .foregroundColor(.orange)
                     .frame(width: 24, height: 24)
-                
+
                 HStack(spacing: 4) {
                     ForEach(0..<3) { index in
                         Circle()
@@ -335,14 +308,14 @@ struct TypingIndicatorView: View {
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
             }
-            
+
             Spacer(minLength: 60)
         }
         .onAppear {
             startAnimation()
         }
     }
-    
+
     private func startAnimation() {
         Timer.scheduledTimer(withTimeInterval: 0.6, repeats: true) { _ in
             animationPhase = (animationPhase + 1) % 3
@@ -350,29 +323,28 @@ struct TypingIndicatorView: View {
     }
 }
 
-// MARK: - Error Message View
 
 struct ErrorMessageView: View {
     let message: String
     let onRetry: () -> Void
     let onDismiss: () -> Void
-    
+
     var body: some View {
         HStack {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundColor(.orange)
-            
+
             Text(message)
                 .font(.caption)
                 .foregroundColor(.primary)
                 .lineLimit(2)
-            
+
             Spacer()
-            
+
             Button("再試行", action: onRetry)
                 .font(.caption)
                 .foregroundColor(.orange)
-            
+
             Button(action: onDismiss) {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundColor(.secondary)
@@ -390,22 +362,21 @@ struct ErrorMessageView: View {
     }
 }
 
-// MARK: - Service Unavailable View
 
 struct ServiceUnavailableView: View {
     let onRefresh: () -> Void
-    
+
     var body: some View {
         HStack {
             Image(systemName: "wifi.slash")
                 .foregroundColor(.red)
-            
+
             Text("AIサービスが利用できません")
                 .font(.caption)
                 .foregroundColor(.primary)
-            
+
             Spacer()
-            
+
             Button("再接続", action: onRefresh)
                 .font(.caption)
                 .foregroundColor(.orange)

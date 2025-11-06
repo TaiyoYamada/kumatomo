@@ -1,12 +1,10 @@
 import SwiftUI
 
 struct PortalCardGrid: View {
-    // MARK: - Properties
     let cards: [PortalCardData]
     @Environment(NetworkMonitor.self) private var networkMonitor
-    
-    
-    // MARK: - Body
+
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 16) {
@@ -22,19 +20,17 @@ struct PortalCardGrid: View {
 
 
 struct PortalCardView: View {
-    // MARK: - Properties
     let cardData: PortalCardData
-    
+
     @State private var isPressed = false
     @State private var showingError = false
     @State private var errorMessage = ""
     @State private var imageLoadError = false
     @Environment(NetworkMonitor.self) private var networkMonitor
-    
-    // MARK: - Body
+
     var body: some View {
         Button(action: handleCardTap) {
-                
+
             VStack(spacing: 10) {
                 ZStack {
                     Circle()
@@ -68,10 +64,8 @@ struct PortalCardView: View {
             Text(errorMessage)
         }
     }
-    
-    // MARK: - Actions & Helpers
-    
-    /// Handles card tap action and URL opening
+
+
     private func handleCardTap() {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.prepare()
@@ -80,9 +74,8 @@ struct PortalCardView: View {
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    // URL opened successfully - no action needed
                     break
-                    
+
                 case .failure(let error):
                     showError(error.userFriendlyMessage)
                     PortalErrorHandler.shared.logError(error, "Portal card '\(cardData.title)' error")
@@ -90,14 +83,12 @@ struct PortalCardView: View {
             }
         }
     }
-    
-    /// Shows an error alert with the specified message
+
     private func showError(_ message: String) {
         errorMessage = message
         showingError = true
     }
-    
-    /// Validates if the card's URL is properly formatted
+
     private var isValidURL: Bool {
         do {
             _ = try PortalErrorHandler.shared.validateURL(cardData.externalURL)

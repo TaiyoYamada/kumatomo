@@ -16,22 +16,19 @@ class ShopListViewModel {
     var showingMap = false
     var favoritesErrorMessage: String?
     var selectedShop: Shop?
-    
+
     @ObservationIgnored @Injected var fetchShopsUseCase: FetchShopsUseCase
     private let locationManager = LocationManager.shared
     private let favoritesManager = FavoritesManager.shared
     private var cancellables = Set<AnyCancellable>()
-    
-    // Computed property to access user location from LocationManager
+
     var userLocation: CLLocation? {
         return locationManager.userLocation
     }
-    
+
     init() {
-        // Request location permission on initialization
         locationManager.requestLocationPermission()
-        
-        // Observe location updates via NotificationCenter
+
         NotificationCenter.default.publisher(for: .LocationUpdated)
             .sink { [weak self] _ in
                 Task { @MainActor in
@@ -39,43 +36,40 @@ class ShopListViewModel {
                 }
             }
             .store(in: &cancellables)
-        
-        // Observe favorites manager errors via NotificationCenter
+
         NotificationCenter.default.publisher(for: .FavoritesErrorChanged)
             .compactMap { $0.userInfo?["errorMessage"] as? String }
             .sink { [weak self] message in
                 self?.favoritesErrorMessage = message
             }
             .store(in: &cancellables)
-        
-        // Load initial data
+
         Task {
             await loadShops()
         }
     }
-    
+
     func loadShops() async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             let latitude = userLocation?.coordinate.latitude
             let longitude = userLocation?.coordinate.longitude
-            
+
             shops = try await fetchShopsUseCase.execute(
-                genre: nil, // Load all shops, filter locally for multi-select
+                genre: nil,
                 latitude: latitude,
                 longitude: longitude,
-                radius: 5000 // 5km radius
+                radius: 5000
             )
-            
+
             applyFilters()
             #if DEBUG
             print("🧩 [ShopListVM] fetched shops count=\(shops.count)")
             for s in shops { print("🧩 [ShopListVM] id=\(s.id) name=\(s.name) imageUrl=\(s.imageUrl ?? "<nil>")") }
             #endif
         } catch {
-            // 開発環境でAPIが利用できない場合はモックデータを使用
             if !APIConfig.shared.isConfigured || error.localizedDescription.contains("localhost") {
                 print("🔧 APIが利用できないため、モックデータを使用します")
                 shops = createMockShops()
@@ -85,11 +79,10 @@ class ShopListViewModel {
                 print("🚨 お店一覧の取得に失敗: \(error)")
             }
         }
-        
+
         isLoading = false
     }
-    
-    // MARK: - Mock Data for Development
+
     private func createMockShops() -> [Shop] {
         return [
             Shop(
@@ -154,11 +147,11 @@ class ShopListViewModel {
             )
         ]
     }
-    
+
     func refreshShops() async {
         await loadShops()
     }
-    
+
     func toggleGenre(_ genre: ShopGenre) {
         if selectedGenres.contains(genre) {
             selectedGenres.remove(genre)
@@ -167,12 +160,12 @@ class ShopListViewModel {
         }
         applyFilters()
     }
-    
+
     func clearAllGenres() {
         selectedGenres.removeAll()
         applyFilters()
     }
-    
+
     func applyFilters() {
         // 1) ジャンルフィルタ適用
         var result: [Shop]
@@ -200,34 +193,31 @@ class ShopListViewModel {
 
         filteredShops = result
     }
-    
+
     func toggleMapView() {
         showingMap.toggle()
     }
-    
+
     func requestLocationPermission() {
         locationManager.requestLocationPermission()
     }
-    
+
     func distanceFromUser(to shop: Shop) -> String? {
         return locationManager.distanceFromUser(to: shop)
     }
-    
+
     func dismissFavoritesError() {
         favoritesErrorMessage = nil
         favoritesManager.errorMessage = nil
     }
-    
+
     func selectShopFromMap(_ shop: Shop) {
         selectedShop = shop
-        
-        // If we're in list view, scroll to the selected shop
+
         if !showingMap {
-            // This would require additional implementation in the list view
-            // to handle scrolling to a specific shop
         }
     }
-    
+
     func clearSelection() {
         selectedShop = nil
     }

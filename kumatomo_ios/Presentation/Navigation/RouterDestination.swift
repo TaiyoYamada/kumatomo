@@ -1,12 +1,10 @@
 import SwiftUI
 
-// MARK: - 画面遷移用のDestination enum
-// 統合済み: 全ての画面遷移はこのenumで管理
 enum RouterDestination: Hashable {
 	case myProfile      // マイプロフィール画面
 	case shopList       // お店一覧画面
 	case favoritesList  // お気に入り一覧画面
-	case kumamonAI      // くまモンAI画面（サイドバーから遷移）
+	case kumamonAI
 	case bookmarks      // ブックマーク画面
 	case likes          // いいね一覧画面
 	case coupons        // クーポン画面
@@ -21,8 +19,6 @@ enum RouterDestination: Hashable {
 	case userProfile(userId: Int) // ユーザープロフィール画面
 }
 
-// MARK: - タブ選択用のenum（ContentViewから移動・統合）
-// 旧: MainTabView.Selection -> TabSelection に統一
 enum TabSelection: Hashable {
 	case bulletinboard       // 掲示板タブ
 	case search     // 検索タブ
@@ -77,28 +73,27 @@ extension View {
 			}
 		}
 	}
-	
+
 
 }
 
-// MARK: - Placeholder View for missing implementations
 struct PlaceholderView: View {
     let title: String
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "hammer.and.wrench")
                 .font(.system(size: 48))
                 .foregroundColor(.primaryOrange)
-            
+
             Text(title)
                 .font(.title2)
                 .fontWeight(.semibold)
-            
+
             Text("この機能は開発中です")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-            
+
             Text("近日公開予定です")
                 .font(.caption)
                 .foregroundColor(.secondary)

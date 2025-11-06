@@ -1,6 +1,5 @@
 import Foundation
 
-// Domain layer protocol for post-related operations
 protocol PostRepository {
     func fetchAllPosts(page: Int?, limit: Int?) async throws -> [Post]
     func fetchUserPosts(userId: Int, page: Int?, limit: Int?) async throws -> [Post]
@@ -17,7 +16,6 @@ protocol PostRepository {
     func toggleReaction(postId: Int, reactionType: ReactionType) async throws -> (reactions: PostReactions, userReaction: ReactionType?)
     func toggleBookmark(postId: Int) async throws -> Bool
 
-    // Cache-aware fetches used by BulletinBoard
     func fetchAllPostsWithCache(page: Int, limit: Int, useCache: Bool) async throws -> [Post]
     func fetchMunicipalityPostsWithCache(municipality: String, page: Int, limit: Int, useCache: Bool) async throws -> [Post]
     func fetchFollowingPostsWithCache(page: Int, limit: Int, useCache: Bool) async throws -> [Post]

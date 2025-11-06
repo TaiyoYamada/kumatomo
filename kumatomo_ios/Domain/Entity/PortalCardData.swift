@@ -1,6 +1,5 @@
 import Foundation
 
-// これはモックデータです。admin側から取得するように将来的に変更する予定です。
 struct PortalCardData: Identifiable {
     let id = UUID()
     let title: String
@@ -41,11 +40,3 @@ let samplePortalCards: [PortalCardData] = [
         externalURL: "https://www.iryou.teikyouseido.mhlw.go.jp/znk-web/juminkanja/S2310/initialize?pref=43"
     )
 ]
-//
-//let portalSlideshowImages: [String] = [
-//    "portal_slide_1", // TODO: Add actual slideshow image to Assets.xcassets
-//    "portal_slide_2", // TODO: Add actual slideshow image to Assets.xcassets  
-//    "portal_slide_3", // TODO: Add actual slideshow image to Assets.xcassets
-//    "portal_slide_4", // TODO: Add actual slideshow image to Assets.xcassets
-//    "portal_slide_5"  // TODO: Add actual slideshow image to Assets.xcassets
-//]

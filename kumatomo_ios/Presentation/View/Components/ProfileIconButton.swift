@@ -3,7 +3,7 @@ import SwiftUI
 struct ProfileIconButton: View {
     let user: User?
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             AsyncImage(url: URL(string: user?.profileImageURL ?? "")) { image in

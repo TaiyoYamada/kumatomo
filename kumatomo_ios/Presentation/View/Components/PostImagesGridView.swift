@@ -2,22 +2,21 @@ import SwiftUI
 
 struct PostImagesGridView: View {
     let images: [PostImage]
-    
-    // Convenience initializer for string URLs
+
     init(imageUrls: [String]) {
         self.images = imageUrls.enumerated().map { index, url in
             PostImage(id: index, postId: 0, imageUrl: url, displayOrder: index + 1)
         }
     }
-    
+
     init(images: [PostImage]) {
         self.images = images
     }
-    
+
     private var imageUrls: [String] {
         return images.map { $0.imageUrl }
     }
-    
+
     var body: some View {
         Group {
             switch images.count {
@@ -36,11 +35,10 @@ struct PostImagesGridView: View {
     }
 }
 
-// MARK: - Single Image View
 
 struct SingleImageView: View {
     let imageURL: String
-    
+
     var body: some View {
         AsyncImage(url: URL(string: imageURL)) { phase in
             switch phase {
@@ -76,11 +74,10 @@ struct SingleImageView: View {
     }
 }
 
-// MARK: - Two Images View
 
 struct TwoImagesView: View {
     let images: [String]
-    
+
     var body: some View {
         HStack(spacing: 2) {
             ForEach(0..<min(images.count, 2), id: \.self) { index in
@@ -122,14 +119,12 @@ struct TwoImagesView: View {
     }
 }
 
-// MARK: - Three Images View
 
 struct ThreeImagesView: View {
     let images: [String]
-    
+
     var body: some View {
         HStack(spacing: 2) {
-            // First image (larger)
             AsyncImage(url: URL(string: images[0])) { phase in
                 switch phase {
                 case .empty:
@@ -159,8 +154,7 @@ struct ThreeImagesView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            
-            // Two smaller images
+
             VStack(spacing: 2) {
                 ForEach(1..<min(images.count, 3), id: \.self) { index in
                     AsyncImage(url: URL(string: images[index])) { phase in
@@ -200,11 +194,10 @@ struct ThreeImagesView: View {
     }
 }
 
-// MARK: - Four Images View
 
 struct FourImagesView: View {
     let images: [String]
-    
+
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 2), spacing: 2) {
             ForEach(0..<min(images.count, 4), id: \.self) { index in
@@ -245,11 +238,10 @@ struct FourImagesView: View {
     }
 }
 
-// MARK: - Multiple Images View (4+ images)
 
 struct MultipleImagesView: View {
     let images: [String]
-    
+
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 2), spacing: 2) {
             ForEach(0..<min(images.count, 3), id: \.self) { index in
@@ -286,8 +278,7 @@ struct MultipleImagesView: View {
                     }
                 }
             }
-            
-            // Show "+X more" overlay on the last image if there are more than 4 images
+
             if images.count > 4 {
                 ZStack {
                     AsyncImage(url: URL(string: images[3])) { phase in
@@ -304,7 +295,7 @@ struct MultipleImagesView: View {
                                 .aspectRatio(1, contentMode: .fit)
                         }
                     }
-                    
+
                     Rectangle()
                         .fill(.black.opacity(0.6))
                         .overlay(
@@ -318,7 +309,6 @@ struct MultipleImagesView: View {
     }
 }
 
-// MARK: - Preview
 
 #if DEBUG
 struct PostImagesGridView_Previews: PreviewProvider {

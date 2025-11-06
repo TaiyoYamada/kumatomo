@@ -16,7 +16,7 @@ enum EngagementError: LocalizedError {
     case serverError(String)
     case timeout
     case unknownError(Error)
-    
+
     var errorDescription: String? {
         switch self {
         case .networkError(let error):
@@ -51,7 +51,7 @@ enum EngagementError: LocalizedError {
             return "不明なエラー: \(error.localizedDescription)"
         }
     }
-    
+
     var recoverySuggestion: String? {
         switch self {
         case .networkError:

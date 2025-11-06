@@ -5,7 +5,7 @@ struct SearchResult: Codable {
     let posts: [Post]
     let shops: [Shop]
     let pagination: SearchPagination
-    
+
     enum CodingKeys: String, CodingKey {
         case posts, shops, pagination
     }
@@ -17,7 +17,7 @@ struct SearchPagination: Codable {
     let perPage: Int
     let posts: PaginationInfo?
     let shops: PaginationInfo?
-    
+
     enum CodingKeys: String, CodingKey {
         case currentPage = "current_page"
         case perPage = "per_page"
@@ -31,7 +31,7 @@ struct PaginationInfo: Codable {
     let lastPage: Int
     let perPage: Int
     let total: Int
-    
+
     enum CodingKeys: String, CodingKey {
         case currentPage = "current_page"
         case lastPage = "last_page"
@@ -45,7 +45,7 @@ struct SearchHistory: Identifiable, Codable {
     let id = UUID()
     let query: String
     let timestamp: Date
-    
+
     enum CodingKeys: String, CodingKey {
         case query, timestamp
     }

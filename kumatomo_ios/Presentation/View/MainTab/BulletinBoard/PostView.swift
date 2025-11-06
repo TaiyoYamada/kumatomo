@@ -3,42 +3,38 @@ import PhotosUI
 
 struct PostView: View {
     let onPostSuccess: (() -> Void)?
-    
+
     @State private var viewModel = PostViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var showingCancelAlert = false
-    
+
     init(onPostSuccess: (() -> Void)? = nil) {
         self.onPostSuccess = onPostSuccess
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Main content area
                 ScrollView {
                     TextInputArea(
                         content: $viewModel.postContent,
                         characterCount: viewModel.postContent.count
                     )
-                    
-                    
-                    // Image preview if images are selected
+
+
                     if !viewModel.selectedImages.isEmpty {
                         ImagePreviewSection(
                             selectedImages: $viewModel.selectedImages,
                             selectedItems: $selectedItems
                         )
                     }
-                    
-                    // Shop selection if shop is selected
+
                     if viewModel.selectedShop != nil {
                         ShopPreviewSection(selectedShop: $viewModel.selectedShop)
                     }
                 }
-                
-                // Action buttons row (bottom)
+
                 ActionButtonsRow(
                     selectedImages: $viewModel.selectedImages,
                     selectedItems: $selectedItems,
@@ -46,15 +42,14 @@ struct PostView: View {
                     selectedTags: $viewModel.selectedTags,
                     availableTags: viewModel.availableTags
                 )
-                
-                // Tag selection section
+
                 TagSelectionView(
                     selectedTags: $viewModel.selectedTags,
                     availableTags: viewModel.availableTags
                 )
                 .padding(.top, 8)
-                
-                
+
+
             }
             .background(Color(UIColor.systemBackground))
             .navigationBarTitleDisplayMode(.inline)
@@ -65,10 +60,9 @@ struct PostView: View {
                     }
                     .foregroundColor(.primary)
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 8) {
-                        // Validation status indicator
                         if !validationState.errors.isEmpty {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(.caption)
@@ -80,7 +74,7 @@ struct PostView: View {
                                 .foregroundColor(.green)
                                 .scaleEffect(0.8)
                         }
-                        
+
                         Button("投稿") {
                             handlePost()
                         }
@@ -105,7 +99,6 @@ struct PostView: View {
         }
         .overlay {
             OverlayContent(viewModel: viewModel) {
-                // Call success callback and dismiss modal
                 onPostSuccess?()
                 dismiss()
             }
@@ -114,65 +107,56 @@ struct PostView: View {
             handleMultipleImageSelection(newItems)
         }
         .onAppear {
-            // Ensure form starts in clean state
             if viewModel.postContent.isEmpty &&
                 viewModel.selectedImages.isEmpty &&
                 viewModel.selectedShop == nil &&
                 viewModel.selectedTags == ["熊本県全体"] {
-                // Form is already clean, no action needed
             }
         }
         .onDisappear {
-            // Clear any error messages when modal is dismissed
             viewModel.errorMessage = nil
         }
     }
 }
 
-// MARK: - Computed Properties
 private extension PostView {
     var canPost: Bool {
         viewModel.canPost
     }
-    
+
     var validationState: ValidationState {
         viewModel.getValidationState()
     }
-    
+
     var hasUnsavedContent: Bool {
-        !viewModel.postContent.isEmpty || 
-        !viewModel.selectedImages.isEmpty || 
+        !viewModel.postContent.isEmpty ||
+        !viewModel.selectedImages.isEmpty ||
         viewModel.selectedShop != nil ||
         viewModel.selectedTags != ["熊本県全体"]
     }
 }
 
-// MARK: - Actions
 private extension PostView {
     func handleCancel() {
-        // Check if there's any content to discard
         if hasUnsavedContent {
             showingCancelAlert = true
         } else {
-            // No content to lose, dismiss immediately
             viewModel.resetForm()
             dismiss()
         }
     }
-    
+
     func handlePost() {
-        // Validate before attempting to post
         let validation = viewModel.validateForSubmission()
-        
+
         switch validation {
         case .failure(let error):
-            // Show error in modal dialog
             viewModel.errorMessage = error.errorDescription
             return
         case .success:
             break
         }
-        
+
         Task {
             if let currentUser = AuthService.shared.currentUser {
                 let success = await viewModel.createPostWithMultipleImages(
@@ -181,12 +165,10 @@ private extension PostView {
                     shopId: viewModel.selectedShop?.id,
                     images: viewModel.selectedImages
                 )
-                
+
                 if success {
                     await MainActor.run {
-                        // Call the success callback to refresh the feed
                         onPostSuccess?()
-                        // Form is already reset in the success handler
                         dismiss()
                     }
                 }
@@ -195,20 +177,20 @@ private extension PostView {
             }
         }
     }
-    
 
-    
+
+
     func handleMultipleImageSelection(_ newItems: [PhotosPickerItem]) {
         Task {
             var images: [UIImage] = []
-            
-            for item in newItems.prefix(5) { // Maximum 5 images
+
+            for item in newItems.prefix(5) {
                 if let data = try? await item.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
                     images.append(uiImage)
                 }
             }
-            
+
             await MainActor.run {
                 viewModel.selectedImages = images
             }
@@ -217,23 +199,22 @@ private extension PostView {
 }
 
 
-// MARK: - Text Input Area
 private struct TextInputArea: View {
     @Binding var content: String
     let characterCount: Int
-    
+
     private var isOverLimit: Bool {
         characterCount > 300
     }
-    
+
     private var isNearLimit: Bool {
         characterCount > 270
     }
-    
+
     private var isWarningLimit: Bool {
         characterCount > 220
     }
-    
+
     private var borderColor: Color {
         if isOverLimit {
             return .red
@@ -245,7 +226,7 @@ private struct TextInputArea: View {
             return Color(UIColor.separator).opacity(0.3)
         }
     }
-    
+
     private var borderWidth: CGFloat {
         if isOverLimit || isNearLimit {
             return 2
@@ -255,11 +236,10 @@ private struct TextInputArea: View {
             return 0.5
         }
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topLeading) {
-                // Background with subtle border
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color(UIColor.systemBackground))
                     .overlay(
@@ -267,15 +247,14 @@ private struct TextInputArea: View {
                             .stroke(borderColor, lineWidth: borderWidth)
                     )
                     .animation(.easeInOut(duration: 0.2), value: characterCount)
-                
+
                 TextEditor(text: $content)
                     .font(.body)
                     .scrollContentBackground(.hidden)
                     .frame(minHeight: 120)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 8)
-                
-                // Placeholder text
+
                 if content.isEmpty {
                     VStack {
                         HStack {
@@ -291,24 +270,21 @@ private struct TextInputArea: View {
                     .allowsHitTesting(false)
                 }
             }
-            
-            // Enhanced character counter with progress indicator
+
             HStack(spacing: 8) {
-                // Character limit progress bar
                 if characterCount > 0 {
                     ProgressView(value: Double(characterCount), total: 300.0)
                         .progressViewStyle(LinearProgressViewStyle(tint:
-                            isOverLimit ? .red : 
-                            isNearLimit ? .orange : 
+                            isOverLimit ? .red :
+                            isNearLimit ? .orange :
                             isWarningLimit ? .yellow : .orange
                         ))
                         .frame(height: 2)
                         .animation(.easeInOut(duration: 0.2), value: characterCount)
                 }
-                
+
                 Spacer()
-                
-                // Character counter with enhanced styling
+
                 HStack(spacing: 4) {
                     if isOverLimit {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -319,17 +295,17 @@ private struct TextInputArea: View {
                             .font(.caption2)
                             .foregroundColor(.orange)
                     }
-                    
+
                     Text("\(characterCount)")
                         .font(.caption)
                         .fontWeight(isOverLimit || isNearLimit ? .semibold : .regular)
                         .foregroundColor(
-                            isOverLimit ? .red : 
-                            isNearLimit ? .orange : 
+                            isOverLimit ? .red :
+                            isNearLimit ? .orange :
                             isWarningLimit ? .yellow :
                             .secondary
                         )
-                    
+
                     Text("/300")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -346,14 +322,13 @@ private struct TextInputArea: View {
                 )
                 .animation(.easeInOut(duration: 0.2), value: characterCount)
             }
-            
-            // Character limit warning message
+
             if isOverLimit {
                 HStack(spacing: 6) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.caption)
                         .foregroundColor(.red)
-                    
+
                     Text("文字数制限を超えています。\(characterCount - 300)文字削除してください。")
                         .font(.caption)
                         .foregroundColor(.red)
@@ -373,7 +348,7 @@ private struct TextInputArea: View {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.caption)
                         .foregroundColor(.orange)
-                    
+
                     Text("文字数制限まであと\(300 - characterCount)文字です。")
                         .font(.caption)
                         .foregroundColor(.orange)
@@ -392,11 +367,10 @@ private struct TextInputArea: View {
     }
 }
 
-// MARK: - Image Preview Section
 private struct ImagePreviewSection: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
@@ -408,7 +382,7 @@ private struct ImagePreviewSection: View {
                             .frame(height: 120)
                             .clipped()
                             .cornerRadius(12)
-                        
+
                         Button(action: {
                             selectedImages.remove(at: index)
                             if selectedItems.indices.contains(index) {
@@ -429,10 +403,9 @@ private struct ImagePreviewSection: View {
     }
 }
 
-// MARK: - Shop Preview Section
 private struct ShopPreviewSection: View {
     @Binding var selectedShop: Shop?
-    
+
     var body: some View {
         if let shop = selectedShop {
             HStack {
@@ -440,7 +413,7 @@ private struct ShopPreviewSection: View {
                     Text(shop.name)
                         .font(.subheadline.weight(.medium))
                         .foregroundColor(.primary)
-                    
+
                     if let address = shop.address {
                         Text(address)
                             .font(.caption)
@@ -448,9 +421,9 @@ private struct ShopPreviewSection: View {
                             .lineLimit(1)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 Button(action: { selectedShop = nil }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.secondary)
@@ -463,7 +436,6 @@ private struct ShopPreviewSection: View {
     }
 }
 
-// MARK: - Action Buttons Row
 private struct ActionButtonsRow: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
@@ -472,10 +444,9 @@ private struct ActionButtonsRow: View {
     let availableTags: [String]
     @State private var showingShopPicker = false
     @State private var showingRegionalTagPicker = false
-    
+
     var body: some View {
         HStack(spacing: 20) {
-            // Image attachment button
             PhotosPicker(
                 selection: $selectedItems,
                 maxSelectionCount: 5,
@@ -485,22 +456,19 @@ private struct ActionButtonsRow: View {
                     .font(.title2)
                     .foregroundColor(.orange)
             }
-            
-            // Shop selection button
+
             Button(action: { showingShopPicker = true }) {
                 Image(systemName: "location")
                     .font(.title2)
                     .foregroundColor(.orange)
             }
-            
-            // Regional tag selection button
+
             Button(action: { showingRegionalTagPicker = true }) {
                 Image(systemName: "mappin.and.ellipse")
                     .font(.title2)
                     .foregroundColor(.orange)
             }
-            
-            // Emoji button (placeholder for future implementation)
+
             Button(action: {}) {
                 Image(systemName: "face.smiling")
                     .font(.title2)
@@ -508,7 +476,7 @@ private struct ActionButtonsRow: View {
             }
             .disabled(true)
             .opacity(0.5)
-            
+
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -536,11 +504,10 @@ private struct ActionButtonsRow: View {
 
 
 
-// MARK: - Overlay Content
 private struct OverlayContent: View {
     @Bindable var viewModel: PostViewModel
     let onDismiss: () -> Void
-    
+
     var body: some View {
         Group {
             if let errorMessage = viewModel.errorMessage {
@@ -551,11 +518,11 @@ private struct OverlayContent: View {
                     }
                 )
             }
-            
+
             if viewModel.showSuccessModal {
                 SuccessOverlay(onDismiss: onDismiss)
             }
-            
+
             if viewModel.isLoading {
                 LoadingOverlay()
             }
@@ -563,32 +530,30 @@ private struct OverlayContent: View {
     }
 }
 
-// MARK: - Error Overlay
 private struct ErrorOverlay: View {
     let message: String
     let onClose: () -> Void
-    
+
     var body: some View {
         Color.black.opacity(0.4)
             .ignoresSafeArea()
             .overlay {
                 VStack(spacing: 20) {
-                    // Error icon with animation
                     ZStack {
                         Circle()
                             .fill(Color.orange.opacity(0.1))
                             .frame(width: 80, height: 80)
-                        
+
                         Image(systemName: "exclamationmark.triangle.fill")
                             .font(.system(size: 32))
                             .foregroundStyle(Color.orange)
                     }
-                    
+
                     VStack(spacing: 12) {
                         Text("投稿できません")
                             .font(.title3.weight(.semibold))
                             .foregroundStyle(.primary)
-                        
+
                         Text(message)
                             .font(.body)
                             .foregroundStyle(.secondary)
@@ -596,7 +561,7 @@ private struct ErrorOverlay: View {
                             .lineLimit(nil)
                             .padding(.horizontal)
                     }
-                    
+
                     Button("OK") {
                         onClose()
                     }
@@ -616,11 +581,10 @@ private struct ErrorOverlay: View {
     }
 }
 
-// MARK: - Success Overlay
 private struct SuccessOverlay: View {
     let onDismiss: () -> Void
     @State private var checkmarkScale: CGFloat = 0
-    
+
     var body: some View {
         Color.black.opacity(0.4)
             .ignoresSafeArea()
@@ -630,18 +594,18 @@ private struct SuccessOverlay: View {
                         Circle()
                             .fill(Color.green.opacity(0.1))
                             .frame(width: 80, height: 80)
-                        
+
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 40))
                             .foregroundStyle(Color.green)
                             .scaleEffect(checkmarkScale)
                     }
-                    
+
                     VStack(spacing: 8) {
                         Text("投稿しました！")
                             .font(.title3.weight(.semibold))
                             .foregroundStyle(.primary)
-                        
+
                         Text("タイムラインに反映されます")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -656,8 +620,7 @@ private struct SuccessOverlay: View {
                 withAnimation(.interpolatingSpring(stiffness: 300, damping: 30).delay(0.1)) {
                     checkmarkScale = 1.0
                 }
-                
-                // Automatically dismiss after showing success message
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     withAnimation(.easeOut(duration: 0.3)) {
                         onDismiss()
@@ -671,7 +634,6 @@ private struct SuccessOverlay: View {
     }
 }
 
-// MARK: - Loading Overlay
 private struct LoadingOverlay: View {
     var body: some View {
         Color.black.opacity(0.4)
@@ -681,7 +643,7 @@ private struct LoadingOverlay: View {
                     ProgressView()
                         .scaleEffect(1.2)
                         .tint(.white)
-                    
+
                     Text("投稿中...")
                         .font(.subheadline)
                         .foregroundStyle(.white)

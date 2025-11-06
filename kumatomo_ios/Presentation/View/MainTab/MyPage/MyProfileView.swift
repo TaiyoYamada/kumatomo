@@ -10,7 +10,7 @@ struct MyProfileView: View {
     @State private var scrollOffset: CGFloat = 0
     @Environment(\.openSidebar) private var openSidebar
     @Environment(CurrentUserManager.self) private var userManager
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -26,29 +26,29 @@ struct MyProfileView: View {
                         })
                     }
                 )
-                
+
                 // プロフィール情報
                 ModernProfileInfoView(user: viewModel.profile)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 12)
-                
+
                 // 統計情報（投稿数含む）
                 ProfileStatsView(user: viewModel.profile)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 12)
-                
+
                 // お気に入りセクションはサイドバーの独立画面へ移動
-                
+
                 // 区切り線
                 Rectangle()
                     .fill(Color(UIColor.separator))
                     .frame(height: 1)
-                
+
                 // 掲示板と同じタイムライン（内部スクロールなし）
                 PostTimeline(
                     posts: viewModel.posts,
                     loading: viewModel.isLoadingMore,
-                    onRefresh: { /* handled by outer ScrollView */ },
+                    onRefresh: {  },
                     onLoadMore: {
                         let userId = AuthService.shared.currentUser?.id ?? 0
                         viewModel.loadMoreUserPosts(userID: userId)
@@ -58,8 +58,7 @@ struct MyProfileView: View {
                         let postId = post.id
                         let originalIsLiked = post.isLikedByCurrentUser ?? false
                         let originalLikeCount = post.likeCount ?? 0
-                        
-                        // Optimistic update on the profile's posts list
+
                         await MainActor.run {
                             if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
                                 var p = viewModel.posts[idx]
@@ -69,7 +68,7 @@ struct MyProfileView: View {
                                 viewModel.posts[idx] = p
                             }
                         }
-                        
+
                         do {
                             let response = try await EngagementAPIService.shared.toggleLike(postId: postId)
                             await MainActor.run {
@@ -80,7 +79,6 @@ struct MyProfileView: View {
                                 }
                             }
                         } catch {
-                            // Roll back on failure
                             await MainActor.run {
                                 if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
                                     var p = viewModel.posts[idx]
@@ -100,15 +98,6 @@ struct MyProfileView: View {
             viewModel.loadUserPosts(userID: userId)
         }
         .navigationBarTitleDisplayMode(.inline)
-    ////            .sidebarButton()
-    //            .toolbar {
-    //                ToolbarItem(placement: .navigationBarTrailing) {
-    //                    NavigationLink(destination: SearchView()) {
-    //                        Image(systemName: "magnifyingglass")
-    //                            .foregroundColor(.primary)
-    //                    }
-    //                }
-    //            }
         .withSheetRouter(sheet: $sheetDestination)
         .overlay {
             if viewModel.isLoading {
@@ -127,7 +116,6 @@ struct MyProfileView: View {
             viewModel.loadUserPosts(userID: userId)
         }
         }
-    // refreshableはPostTimeline側で対応済み
 }
 
 
@@ -135,7 +123,7 @@ struct ModernProfileHeaderView: View {
     let user: User
     let scrollOffset: CGFloat
     let onEditTapped: () -> Void
-    
+
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
@@ -205,7 +193,7 @@ struct ModernProfileHeaderView: View {
                                 Image(systemName: "photo")
                                     .font(.system(size: 32))
                                     .foregroundColor(.white.opacity(0.7))
-                                
+
                                 Text("カバー画像")
                                     .font(.subheadline)
                                     .foregroundColor(.white.opacity(0.8))
@@ -213,7 +201,7 @@ struct ModernProfileHeaderView: View {
                         )
                     }
                 }
-                .frame(height: min(220, UIScreen.main.bounds.height * 0.25)) // iPhone 16 最適化
+                .frame(height: min(220, UIScreen.main.bounds.height * 0.25))
                 .clipped()
                 .overlay(
                     // グラデーションオーバーレイ - より洗練された効果
@@ -227,8 +215,7 @@ struct ModernProfileHeaderView: View {
                         endPoint: .bottom
                     )
                 )
-                
-                // プロフィール画像とボタンエリア - Twitter/Instagram レイアウト
+
                 ZStack(alignment: .topTrailing) {
                     HStack(alignment: .top) {
                         // プロフィール画像 - より大きく、より目立つように
@@ -238,7 +225,7 @@ struct ModernProfileHeaderView: View {
                                 .fill(Color(.systemBackground))
                                 .frame(width: 108, height: 108)
                                 .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
-                            
+
                             // 内側のプロフィール画像
                             if let imageURL = user.profileImageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
                                 AsyncImage(url: url) { phase in
@@ -286,11 +273,10 @@ struct ModernProfileHeaderView: View {
                             }
                         }
                         .offset(y: -54)
-                        
+
                         Spacer()
                     }
-                    
-                    // 編集ボタン - Twitter/Instagram スタイル
+
                     Button(action: {
                         onEditTapped()
                     }) {
@@ -320,17 +306,16 @@ struct ModernProfileHeaderView: View {
     }
 }
 
-// モダンなプロフィール情報 - Twitter/Instagram スタイル
 struct ModernProfileInfoView: View {
     let user: User
-    
+
     private func formatJoinDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.locale = Locale(identifier: "ja_JP")
         return formatter.string(from: date)
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
@@ -339,14 +324,14 @@ struct ModernProfileInfoView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.black)
-                    
+
                     if user.isVerified == true {
                         Image(systemName: "checkmark.seal.fill")
                             .foregroundColor(.orange)
                             .font(.title3)
                     }
                 }
-                
+
                 if let username = user.username, !username.isEmpty {
                     Text("@\(username)")
                         .font(.subheadline)
@@ -359,7 +344,7 @@ struct ModernProfileInfoView: View {
                         .fontWeight(.medium)
                 }
             }
-            
+
             // バイオ/自己紹介
             if let bio = user.bio, !bio.isEmpty {
                 Text(bio)
@@ -369,8 +354,7 @@ struct ModernProfileInfoView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .lineSpacing(2)
             }
-            
-            // 詳細情報 - Twitter/Instagram スタイルのアイコン付き情報
+
             VStack(alignment: .leading, spacing: 12) {
                 // 出身地情報
                 if let location = user.location, !location.isEmpty {
@@ -384,14 +368,14 @@ struct ModernProfileInfoView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 // 参加日 - より詳細な表示
                 HStack(spacing: 10) {
                     Image(systemName: "calendar")
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
                         .frame(width: 16)
-                    
+
                     Group {
                         if let joinedDate = user.joinedDate, !joinedDate.isEmpty {
                             Text("\(joinedDate)に参加")
@@ -411,10 +395,9 @@ struct ModernProfileInfoView: View {
     }
 }
 
-// 統計情報ビュー - Twitter/Instagram スタイル
 struct ProfileStatsView: View {
     let user: User
-    
+
     var body: some View {
         HStack(spacing: 0) {
             // 投稿数
@@ -424,25 +407,25 @@ struct ProfileStatsView: View {
                 isClickable: false,
                 labelColor: .primary
             )
-            
+
             Spacer()
-            
+
             // フォロー中
             StatItemView(
                 count: user.followingCount ?? 0,
                 label: "フォロー中",
                 isClickable: true
             )
-            
+
             Spacer()
-            
+
             // フォロワー
             StatItemView(
                 count: user.followersCount ?? 0,
                 label: "フォロワー",
                 isClickable: true
             )
-            
+
             Spacer()
         }
         .padding(.vertical, 8)
@@ -454,7 +437,7 @@ struct StatItemView: View {
     let label: String
     let isClickable: Bool
     var labelColor: Color = .secondary
-    
+
     private var formattedCount: String {
         if count >= 1000000 {
             return String(format: "%.1fM", Double(count) / 1000000.0)
@@ -464,7 +447,7 @@ struct StatItemView: View {
             return "\(count)"
         }
     }
-    
+
     @ViewBuilder
     var body: some View {
         let content = HStack(spacing: 4) {
@@ -478,7 +461,6 @@ struct StatItemView: View {
 
         if isClickable {
             Button(action: {
-                // TODO: フォロー/フォロワー一覧画面への遷移
                 print("Navigate to \(label) list")
             }) {
                 content
@@ -491,49 +473,10 @@ struct StatItemView: View {
 }
 
 // モダンなタブセクション
-//struct ModernTabSectionView: View {
-//    @Binding var selectedTab: Int
-//    
-//    let tabs = ["投稿", "メディア", "いいね"]
-//    
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            ScrollView(.horizontal, showsIndicators: false) {
-//                HStack(spacing: 0) {
-//                    ForEach(0..<tabs.count, id: \.self) { index in
-//                        Button(action: {
-//                            withAnimation(.easeInOut(duration: 0.3)) {
-//                                selectedTab = index
-//                            }
-//                        }) {
-//                            VStack(spacing: 12) {
-//                                Text(tabs[index])
-//                                    .font(.system(size: 16, weight: .semibold))
-//                                    .foregroundColor(selectedTab == index ? .primary : .secondary)
-//                                
-//                                Rectangle()
-//                                    .fill(selectedTab == index ? Color.accentColor : Color.clear)
-//                                    .frame(height: 3)
-//                                    .animation(.easeInOut(duration: 0.3), value: selectedTab)
-//                            }
-//                        }
-//                        .frame(maxWidth: .infinity)
-//                    }
-//                }
-//                .padding(.horizontal, 20)
-//            }
-//            
-//            Divider()
-//                .background(Color.secondary.opacity(0.3))
-//        }
-//        .background(.regularMaterial)
-//    }
-//}
 
-// モダンな投稿タイムライン - Twitter/Instagram スタイル
 struct ModernPostGridView: View {
     let posts: [Post]
-    
+
     var body: some View {
         LazyVStack(spacing: 0) {
             if posts.isEmpty {
@@ -542,7 +485,7 @@ struct ModernPostGridView: View {
                 ForEach(posts) { post in
                     ModernPostCardView(post: post)
                         .padding(.vertical, 2)
-                    
+
                     Divider()
                         .background(Color.secondary.opacity(0.15))
                         .padding(.leading, 20)
@@ -553,7 +496,6 @@ struct ModernPostGridView: View {
     }
 }
 
-// 空の状態ビュー - Twitter/Instagram スタイル
 struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 20) {
@@ -562,19 +504,19 @@ struct EmptyStateView: View {
                 Circle()
                     .fill(Color.secondary.opacity(0.1))
                     .frame(width: 80, height: 80)
-                
+
                 Image(systemName: "photo.on.rectangle.angled")
                     .font(.system(size: 32))
                     .foregroundColor(.secondary)
             }
-            
+
             // メッセージ
             VStack(spacing: 8) {
                 Text("まだ投稿がありません")
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
+
                 Text("あなたの最初の投稿を共有して、\nフォロワーとつながりましょう")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -588,10 +530,9 @@ struct EmptyStateView: View {
     }
 }
 
-// 投稿カード - Twitter/Instagram スタイル
 struct ModernPostCardView: View {
     let post: Post
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             PostCardHeaderView(post: post)
@@ -604,16 +545,15 @@ struct ModernPostCardView: View {
     }
 }
 
-// 投稿カードヘッダー - Twitter/Instagram スタイル
 struct PostCardHeaderView: View {
     let post: Post
-    
+
     private var timeAgoText: String {
         guard let createdAt = post.createdAt else { return "不明" }
-        
+
         let now = Date()
         let timeInterval = now.timeIntervalSince(createdAt)
-        
+
         if timeInterval < 60 {
             return "今"
         } else if timeInterval < 3600 {
@@ -627,44 +567,43 @@ struct PostCardHeaderView: View {
             return "\(days)日"
         }
     }
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             PostUserImageView(imageURL: post.user?.profileImageURL)
                 .frame(width: 44, height: 44)
-            
+
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
                     Text(post.user?.name ?? "Unknown User")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
-                    
+
                     if post.user?.isVerified == true {
                         Image(systemName: "checkmark.seal.fill")
                             .foregroundColor(.orange)
                             .font(.system(size: 14))
                     }
                 }
-                
+
                 HStack(spacing: 4) {
                     Text("@\(post.user?.username ?? "username")")
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
-                    
+
                     Text("·")
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
-                    
+
                     Text(timeAgoText)
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Spacer()
-            
+
             Button(action: {
-                // TODO: 投稿メニューの表示
             }) {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 16))
@@ -676,10 +615,9 @@ struct PostCardHeaderView: View {
     }
 }
 
-// 投稿カードコンテンツ - Twitter/Instagram スタイル
 struct PostCardContentView: View {
     let post: Post
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // 投稿テキスト
@@ -691,19 +629,15 @@ struct PostCardContentView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .lineSpacing(2)
             }
-            
+
             // 画像グリッド
-//            if let images = post.images, !images.isEmpty {
-//                PostImagesGridView(images: images.map { $0.imageUrl })
-//                    .cornerRadius(16)
-//            }
-            
+
             if let images = post.images, !images.isEmpty {
                 PostImagesGridView(imageUrls: images.map { $0.imageUrl })
                     .cornerRadius(16)
             }
 
-            
+
             // タグ表示（先頭に#、オレンジ、背景なし、折返し可）
             if let tags = post.tags, !tags.isEmpty {
                 CategoryTagsView(tags: tags)
@@ -713,10 +647,9 @@ struct PostCardContentView: View {
     }
 }
 
-// 投稿カードアクション - Twitter/Instagram スタイル
 struct PostCardActionsView: View {
     let post: Post
-    
+
     var body: some View {
         HStack(spacing: 0) {
             // コメント
@@ -726,32 +659,30 @@ struct PostCardActionsView: View {
                 color: .secondary,
                 activeColor: .orange
             )
-            
+
             Spacer()
-            
+
             // リツイート/シェア
             ActionButton(
                 icon: "arrow.2.squarepath",
-                count: 0, // TODO: リツイート数を追加
+                count: 0,
                 color: .secondary,
                 activeColor: .green
             )
-            
+
             Spacer()
-            
+
             // いいね
             ActionButton(
                 icon: post.userReaction == .thumbsUp ? "heart.fill" : "heart",
                 count: post.reactions?.thumbsUp ?? 0,
-//                color: post.userReaction == .thumbsUp ? .red : .secondary,
                 activeColor: .red
             )
-            
+
             Spacer()
-            
+
             // シェア
             Button(action: {
-                // TODO: シェア機能の実装
             }) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.system(size: 18))
@@ -759,7 +690,7 @@ struct PostCardActionsView: View {
                     .padding(8)
             }
             .buttonStyle(PlainButtonStyle())
-            
+
             Spacer()
         }
         .padding(.leading, 56)

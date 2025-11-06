@@ -7,14 +7,13 @@ import Observation
 @Observable
 class CurrentUserManager {
     static let shared = CurrentUserManager()
-    
+
     var currentUser: User?
     private var cancellables = Set<AnyCancellable>()
-    
+
     private init() {
         // 初期ロード
         loadCurrentUser()
-        // AuthService の変更を監視して即時反映
         AuthService.shared.$currentUser
             .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
@@ -28,22 +27,20 @@ class CurrentUserManager {
             }
             .store(in: &cancellables)
     }
-    
+
     func loadCurrentUser() {
-        // AuthServiceから現在のユーザー情報をスナップショット
         currentUser = AuthService.shared.currentUser
     }
-    
+
     func updateUser(_ user: User) {
         currentUser = user
     }
-    
+
     func clearUser() {
         currentUser = nil
     }
 }
 
-// MARK: - User Extension for easier initialization
 
 extension User {
     init(
@@ -64,12 +61,12 @@ extension User {
         self.coverImageURL = coverImageURL
         self.birthday = birthday
         self.createdAt = createdAt
-        
+
         // デフォルト値を設定
         self.username = nil
         self.profileImageURL = nil
         self.location = nil
-        self.postCount = nil        
+        self.postCount = nil
         self.followingCount = nil
         self.followersCount = nil
         self.hasCompletedSetup = nil

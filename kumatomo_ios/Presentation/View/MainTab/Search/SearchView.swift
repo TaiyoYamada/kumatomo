@@ -6,15 +6,15 @@ struct SearchView: View {
     @Environment(CurrentUserManager.self) private var userManager
     @Environment(AppRouter.self) private var appRouter
     @State private var sheetDestination: SheetDestination?
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // 検索バー
             searchBar
-            
+
             // フィルターセグメント
             filterSegment
-            
+
             // コンテンツ
             if viewModel.isLoading {
                 loadingView
@@ -27,7 +27,7 @@ struct SearchView: View {
             } else {
                 emptyStateView
             }
-            
+
             Spacer()
             }
             .navigationTitle("検索")
@@ -44,14 +44,14 @@ struct SearchView: View {
             }
             .withSheetRouter(sheet: $sheetDestination)
     }
-    
+
     // 検索バー
     private var searchBar: some View {
         HStack {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
-                
+
                 TextField("投稿やお店を検索", text: $viewModel.searchText)
                     .textFieldStyle(PlainTextFieldStyle())
                     .onSubmit {
@@ -60,7 +60,7 @@ struct SearchView: View {
                     .onChange(of: viewModel.searchText) { _ in
                         viewModel.onSearchTextChanged()
                     }
-                
+
                 if !viewModel.searchText.isEmpty {
                     Button(action: {
                         viewModel.clearSearch()
@@ -74,7 +74,7 @@ struct SearchView: View {
             .padding(.vertical, 8)
             .background(Color(.systemGray6))
             .cornerRadius(10)
-            
+
             if !viewModel.searchText.isEmpty {
                 Button("検索") {
                     viewModel.performSearch()
@@ -85,7 +85,7 @@ struct SearchView: View {
         .padding(.horizontal)
         .padding(.top, 8)
     }
-    
+
     // フィルターセグメント
     private var filterSegment: some View {
         Picker("フィルター", selection: $viewModel.selectedFilter) {
@@ -100,7 +100,7 @@ struct SearchView: View {
             viewModel.changeFilter(to: newFilter)
         }
     }
-    
+
     // ローディング表示
     private var loadingView: some View {
         VStack {
@@ -110,7 +110,7 @@ struct SearchView: View {
             Spacer()
         }
     }
-    
+
     // 検索履歴表示
     private var searchHistoryView: some View {
         ScrollView {
@@ -120,9 +120,9 @@ struct SearchView: View {
                         Text("最近の検索")
                             .font(.headline)
                             .foregroundColor(.primary)
-                        
+
                         Spacer()
-                        
+
                         Button("すべて削除") {
                             viewModel.clearSearchHistory()
                         }
@@ -131,18 +131,18 @@ struct SearchView: View {
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 8)
-                    
+
                     ForEach(Array(viewModel.searchHistory.enumerated()), id: \.element.id) { index, history in
                         HStack {
                             Image(systemName: "clock")
                                 .foregroundColor(.gray)
                                 .font(.caption)
-                            
+
                             Text(history.query)
                                 .foregroundColor(.primary)
-                            
+
                             Spacer()
-                            
+
                             Button(action: {
                                 viewModel.removeSearchHistory(at: index)
                             }) {
@@ -157,7 +157,7 @@ struct SearchView: View {
                         .onTapGesture {
                             viewModel.searchFromHistory(history)
                         }
-                        
+
                         if index < viewModel.searchHistory.count - 1 {
                             Divider()
                                 .padding(.leading, 40)
@@ -174,7 +174,7 @@ struct SearchView: View {
             }
         }
     }
-    
+
     // 検索結果表示
     private var searchResultsView: some View {
         ScrollView {
@@ -183,18 +183,18 @@ struct SearchView: View {
                     // 投稿結果
                     if !results.posts.isEmpty && (viewModel.selectedFilter == .all || viewModel.selectedFilter == .posts) {
                         searchSectionHeader(title: "投稿", count: results.posts.count)
-                        
+
                         ForEach(results.posts) { post in
                             PostSearchResultCard(post: post) {
                                 sheetDestination = .postDetail(post.id)
                             }
                         }
                     }
-                    
+
                     // お店結果
                     if !results.shops.isEmpty && (viewModel.selectedFilter == .all || viewModel.selectedFilter == .shops) {
                         searchSectionHeader(title: "お店", count: results.shops.count)
-                        
+
                         ForEach(results.shops) { shop in
                             ShopSearchResultCard(shop: shop) {
                                 appRouter.navigateToShopDetail(shopId: shop.id)
@@ -206,23 +206,23 @@ struct SearchView: View {
             .padding(.horizontal)
         }
     }
-    
+
     // セクションヘッダー
     private func searchSectionHeader(title: String, count: Int) -> some View {
         HStack {
             Text(title)
                 .font(.headline)
                 .foregroundColor(.primary)
-            
+
             Text("(\(count)件)")
                 .font(.caption)
                 .foregroundColor(.gray)
-            
+
             Spacer()
         }
         .padding(.vertical, 8)
     }
-    
+
     // 検索結果なし
     private var noResultsView: some View {
         VStack {
@@ -240,7 +240,7 @@ struct SearchView: View {
             Spacer()
         }
     }
-    
+
     // 空の状態
     private var emptyStateView: some View {
         VStack {
@@ -258,12 +258,12 @@ struct SearchView: View {
             Spacer()
         }
     }
-    
+
     // 投稿検索結果カード
     struct PostSearchResultCard: View {
         let post: Post
         let onTap: () -> Void
-        
+
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -279,14 +279,14 @@ struct SearchView: View {
                         }
                         .frame(width: 32, height: 32)
                         .clipShape(Circle())
-                        
+
                         Text(user.name ?? "Unknown User")
                             .font(.caption)
                             .foregroundColor(.primary)
                     }
-                    
+
                     Spacer()
-                    
+
                     // お店情報
                     if let shop = post.shop {
                         Text(shop.name)
@@ -298,13 +298,13 @@ struct SearchView: View {
                             .cornerRadius(8)
                     }
                 }
-                
+
                 // 投稿内容
                 Text(post.content)
                     .font(.body)
                     .lineLimit(3)
                     .foregroundColor(.primary)
-                
+
                 // 画像
                 if let images = post.images, !images.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -321,14 +321,14 @@ struct SearchView: View {
                                 .frame(width: 60, height: 60)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
-                            
+
                             if images.count > 3 {
                                 ZStack {
                                     Rectangle()
                                         .fill(Color.black.opacity(0.5))
                                         .frame(width: 60, height: 60)
                                         .clipShape(RoundedRectangle(cornerRadius: 8))
-                                    
+
                                     Text("+\(images.count - 3)")
                                         .font(.caption)
                                         .foregroundColor(.white)
@@ -337,7 +337,7 @@ struct SearchView: View {
                         }
                     }
                 }
-                
+
                 // 投稿日時
                 if let createdAt = post.createdAt {
                     Text(createdAt, style: .relative)
@@ -355,14 +355,14 @@ struct SearchView: View {
             }
         }
     }
-    
+
     // お店検索結果カード
     struct ShopSearchResultCard: View {
         let shop: Shop
         let onTap: () -> Void
-        
+
                 @Environment(LocationManager.self) private var locationManager
-        
+
         var body: some View {
             HStack(spacing: 12) {
                 // お店画像
@@ -381,7 +381,7 @@ struct SearchView: View {
                     ImageDebugLogger.logImage(shop.imageUrl, context: "Search:shopId=\(shop.id)")
                     #endif
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     // お店名と距離
                     HStack {
@@ -389,9 +389,9 @@ struct SearchView: View {
                             .font(.headline)
                             .foregroundColor(.primary)
                             .lineLimit(1)
-                        
+
                         Spacer()
-                        
+
                         if let distance = locationManager.distanceFromUser(to: shop) {
                             Text(distance)
                                 .font(.caption)
@@ -402,7 +402,7 @@ struct SearchView: View {
                                 .cornerRadius(4)
                         }
                     }
-                    
+
                     // ジャンル
                     if let genre = shop.genre {
                         Text(genre.displayName)
@@ -413,7 +413,7 @@ struct SearchView: View {
                             .background(Color.orange.opacity(0.1))
                             .cornerRadius(6)
                     }
-                    
+
                     // 住所
                     if let address = shop.address {
                         Text(address)
@@ -421,10 +421,10 @@ struct SearchView: View {
                             .foregroundColor(.gray)
                             .lineLimit(2)
                     }
-                    
+
                     Spacer()
                 }
-                
+
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)
                     .font(.caption)
@@ -447,7 +447,7 @@ enum SearchFilterType: String, CaseIterable {
     case all = "all"
     case posts = "posts"
     case shops = "shops"
-    
+
     var displayName: String {
         switch self {
         case .all:

@@ -3,12 +3,12 @@ import SwiftUI
 struct PostUserImageView: View {
     let imageURL: String?
     let size: CGFloat
-    
+
     init(imageURL: String?, size: CGFloat = 44) {
         self.imageURL = imageURL
         self.size = size
     }
-    
+
     var body: some View {
         Group {
             if let imageURL = imageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
@@ -60,7 +60,6 @@ struct PostUserImageView: View {
     }
 }
 
-// MARK: - Preview
 
 #if DEBUG
 struct PostUserImageView_Previews: PreviewProvider {

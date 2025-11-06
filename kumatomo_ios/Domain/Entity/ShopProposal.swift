@@ -11,7 +11,7 @@ struct ShopProposal: Identifiable, Codable, Equatable {
     let adminNotes: String?
     let createdAt: Date
     let updatedAt: Date?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case userId = "user_id"
@@ -26,7 +26,7 @@ enum ProposalStatus: String, Codable, CaseIterable {
     case pending = "pending"
     case approved = "approved"
     case rejected = "rejected"
-    
+
     var displayName: String {
         switch self {
         case .pending:
@@ -37,7 +37,7 @@ enum ProposalStatus: String, Codable, CaseIterable {
             return "却下"
         }
     }
-    
+
     var isActive: Bool {
         return self == .pending
     }

@@ -5,7 +5,6 @@ struct ShopListResponse: Codable {
     let pagination: ShopPagination?
 }
 
-// Pagination for shops with all fields optional (robust to API variations)
 struct ShopPagination: Codable {
     let currentPage: Int?
     let lastPage: Int?

@@ -13,7 +13,7 @@ enum PostAPIError: Error {
     case authenticationRequired
     case postNotFound
     case insufficientPermissions
-    
+
     var localizedDescription: String {
         switch self {
         case .invalidURL:
@@ -42,8 +42,7 @@ enum PostAPIError: Error {
             return "この操作を実行する権限がありません"
         }
     }
-    
-    /// Returns true if the error is recoverable (e.g., network issues)
+
     var isRecoverable: Bool {
         switch self {
         case .networkError, .timeout, .serverError:
@@ -54,14 +53,12 @@ enum PostAPIError: Error {
             return false
         }
     }
-    
-    /// Returns true if the error is related to engagement functionality
+
     var isEngagementRelated: Bool {
         switch self {
         case .engagementDataError:
             return true
         case .apiError(let code, _):
-            // 特定のHTTPステータスコードをエンゲージメント関連として扱う
             return code >= 500 // サーバーエラーはエンゲージメントデータ取得失敗の可能性
         default:
             return false

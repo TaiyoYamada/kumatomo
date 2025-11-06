@@ -1,11 +1,10 @@
 import Foundation
 
-// MARK: - Image Upload Response Models
 
 struct ImageUploadResponse: Codable {
     let url: String
     let message: String?
-    
+
     enum CodingKeys: String, CodingKey {
         case url
         case message
@@ -14,7 +13,7 @@ struct ImageUploadResponse: Codable {
 
 struct UserResponse: Codable {
     let data: User
-    
+
     enum CodingKeys: String, CodingKey {
         case data
     }
