@@ -490,14 +490,12 @@ private struct ActionButtonsRow: View {
         )
         .sheet(isPresented: $showingShopPicker) {
             ShopPickerView(selectedShop: $selectedShop)
-                .appSheetStyle()
         }
         .sheet(isPresented: $showingRegionalTagPicker) {
             RegionalTagSelectionView(
                 selectedTags: $selectedTags,
                 availableTags: availableTags
             )
-            .appSheetStyle()
         }
     }
 }
@@ -653,4 +651,3 @@ private struct LoadingOverlay: View {
             .animation(.easeInOut(duration: 0.3), value: true)
     }
 }
-

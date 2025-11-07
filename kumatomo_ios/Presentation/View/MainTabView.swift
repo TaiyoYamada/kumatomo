@@ -19,7 +19,6 @@ struct MainTabView: View {
                         .environment(\.openSidebar, sidebarState.open)
                         .withAppRouter()
                         .navigationTitle("ホーム")
-                        .appNavigationStyle()
                 }
                 .tabItem {
                     Image(systemName: "house.fill")
@@ -34,7 +33,6 @@ struct MainTabView: View {
                         .environment(\.openSidebar, sidebarState.open)
                         .withAppRouter()
                         .navigationTitle("検索")
-                        .appNavigationStyle()
                 }
                 .tabItem {
                     Image(systemName: "magnifyingglass")
@@ -46,7 +44,6 @@ struct MainTabView: View {
                     PortalView()
                         .withAppRouter()
                 }
-                .appNavigationStyle()
                 .environment(userManager)
                 .environment(sidebarState)
                 .environment(\.openSidebar, sidebarState.open)
@@ -64,7 +61,6 @@ struct MainTabView: View {
                         .environment(\.openSidebar, sidebarState.open)
                         .withAppRouter()
                         .navigationTitle("お店一覧")
-                        .appNavigationStyle()
                 }
                 .environment(appRouter)
                 .tabItem {
@@ -80,7 +76,7 @@ struct MainTabView: View {
                         .environment(\.openSidebar, sidebarState.open)
                         .withAppRouter()
                         .navigationTitle("プロフィール")
-                        .appNavigationStyle()
+                        .navigationBarTitleDisplayMode(.inline)
                 }
                 .tabItem {
                     Image(systemName: "person.crop.circle.fill")
