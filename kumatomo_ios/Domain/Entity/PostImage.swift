@@ -22,32 +22,29 @@ struct PostImage: Identifiable, Codable, Equatable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        // 利用可能なキーをログ出力
-        let availableKeys = container.allKeys.map { $0.stringValue }
-        print("🔍 PostImage利用可能キー: \(availableKeys)")
-
         id = try container.decode(Int.self, forKey: .id)
         postId = try container.decodeIfPresent(Int.self, forKey: .postId)
 
         if let url = try? container.decode(String.self, forKey: .imageUrl) {
             imageUrl = url
-            print("🔍 image_urlキーを使用: \(imageUrl)")
         } else if let url = try? container.decode(String.self, forKey: .imageUrlAlt) {
             imageUrl = url
-            print("🔍 imageUrlキーを使用")
         } else if let url = try? container.decode(String.self, forKey: .url) {
             imageUrl = url
-            print("🔍 urlキーを使用")
         } else {
-            print("🚨 画像URLキーが見つかりません。利用可能キー: \(availableKeys)")
-            throw DecodingError.keyNotFound(CodingKeys.imageUrl, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "image_url, imageUrl, url のいずれのキーも見つかりません"))
+            throw DecodingError.keyNotFound(
+                CodingKeys.imageUrl,
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "image_url, imageUrl, url のいずれのキーも見つかりません"
+                )
+            )
         }
 
         displayOrder = try container.decodeIfPresent(Int.self, forKey: .displayOrder) ?? 1
+        // Dates are decoded via JSONDecoder.dateDecodingStrategy configured in the Data layer
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
         updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
-
-        print("🔍 PostImage デコード結果: id=\(id), postId=\(postId ?? -1), imageUrl=\(imageUrl)")
     }
 
     func encode(to encoder: Encoder) throws {

@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import Observation
 
 struct SidebarPanel: View {
     let user: User?
@@ -7,6 +8,7 @@ struct SidebarPanel: View {
 
     let allItems = SidebarMenuItemType.allCases
     @Environment(AppRouter.self) private var appRouter
+    @State private var viewModel = SidebarViewModel()
 
     var body: some View {
 
@@ -102,10 +104,10 @@ struct SidebarPanel: View {
     }
 
     private func handleLogout() {
-        Task {
-            try? await AuthService.shared.signOut()
+        Task { @MainActor in
+            await viewModel.signOut()
+            onClose()
         }
-        onClose()
     }
 }
 
