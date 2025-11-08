@@ -93,9 +93,21 @@ struct Shop: Identifiable, Codable, Equatable {
             isApproved = true
         }
 
-        // Dates are decoded via JSONDecoder.dateDecodingStrategy configured in the Data layer
-        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
-        updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        if let d = try? container.decode(Date.self, forKey: .createdAt) {
+            createdAt = d
+        } else if let s = try? container.decode(String.self, forKey: .createdAt) {
+            createdAt = APIHelper.parseDate(s)
+        } else {
+            createdAt = nil
+        }
+
+        if let d = try? container.decode(Date.self, forKey: .updatedAt) {
+            updatedAt = d
+        } else if let s = try? container.decode(String.self, forKey: .updatedAt) {
+            updatedAt = APIHelper.parseDate(s)
+        } else {
+            updatedAt = nil
+        }
     }
 }
 
@@ -122,5 +134,22 @@ extension Shop {
     var coordinate: CLLocationCoordinate2D? {
         guard let lat = latitude, let lng = longitude else { return nil }
         return CLLocationCoordinate2D(latitude: lat, longitude: lng)
+    }
+
+
+    @MainActor func distanceFromUser(_ userLocation: CLLocation?) -> String? {
+        guard let userLocation = userLocation,
+              let coordinate = coordinate else { return nil }
+
+        let shopLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        let distance = userLocation.distance(from: shopLocation)
+
+        return LocationManager.formatDistance(distance)
+    }
+
+
+    @MainActor
+    var distanceFromCurrentUser: String? {
+        return LocationManager.shared.distanceFromUser(to: self)
     }
 }
