@@ -291,7 +291,8 @@ class UserController extends Controller
             
             // Store in public disk
             $path = $image->storeAs('profile_images', $filename, 'public');
-            $url = url(Storage::url($path));
+            // Use filesystem config base (/images) for predictable public URL
+            $url = url(Storage::disk('public')->url($path));
 
             return response()->json([
                 'url' => $url,
@@ -320,7 +321,7 @@ class UserController extends Controller
             
             // Store in public disk
             $path = $image->storeAs('cover_images', $filename, 'public');
-            $url = url(Storage::url($path));
+            $url = url(Storage::disk('public')->url($path));
 
             return response()->json([
                 'url' => $url,
