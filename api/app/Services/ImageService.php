@@ -100,7 +100,8 @@ class ImageService
                 
                 $path = "{$size}_{$directory}/{$filename}";
                 Storage::disk('public')->put($path, $processedImage);
-                $result[$size] = url("storage/{$path}");
+                // Use Storage::url() so base path follows filesystem config
+                $result[$size] = url(Storage::disk('public')->url($path));
                 
                 Log::info("Generated {$size} image", [
                     'path' => $path,
@@ -247,8 +248,15 @@ class ImageService
      */
     public function deleteImage(string $imageUrl): bool
     {
-        // URLからパスを抽出
-        $path = str_replace(url('storage/'), '', $imageUrl);
+        // URLからパスを抽出（/images または /storage の両方に対応）
+        $baseImages = rtrim(url('images/'), '/');
+        $baseStorage = rtrim(url('storage/'), '/');
+        $path = $imageUrl;
+        if (str_starts_with($path, $baseImages)) {
+            $path = ltrim(substr($path, strlen($baseImages)), '/');
+        } elseif (str_starts_with($path, $baseStorage)) {
+            $path = ltrim(substr($path, strlen($baseStorage)), '/');
+        }
         
         if (Storage::disk('public')->exists($path)) {
             return Storage::disk('public')->delete($path);

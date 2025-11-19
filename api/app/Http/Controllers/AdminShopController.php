@@ -91,7 +91,7 @@ class AdminShopController extends Controller
             // 画像アップロード処理
             if ($request->hasFile('image')) {
                 $imagePath = $request->file('image')->store('shops', 'public');
-                $validatedData['image_url'] = Storage::url($imagePath);
+                $validatedData['image_url'] = Storage::disk('public')->url($imagePath);
             }
 
             $shop = Shop::create($validatedData);
@@ -195,12 +195,21 @@ class AdminShopController extends Controller
             if ($request->hasFile('image')) {
                 // 古い画像を削除
                 if ($shop->image_url) {
-                    $oldImagePath = str_replace('/storage/', '', $shop->image_url);
-                    Storage::disk('public')->delete($oldImagePath);
+                    $old = $shop->image_url;
+                    $baseImages = rtrim(url('images/'), '/');
+                    $baseStorage = rtrim(url('storage/'), '/');
+                    if (str_starts_with($old, $baseImages)) {
+                        $old = ltrim(substr($old, strlen($baseImages)), '/');
+                    } elseif (str_starts_with($old, $baseStorage)) {
+                        $old = ltrim(substr($old, strlen($baseStorage)), '/');
+                    } else {
+                        $old = ltrim(str_replace(['/images/', '/storage/'], '', $old), '/');
+                    }
+                    Storage::disk('public')->delete($old);
                 }
 
                 $imagePath = $request->file('image')->store('shops', 'public');
-                $validatedData['image_url'] = Storage::url($imagePath);
+                $validatedData['image_url'] = Storage::disk('public')->url($imagePath);
             }
 
             $shop->update($validatedData);
@@ -260,8 +269,17 @@ class AdminShopController extends Controller
 
             // 画像ファイルを削除
             if ($shop->image_url) {
-                $imagePath = str_replace('/storage/', '', $shop->image_url);
-                Storage::disk('public')->delete($imagePath);
+                $old = $shop->image_url;
+                $baseImages = rtrim(url('images/'), '/');
+                $baseStorage = rtrim(url('storage/'), '/');
+                if (str_starts_with($old, $baseImages)) {
+                    $old = ltrim(substr($old, strlen($baseImages)), '/');
+                } elseif (str_starts_with($old, $baseStorage)) {
+                    $old = ltrim(substr($old, strlen($baseStorage)), '/');
+                } else {
+                    $old = ltrim(str_replace(['/images/', '/storage/'], '', $old), '/');
+                }
+                Storage::disk('public')->delete($old);
             }
 
             $shop->delete();

@@ -41,7 +41,8 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL') . '/storage',
+            // Serve files via controller route at /images/{path}
+            'url' => env('APP_URL') . '/images',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

@@ -8,6 +8,9 @@ Route::get('/', function () {
 });
 
 // 画像配信ルート
+// 推奨: publicディスク配下を /images/{path} で配信
+Route::get('/images/{path}', [ImageController::class, 'show'])->where('path', '.*');
+
 // 新形式: publicディスク配下を任意パスで配信 (/storage/{path})
 Route::get('/storage/{path}', [ImageController::class, 'show'])->where('path', '.*');
 
