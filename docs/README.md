@@ -47,4 +47,5 @@ yarn dev
 
 ## ライセンス
 
-本プロジェクトは [MIT License](./LICENSE) の内容に従います。
+本プロジェクトは [License](./LICENSE) の内容に従います。
+
