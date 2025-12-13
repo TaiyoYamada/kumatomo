@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+/// @mockable
 protocol AuthRepository {
     var isAuthenticated: Bool { get }
     var currentUser: User? { get }
