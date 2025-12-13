@@ -72,7 +72,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E5CD33402E43698400ACDA82 /* Build configuration list for PBXNativeTarget "kumatomo" */;
 			buildPhases = (
+				E5AFC0822EED3F7F00CD0A1E /* Run Script */,
 				E5CD332F2E43698300ACDA82 /* Sources */,
+				E5AFC0832EED51BC00CD0A1E /* ShellScript */,
 				E5CD33302E43698300ACDA82 /* Frameworks */,
 				E5CD33312E43698300ACDA82 /* Resources */,
 				E5BE54692EB2CE470084FF9F /* Embed Frameworks */,
@@ -138,6 +140,44 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E5AFC0822EED3F7F00CD0A1E /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}/Scripts/swiftformat.sh\"\n";
+		};
+		E5AFC0832EED51BC00CD0A1E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}/Scripts/swiftlint.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E5CD332F2E43698300ACDA82 /* Sources */ = {
@@ -226,6 +266,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HJC5DQ3PVM;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "kumatomo-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "くまトモ";
@@ -324,6 +365,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HJC5DQ3PVM;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "kumatomo-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "くまトモ";
@@ -480,6 +522,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HJC5DQ3PVM;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "kumatomo-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "くまトモ";
@@ -513,6 +556,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HJC5DQ3PVM;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "kumatomo-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "くまトモ";
