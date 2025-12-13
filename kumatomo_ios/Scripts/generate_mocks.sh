@@ -12,12 +12,13 @@ if ! command -v mockolo &>/dev/null; then
     exit 0
 fi
 
-# Configuration - when in kumatomo_ios/Scripts, go up to kumatomo_ios
+# Configuration - when in kumatomo_ios/Scripts, go up to project root
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 IOS_DIR="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(dirname "$IOS_DIR")"
 
 SOURCE_DIR="${IOS_DIR}/Domain/Repository"
-OUTPUT_FILE="${IOS_DIR}/kumatomoTests/Mocks/GeneratedMocks.swift"
+OUTPUT_FILE="${PROJECT_ROOT}/kumatomoTests/Mocks/GeneratedMocks.swift"
 
 # Create output directory if it doesn't exist
 mkdir -p "$(dirname "$OUTPUT_FILE")"
