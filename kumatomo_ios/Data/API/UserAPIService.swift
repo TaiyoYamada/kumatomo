@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 import UIKit
 
 // MARK: - UsernameAvailabilityResponse
@@ -11,772 +11,284 @@ struct UsernameAvailabilityResponse: Codable {
 
 // MARK: - UserAPIService
 
-class UserAPIService {
+final class UserAPIService {
     static let shared = UserAPIService()
-    private var baseURL: URL? { APIConfig.shared.baseURL }
 
-    private var jsonDecoder: JSONDecoder {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        decoder.dateDecodingStrategy = .iso8601
-        return decoder
-    }
+    private let client = APIClient.shared
 
-    private var jsonEncoder: JSONEncoder {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        return encoder
-    }
+    // internal init for dependency injection
+    init() {}
 
+    // MARK: - Profile Fetching
+
+    /// ユーザープロフィールを取得
     func fetchProfile(userID: String) -> AnyPublisher<User, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-
-        // キャッシュを完全に無視して、必ずサーバーから新しい情報を取得するようにする
-        request.cachePolicy = .reloadIgnoringLocalCacheData
-        // さらに強力なキャッシュ無効化ヘッダーを追加
-        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
-        request.setValue("no-store", forHTTPHeaderField: "Cache-Control")
-        request.setValue("0", forHTTPHeaderField: "Expires")
-        request.setValue("no-cache", forHTTPHeaderField: "Pragma")
-        // --- 👆 ここまで修正！ ---
-
-        // デバッグ用のログ出力
-        print("📡 リクエストURL: \(url.absoluteString)")
-
-        // 認証トークンを追加
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        return APISession.shared.session.dataTaskPublisher(for: request)
-            .tryMap { data, response in
-                // デバッグ用にレスポンスの詳細を出力
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 ステータスコード: \(httpResponse.statusCode)")
-
-                    // レスポンスボディを文字列として出力
-                    if let responseBody = String(data: data, encoding: .utf8) {
-                        print("📄 レスポンスボディ: \(responseBody)")
-                    }
-
-                    if httpResponse.statusCode >= 400 {
-                        print("⚠️ ユーザー取得失敗（ステータス: \(httpResponse.statusCode)）")
-                    }
+        Future<User, Error> { promise in
+            Task {
+                do {
+                    let user: UserResponse = try await self.client.get(UserEndpoint.fetchUser(userId: Int(userID) ?? 0))
+                    promise(.success(user.data))
+                } catch {
+                    promise(.failure(error))
                 }
-                try self.validateResponse(response)
-                let userResponse = try self.jsonDecoder.decode(UserResponse.self, from: data)
-                return userResponse.data
             }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
-    func saveProfile(_ profile: User) -> AnyPublisher<Bool, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        var request = URLRequest(url: baseURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        do {
-            let encoded = try jsonEncoder.encode(profile)
-            request.httpBody = encoded
-
-            if let json = String(data: encoded, encoding: .utf8) {
-                print("📤 送信データ: \(json)")
-            }
-        } catch {
-            return Fail(error: error).eraseToAnyPublisher()
-        }
-
-        return APISession.shared.session.dataTaskPublisher(for: request)
-            .tryMap { data, response in
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 ステータスコード: \(httpResponse.statusCode)")
-                }
-
-                if let json = String(data: data, encoding: .utf8) {
-                    print("📡 レスポンスボディ: \(json)")
-                }
-
-                try self.validateResponse(response) // ここで400系で失敗
-                return true
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+    /// ユーザープロフィールを取得（async版）
+    func fetchProfileAsync(userId: Int) async throws -> User {
+        let response: UserResponse = try await client.get(UserEndpoint.fetchUser(userId: userId))
+        return response.data
     }
 
-    func createUser(_ user: User) -> AnyPublisher<Bool, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        var request = URLRequest(url: baseURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        do {
-            request.httpBody = try jsonEncoder.encode(user)
-        } catch {
-            return Fail(error: error).eraseToAnyPublisher()
+    /// ユーザープロフィールを取得（async版、String ID）
+    func fetchProfileAsync(userID: String) async throws -> User {
+        guard let userId = Int(userID) else {
+            throw APIError.invalidURL
         }
-
-        return APISession.shared.session.dataTaskPublisher(for: request)
-            .tryMap { _, response in
-                try self.validateResponse(response)
-                return true
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        return try await fetchProfileAsync(userId: userId)
     }
 
+    // MARK: - Profile Creation
+
+    /// プロフィールを作成
+    func createProfile(_ user: User) -> AnyPublisher<User, Error> {
+        Future<User, Error> { promise in
+            Task {
+                do {
+                    let data: [String: Any] = [
+                        "name": user.name ?? "",
+                        "email": user.email ?? "",
+                        "bio": user.bio ?? "",
+                        "location": user.location ?? "",
+                    ]
+                    let response: UserResponse = try await self.client.post(UserEndpoint.updateProfile(data: data))
+                    promise(.success(response.data))
+                } catch {
+                    promise(.failure(ProfileError.profileCreationFailed(error)))
+                }
+            }
+        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
+
+    /// プロフィールを作成（async版）
+    func createProfile(_ user: User) async throws -> User {
+        let data: [String: Any] = [
+            "name": user.name ?? "",
+            "email": user.email ?? "",
+            "bio": user.bio ?? "",
+            "location": user.location ?? "",
+        ]
+        let response: UserResponse = try await client.post(UserEndpoint.updateProfile(data: data))
+        return response.data
+    }
+
+    // MARK: - Profile Updates
+
+    /// プロフィールを更新
     func updateProfile(_ user: User) -> AnyPublisher<User, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        let url = baseURL.appendingPathComponent("users").appendingPathComponent("\(user.id)")
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        do {
-            let encoded = try jsonEncoder.encode(user)
-            request.httpBody = encoded
-
-            if let json = String(data: encoded, encoding: .utf8) {
-                print("📤 プロフィール更新データ: \(json)")
-            }
-        } catch {
-            return Fail(error: ProfileError.profileUpdateFailed(error)).eraseToAnyPublisher()
-        }
-
-        return APISession.shared.session.dataTaskPublisher(for: request)
-            .tryMap { data, response in
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 プロフィール更新ステータス: \(httpResponse.statusCode)")
-
-                    if httpResponse.statusCode == 401 {
-                        throw ProfileError.unauthorized
-                    } else if httpResponse.statusCode >= 400 {
-                        let message = String(data: data, encoding: .utf8) ?? "Unknown error"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
+        Future<User, Error> { promise in
+            Task {
+                do {
+                    var data: [String: Any] = [
+                        "name": user.name ?? "",
+                        "bio": user.bio ?? "",
+                        "location": user.location ?? "",
+                    ]
+                    // 画像URLも含める
+                    if let profileImageURL = user.profileImageURL {
+                        data["profileImageURL"] = profileImageURL
                     }
+                    if let coverImageURL = user.coverImageURL {
+                        data["coverImageURL"] = coverImageURL
+                    }
+                    let response: UserResponse = try await self.client.put(UserEndpoint.updateProfile(data: data))
+                    promise(.success(response.data))
+                } catch {
+                    promise(.failure(ProfileError.profileUpdateFailed(error)))
                 }
-
-                try self.validateResponse(response)
-                let userResponse = try self.jsonDecoder.decode(UserResponse.self, from: data)
-                return userResponse.data
             }
-            .mapError { error in
-                if error is ProfileError {
-                    return error
-                }
-                return ProfileError.profileUpdateFailed(error)
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
-    func updateUsername(_ username: String) -> AnyPublisher<User, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        let url = baseURL.appendingPathComponent("users/update-username")
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+    /// プロフィールを更新（async版）
+    func updateProfile(_ user: User) async throws -> User {
+        var data: [String: Any] = [
+            "name": user.name ?? "",
+            "bio": user.bio ?? "",
+            "location": user.location ?? "",
+        ]
+        // 画像URLも含める
+        if let profileImageURL = user.profileImageURL {
+            data["profileImageURL"] = profileImageURL
         }
-
-        let requestBody = ["username": username]
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
-        } catch {
-            return Fail(error: ProfileError.profileUpdateFailed(error)).eraseToAnyPublisher()
+        if let coverImageURL = user.coverImageURL {
+            data["coverImageURL"] = coverImageURL
         }
-
-        print("📡 ユーザーネーム更新: \(username)")
-
-        return APISession.shared.session.dataTaskPublisher(for: request)
-            .tryMap { data, response in
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 ユーザーネーム更新ステータス: \(httpResponse.statusCode)")
-
-                    if httpResponse.statusCode == 401 {
-                        throw ProfileError.unauthorized
-                    } else if httpResponse.statusCode >= 400 {
-                        let message = String(data: data, encoding: .utf8) ?? "Unknown error"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    }
-                }
-
-                try self.validateResponse(response)
-                let userResponse = try self.jsonDecoder.decode(UserResponse.self, from: data)
-                return userResponse.data
-            }
-            .mapError { error in
-                if error is ProfileError {
-                    return error
-                }
-                return ProfileError.profileUpdateFailed(error)
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        let response: UserResponse = try await client.put(UserEndpoint.updateProfile(data: data))
+        return response.data
     }
 
+    /// プロフィールを更新（async版、データ辞書）
+    func updateProfileAsync(data: [String: Any]) async throws -> User {
+        let response: UserResponse = try await client.put(UserEndpoint.updateProfile(data: data))
+        return response.data
+    }
+
+    // MARK: - Profile Deletion
+
+    /// プロフィールを削除
+    func deleteProfile(userID: String) async throws {
+        try await client.delete(UserEndpoint.fetchUser(userId: Int(userID) ?? 0))
+    }
+
+    // MARK: - Username
+
+    /// ユーザーネームの利用可能性を確認
     func checkUsernameAvailability(_ username: String) -> AnyPublisher<Bool, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        let url = baseURL.appendingPathComponent("users/check-username")
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        let requestBody = ["username": username]
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
-        } catch {
-            return Fail(error: ProfileError.usernameCheckFailed(error)).eraseToAnyPublisher()
-        }
-
-        print("📡 ユーザーネーム確認: \(username)")
-
-        return APISession.shared.session.dataTaskPublisher(for: request)
-            .tryMap { data, response in
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 ユーザーネーム確認ステータス: \(httpResponse.statusCode)")
-
-                    if httpResponse.statusCode == 401 {
-                        throw ProfileError.unauthorized
-                    } else if httpResponse.statusCode >= 400 {
-                        let message = String(data: data, encoding: .utf8) ?? "Unknown error"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    }
-                }
-
-                try self.validateResponse(response)
-
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let available = json["available"] as? Bool {
-                    return available
-                } else {
-                    throw ProfileError.usernameCheckFailed(APIError.invalidResponse)
+        Future<Bool, Error> { promise in
+            Task {
+                do {
+                    let response: UsernameAvailabilityResponse = try await self.client.request(
+                        UsernameEndpoint.check(username: username)
+                    )
+                    promise(.success(response.available))
+                } catch {
+                    promise(.failure(ProfileError.usernameCheckFailed(error)))
                 }
             }
-            .mapError { error in
-                if error is ProfileError {
-                    return error
-                }
-                return ProfileError.usernameCheckFailed(error)
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
+    /// ユーザーネームを更新
+    func updateUsername(_ username: String) -> AnyPublisher<User, Error> {
+        Future<User, Error> { promise in
+            Task {
+                do {
+                    let response: UserResponse = try await self.client.request(
+                        UsernameEndpoint.update(username: username)
+                    )
+                    promise(.success(response.data))
+                } catch {
+                    promise(.failure(ProfileError.profileUpdateFailed(error)))
+                }
+            }
+        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
+
+    // MARK: - Follow Operations
+
+    /// ユーザーをフォロー
+    func followUser(userId: Int) async throws {
+        try await client.requestVoid(UserEndpoint.follow(userId: userId))
+    }
+
+    /// ユーザーのフォローを解除
+    func unfollowUser(userId: Int) async throws {
+        try await client.requestVoid(UserEndpoint.unfollow(userId: userId))
+    }
+
+    /// フォロワー一覧を取得
+    func fetchFollowers(userId: Int, page: Int? = nil, limit: Int? = nil) async throws -> [User] {
+        try await client.get(UserEndpoint.fetchFollowers(userId: userId, page: page, limit: limit))
+    }
+
+    /// フォロー中一覧を取得
+    func fetchFollowing(userId: Int, page: Int? = nil, limit: Int? = nil) async throws -> [User] {
+        try await client.get(UserEndpoint.fetchFollowing(userId: userId, page: page, limit: limit))
+    }
+
+    // MARK: - Profile Save (Combine)
+
+    /// プロフィールを保存（updateProfileと同じ機能、後方互換性のため）
+    func saveProfile(_ user: User) -> AnyPublisher<User, Error> {
+        updateProfile(user)
+    }
+
+    // MARK: - Profile Deletion (Combine)
+
+    /// プロフィールを削除（Combine版）
+    func deleteProfile(userID: String) -> AnyPublisher<Bool, Error> {
+        Future<Bool, Error> { promise in
+            Task {
+                do {
+                    try await self.client.delete(UserEndpoint.fetchUser(userId: Int(userID) ?? 0))
+                    promise(.success(true))
+                } catch {
+                    promise(.failure(ProfileError.profileDeletionFailed(error)))
+                }
+            }
+        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
+
+    // MARK: - Image Upload
+
+    /// プロフィール画像をアップロード
     func uploadProfileImage(_ image: UIImage) -> AnyPublisher<String, Error> {
-        return uploadImage(image, endpoint: "/upload-profile-image")
-            .mapError { error in
-                ProfileError.imageUploadFailed(error)
+        Future<String, Error> { promise in
+            Task {
+                do {
+                    let url = try await ImageUploadService.shared.uploadProfileImage(image)
+                    promise(.success(url))
+                } catch {
+                    promise(.failure(ProfileError.imageUploadFailed(error)))
+                }
             }
-            .eraseToAnyPublisher()
+        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
+    /// カバー画像をアップロード
     func uploadCoverImage(_ image: UIImage) -> AnyPublisher<String, Error> {
-        return uploadImage(image, endpoint: "/upload-cover-image")
-            .mapError { error in
-                ProfileError.imageUploadFailed(error)
+        Future<String, Error> { promise in
+            Task {
+                do {
+                    let url = try await ImageUploadService.shared.uploadCoverImage(image)
+                    promise(.success(url))
+                } catch {
+                    promise(.failure(ProfileError.imageUploadFailed(error)))
+                }
             }
-            .eraseToAnyPublisher()
-    }
-
-    private func uploadImage(_ image: UIImage, endpoint: String) -> AnyPublisher<String, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        let url = baseURL.appendingPathComponent(endpoint.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
-
-        guard let imageData = image.jpegData(compressionQuality: 0.7) else {
-            return Fail(error: ImageUploadError.imageConversionFailed).eraseToAnyPublisher()
         }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        let boundary = UUID().uuidString
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
-        var body = Data()
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
-        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-        body.append(imageData)
-        body.append("\r\n".data(using: .utf8)!)
-        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-
-        request.httpBody = body
-
-        print("🖼️ 画像アップロード開始: \(endpoint)")
-        print("📡 画像データサイズ: \(imageData.count) bytes")
-
-        return APISession.shared.session.dataTaskPublisher(for: request)
-            .tryMap { data, response in
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 画像アップロードステータス: \(httpResponse.statusCode)")
-
-                    if httpResponse.statusCode == 401 {
-                        throw ProfileError.unauthorized
-                    } else if httpResponse.statusCode >= 400 {
-                        let message = String(data: data, encoding: .utf8) ?? "Unknown error"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    }
-                }
-
-                try self.validateResponse(response)
-
-                let decoder = JSONDecoder()
-                let response = try decoder.decode(ImageUploadResponse.self, from: data)
-                print("✅ 画像アップロード成功: \(response.url)")
-                return response.url
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-    }
-
-    @MainActor
-    func createProfile(_ user: User, progressTracker: ProgressTracker? = nil) -> AnyPublisher<User, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        let url = baseURL.appendingPathComponent("users")
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        let createRequest = user.toCreateRequest()
-
-        do {
-            let encoded = try jsonEncoder.encode(createRequest)
-            request.httpBody = encoded
-
-            if let json = String(data: encoded, encoding: .utf8) {
-                print("📤 プロフィール作成データ: \(json)")
-            }
-        } catch {
-            return Fail(error: ProfileError.validationFailed(["データのエンコードに失敗しました"]))
-                .eraseToAnyPublisher()
-        }
-
-        progressTracker?.start()
-
-        let publisher = APISession.shared.session.dataTaskPublisher(for: request)
-            .handleEvents(
-                receiveSubscription: { _ in
-                    progressTracker?.update(progress: 0.1)
-                },
-                receiveOutput: { _ in
-                    progressTracker?.update(progress: 0.8)
-                },
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        progressTracker?.complete()
-                    case .failure:
-                        progressTracker?.cancel()
-                    }
-                }
-            )
-            .tryMap { data, response in
-                progressTracker?.update(progress: 0.6)
-
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 プロフィール作成ステータス: \(httpResponse.statusCode)")
-
-                    switch httpResponse.statusCode {
-                    case 401:
-                        throw ProfileError.unauthorized
-                    case 422:
-                        if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                           let errors = errorData["errors"] as? [String: [String]] {
-                            let messages = errors.values.flatMap { $0 }
-                            throw ProfileError.validationFailed(messages)
-                        }
-                        throw ProfileError.validationFailed(["入力データが無効です"])
-                    case 409:
-                        throw ProfileError.usernameNotAvailable
-                    case 400 ..< 500:
-                        let message = String(data: data, encoding: .utf8) ?? "クライアントエラー"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    case 500...:
-                        let message = String(data: data, encoding: .utf8) ?? "サーバーエラー"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    default:
-                        break
-                    }
-                }
-
-                try self.validateResponse(response)
-                let userResponse = try self.jsonDecoder.decode(UserResponse.self, from: data)
-                print("✅ プロフィール作成成功: \(userResponse.data.username ?? "unknown")")
-                return userResponse.data
-            }
-            .mapError { error in
-                if error is ProfileError {
-                    return error
-                }
-                return ProfileError.networkError(error)
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-
-        if let tracker = progressTracker {
-            let cancellable = AnyCancellable(publisher.sink(
-                receiveCompletion: { _ in },
-                receiveValue: { _ in }
-            ))
-            tracker.setCancellable(cancellable)
-        }
-
-        return publisher
-    }
-
-    func fetchProfileEnhanced(userID: String, useCache: Bool = true) -> AnyPublisher<User, Error> {
-        if useCache, let cachedUser = ProfileCache.shared.getUser(id: userID) {
-            print("📱 キャッシュからプロフィール取得: \(userID)")
-            return Just(cachedUser)
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher()
-        }
-
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-
-        let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        print("📡 プロフィール取得リクエスト: \(url.absoluteString)")
-
-        return APISession.shared.session.dataTaskPublisher(for: request)
-            .retry(2)
-            .tryMap { data, response in
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 プロフィール取得ステータス: \(httpResponse.statusCode)")
-
-                    switch httpResponse.statusCode {
-                    case 401:
-                        throw ProfileError.unauthorized
-                    case 404:
-                        throw ProfileError.profileLoadFailed(APIError.userNotFound)
-                    case 400 ..< 500:
-                        let message = String(data: data, encoding: .utf8) ?? "クライアントエラー"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    case 500...:
-                        let message = String(data: data, encoding: .utf8) ?? "サーバーエラー"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    default:
-                        break
-                    }
-                }
-
-                try self.validateResponse(response)
-                let userResponse = try self.jsonDecoder.decode(UserResponse.self, from: data)
-
-                ProfileCache.shared.setUser(userResponse.data)
-
-                return userResponse.data
-            }
-            .mapError { error in
-                if error is ProfileError {
-                    return error
-                }
-                return ProfileError.profileLoadFailed(error)
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-    }
-
-    @MainActor
-    func deleteProfile(userID: String, progressTracker: ProgressTracker? = nil) -> AnyPublisher<Bool, Error> {
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
-        var request = URLRequest(url: url)
-        request.httpMethod = "DELETE"
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        print("🗑️ プロフィール削除リクエスト: \(userID)")
-        progressTracker?.start()
-
-        let publisher = APISession.shared.session.dataTaskPublisher(for: request)
-            .handleEvents(
-                receiveSubscription: { _ in
-                    progressTracker?.update(progress: 0.1)
-                },
-                receiveOutput: { _ in
-                    progressTracker?.update(progress: 0.8)
-                },
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        progressTracker?.complete()
-                    case .failure:
-                        progressTracker?.cancel()
-                    }
-                }
-            )
-            .tryMap { data, response in
-                progressTracker?.update(progress: 0.6)
-
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 プロフィール削除ステータス: \(httpResponse.statusCode)")
-
-                    switch httpResponse.statusCode {
-                    case 401:
-                        throw ProfileError.unauthorized
-                    case 403:
-                        throw ProfileError.serverError(statusCode: 403, message: "削除権限がありません")
-                    case 404:
-                        throw ProfileError.profileLoadFailed(APIError.userNotFound)
-                    case 400 ..< 500:
-                        let message = String(data: data, encoding: .utf8) ?? "削除に失敗しました"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    case 500...:
-                        let message = String(data: data, encoding: .utf8) ?? "サーバーエラー"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    default:
-                        break
-                    }
-                }
-
-                try self.validateResponse(response)
-
-                ProfileCache.shared.removeUser(id: userID)
-
-                print("✅ プロフィール削除成功: \(userID)")
-                return true
-            }
-            .mapError { error in
-                if error is ProfileError {
-                    return error
-                }
-                return ProfileError.networkError(error)
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-
-        if let tracker = progressTracker {
-            let cancellable = AnyCancellable(publisher.sink(
-                receiveCompletion: { _ in },
-                receiveValue: { _ in }
-            ))
-            tracker.setCancellable(cancellable)
-        }
-
-        return publisher
-    }
-
-    @MainActor
-    func uploadImageEnhanced(
-        _ image: UIImage,
-        endpoint: String,
-        progressTracker: ProgressTracker? = nil
-    ) -> AnyPublisher<String, Error> {
-        guard let validationResult = validateImageForUpload(image) else {
-            return Fail(error: ProfileError.imageUploadFailed(ImageUploadError.imageConversionFailed))
-                .eraseToAnyPublisher()
-        }
-
-        if case let .failure(error) = validationResult {
-            return Fail(error: error).eraseToAnyPublisher()
-        }
-
-        guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
-        let url = baseURL.appendingPathComponent(endpoint.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
-
-        guard let imageData = image.jpegData(compressionQuality: 0.7) else {
-            return Fail(error: ProfileError.imageUploadFailed(ImageUploadError.imageConversionFailed))
-                .eraseToAnyPublisher()
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.timeoutInterval = 60.0
-
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        let boundary = UUID().uuidString
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
-        var body = Data()
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
-        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-        body.append(imageData)
-        body.append("\r\n".data(using: .utf8)!)
-        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-
-        request.httpBody = body
-
-        print("🖼️ 画像アップロード開始: \(endpoint)")
-        print("📡 画像データサイズ: \(imageData.count) bytes")
-
-        progressTracker?.start()
-
-        let publisher = APISession.shared.session.dataTaskPublisher(for: request)
-            .handleEvents(
-                receiveSubscription: { _ in
-                    progressTracker?.update(progress: 0.1)
-                },
-                receiveOutput: { _ in
-                    progressTracker?.update(progress: 0.9)
-                },
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        progressTracker?.complete()
-                    case .failure:
-                        progressTracker?.cancel()
-                    }
-                }
-            )
-            .tryMap { data, response in
-                progressTracker?.update(progress: 0.7)
-
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📡 画像アップロードステータス: \(httpResponse.statusCode)")
-
-                    switch httpResponse.statusCode {
-                    case 401:
-                        throw ProfileError.unauthorized
-                    case 413:
-                        throw ProfileError.imageTooLarge(maxSize: 10)
-                    case 415:
-                        throw ProfileError.unsupportedImageFormat
-                    case 429:
-                        throw ProfileError.rateLimitExceeded
-                    case 507:
-                        throw ProfileError.quotaExceeded
-                    case 400 ..< 500:
-                        let message = String(data: data, encoding: .utf8) ?? "画像アップロードエラー"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    case 500...:
-                        let message = String(data: data, encoding: .utf8) ?? "サーバーエラー"
-                        throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
-                    default:
-                        break
-                    }
-                }
-
-                try self.validateResponse(response)
-
-                let decoder = JSONDecoder()
-                let response = try decoder.decode(ImageUploadResponse.self, from: data)
-                print("✅ 画像アップロード成功: \(response.url)")
-                return response.url
-            }
-            .mapError { error in
-                if error is ProfileError {
-                    return error
-                }
-                if let urlError = error as? URLError, urlError.code == .timedOut {
-                    return ProfileError.uploadTimeout
-                }
-                return ProfileError.imageUploadFailed(error)
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-
-        if let tracker = progressTracker {
-            let cancellable = AnyCancellable(publisher.sink(
-                receiveCompletion: { _ in },
-                receiveValue: { _ in }
-            ))
-            tracker.setCancellable(cancellable)
-        }
-
-        return publisher
-    }
-
-    @MainActor
-    func uploadProfileImageEnhanced(
-        _ image: UIImage,
-        progressTracker: ProgressTracker? = nil
-    ) -> AnyPublisher<String, Error> {
-        return uploadImageEnhanced(image, endpoint: "/upload-profile-image", progressTracker: progressTracker)
-    }
-
-    @MainActor
-    func uploadCoverImageEnhanced(
-        _ image: UIImage,
-        progressTracker: ProgressTracker? = nil
-    ) -> AnyPublisher<String, Error> {
-        return uploadImageEnhanced(image, endpoint: "/upload-cover-image", progressTracker: progressTracker)
-    }
-
-    private func validateImageForUpload(_ image: UIImage) -> Result<Void, ProfileError>? {
-        let maxDimension: CGFloat = 4_096
-        if image.size.width > maxDimension || image.size.height > maxDimension {
-            return .failure(.imageTooLarge(maxSize: 10))
-        }
-
-        guard image.jpegData(compressionQuality: 0.7) != nil else {
-            return .failure(.imageCompressionFailed)
-        }
-
-        return .success(())
-    }
-
-    private func validateResponse(_ response: URLResponse) throws {
-        guard let httpResponse = response as? HTTPURLResponse,
-              200 ..< 300 ~= httpResponse.statusCode else {
-            throw URLError(.badServerResponse)
-        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 }
 
-extension UserAPIService {
-    func fetchProfileAsync(userID: String) async throws -> User {
-        guard let baseURL else { throw APIError.invalidURL }
-        let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        if let token = AuthTokenManager.shared.token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+// MARK: - UsernameEndpoint
+
+private enum UsernameEndpoint: APIEndpoint {
+    case check(username: String)
+    case update(username: String)
+
+    var path: String {
+        switch self {
+        case .check: return "/users/check-username"
+        case .update: return "/users/update-username"
         }
+    }
 
-        // キャッシュを完全に無視して、必ずサーバーから新しい情報を取得するようにする
-        request.cachePolicy = .reloadIgnoringLocalCacheData
-        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
-        request.setValue("no-store", forHTTPHeaderField: "Cache-Control")
-        request.setValue("0", forHTTPHeaderField: "Expires")
-        request.setValue("no-cache", forHTTPHeaderField: "Pragma")
+    var method: HTTPMethod {
+        return .post
+    }
 
-        let (data, response) = try await APISession.shared.session.data(for: request)
-        try validateResponse(response)
-        let userResponse = try jsonDecoder.decode(UserResponse.self, from: data)
-        return userResponse.data
+    var body: [String: Any]? {
+        switch self {
+        case let .check(username): return ["username": username]
+        case let .update(username): return ["username": username]
+        }
     }
 }

@@ -6,10 +6,8 @@ struct LikeResponse: Codable, Equatable {
     var isLiked: Bool
     var likeCount: Int
 
-    enum CodingKeys: String, CodingKey {
-        case isLiked = "is_liked"
-        case likeCount = "like_count"
-    }
+    // CodingKeys removed: APIClient uses .convertFromSnakeCase decoder strategy
+    // which automatically converts is_liked -> isLiked, like_count -> likeCount
 
     init(isLiked: Bool, likeCount: Int) {
         self.isLiked = isLiked
@@ -23,10 +21,8 @@ struct BookmarkResponse: Codable, Equatable {
     var isBookmarked: Bool
     var bookmarkCount: Int
 
-    enum CodingKeys: String, CodingKey {
-        case isBookmarked = "is_bookmarked"
-        case bookmarkCount = "bookmark_count"
-    }
+    // CodingKeys removed: APIClient uses .convertFromSnakeCase decoder strategy
+    // which automatically converts is_bookmarked -> isBookmarked, bookmark_count -> bookmarkCount
 
     init(isBookmarked: Bool, bookmarkCount: Int) {
         self.isBookmarked = isBookmarked

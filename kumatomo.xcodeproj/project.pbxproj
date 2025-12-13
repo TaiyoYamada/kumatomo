@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E51A7EE02EED72FF00842CE5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E51A7EDF2EED72FF00842CE5 /* Alamofire */; };
 		E5B58B672EB2CF570096C37C /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5B58B662EB2CF570096C37C /* Resolver */; };
 /* End PBXBuildFile section */
 
@@ -101,6 +102,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E5B58B672EB2CF570096C37C /* Resolver in Frameworks */,
+				E51A7EE02EED72FF00842CE5 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,6 +201,7 @@
 			name = kumatomo;
 			packageProductDependencies = (
 				E5B58B662EB2CF570096C37C /* Resolver */,
+				E51A7EDF2EED72FF00842CE5 /* Alamofire */,
 			);
 			productName = kumatomo;
 			productReference = E5CD33332E43698300ACDA82 /* kumatomo.app */;
@@ -238,6 +241,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */,
+				E51A7EDE2EED72FF00842CE5 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E5CD33342E43698300ACDA82 /* Products */;
@@ -291,7 +295,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}kumatomo_ios/Scripts/generate_mocks.sh\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}/kumatomo_ios/Scripts/generate_mocks.sh\"\n";
 		};
 		E5AFC0822EED3F7F00CD0A1E /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1223,6 +1227,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E51A7EDE2EED72FF00842CE5 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 		E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Resolver";
@@ -1234,6 +1246,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E51A7EDF2EED72FF00842CE5 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E51A7EDE2EED72FF00842CE5 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		E5B58B662EB2CF570096C37C /* Resolver */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */;

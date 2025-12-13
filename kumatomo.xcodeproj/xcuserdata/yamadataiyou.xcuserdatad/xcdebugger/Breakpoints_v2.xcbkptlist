@@ -20,5 +20,51 @@
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "64B3D4C7-EECA-43C5-BC21-09E1425E9321"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kumatomo_ios/Data/Local/Cache/OfflineDataCache.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "syncCacheWithServer()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "64B3D4C7-EECA-43C5-BC21-09E1425E9321 - 8b654f66036d31a2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kumatomo.OfflineDataCache.syncCacheWithServer() async -&gt; ()"
+                  moduleName = "kumatomo.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Data/Local/Cache/OfflineDataCache.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98">
+               </Location>
+               <Location
+                  uuid = "64B3D4C7-EECA-43C5-BC21-09E1425E9321 - c5f6b1fb31dd54bf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for kumatomo.OfflineDataCache.syncCacheWithServer() async -&gt; ()"
+                  moduleName = "kumatomo.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yamadataiyou/Developer/kumatomo/kumatomo_ios/Data/Local/Cache/OfflineDataCache.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
