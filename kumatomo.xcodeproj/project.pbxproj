@@ -7,10 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E5B3F8092EED9E6A00374824 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5B3F8082EED9E6A00374824 /* Resolver */; };
-		E5B3F80D2EED9E7300374824 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5B3F80C2EED9E7300374824 /* Resolver */; };
-		E5B58B672EB2CF570096C37C /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5B58B662EB2CF570096C37C /* Resolver */; };
+		E5A685602EEDAD5D008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A6855F2EEDAD5D008E8034 /* Resolver */; };
+		E5A685622EEDAD6A008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A685612EEDAD6A008E8034 /* Resolver */; };
+		E5A685642EEDAD79008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A685632EEDAD79008E8034 /* Resolver */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		E5A685652EEDAE27008E8034 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = wrapper.storyboardc;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+			);
+			script = "# $(IBC_EXEC)\n";
+		};
+/* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
 		E51A7E922EED6BCF00842CE5 /* PBXContainerItemProxy */ = {
@@ -88,7 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5B3F8092EED9E6A00374824 /* Resolver in Frameworks */,
+				E5A685642EEDAD79008E8034 /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,7 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5B3F80D2EED9E7300374824 /* Resolver in Frameworks */,
+				E5A685622EEDAD6A008E8034 /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,7 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5B58B672EB2CF570096C37C /* Resolver in Frameworks */,
+				E5A685602EEDAD5D008E8034 /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +167,7 @@
 				E51A7ED62EED6CB700842CE5 /* ShellScript */,
 			);
 			buildRules = (
+				E5A685652EEDAE27008E8034 /* PBXBuildRule */,
 			);
 			dependencies = (
 				E51A7E932EED6BCF00842CE5 /* PBXTargetDependency */,
@@ -162,7 +177,7 @@
 			);
 			name = kumatomoTests;
 			packageProductDependencies = (
-				E5B3F8082EED9E6A00374824 /* Resolver */,
+				E5A685632EEDAD79008E8034 /* Resolver */,
 			);
 			productName = kumatomoTests;
 			productReference = E51A7E8E2EED6BCF00842CE5 /* kumatomoTests.xctest */;
@@ -186,7 +201,7 @@
 			);
 			name = kumatomoUITests;
 			packageProductDependencies = (
-				E5B3F80C2EED9E7300374824 /* Resolver */,
+				E5A685612EEDAD6A008E8034 /* Resolver */,
 			);
 			productName = kumatomoUITests;
 			productReference = E51A7E9D2EED6BE000842CE5 /* kumatomoUITests.xctest */;
@@ -212,7 +227,7 @@
 			);
 			name = kumatomo;
 			packageProductDependencies = (
-				E5B58B662EB2CF570096C37C /* Resolver */,
+				E5A6855F2EEDAD5D008E8034 /* Resolver */,
 			);
 			productName = kumatomo;
 			productReference = E5CD33332E43698300ACDA82 /* kumatomo.app */;
@@ -242,16 +257,17 @@
 				};
 			};
 			buildConfigurationList = E5CD332E2E43698300ACDA82 /* Build configuration list for PBXProject "kumatomo" */;
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				ja,
 				Base,
 			);
 			mainGroup = E5CD332A2E43698300ACDA82;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */,
+				E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E5CD33342E43698300ACDA82 /* Products */;
@@ -384,6 +400,8 @@
 /* Begin XCBuildConfiguration section */
 		E51A7E952EED6BCF00842CE5 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
+			baseConfigurationReferenceRelativePath = "Config/Dev-Simulator.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -465,6 +483,8 @@
 		};
 		E51A7E962EED6BCF00842CE5 /* Debug-Device */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
+			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -546,6 +566,8 @@
 		};
 		E51A7E972EED6BCF00842CE5 /* Staging */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
+			baseConfigurationReferenceRelativePath = Config/Staging.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -571,6 +593,8 @@
 		};
 		E51A7E982EED6BCF00842CE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
+			baseConfigurationReferenceRelativePath = Config/Prod.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -596,6 +620,8 @@
 		};
 		E51A7EA62EED6BE000842CE5 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
+			baseConfigurationReferenceRelativePath = "Config/Dev-Simulator.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -677,6 +703,8 @@
 		};
 		E51A7EA72EED6BE000842CE5 /* Debug-Device */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
+			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -758,6 +786,8 @@
 		};
 		E51A7EA82EED6BE000842CE5 /* Staging */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
+			baseConfigurationReferenceRelativePath = Config/Staging.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -783,6 +813,8 @@
 		};
 		E51A7EA92EED6BE000842CE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
+			baseConfigurationReferenceRelativePath = Config/Prod.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1265,7 +1297,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */ = {
+		E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Resolver";
 			requirement = {
@@ -1276,19 +1308,19 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E5B3F8082EED9E6A00374824 /* Resolver */ = {
+		E5A6855F2EEDAD5D008E8034 /* Resolver */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */;
+			package = E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */;
 			productName = Resolver;
 		};
-		E5B3F80C2EED9E7300374824 /* Resolver */ = {
+		E5A685612EEDAD6A008E8034 /* Resolver */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */;
+			package = E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */;
 			productName = Resolver;
 		};
-		E5B58B662EB2CF570096C37C /* Resolver */ = {
+		E5A685632EEDAD79008E8034 /* Resolver */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */;
+			package = E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */;
 			productName = Resolver;
 		};
 /* End XCSwiftPackageProductDependency section */
