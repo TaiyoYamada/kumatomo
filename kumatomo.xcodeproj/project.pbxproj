@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		E51A7EE02EED72FF00842CE5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E51A7EDF2EED72FF00842CE5 /* Alamofire */; };
+		E5B3F8092EED9E6A00374824 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5B3F8082EED9E6A00374824 /* Resolver */; };
+		E5B3F80B2EED9E6A00374824 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E5B3F80A2EED9E6A00374824 /* Alamofire */; };
+		E5B3F80D2EED9E7300374824 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5B3F80C2EED9E7300374824 /* Resolver */; };
+		E5B3F80F2EED9E7300374824 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E5B3F80E2EED9E7300374824 /* Alamofire */; };
 		E5B58B672EB2CF570096C37C /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5B58B662EB2CF570096C37C /* Resolver */; };
 /* End PBXBuildFile section */
 
@@ -87,6 +91,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5B3F8092EED9E6A00374824 /* Resolver in Frameworks */,
+				E5B3F80B2EED9E6A00374824 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +100,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5B3F80D2EED9E7300374824 /* Resolver in Frameworks */,
+				E5B3F80F2EED9E7300374824 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,6 +117,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E5B3F8072EED9E6A00374824 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E5CD332A2E43698300ACDA82 = {
 			isa = PBXGroup;
 			children = (
@@ -116,6 +131,7 @@
 				E5CD33352E43698300ACDA82 /* kumatomo_ios */,
 				E51A7E8F2EED6BCF00842CE5 /* kumatomoTests */,
 				E51A7E9E2EED6BE000842CE5 /* kumatomoUITests */,
+				E5B3F8072EED9E6A00374824 /* Frameworks */,
 				E5CD33342E43698300ACDA82 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -152,6 +168,8 @@
 			);
 			name = kumatomoTests;
 			packageProductDependencies = (
+				E5B3F8082EED9E6A00374824 /* Resolver */,
+				E5B3F80A2EED9E6A00374824 /* Alamofire */,
 			);
 			productName = kumatomoTests;
 			productReference = E51A7E8E2EED6BCF00842CE5 /* kumatomoTests.xctest */;
@@ -175,6 +193,8 @@
 			);
 			name = kumatomoUITests;
 			packageProductDependencies = (
+				E5B3F80C2EED9E7300374824 /* Resolver */,
+				E5B3F80E2EED9E7300374824 /* Alamofire */,
 			);
 			productName = kumatomoUITests;
 			productReference = E51A7E9D2EED6BE000842CE5 /* kumatomoUITests.xctest */;
@@ -1247,6 +1267,26 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		E51A7EDF2EED72FF00842CE5 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E51A7EDE2EED72FF00842CE5 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		E5B3F8082EED9E6A00374824 /* Resolver */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */;
+			productName = Resolver;
+		};
+		E5B3F80A2EED9E6A00374824 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E51A7EDE2EED72FF00842CE5 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		E5B3F80C2EED9E7300374824 /* Resolver */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5B58B652EB2CF570096C37C /* XCRemoteSwiftPackageReference "Resolver" */;
+			productName = Resolver;
+		};
+		E5B3F80E2EED9E7300374824 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E51A7EDE2EED72FF00842CE5 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
