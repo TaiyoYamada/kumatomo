@@ -56,7 +56,6 @@ class PostViewModel {
     var postContent: String = ""
     var selectedImage: UIImage?
     var selectedImages: [UIImage] = []
-    var selectedShop: Shop?
     var imageURL: String?
     var tags: [String] = []
     var tagInput: String = ""
@@ -281,7 +280,6 @@ class PostViewModel {
         postContent = ""
         selectedImage = nil
         selectedImages = []
-        selectedShop = nil
         imageURL = nil
         tags = []
         tagInput = ""
@@ -339,7 +337,7 @@ class PostViewModel {
         return false
     }
 
-    func createPostWithMultipleImages(userId: Int, content: String, shopId: Int?, images: [UIImage]) async -> Bool {
+    func createPostWithMultipleImages(userId: Int, content: String, images: [UIImage]) async -> Bool {
         switch validateForSubmission() {
         case .failure(let error):
             await handlePostError(error)
@@ -358,7 +356,6 @@ class PostViewModel {
             let newPost = try await createPostWithMultipleImagesUseCase.execute(
                 userId: userId,
                 content: content,
-                shopId: shopId,
                 tags: Array(selectedTags),
                 imageDatas: datas
             )
@@ -382,7 +379,6 @@ class PostViewModel {
     func startEditing(_ post: Post) {
         editingPost = post
         postContent = post.content
-        selectedShop = post.shop
         tags = post.tags ?? []
         if let postTags = post.tags, !postTags.isEmpty {
             selectedTags = Set(postTags)
@@ -420,8 +416,6 @@ class PostViewModel {
 
         var updatedPost = post
         updatedPost.content = postContent
-        updatedPost.shopId = selectedShop?.id
-        updatedPost.shop = selectedShop
         updatedPost.tags = selectedTags.isEmpty ? nil : Array(selectedTags)
         updatedPost.updatedAt = Date()
 
@@ -436,7 +430,6 @@ class PostViewModel {
             let serverPost = try await updatePostUseCase.execute(
                 postId: post.id,
                 content: postContent,
-                shopId: selectedShop?.id,
                 tags: Array(selectedTags)
             )
 

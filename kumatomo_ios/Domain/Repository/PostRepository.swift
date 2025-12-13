@@ -7,9 +7,9 @@ protocol PostRepository {
     func fetchFollowingPosts(page: Int?, limit: Int?) async throws -> [Post]
 
     func createPost(userId: Int, content: String, imageUrl: String?, tags: [String]) async throws -> Post
-    func createPostWithMultipleImages(userId: Int, content: String, shopId: Int?, imageUrls: [String], tags: [String]) async throws -> Post
+    func createPostWithMultipleImages(userId: Int, content: String, imageUrls: [String], tags: [String]) async throws -> Post
 
-    func updatePost(postId: Int, content: String, shopId: Int?, tags: [String]) async throws -> Post
+    func updatePost(postId: Int, content: String, tags: [String]) async throws -> Post
     func deletePost(postId: Int) async throws
     func fetchPost(postId: Int) async throws -> Post
 

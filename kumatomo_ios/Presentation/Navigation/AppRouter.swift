@@ -11,7 +11,6 @@ class AppRouter {
         .bulletinboard: NavigationPath(),
         .search: NavigationPath(),
         .portal: NavigationPath(),
-        .shop: NavigationPath(),
         .profile: NavigationPath()
     ]
 
@@ -60,11 +59,6 @@ class AppRouter {
     func navigateToPostDetail(postId: Int) {
         print("[AppRouter] navigateToPostDetail id=\(postId) currentTab=\(selectedTab)")
         append(.postDetail(postId: postId))
-    }
-
-    func navigateToShopDetail(shopId: Int) {
-        print("[AppRouter] navigateToShopDetail id=\(shopId) currentTab=\(selectedTab)")
-        append(.shopDetail(shopId: shopId))
     }
 
     func navigateToLikedPosts(on tab: TabSelection? = nil) {

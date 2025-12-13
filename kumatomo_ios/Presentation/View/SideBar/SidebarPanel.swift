@@ -87,8 +87,6 @@ struct SidebarPanel: View {
                 router.navigateToBookmarkedPosts(on: .portal)
             case .likes:
                 router.navigateToLikedPosts(on: .portal)
-            case .favoriteShops:
-                router.navigate(to: .favoritesList, on: .portal)
             case .coupons:
                 router.navigate(to: .coupons, on: .portal)
             case .settings:

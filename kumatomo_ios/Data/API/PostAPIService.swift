@@ -40,7 +40,7 @@ class PostAPIService {
     }
 
     // 投稿を作成する（複数画像対応、エンゲージメントデータ付きレスポンス）
-    func createPostWithMultipleImages(userId: Int, content: String, shopId: Int? = nil, imageUrls: [String], tags: [String] = []) async throws -> Post {
+    func createPostWithMultipleImages(userId: Int, content: String, imageUrls: [String], tags: [String] = []) async throws -> Post {
         let endpoint = "\(baseURL)/posts"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
@@ -67,10 +67,6 @@ class PostAPIService {
             "content": content,
             "image_urls": imageUrls
         ]
-
-        if let shopId = shopId {
-            body["shop_id"] = shopId
-        }
 
         // タグがある場合は追加
         if !tags.isEmpty {
@@ -433,7 +429,7 @@ class PostAPIService {
     }
 
     // 投稿を更新する（エンゲージメントデータ保持）
-    func updatePost(postId: Int, content: String, shopId: Int? = nil, tags: [String] = []) async throws -> Post {
+    func updatePost(postId: Int, content: String, tags: [String] = []) async throws -> Post {
         let endpoint = "\(baseURL)/posts/\(postId)"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
@@ -458,10 +454,6 @@ class PostAPIService {
         var body: [String: Any] = [
             "content": content
         ]
-
-        if let shopId = shopId {
-            body["shop_id"] = shopId
-        }
 
         // タグがある場合は追加
         if !tags.isEmpty {

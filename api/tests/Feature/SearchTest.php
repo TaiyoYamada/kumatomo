@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Models\Shop;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,22 +18,14 @@ class SearchTest extends TestCase
         // テスト用のユーザーを作成
         $this->user = User::factory()->create();
         
-        // テスト用のお店を作成
-        $this->shop = Shop::factory()->create([
-            'name' => 'テストカフェ',
-            'description' => '美味しいコーヒーが飲めるお店',
-            'genre' => 'カフェ'
-        ]);
-        
         // テスト用の投稿を作成
         $this->post = Post::factory()->create([
             'user_id' => $this->user->id,
-            'shop_id' => $this->shop->id,
-            'content' => 'テストカフェで美味しいコーヒーを飲みました'
+            'content' => 'テスト投稿です'
         ]);
     }
 
-    public function test_search_returns_both_posts_and_shops()
+    public function test_search_returns_posts()
     {
         $response = $this->actingAs($this->user)
             ->getJson('/api/search?q=テスト');
@@ -47,16 +38,7 @@ class SearchTest extends TestCase
                             'id',
                             'content',
                             'user',
-                            'shop',
                             'images'
-                        ]
-                    ],
-                    'shops' => [
-                        '*' => [
-                            'id',
-                            'name',
-                            'description',
-                            'genre'
                         ]
                     ],
                     'pagination'
@@ -67,7 +49,6 @@ class SearchTest extends TestCase
 
         $data = $response->json('data');
         $this->assertNotEmpty($data['posts']);
-        $this->assertNotEmpty($data['shops']);
     }
 
     public function test_search_filters_posts_only()
@@ -79,19 +60,6 @@ class SearchTest extends TestCase
         
         $data = $response->json('data');
         $this->assertNotEmpty($data['posts']);
-        $this->assertEmpty($data['shops']);
-    }
-
-    public function test_search_filters_shops_only()
-    {
-        $response = $this->actingAs($this->user)
-            ->getJson('/api/search?q=テスト&type=shops');
-
-        $response->assertStatus(200);
-        
-        $data = $response->json('data');
-        $this->assertEmpty($data['posts']);
-        $this->assertNotEmpty($data['shops']);
     }
 
     public function test_search_requires_query_parameter()
@@ -130,6 +98,5 @@ class SearchTest extends TestCase
         
         $data = $response->json('data');
         $this->assertEmpty($data['posts']);
-        $this->assertEmpty($data['shops']);
     }
 }

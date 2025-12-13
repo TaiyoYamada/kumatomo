@@ -102,11 +102,6 @@ class LocationManager: NSObject {
         return LocationManager.formatDistance(distance)
     }
 
-    func distanceFromUser(to shop: Shop) -> String? {
-        guard let coordinate = shop.coordinate else { return nil }
-        return distanceFromUser(to: coordinate)
-    }
-
 
     private func setupLocationManager() {
         locationManager.delegate = self

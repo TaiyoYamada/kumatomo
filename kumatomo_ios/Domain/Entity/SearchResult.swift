@@ -3,11 +3,10 @@ import Foundation
 // 検索結果のモデル
 struct SearchResult: Codable {
     let posts: [Post]
-    let shops: [Shop]
     let pagination: SearchPagination
 
     enum CodingKeys: String, CodingKey {
-        case posts, shops, pagination
+        case posts, pagination
     }
 }
 
@@ -16,12 +15,11 @@ struct SearchPagination: Codable {
     let currentPage: Int
     let perPage: Int
     let posts: PaginationInfo?
-    let shops: PaginationInfo?
 
     enum CodingKeys: String, CodingKey {
         case currentPage = "current_page"
         case perPage = "per_page"
-        case posts, shops
+        case posts
     }
 }
 
@@ -50,4 +48,3 @@ struct SearchHistory: Identifiable, Codable {
         case query, timestamp
     }
 }
-

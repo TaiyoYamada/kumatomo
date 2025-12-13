@@ -18,11 +18,6 @@ struct PostEditView: View {
                             characterCount: viewModel.postContent.count
                         )
 
-                        ShopEditCard(
-                            selectedShop: $viewModel.selectedShop,
-                            onPickShop: { sheetDestination = .shopPicker(selectedShop: $viewModel.selectedShop) }
-                        )
-
                         TagsEditCard(
                             tags: $viewModel.tags,
                             tagInput: $viewModel.tagInput,
@@ -138,94 +133,6 @@ private struct ContentEditCard: View {
                 maxCount: 300,
                 isOverLimit: isOverLimit
             )
-        }
-        .padding(16)
-        .background(Color(UIColor.systemBackground))
-        .cornerRadius(12)
-        .shadow(
-            color: .black.opacity(0.05),
-            radius: 2,
-            y: 1
-        )
-    }
-}
-
-private struct ShopEditCard: View {
-    @Binding var selectedShop: Shop?
-    let onPickShop: () -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("お店")
-                    .font(.headline.weight(.medium))
-                    .foregroundStyle(.primary)
-
-                Spacer()
-
-                Text("任意")
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Color.secondary)
-                    .cornerRadius(4)
-            }
-
-            Button(action: { onPickShop() }) {
-                HStack {
-                    if let shop = selectedShop {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(shop.name)
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.primary)
-
-                            if let address = shop.address {
-                                Text(address)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
-                            }
-
-                            if let genre = shop.genre {
-                                Text(genre.displayName)
-                                    .font(.caption)
-                                    .foregroundStyle(.orange)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.orange.opacity(0.1))
-                                    .cornerRadius(4)
-                            }
-                        }
-                    } else {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundStyle(.secondary)
-
-                            Text("お店を検索・選択")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    Spacer()
-
-                    if selectedShop != nil {
-                        Button(action: { selectedShop = nil }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.secondary)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    } else {
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(12)
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-            }
-            .buttonStyle(PlainButtonStyle())
         }
         .padding(16)
         .background(Color(UIColor.systemBackground))

@@ -5,11 +5,11 @@ protocol CreatePostUseCase {
 }
 
 protocol CreatePostWithMultipleImagesUseCase {
-    func execute(userId: Int, content: String, shopId: Int?, tags: [String], imageDatas: [Data]) async throws -> Post
+    func execute(userId: Int, content: String, tags: [String], imageDatas: [Data]) async throws -> Post
 }
 
 protocol UpdatePostUseCase {
-    func execute(postId: Int, content: String, shopId: Int?, tags: [String]) async throws -> Post
+    func execute(postId: Int, content: String, tags: [String]) async throws -> Post
 }
 
 protocol DeletePostUseCase {
@@ -43,7 +43,7 @@ final class CreatePostWithMultipleImagesUseCaseImpl: CreatePostWithMultipleImage
         self.postRepository = postRepository
         self.imageUploadRepository = imageUploadRepository
     }
-    func execute(userId: Int, content: String, shopId: Int?, tags: [String], imageDatas: [Data]) async throws -> Post {
+    func execute(userId: Int, content: String, tags: [String], imageDatas: [Data]) async throws -> Post {
         let urls = try await withThrowingTaskGroup(of: String.self) { group -> [String] in
             for data in imageDatas {
                 group.addTask { try await self.imageUploadRepository.uploadImage(data, endpoint: "/upload-image") }
@@ -52,15 +52,15 @@ final class CreatePostWithMultipleImagesUseCaseImpl: CreatePostWithMultipleImage
             for try await u in group { results.append(u) }
             return results
         }
-        return try await postRepository.createPostWithMultipleImages(userId: userId, content: content, shopId: shopId, imageUrls: urls, tags: tags)
+        return try await postRepository.createPostWithMultipleImages(userId: userId, content: content, imageUrls: urls, tags: tags)
     }
 }
 
 final class UpdatePostUseCaseImpl: UpdatePostUseCase {
     private let repository: PostRepository
     init(repository: PostRepository) { self.repository = repository }
-    func execute(postId: Int, content: String, shopId: Int?, tags: [String]) async throws -> Post {
-        try await repository.updatePost(postId: postId, content: content, shopId: shopId, tags: tags)
+    func execute(postId: Int, content: String, tags: [String]) async throws -> Post {
+        try await repository.updatePost(postId: postId, content: content, tags: tags)
     }
 }
 

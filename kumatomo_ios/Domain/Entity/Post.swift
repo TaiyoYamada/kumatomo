@@ -3,7 +3,6 @@ import Foundation
 struct Post: Identifiable, Codable, Equatable {
     var id: Int
     var userId: Int?
-    var shopId: Int?
     var content: String
     var imageUrl: String?
     var tags: [String]?
@@ -28,13 +27,11 @@ struct Post: Identifiable, Codable, Equatable {
 
     // 関連データ
     var user: User?
-    var shop: Shop?
     var images: [PostImage]?
 
     enum CodingKeys: String, CodingKey {
         case id
         case userId = "user_id"
-        case shopId = "shop_id"
         case content
         case imageUrl = "image_url"
         case tags
@@ -53,13 +50,11 @@ struct Post: Identifiable, Codable, Equatable {
         case isBookmarkedByCurrentUser = "is_bookmarked_by_current_user"
         case comments
         case user
-        case shop
         case images
     }
 
     private enum AltKeys: String, CodingKey {
         case userId
-        case shopId
         case imageUrl
         case createdAt
         case updatedAt
@@ -83,7 +78,6 @@ struct Post: Identifiable, Codable, Equatable {
         let alt = try? decoder.container(keyedBy: AltKeys.self)
 
         if let v = try? container.decodeIfPresent(Int.self, forKey: .userId) { userId = v } else { userId = try alt?.decodeIfPresent(Int.self, forKey: .userId) }
-        if let v = try? container.decodeIfPresent(Int.self, forKey: .shopId) { shopId = v } else { shopId = try alt?.decodeIfPresent(Int.self, forKey: .shopId) }
         content = (try? container.decode(String.self, forKey: .content)) ?? ""
         if let v = try? container.decodeIfPresent(String.self, forKey: .imageUrl) { imageUrl = v } else { imageUrl = try alt?.decodeIfPresent(String.self, forKey: .imageUrl) }
         tags = try container.decodeIfPresent([String].self, forKey: .tags)
@@ -121,7 +115,6 @@ struct Post: Identifiable, Codable, Equatable {
         comments = try container.decodeIfPresent([Comment].self, forKey: .comments)
 
         user = try container.decodeIfPresent(User.self, forKey: .user)
-        shop = try container.decodeIfPresent(Shop.self, forKey: .shop)
         images = try container.decodeIfPresent([PostImage].self, forKey: .images)
 
         print("🔍 Post デコード結果: id=\(id), images=\(images?.count ?? 0)枚, reactions=\(reactions?.thumbsUp ?? 0)")
@@ -131,7 +124,6 @@ struct Post: Identifiable, Codable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encodeIfPresent(userId, forKey: .userId)
-        try container.encodeIfPresent(shopId, forKey: .shopId)
         try container.encode(content, forKey: .content)
         try container.encodeIfPresent(imageUrl, forKey: .imageUrl)
         try container.encodeIfPresent(tags, forKey: .tags)
@@ -155,34 +147,25 @@ struct Post: Identifiable, Codable, Equatable {
         try container.encodeIfPresent(comments, forKey: .comments)
 
         try container.encodeIfPresent(user, forKey: .user)
-        try container.encodeIfPresent(shop, forKey: .shop)
         try container.encodeIfPresent(images, forKey: .images)
     }
 }
 
 extension Post {
-    init(id: Int = 0, userId: Int, content: String, shopId: Int? = nil, imageUrl: String? = nil, tags: [String]? = nil) {
+    init(id: Int = 0, userId: Int, content: String, imageUrl: String? = nil, tags: [String]? = nil) {
         self.id = id
         self.userId = userId
-        self.shopId = shopId
         self.content = content
         self.imageUrl = imageUrl
         self.tags = tags
         self.createdAt = Date()
         self.updatedAt = Date()
         self.user = nil
-        self.shop = nil
         self.images = nil
     }
 
     mutating func updateContent(_ newContent: String) {
         self.content = newContent
-        self.updatedAt = Date()
-    }
-
-    mutating func updateShop(_ newShop: Shop?) {
-        self.shop = newShop
-        self.shopId = newShop?.id
         self.updatedAt = Date()
     }
 

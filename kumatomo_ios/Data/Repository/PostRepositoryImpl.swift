@@ -27,12 +27,12 @@ final class PostRepositoryImpl: PostRepository {
         try await service.createPost(userId: userId, content: content, imageUrl: imageUrl, tags: tags)
     }
 
-    func createPostWithMultipleImages(userId: Int, content: String, shopId: Int?, imageUrls: [String], tags: [String]) async throws -> Post {
-        try await service.createPostWithMultipleImages(userId: userId, content: content, shopId: shopId, imageUrls: imageUrls, tags: tags)
+    func createPostWithMultipleImages(userId: Int, content: String, imageUrls: [String], tags: [String]) async throws -> Post {
+        try await service.createPostWithMultipleImages(userId: userId, content: content, imageUrls: imageUrls, tags: tags)
     }
 
-    func updatePost(postId: Int, content: String, shopId: Int?, tags: [String]) async throws -> Post {
-        try await service.updatePost(postId: postId, content: content, shopId: shopId, tags: tags)
+    func updatePost(postId: Int, content: String, tags: [String]) async throws -> Post {
+        try await service.updatePost(postId: postId, content: content, tags: tags)
     }
 
     func deletePost(postId: Int) async throws {

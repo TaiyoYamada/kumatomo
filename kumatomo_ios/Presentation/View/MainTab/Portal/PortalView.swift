@@ -28,19 +28,6 @@ struct PortalView: View {
                         .padding(.horizontal, 16)
                         PortalCardGrid(cards: samplePortalCards)
                     }
-
-                    VStack {
-                        HStack {
-                            Text("おすすめのお店")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-
-                        RecommendedShopCarouselView(shops: sampleShops)
-                    }
                 }
                 .padding(.bottom, 16)
         }

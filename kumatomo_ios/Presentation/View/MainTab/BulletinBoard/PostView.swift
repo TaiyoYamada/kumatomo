@@ -29,16 +29,11 @@ struct PostView: View {
                             selectedItems: $selectedItems
                         )
                     }
-
-                    if viewModel.selectedShop != nil {
-                        ShopPreviewSection(selectedShop: $viewModel.selectedShop)
-                    }
                 }
 
                 ActionButtonsRow(
                     selectedImages: $viewModel.selectedImages,
                     selectedItems: $selectedItems,
-                    selectedShop: $viewModel.selectedShop,
                     selectedTags: $viewModel.selectedTags,
                     availableTags: viewModel.availableTags
                 )
@@ -109,7 +104,6 @@ struct PostView: View {
         .onAppear {
             if viewModel.postContent.isEmpty &&
                 viewModel.selectedImages.isEmpty &&
-                viewModel.selectedShop == nil &&
                 viewModel.selectedTags == ["熊本県全体"] {
             }
         }
@@ -131,7 +125,6 @@ private extension PostView {
     var hasUnsavedContent: Bool {
         !viewModel.postContent.isEmpty ||
         !viewModel.selectedImages.isEmpty ||
-        viewModel.selectedShop != nil ||
         viewModel.selectedTags != ["熊本県全体"]
     }
 }
@@ -162,7 +155,6 @@ private extension PostView {
                 let success = await viewModel.createPostWithMultipleImages(
                     userId: currentUser.id,
                     content: viewModel.postContent,
-                    shopId: viewModel.selectedShop?.id,
                     images: viewModel.selectedImages
                 )
 
@@ -403,46 +395,11 @@ private struct ImagePreviewSection: View {
     }
 }
 
-private struct ShopPreviewSection: View {
-    @Binding var selectedShop: Shop?
-
-    var body: some View {
-        if let shop = selectedShop {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(shop.name)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundColor(.primary)
-
-                    if let address = shop.address {
-                        Text(address)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                }
-
-                Spacer()
-
-                Button(action: { selectedShop = nil }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(12)
-            .background(Color(UIColor.secondarySystemBackground))
-            .cornerRadius(8)
-        }
-    }
-}
-
 private struct ActionButtonsRow: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
-    @Binding var selectedShop: Shop?
     @Binding var selectedTags: Set<String>
     let availableTags: [String]
-    @State private var showingShopPicker = false
     @State private var showingRegionalTagPicker = false
 
     var body: some View {
@@ -453,12 +410,6 @@ private struct ActionButtonsRow: View {
                 matching: .images
             ) {
                 Image(systemName: "photo")
-                    .font(.title2)
-                    .foregroundColor(.orange)
-            }
-
-            Button(action: { showingShopPicker = true }) {
-                Image(systemName: "location")
                     .font(.title2)
                     .foregroundColor(.orange)
             }
@@ -488,9 +439,6 @@ private struct ActionButtonsRow: View {
                 .foregroundColor(Color(UIColor.separator)),
             alignment: .top
         )
-        .sheet(isPresented: $showingShopPicker) {
-            ShopPickerView(selectedShop: $selectedShop)
-        }
         .sheet(isPresented: $showingRegionalTagPicker) {
             RegionalTagSelectionView(
                 selectedTags: $selectedTags,

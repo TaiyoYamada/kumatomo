@@ -2,8 +2,6 @@ import SwiftUI
 
 enum RouterDestination: Hashable {
 	case myProfile      // マイプロフィール画面
-	case shopList       // お店一覧画面
-	case favoritesList  // お気に入り一覧画面
 	case kumamonAI
 	case bookmarks      // ブックマーク画面
 	case likes          // いいね一覧画面
@@ -13,7 +11,6 @@ enum RouterDestination: Hashable {
 	case signUp         // サインアップ画面
 	case initialSetup   // 初期設定画面
 	case postDetail(postId: Int)  // 投稿詳細画面
-	case shopDetail(shopId: Int)   // お店詳細画面
 	case likedPosts     // いいねした投稿一覧画面
 	case bookmarkedPosts // ブックマークした投稿一覧画面
 	case userProfile(userId: Int) // ユーザープロフィール画面
@@ -23,7 +20,6 @@ enum TabSelection: Hashable {
 	case bulletinboard       // 掲示板タブ
 	case search     // 検索タブ
 	case portal     // ポータルタブ
-	case shop       // お店タブ
 	case profile    // プロフィールタブ
 }
 
@@ -33,10 +29,6 @@ extension View {
 			switch destination {
 			case .myProfile:
 				MyProfileView()
-			case .shopList:
-				ShopListView()
-			case .favoritesList:
-				FavoritesListView()
             case .kumamonAI:
                 KumamonAIView()
                     .environment(CurrentUserManager.shared)
@@ -59,8 +51,6 @@ extension View {
 			case .postDetail(let postId):
 				PostDetailView(postId: postId)
 					.environment(CurrentUserManager.shared)
-			case .shopDetail(let shopId):
-				ShopDetailView(shopId: shopId)
 			case .likedPosts:
 				LikedPostsView()
 					.environment(CurrentUserManager.shared)
