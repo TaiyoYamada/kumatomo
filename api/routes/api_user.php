@@ -8,7 +8,6 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ImageController;
-use App\Http\Controllers\AIController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\BookmarkController;
@@ -82,12 +81,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Unified search
     Route::get('/search', [SearchController::class, 'search']);
-
-    // AI Chat
-    Route::post('/ai/chat', [AIController::class, 'chat']);
-
-    // AI Health (public)
-    Route::get('/ai/health', [AIController::class, 'health']);
 
     // Public profile creation (for onboarding)
     Route::post('/users', [UserController::class, 'store']);

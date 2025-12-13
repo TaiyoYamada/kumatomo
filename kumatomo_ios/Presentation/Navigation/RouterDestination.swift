@@ -2,7 +2,6 @@ import SwiftUI
 
 enum RouterDestination: Hashable {
 	case myProfile      // マイプロフィール画面
-	case kumamonAI
 	case bookmarks      // ブックマーク画面
 	case likes          // いいね一覧画面
 	case coupons        // クーポン画面
@@ -29,9 +28,6 @@ extension View {
 			switch destination {
 			case .myProfile:
 				MyProfileView()
-            case .kumamonAI:
-                KumamonAIView()
-                    .environment(CurrentUserManager.shared)
 			case .bookmarks:
 				BookmarkedPostsView()
 					.environment(CurrentUserManager.shared)

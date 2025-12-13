@@ -66,8 +66,6 @@ struct SidebarPanel: View {
             return .coupons
         case .settings:
             return .settings
-        case .kumamonAI:
-            return .kumamonAI
         default:
             return .settings
         }
@@ -91,8 +89,6 @@ struct SidebarPanel: View {
                 router.navigate(to: .coupons, on: .portal)
             case .settings:
                 router.navigateToSettings(on: .portal)
-            case .kumamonAI:
-                router.navigate(to: .kumamonAI, on: .portal)
             default:
                 break
             }

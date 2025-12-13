@@ -32,7 +32,6 @@ extension Resolver: ResolverRegistering {
         register { CommentAPIService.shared }.scope(.application)
         register { UserAPIService() }.scope(.application)
         register { AuthService.shared }.scope(.application)
-        register { KumamonAIService.shared }.scope(.application)
 
         register { NetworkMonitor.shared }.scope(.application)
         register { PostCacheManager.shared }.scope(.application)
