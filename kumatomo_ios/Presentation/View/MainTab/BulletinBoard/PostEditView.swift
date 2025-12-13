@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - PostEditView
+
 struct PostEditView: View {
     @Bindable var viewModel: PostViewModel
     @Environment(\.dismiss) private var dismiss
@@ -23,7 +25,7 @@ struct PostEditView: View {
                             tagInput: $viewModel.tagInput,
                             onAddTag: {
                                 let result = viewModel.addTag()
-                                if case .failure(let error) = result {
+                                if case let .failure(error) = result {
                                     viewModel.errorMessage = error.localizedDescription
                                 }
                             },
@@ -68,8 +70,8 @@ struct PostEditView: View {
 private extension PostEditView {
     var canUpdate: Bool {
         !viewModel.postContent.isEmpty &&
-        viewModel.postContent.count <= 300 &&
-        !viewModel.isUpdating
+            viewModel.postContent.count <= 300 &&
+            !viewModel.isUpdating
     }
 }
 
@@ -83,6 +85,8 @@ private extension PostEditView {
         }
     }
 }
+
+// MARK: - ContentEditCard
 
 private struct ContentEditCard: View {
     @Binding var content: String
@@ -144,6 +148,8 @@ private struct ContentEditCard: View {
         )
     }
 }
+
+// MARK: - TagsEditCard
 
 private struct TagsEditCard: View {
     @Binding var tags: [String]
@@ -227,6 +233,8 @@ private struct TagsEditCard: View {
     }
 }
 
+// MARK: - ImageEditNote
+
 private struct ImageEditNote: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -255,6 +263,8 @@ private struct ImageEditNote: View {
     }
 }
 
+// MARK: - CharacterCounter
+
 private struct CharacterCounter: View {
     let count: Int
     let maxCount: Int
@@ -282,6 +292,8 @@ private struct CharacterCounter: View {
     }
 }
 
+// MARK: - UpdateButton
+
 private struct UpdateButton: View {
     let isEnabled: Bool
     let isLoading: Bool
@@ -296,6 +308,8 @@ private struct UpdateButton: View {
             .animation(.easeInOut(duration: 0.3), value: isLoading)
     }
 }
+
+// MARK: - OverlayContent
 
 private struct OverlayContent: View {
     @Bindable var viewModel: PostViewModel
@@ -322,6 +336,8 @@ private struct OverlayContent: View {
         }
     }
 }
+
+// MARK: - ErrorOverlay
 
 private struct ErrorOverlay: View {
     let message: String
@@ -360,6 +376,8 @@ private struct ErrorOverlay: View {
             .animation(.interpolatingSpring(stiffness: 300, damping: 30), value: message)
     }
 }
+
+// MARK: - SuccessOverlay
 
 private struct SuccessOverlay: View {
     let onDismiss: () -> Void
@@ -411,6 +429,8 @@ private struct SuccessOverlay: View {
             ))
     }
 }
+
+// MARK: - LoadingOverlay
 
 private struct LoadingOverlay: View {
     var body: some View {

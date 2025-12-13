@@ -42,7 +42,6 @@ struct SignUpView: View {
         }
     }
 
-
     private var header: some View {
         HStack {
             Button {
@@ -71,17 +70,21 @@ struct SignUpView: View {
     private var inputForm: some View {
         @Bindable var auth = authViewModel
         return VStack(spacing: 20) {
-            InputField(text: $auth.email,
-                      title: "メールアドレス",
-                      placeholder: "your@email.com",
-                      systemImage: "envelope")
-                .autocapitalization(.none)
-                .keyboardType(.emailAddress)
+            InputField(
+                text: $auth.email,
+                title: "メールアドレス",
+                placeholder: "your@email.com",
+                systemImage: "envelope"
+            )
+            .autocapitalization(.none)
+            .keyboardType(.emailAddress)
 
-            SecureInputField(text: $auth.password,
-                            title: "パスワード",
-                            placeholder: "パスワードを入力 (6文字以上)",
-                            systemImage: "lock")
+            SecureInputField(
+                text: $auth.password,
+                title: "パスワード",
+                placeholder: "パスワードを入力 (6文字以上)",
+                systemImage: "lock"
+            )
         }
         .padding(.horizontal)
     }

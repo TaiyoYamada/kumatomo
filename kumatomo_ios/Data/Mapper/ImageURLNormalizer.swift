@@ -8,7 +8,10 @@ enum ImageURLNormalizer {
         }
 
         let baseURLString = APIConfig.shared.baseURLString
-        guard let baseURL = URL(string: baseURLString), var baseComps = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
+        guard let baseURL = URL(string: baseURLString), var baseComps = URLComponents(
+            url: baseURL,
+            resolvingAgainstBaseURL: false
+        ) else {
             return URL(string: raw)
         }
 
@@ -28,7 +31,7 @@ enum ImageURLNormalizer {
             return URL(string: origin + raw)
         }
 
-        if var comps = URLComponents(string: raw), let host = comps.host, (host == "localhost" || host == "127.0.0.1") {
+        if var comps = URLComponents(string: raw), let host = comps.host, host == "localhost" || host == "127.0.0.1" {
             comps.scheme = baseComps.scheme
             comps.host = baseComps.host
             comps.port = baseComps.port
@@ -38,4 +41,3 @@ enum ImageURLNormalizer {
         return URL(string: raw)
     }
 }
-

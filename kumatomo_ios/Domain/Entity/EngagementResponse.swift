@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - LikeResponse
+
 struct LikeResponse: Codable, Equatable {
     var isLiked: Bool
     var likeCount: Int
@@ -15,6 +17,8 @@ struct LikeResponse: Codable, Equatable {
     }
 }
 
+// MARK: - BookmarkResponse
+
 struct BookmarkResponse: Codable, Equatable {
     var isBookmarked: Bool
     var bookmarkCount: Int
@@ -29,6 +33,8 @@ struct BookmarkResponse: Codable, Equatable {
         self.bookmarkCount = bookmarkCount
     }
 }
+
+// MARK: - EngagementStatus
 
 struct EngagementStatus: Codable, Equatable {
     var isLiked: Bool
@@ -60,6 +66,8 @@ struct EngagementStatus: Codable, Equatable {
     }
 }
 
+// MARK: - CommentCreateRequest
+
 struct CommentCreateRequest: Codable {
     var content: String
     var imageUrl: String?
@@ -74,6 +82,8 @@ struct CommentCreateRequest: Codable {
         self.imageUrl = imageUrl
     }
 }
+
+// MARK: - CommentResponse
 
 struct CommentResponse: Codable, Equatable {
     var comment: Comment

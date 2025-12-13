@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - LoginView
+
 struct LoginView: View {
     @State private var viewModel = AuthViewModel()
     @State private var isShowingSignUp = false
@@ -15,23 +17,27 @@ struct LoginView: View {
 
                 // 入力フォーム
                 VStack(spacing: 24) {
-                    InputField(text: $viewModel.email,
-                              title: "メールアドレス",
-                              placeholder: "your@email.com",
-                              systemImage: "envelope")
-                        .autocapitalization(.none)
-                        .keyboardType(.emailAddress)
+                    InputField(
+                        text: $viewModel.email,
+                        title: "メールアドレス",
+                        placeholder: "your@email.com",
+                        systemImage: "envelope"
+                    )
+                    .autocapitalization(.none)
+                    .keyboardType(.emailAddress)
 
-                    SecureInputField(text: $viewModel.password,
-                                    title: "パスワード",
-                                    placeholder: "パスワードを入力",
-                                    systemImage: "lock")
+                    SecureInputField(
+                        text: $viewModel.password,
+                        title: "パスワード",
+                        placeholder: "パスワードを入力",
+                        systemImage: "lock"
+                    )
                 }
                 .padding(.horizontal)
                 .padding(.top)
 
                 // エラーメッセージ
-                if ((viewModel.errorMessage?.isEmpty) == nil) {
+                if (viewModel.errorMessage?.isEmpty) == nil {
                     Text(viewModel.errorMessage ?? "")
                         .foregroundColor(.red)
                         .font(.caption)
@@ -84,6 +90,8 @@ struct LoginView: View {
     }
 }
 
+// MARK: - InputField
+
 struct InputField: View {
     @Binding var text: String
     let title: String
@@ -110,6 +118,8 @@ struct InputField: View {
         }
     }
 }
+
+// MARK: - SecureInputField
 
 struct SecureInputField: View {
     @Binding var text: String

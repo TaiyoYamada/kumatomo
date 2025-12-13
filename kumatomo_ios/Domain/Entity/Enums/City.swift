@@ -18,4 +18,3 @@ enum City: String, CaseIterable, Codable {
 
     var displayName: String { rawValue }
 }
-

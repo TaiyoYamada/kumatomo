@@ -2,17 +2,18 @@ import Foundation
 import Combine
 import UIKit
 
+// MARK: - UsernameAvailabilityResponse
+
 struct UsernameAvailabilityResponse: Codable {
     let available: Bool
     let message: String?
 }
 
-
+// MARK: - UserAPIService
 
 class UserAPIService {
     static let shared = UserAPIService()
     private var baseURL: URL? { APIConfig.shared.baseURL }
-
 
     private var jsonDecoder: JSONDecoder {
         let decoder = JSONDecoder()
@@ -32,7 +33,6 @@ class UserAPIService {
         let url = baseURL.appendingPathComponent("users").appendingPathComponent(userID)
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-
 
         // キャッシュを完全に無視して、必ずサーバーから新しい情報を取得するようにする
         request.cachePolicy = .reloadIgnoringLocalCacheData
@@ -129,7 +129,6 @@ class UserAPIService {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
-
 
     func updateProfile(_ user: User) -> AnyPublisher<User, Error> {
         guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
@@ -298,7 +297,6 @@ class UserAPIService {
             .eraseToAnyPublisher()
     }
 
-
     private func uploadImage(_ image: UIImage, endpoint: String) -> AnyPublisher<String, Error> {
         guard let baseURL else { return Fail(error: APIError.invalidURL).eraseToAnyPublisher() }
         let url = baseURL.appendingPathComponent(endpoint.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
@@ -353,7 +351,6 @@ class UserAPIService {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
-
 
     @MainActor
     func createProfile(_ user: User, progressTracker: ProgressTracker? = nil) -> AnyPublisher<User, Error> {
@@ -419,7 +416,7 @@ class UserAPIService {
                         throw ProfileError.validationFailed(["入力データが無効です"])
                     case 409:
                         throw ProfileError.usernameNotAvailable
-                    case 400..<500:
+                    case 400 ..< 500:
                         let message = String(data: data, encoding: .utf8) ?? "クライアントエラー"
                         throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
                     case 500...:
@@ -487,7 +484,7 @@ class UserAPIService {
                         throw ProfileError.unauthorized
                     case 404:
                         throw ProfileError.profileLoadFailed(APIError.userNotFound)
-                    case 400..<500:
+                    case 400 ..< 500:
                         let message = String(data: data, encoding: .utf8) ?? "クライアントエラー"
                         throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
                     case 500...:
@@ -560,7 +557,7 @@ class UserAPIService {
                         throw ProfileError.serverError(statusCode: 403, message: "削除権限がありません")
                     case 404:
                         throw ProfileError.profileLoadFailed(APIError.userNotFound)
-                    case 400..<500:
+                    case 400 ..< 500:
                         let message = String(data: data, encoding: .utf8) ?? "削除に失敗しました"
                         throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
                     case 500...:
@@ -599,13 +596,17 @@ class UserAPIService {
     }
 
     @MainActor
-    func uploadImageEnhanced(_ image: UIImage, endpoint: String, progressTracker: ProgressTracker? = nil) -> AnyPublisher<String, Error> {
+    func uploadImageEnhanced(
+        _ image: UIImage,
+        endpoint: String,
+        progressTracker: ProgressTracker? = nil
+    ) -> AnyPublisher<String, Error> {
         guard let validationResult = validateImageForUpload(image) else {
             return Fail(error: ProfileError.imageUploadFailed(ImageUploadError.imageConversionFailed))
                 .eraseToAnyPublisher()
         }
 
-        if case .failure(let error) = validationResult {
+        if case let .failure(error) = validationResult {
             return Fail(error: error).eraseToAnyPublisher()
         }
 
@@ -677,7 +678,7 @@ class UserAPIService {
                         throw ProfileError.rateLimitExceeded
                     case 507:
                         throw ProfileError.quotaExceeded
-                    case 400..<500:
+                    case 400 ..< 500:
                         let message = String(data: data, encoding: .utf8) ?? "画像アップロードエラー"
                         throw ProfileError.serverError(statusCode: httpResponse.statusCode, message: message)
                     case 500...:
@@ -718,20 +719,24 @@ class UserAPIService {
         return publisher
     }
 
-
     @MainActor
-    func uploadProfileImageEnhanced(_ image: UIImage, progressTracker: ProgressTracker? = nil) -> AnyPublisher<String, Error> {
+    func uploadProfileImageEnhanced(
+        _ image: UIImage,
+        progressTracker: ProgressTracker? = nil
+    ) -> AnyPublisher<String, Error> {
         return uploadImageEnhanced(image, endpoint: "/upload-profile-image", progressTracker: progressTracker)
     }
 
     @MainActor
-    func uploadCoverImageEnhanced(_ image: UIImage, progressTracker: ProgressTracker? = nil) -> AnyPublisher<String, Error> {
+    func uploadCoverImageEnhanced(
+        _ image: UIImage,
+        progressTracker: ProgressTracker? = nil
+    ) -> AnyPublisher<String, Error> {
         return uploadImageEnhanced(image, endpoint: "/upload-cover-image", progressTracker: progressTracker)
     }
 
-
     private func validateImageForUpload(_ image: UIImage) -> Result<Void, ProfileError>? {
-        let maxDimension: CGFloat = 4096
+        let maxDimension: CGFloat = 4_096
         if image.size.width > maxDimension || image.size.height > maxDimension {
             return .failure(.imageTooLarge(maxSize: 10))
         }
@@ -745,7 +750,7 @@ class UserAPIService {
 
     private func validateResponse(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse,
-              200..<300 ~= httpResponse.statusCode else {
+              200 ..< 300 ~= httpResponse.statusCode else {
             throw URLError(.badServerResponse)
         }
     }

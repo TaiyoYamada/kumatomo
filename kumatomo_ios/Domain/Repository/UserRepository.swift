@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+
 @MainActor
 protocol UserRepository {
     func fetchProfile(userID: String) -> AnyPublisher<User, Error>

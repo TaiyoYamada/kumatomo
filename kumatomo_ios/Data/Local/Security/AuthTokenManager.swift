@@ -28,7 +28,7 @@ class AuthTokenManager {
     }
 
     func authorizedRequest(_ request: inout URLRequest) {
-        if let token = token {
+        if let token {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         request.setValue("application/json", forHTTPHeaderField: "Accept")

@@ -1,8 +1,12 @@
 import Foundation
 
+// MARK: - FetchLikedPostsUseCase
+
 protocol FetchLikedPostsUseCase {
     func execute(page: Int?, limit: Int?) async throws -> [Post]
 }
+
+// MARK: - FetchLikedPostsUseCaseImpl
 
 final class FetchLikedPostsUseCaseImpl: FetchLikedPostsUseCase {
     private let repository: EngagementRepository
@@ -15,4 +19,3 @@ final class FetchLikedPostsUseCaseImpl: FetchLikedPostsUseCase {
         try await repository.fetchLikedPosts(page: page, limit: limit)
     }
 }
-

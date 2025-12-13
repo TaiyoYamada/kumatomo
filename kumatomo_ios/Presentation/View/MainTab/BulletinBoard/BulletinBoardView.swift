@@ -11,87 +11,87 @@ struct BulletinBoardView: View {
     @Environment(CurrentUserManager.self) private var userManager
 
     var body: some View {
-            ZStack {
-                VStack(spacing: 0) {
-                    TabNavigationHeader(
-                        activeTab: viewModel.activeTab,
-                        selectedMunicipality: viewModel.selectedMunicipality,
-                        onTabChange: viewModel.changeTab,
-                        onMunicipalityChange: viewModel.changeMunicipality
-                    )
+        ZStack {
+            VStack(spacing: 0) {
+                TabNavigationHeader(
+                    activeTab: viewModel.activeTab,
+                    selectedMunicipality: viewModel.selectedMunicipality,
+                    onTabChange: viewModel.changeTab,
+                    onMunicipalityChange: viewModel.changeMunicipality
+                )
 
-                    ZStack {
-                        if viewModel.isLoading && viewModel.posts.isEmpty {
-                            SkeletonLoadingView()
-                        } else if let errorMessage = viewModel.errorMessage, viewModel.posts.isEmpty {
-                            if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
-                                NetworkErrorView {
-                                    viewModel.refreshPosts()
-                                }
-                            } else {
-                                ErrorStateView(error: errorMessage) {
-                                    viewModel.refreshPosts()
-                                }
+                ZStack {
+                    if viewModel.isLoading, viewModel.posts.isEmpty {
+                        SkeletonLoadingView()
+                    } else if let errorMessage = viewModel.errorMessage, viewModel.posts.isEmpty {
+                        if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
+                            NetworkErrorView {
+                                viewModel.refreshPosts()
                             }
                         } else {
-                            PostTimeline(
-                                posts: viewModel.posts,
-                                loading: viewModel.isLoadingMore,
-                                onRefresh: viewModel.refreshPosts,
-                                onLoadMore: viewModel.loadMorePosts
-                            )
-                            .environment(viewModel)
+                            ErrorStateView(error: errorMessage) {
+                                viewModel.refreshPosts()
+                            }
                         }
+                    } else {
+                        PostTimeline(
+                            posts: viewModel.posts,
+                            loading: viewModel.isLoadingMore,
+                            onRefresh: viewModel.refreshPosts,
+                            onLoadMore: viewModel.loadMorePosts
+                        )
+                        .environment(viewModel)
                     }
                 }
+            }
 
-                VStack {
-                    ToastView(
-                        message: toastMessage,
-                        type: toastType,
-                        isShowing: $showToast
-                    )
+            VStack {
+                ToastView(
+                    message: toastMessage,
+                    type: toastType,
+                    isShowing: $showToast
+                )
 
+                Spacer()
+            }
+            .zIndex(1)
+
+            VStack {
+                Spacer()
+                HStack {
                     Spacer()
-                }
-                .zIndex(1)
-
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        FloatingActionButton {
-                            showPostModal = true
-                        }
-                        .padding(.trailing, 16)
-                        .padding(.bottom, 16)
+                    FloatingActionButton {
+                        showPostModal = true
                     }
-                }
-                .zIndex(2)
-            }
-            .navigationTitle("ホーム")
-            .navigationBarTitleDisplayMode(.inline)
-            .sidebarButton()
-            .onAppear {
-                viewModel.loadInitialPosts()
-                // 初回登録後は出身地の市町村タブを優先表示
-                let preferMunicipality = UserDefaults.standard.bool(forKey: "preferMunicipalityTabOnFirstOpen")
-                if preferMunicipality, let muni = viewModel.selectedMunicipality, !muni.isEmpty {
-                    viewModel.changeTab(.municipality)
-                    UserDefaults.standard.set(false, forKey: "preferMunicipalityTabOnFirstOpen")
+                    .padding(.trailing, 16)
+                    .padding(.bottom, 16)
                 }
             }
-            .onChange(of: viewModel.errorMessage) { errorMessage in
-                if let error = errorMessage {
-                    showToastMessage(error, type: .error)
-                }
+            .zIndex(2)
+        }
+        .navigationTitle("ホーム")
+        .navigationBarTitleDisplayMode(.inline)
+        .sidebarButton()
+        .onAppear {
+            viewModel.loadInitialPosts()
+            // 初回登録後は出身地の市町村タブを優先表示
+            let preferMunicipality = UserDefaults.standard.bool(forKey: "preferMunicipalityTabOnFirstOpen")
+            if preferMunicipality, let muni = viewModel.selectedMunicipality, !muni.isEmpty {
+                viewModel.changeTab(.municipality)
+                UserDefaults.standard.set(false, forKey: "preferMunicipalityTabOnFirstOpen")
             }
-            .fullScreenCover(isPresented: $showPostModal) {
-                PostView(onPostSuccess: {
-                    viewModel.refreshPosts()
-                })
-                .environment(userManager)
+        }
+        .onChange(of: viewModel.errorMessage) { errorMessage in
+            if let error = errorMessage {
+                showToastMessage(error, type: .error)
             }
+        }
+        .fullScreenCover(isPresented: $showPostModal) {
+            PostView(onPostSuccess: {
+                viewModel.refreshPosts()
+            })
+            .environment(userManager)
+        }
 
     }
 

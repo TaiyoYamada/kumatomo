@@ -3,6 +3,7 @@ import CoreLocation
 import Combine
 import Observation
 
+// MARK: - LocationManager
 
 @MainActor
 @Observable
@@ -22,8 +23,6 @@ class LocationManager: NSObject {
         setupLocationManager()
     }
 
-
-
     func requestLocationPermission() {
         switch authorizationStatus {
         case .notDetermined:
@@ -36,7 +35,6 @@ class LocationManager: NSObject {
             locationError = .unknown
         }
     }
-
 
     func startLocationUpdates() {
         guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
@@ -52,15 +50,17 @@ class LocationManager: NSObject {
         locationManager.startUpdatingLocation()
         isLocationEnabled = true
         locationError = nil
-        NotificationCenter.default.post(name: .LocationAuthorizationChanged, object: self, userInfo: ["status": authorizationStatus])
+        NotificationCenter.default.post(
+            name: .LocationAuthorizationChanged,
+            object: self,
+            userInfo: ["status": authorizationStatus]
+        )
     }
-
 
     func stopLocationUpdates() {
         locationManager.stopUpdatingLocation()
         isLocationEnabled = false
     }
-
 
     func requestOneTimeLocation(completion: @escaping (Result<CLLocation, LocationError>) -> Void) {
         locationUpdateCompletion = completion
@@ -78,30 +78,26 @@ class LocationManager: NSObject {
         locationManager.requestLocation()
     }
 
-
     func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> CLLocationDistance {
         let fromLocation = CLLocation(latitude: from.latitude, longitude: from.longitude)
         let toLocation = CLLocation(latitude: to.latitude, longitude: to.longitude)
         return fromLocation.distance(from: toLocation)
     }
 
-
     static func formatDistance(_ distance: CLLocationDistance) -> String {
-        if distance < 1000 {
+        if distance < 1_000 {
             return String(format: "%.0fm", distance)
         } else {
-            return String(format: "%.1fkm", distance / 1000)
+            return String(format: "%.1fkm", distance / 1_000)
         }
     }
 
-
     func distanceFromUser(to coordinate: CLLocationCoordinate2D) -> String? {
-        guard let userLocation = userLocation else { return nil }
+        guard let userLocation else { return nil }
 
-        let distance = self.distance(from: userLocation.coordinate, to: coordinate)
+        let distance = distance(from: userLocation.coordinate, to: coordinate)
         return LocationManager.formatDistance(distance)
     }
-
 
     private func setupLocationManager() {
         locationManager.delegate = self
@@ -111,13 +107,15 @@ class LocationManager: NSObject {
     }
 }
 
+// MARK: CLLocationManagerDelegate
+
 extension LocationManager: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
 
         let locationAge = -location.timestamp.timeIntervalSinceNow
-        guard locationAge < 5.0 && location.horizontalAccuracy < 100 else { return }
+        guard locationAge < 5.0, location.horizontalAccuracy < 100 else { return }
 
         userLocation = location
         locationError = nil
@@ -131,21 +129,19 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        let locationError: LocationError
-
-        if let clError = error as? CLError {
+        let locationError: LocationError = if let clError = error as? CLError {
             switch clError.code {
             case .denied:
-                locationError = .permissionDenied
+                .permissionDenied
             case .locationUnknown:
-                locationError = .locationUnavailable
+                .locationUnavailable
             case .network:
-                locationError = .networkError
+                .networkError
             default:
-                locationError = .unknown
+                .unknown
             }
         } else {
-            locationError = .unknown
+            .unknown
         }
 
         self.locationError = locationError
@@ -180,6 +176,8 @@ extension Notification.Name {
     static let LocationAuthorizationChanged = Notification.Name("LocationAuthorizationChanged")
     static let LocationErrorChanged = Notification.Name("LocationErrorChanged")
 }
+
+// MARK: - LocationError
 
 enum LocationError: Error, LocalizedError {
     case permissionDenied

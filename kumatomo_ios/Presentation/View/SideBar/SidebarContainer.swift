@@ -1,6 +1,8 @@
 import SwiftUI
 import UIKit
 
+// MARK: - SidebarContainer
+
 struct SidebarContainer<Content: View>: View {
     @Binding var isPresented: Bool
     let user: User?
@@ -49,7 +51,7 @@ struct SidebarContainer<Content: View>: View {
                             }
                         } else {
                             let edgeThreshold: CGFloat = 32
-                            if startX < edgeThreshold && translationX > 0 {
+                            if startX < edgeThreshold, translationX > 0 {
                                 dragOffsetX = min(translationX, sidebarWidth)
                             }
                         }

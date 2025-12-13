@@ -18,16 +18,18 @@ enum ImageDebugLogger {
         request.timeoutInterval = 6
 
         let task = URLSession.shared.dataTask(with: request) { _, response, error in
-            if let error = error {
+            if let error {
                 print("🧩 [ImageDebug] context=\(context) HEAD error=\(error.localizedDescription)")
                 var getReq = URLRequest(url: url)
                 getReq.httpMethod = "GET"
                 getReq.timeoutInterval = 6
                 let getTask = URLSession.shared.dataTask(with: getReq) { data, response, error in
                     if let http = response as? HTTPURLResponse {
-                        print("🧩 [ImageDebug] context=\(context) GET status=\(http.statusCode) contentType=\(http.value(forHTTPHeaderField: "Content-Type") ?? "?") bytes=\(data?.count ?? 0)")
+                        print(
+                            "🧩 [ImageDebug] context=\(context) GET status=\(http.statusCode) contentType=\(http.value(forHTTPHeaderField: "Content-Type") ?? "?") bytes=\(data?.count ?? 0)"
+                        )
                     }
-                    if let error = error {
+                    if let error {
                         print("🧩 [ImageDebug] context=\(context) GET error=\(error.localizedDescription)")
                     }
                 }
@@ -35,7 +37,9 @@ enum ImageDebugLogger {
                 return
             }
             if let http = response as? HTTPURLResponse {
-                print("🧩 [ImageDebug] context=\(context) HEAD status=\(http.statusCode) contentType=\(http.value(forHTTPHeaderField: "Content-Type") ?? "?")")
+                print(
+                    "🧩 [ImageDebug] context=\(context) HEAD status=\(http.statusCode) contentType=\(http.value(forHTTPHeaderField: "Content-Type") ?? "?")"
+                )
             } else {
                 print("🧩 [ImageDebug] context=\(context) HEAD no HTTPURLResponse")
             }
@@ -44,4 +48,3 @@ enum ImageDebugLogger {
     }
 }
 #endif
-

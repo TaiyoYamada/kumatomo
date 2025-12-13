@@ -3,6 +3,8 @@ import PhotosUI
 
 typealias ModernProfileEditView = ProfileEditView
 
+// MARK: - ProfileEditView
+
 struct ProfileEditView: View {
     @State var viewModel: ProfileViewModel
     @Environment(\.dismiss) private var dismiss
@@ -75,7 +77,8 @@ struct ProfileEditView: View {
                             }
                         } else if let message = viewModel.usernameCheckMessage {
                             HStack(spacing: 8) {
-                                Image(systemName: viewModel.isUsernameAvailable == true ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                Image(systemName: viewModel
+                                    .isUsernameAvailable == true ? "checkmark.circle.fill" : "xmark.circle.fill")
                                     .foregroundColor(viewModel.isUsernameAvailable == true ? .green : .red)
                                     .font(.caption)
 
@@ -151,7 +154,7 @@ struct ProfileEditView: View {
                     viewModel.resetFormFields()
                     dismiss()
                 }
-                Button("キャンセル", role: .cancel) { }
+                Button("キャンセル", role: .cancel) {}
             } message: {
                 Text("保存されていない変更があります。本当に破棄しますか？")
             }
@@ -186,7 +189,7 @@ struct ProfileEditView: View {
                     errorHandler.handleError(
                         ProfileError.profileUpdateFailed(
                             NSError(domain: "ProfileEdit", code: 0, userInfo: [
-                                NSLocalizedDescriptionKey: viewModel.errorMessage ?? "不明なエラー"
+                                NSLocalizedDescriptionKey: viewModel.errorMessage ?? "不明なエラー",
                             ])
                         )
                     )
@@ -206,7 +209,7 @@ struct ProfileEditView: View {
                 }
             }
             .overlay {
-                if showValidationErrors && !viewModel.validationErrorMessages.isEmpty {
+                if showValidationErrors, !viewModel.validationErrorMessages.isEmpty {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
                         .overlay(
@@ -316,7 +319,7 @@ struct ProfileEditView: View {
     }
 
     private func getLoadingMessage() -> String {
-        if viewModel.isProfileImageUploading && viewModel.isCoverImageUploading {
+        if viewModel.isProfileImageUploading, viewModel.isCoverImageUploading {
             return "画像をアップロード中..."
         } else if viewModel.isProfileImageUploading {
             return "プロフィール画像をアップロード中..."
@@ -330,6 +333,7 @@ struct ProfileEditView: View {
     }
 }
 
+// MARK: - ProfileFormRow
 
 struct ProfileFormRow: View {
     let title: String
@@ -337,7 +341,7 @@ struct ProfileFormRow: View {
     let placeholder: String
     let validation: ValidationResult
     var keyboardType: UIKeyboardType = .default
-    var prefix: String? = nil
+    var prefix: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -349,7 +353,7 @@ struct ProfileFormRow: View {
             }
 
             HStack {
-                if let prefix = prefix {
+                if let prefix {
                     Text(prefix)
                         .foregroundColor(.secondary)
                         .font(.body)
@@ -371,6 +375,8 @@ struct ProfileFormRow: View {
     }
 }
 
+// MARK: - ProfileBioRow
+
 struct ProfileBioRow: View {
     @Binding var text: String
     let validation: ValidationResult
@@ -384,7 +390,6 @@ struct ProfileBioRow: View {
                 Spacer()
                 Text("\(text.count)/500")
                     .font(.caption)
-
                     .foregroundColor(.secondary)
             }
 
@@ -424,6 +429,8 @@ struct ProfileBioRow: View {
     }
 }
 
+// MARK: - ProfileDatePickerRow
+
 struct ProfileDatePickerRow: View {
     let title: String
     @Binding var date: Date
@@ -453,6 +460,8 @@ struct ProfileDatePickerRow: View {
     }
 }
 
+// MARK: - ProfileImageEditRow
+
 struct ProfileImageEditRow: View {
     @Binding var selectedProfileItem: PhotosPickerItem?
     @Binding var selectedCoverItem: PhotosPickerItem?
@@ -474,7 +483,7 @@ struct ProfileImageEditRow: View {
                             switch phase {
                             case .empty:
                                 defaultCoverImageGradient
-                            case .success(let image):
+                            case let .success(image):
                                 image
                                     .resizable()
                                     .scaledToFill()
@@ -542,7 +551,7 @@ struct ProfileImageEditRow: View {
                                 case .empty:
                                     ProgressView()
                                         .tint(.secondary)
-                                case .success(let image):
+                                case let .success(image):
                                     image
                                         .resizable()
                                         .scaledToFill()
@@ -600,7 +609,7 @@ struct ProfileImageEditRow: View {
         LinearGradient(
             gradient: Gradient(colors: [
                 Color.orange.opacity(0.6),
-                Color.purple.opacity(0.6)
+                Color.purple.opacity(0.6),
             ]),
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -615,7 +624,7 @@ struct ProfileImageEditRow: View {
     }
 
     private func handleProfileImageSelection(_ newItem: PhotosPickerItem?) {
-        guard let newItem = newItem else {
+        guard let newItem else {
             return
         }
 
@@ -646,7 +655,7 @@ struct ProfileImageEditRow: View {
     }
 
     private func handleCoverImageSelection(_ newItem: PhotosPickerItem?) {
-        guard let newItem = newItem else {
+        guard let newItem else {
             return
         }
 
@@ -677,7 +686,7 @@ struct ProfileImageEditRow: View {
     }
 
     private func validateImageForProfile(_ image: UIImage, type: ImageEditSheet.ImageType) -> Bool {
-        let maxDimension: CGFloat = type == .profile ? 1024 : 2048
+        let maxDimension: CGFloat = type == .profile ? 1_024 : 2_048
         let imageSize = max(image.size.width, image.size.height)
 
         if imageSize > maxDimension {
@@ -688,8 +697,8 @@ struct ProfileImageEditRow: View {
             return false
         }
 
-        let fileSizeMB = Double(imageData.count) / (1024 * 1024)
-        let maxFileSizeMB: Double = 10.0
+        let fileSizeMB = Double(imageData.count) / (1_024 * 1_024)
+        let maxFileSizeMB = 10.0
 
         if fileSizeMB > maxFileSizeMB {
             return true

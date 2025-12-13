@@ -35,8 +35,22 @@ final class AuthRepositoryImpl: AuthRepository {
     }
 
     @MainActor
-    func updateUser(withName name: String?, profileImageURL: String?, bio: String?, location: String?, birthday: Date?, hasCompletedSetup: Bool?) async throws {
-        try await service.updateUser(withName: name, profileImageURL: profileImageURL, bio: bio, location: location, birthday: birthday, hasCompletedSetup: hasCompletedSetup)
+    func updateUser(
+        withName name: String?,
+        profileImageURL: String?,
+        bio: String?,
+        location: String?,
+        birthday: Date?,
+        hasCompletedSetup: Bool?
+    ) async throws {
+        try await service.updateUser(
+            withName: name,
+            profileImageURL: profileImageURL,
+            bio: bio,
+            location: location,
+            birthday: birthday,
+            hasCompletedSetup: hasCompletedSetup
+        )
     }
 
     @MainActor
@@ -49,4 +63,3 @@ final class AuthRepositoryImpl: AuthRepository {
         try await service.fetchCurrentUser()
     }
 }
-

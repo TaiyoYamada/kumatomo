@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - LikedPostsView
+
 struct LikedPostsView: View {
     @State private var engagementViewModel = EngagementViewModel()
     @Environment(CurrentUserManager.self) private var userManager
@@ -11,7 +13,7 @@ struct LikedPostsView: View {
 
     var body: some View {
         ZStack {
-            if engagementViewModel.isLoadingLikedPosts && engagementViewModel.likedPosts.isEmpty {
+            if engagementViewModel.isLoadingLikedPosts, engagementViewModel.likedPosts.isEmpty {
                 SkeletonLoadingView()
             } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.likedPosts.isEmpty {
                 if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
@@ -72,7 +74,7 @@ struct LikedPostsView: View {
             }
         }
         .onChange(of: engagementViewModel.successMessage) { successMessage in
-            if !successMessage.isEmpty && engagementViewModel.showSuccessMessage {
+            if !successMessage.isEmpty, engagementViewModel.showSuccessMessage {
                 print("[LikedPostsView] successMessage -> \(successMessage)")
                 showToastMessage(successMessage, type: .success)
             }
@@ -89,6 +91,7 @@ struct LikedPostsView: View {
     }
 }
 
+// MARK: - LikedPostsTimeline
 
 private struct LikedPostsTimeline: View {
     let posts: [Post]
@@ -116,7 +119,7 @@ private struct LikedPostsTimeline: View {
                     )
                 }
 
-                if loading && !posts.isEmpty {
+                if loading, !posts.isEmpty {
                     PaginationLoadingView()
                 }
             }
@@ -131,6 +134,7 @@ private struct LikedPostsTimeline: View {
     }
 }
 
+// MARK: - LikedPostCell
 
 private struct LikedPostCell: View {
     let post: Post
@@ -156,6 +160,7 @@ private struct LikedPostCell: View {
     }
 }
 
+// MARK: - LikedPostCardView
 
 private struct LikedPostCardView: View {
     let post: Post
@@ -173,6 +178,7 @@ private struct LikedPostCardView: View {
     }
 }
 
+// MARK: - LikedPostsEmptyStateView
 
 private struct LikedPostsEmptyStateView: View {
     @Environment(AppRouter.self) private var appRouter
@@ -235,7 +241,6 @@ private struct LikedPostsEmptyStateView: View {
                     .multilineTextAlignment(.center)
             }
 
-
             Button(action: {
                 appRouter.popToRoot()
             }) {
@@ -256,7 +261,6 @@ private struct LikedPostsEmptyStateView: View {
         .accessibilityIdentifier("liked_posts_empty_state")
     }
 }
-
 
 #Preview {
     LikedPostsView()

@@ -15,13 +15,13 @@ struct TagChip: View {
 
     init(text: String) {
         self.text = text
-        self.isSelected = false
-        self.onTap = nil
+        isSelected = false
+        onTap = nil
     }
 
     var body: some View {
         Group {
-            if let onTap = onTap {
+            if let onTap {
                 Button(action: onTap) {
                     tagContent
                         .scaleEffect(isPressed ? 0.95 : 1.0)

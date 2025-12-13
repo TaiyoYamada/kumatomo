@@ -1,12 +1,14 @@
 import SwiftUI
 
+// MARK: - ActionButton
+
 struct ActionButton: View {
     let icon: String
     let count: Int
     let color: Color
     let activeColor: Color
     var isActive: Bool = false
-    var action: (() -> Void)? = nil
+    var action: (() -> Void)?
 
     init(
         icon: String,
@@ -46,16 +48,17 @@ struct ActionButton: View {
     }
 
     private func formatCount(_ count: Int) -> String {
-        if count >= 1000000 {
-            return String(format: "%.1fM", Double(count) / 1000000.0)
-        } else if count >= 1000 {
-            return String(format: "%.1fK", Double(count) / 1000.0)
+        if count >= 1_000_000 {
+            return String(format: "%.1fM", Double(count) / 1_000_000.0)
+        } else if count >= 1_000 {
+            return String(format: "%.1fK", Double(count) / 1_000.0)
         } else {
             return "\(count)"
         }
     }
 }
 
+// MARK: - LikeButton
 
 struct LikeButton: View {
     let count: Int
@@ -74,6 +77,8 @@ struct LikeButton: View {
     }
 }
 
+// MARK: - CommentButton
+
 struct CommentButton: View {
     let count: Int
     let onTap: () -> Void
@@ -88,6 +93,8 @@ struct CommentButton: View {
         )
     }
 }
+
+// MARK: - ShareButton
 
 struct ShareButton: View {
     let count: Int
@@ -106,6 +113,8 @@ struct ShareButton: View {
     }
 }
 
+// MARK: - BookmarkButton
+
 struct BookmarkButton: View {
     let isBookmarked: Bool
     let onTap: () -> Void
@@ -120,4 +129,3 @@ struct BookmarkButton: View {
         )
     }
 }
-

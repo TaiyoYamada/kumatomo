@@ -3,6 +3,7 @@ import SwiftUI
 import Combine
 import Observation
 
+// MARK: - ProfileErrorHandler
 
 @MainActor
 @Observable
@@ -21,23 +22,21 @@ class ProfileErrorHandler {
 
     private init() {}
 
-
     func handleError(_ error: Error, retryAction: (() async -> Void)? = nil) {
         let profileError = convertToProfileError(error)
-        self.currentError = profileError
+        currentError = profileError
         self.retryAction = retryAction
 
         logError(profileError)
 
-        if profileError.shouldAutoRetry && retryCount < profileError.maxRetryAttempts {
+        if profileError.shouldAutoRetry, retryCount < profileError.maxRetryAttempts {
             handleAutoRetry(profileError)
-        } else if profileError.isRecoverable && retryAction != nil {
+        } else if profileError.isRecoverable, retryAction != nil {
             showRetryAlert = true
         } else {
             showErrorAlert = true
         }
     }
-
 
     private func convertToProfileError(_ error: Error) -> ProfileError {
         if let profileError = error as? ProfileError {
@@ -59,7 +58,6 @@ class ProfileErrorHandler {
         return .networkError(error)
     }
 
-
     private func convertURLError(_ urlError: URLError) -> ProfileError {
         switch urlError.code {
         case .notConnectedToInternet, .dataNotAllowed:
@@ -75,33 +73,39 @@ class ProfileErrorHandler {
         }
     }
 
-
     private func convertImageError(_ imageError: ImageUploadError) -> ProfileError {
         switch imageError {
         case .imageConversionFailed:
             return .imageCompressionFailed
-        case .fileSizeExceeded(let currentSize, let maxSize):
-            return .imageTooLarge(maxSize: maxSize / (1024 * 1024))
+        case let .fileSizeExceeded(currentSize, maxSize):
+            return .imageTooLarge(maxSize: maxSize / (1_024 * 1_024))
         case .unsupportedImageFormat:
             return .unsupportedImageFormat
-        case .uploadFailed(let reason):
-            return .imageUploadFailed(NSError(domain: "ImageUpload", code: 0, userInfo: [NSLocalizedDescriptionKey: reason]))
-        case .networkError(let error):
+        case let .uploadFailed(reason):
+            return .imageUploadFailed(NSError(
+                domain: "ImageUpload",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: reason]
+            ))
+        case let .networkError(error):
             return .networkError(error)
-        case .serverError(let statusCode, let message):
+        case let .serverError(statusCode, message):
             return .serverError(statusCode: statusCode, message: message)
         case .timeout:
             return .uploadTimeout
-        case .imageTooLarge(_, _, let maxWidth, let maxHeight):
+        case let .imageTooLarge(_, _, maxWidth, maxHeight):
             return .imageTooLarge(maxSize: 10)
         default:
-            return .imageUploadFailed(NSError(domain: "ImageUpload", code: 0, userInfo: [NSLocalizedDescriptionKey: imageError.localizedDescription]))
+            return .imageUploadFailed(NSError(
+                domain: "ImageUpload",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: imageError.localizedDescription]
+            ))
         }
     }
 
-
     private func handleAutoRetry(_ error: ProfileError) {
-        guard let retryAction = retryAction else {
+        guard let retryAction else {
             showErrorAlert = true
             return
         }
@@ -128,9 +132,8 @@ class ProfileErrorHandler {
         clearError()
     }
 
-
     func retryLastAction() async {
-        guard let retryAction = retryAction else { return }
+        guard let retryAction else { return }
 
         showRetryAlert = false
         isRetrying = true
@@ -141,7 +144,6 @@ class ProfileErrorHandler {
 
         isRetrying = false
     }
-
 
     func clearError() {
         currentError = nil
@@ -159,7 +161,6 @@ class ProfileErrorHandler {
         showRetryAlert = false
     }
 
-
     private func logError(_ error: ProfileError) {
         let errorInfo = [
             "Error": String(describing: error),
@@ -168,13 +169,12 @@ class ProfileErrorHandler {
             "Recoverable": String(error.isRecoverable),
             "AutoRetry": String(error.shouldAutoRetry),
             "RetryCount": String(retryCount),
-            "NetworkStatus": networkMonitor.isConnected ? "Connected" : "Offline"
+            "NetworkStatus": networkMonitor.isConnected ? "Connected" : "Offline",
         ]
 
         print("🚨 ProfileError: \(errorInfo)")
 
     }
-
 
     func getDisplayMessage(for error: ProfileError) -> String {
         var message = error.errorDescription ?? "不明なエラーが発生しました"
@@ -192,7 +192,6 @@ class ProfileErrorHandler {
         return error.recoverySuggestion
     }
 
-
     func handleValidationErrors(_ errors: [String]) {
         if !errors.isEmpty {
             let validationError = ProfileError.validationFailed(errors)
@@ -200,28 +199,25 @@ class ProfileErrorHandler {
         }
     }
 
-
     func handleImageUploadError(_ error: Error, imageType: String) {
         let profileError = convertToProfileError(error)
 
-        let contextualError: ProfileError
-        switch profileError {
-        case .imageUploadFailed(let originalError):
-            contextualError = .imageUploadFailed(NSError(
+        let contextualError: ProfileError = switch profileError {
+        case let .imageUploadFailed(originalError):
+            .imageUploadFailed(NSError(
                 domain: "ProfileImageUpload",
                 code: 0,
                 userInfo: [
                     NSLocalizedDescriptionKey: "\(imageType)のアップロードに失敗しました",
-                    NSUnderlyingErrorKey: originalError
+                    NSUnderlyingErrorKey: originalError,
                 ]
             ))
         default:
-            contextualError = profileError
+            profileError
         }
 
         handleError(contextualError)
     }
-
 
     func handleNetworkError(_ error: Error, operation: String) {
         if !networkMonitor.isConnected {
@@ -234,14 +230,13 @@ class ProfileErrorHandler {
             code: 0,
             userInfo: [
                 NSLocalizedDescriptionKey: "\(operation)中にネットワークエラーが発生しました",
-                NSUnderlyingErrorKey: error
+                NSUnderlyingErrorKey: error,
             ]
         ))
 
         handleError(networkError)
     }
 }
-
 
 extension ProfileErrorHandler {
 
@@ -253,7 +248,7 @@ extension ProfileErrorHandler {
         let message = getDisplayMessage(for: error)
         let recovery = getRecoveryMessage(for: error)
 
-        if error.isRecoverable && retryAction != nil {
+        if error.isRecoverable, retryAction != nil {
             return Alert(
                 title: Text("エラーが発生しました"),
                 message: Text(message + (recovery != nil ? "\n\n\(recovery!)" : "")),

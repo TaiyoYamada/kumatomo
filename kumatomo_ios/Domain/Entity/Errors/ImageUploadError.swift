@@ -21,25 +21,25 @@ enum ImageUploadError: LocalizedError {
             return "画像データが無効です"
         case .imageCompressionFailed:
             return "画像の圧縮に失敗しました"
-        case .fileSizeExceeded(let currentSize, let maxSize):
+        case let .fileSizeExceeded(currentSize, maxSize):
             return "ファイルサイズが上限を超えています (\(formatFileSize(currentSize))/\(formatFileSize(maxSize)))"
         case .imageConversionFailed:
             return "画像の変換に失敗しました"
         case .unsupportedImageFormat:
             return "対応していない画像形式です"
-        case .decodingFailed(let error):
+        case let .decodingFailed(error):
             return "レスポンスの解析に失敗しました"
-        case .uploadFailed(let reason):
+        case let .uploadFailed(reason):
             return "画像のアップロードに失敗しました: \(reason)"
-        case .networkError(let error):
+        case let .networkError(error):
             return "ネットワークエラー: \(error.localizedDescription)"
-        case .serverError(let statusCode, let message):
+        case let .serverError(statusCode, message):
             return "サーバーエラー (コード: \(statusCode)): \(message)"
         case .timeout:
             return "アップロードがタイムアウトしました"
         case .insufficientStorage:
             return "サーバーの容量が不足しています"
-        case .imageTooLarge(let width, let height, let maxWidth, let maxHeight):
+        case let .imageTooLarge(width, height, maxWidth, maxHeight):
             return "画像サイズが大きすぎます (\(width)x\(height)px, 最大: \(maxWidth)x\(maxHeight)px)"
         }
     }
@@ -87,7 +87,6 @@ enum ImageUploadError: LocalizedError {
             return "この画像形式はサポートされていません"
         case .decodingFailed:
             return "JSONのデコードに失敗しました"
-
         case .uploadFailed:
             return "アップロード処理中にエラーが発生しました"
         case .networkError:

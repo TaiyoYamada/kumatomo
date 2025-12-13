@@ -1,10 +1,14 @@
 import SwiftUI
 
+// MARK: - TagSelectionState
+
 private enum TagSelectionState: Equatable {
     case noTagsSelected
     case maxTagsReached
     case valid
 }
+
+// MARK: - TagSelectionView
 
 struct TagSelectionView: View {
     @Binding var selectedTags: Set<String>
@@ -23,23 +27,22 @@ struct TagSelectionView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-        }
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(UIColor.secondarySystemBackground))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(
-                            validationState == .noTagsSelected ? Color.red.opacity(0.3) :
-                            validationState == .maxTagsReached ? Color.orange.opacity(0.3) :
-                            Color.clear,
-                            lineWidth: validationState == .valid ? 0 : 1
-                        )
-                )
-        )
-        .animation(.easeInOut(duration: 0.2), value: validationState)
+        VStack(alignment: .leading, spacing: 12) {}
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(UIColor.secondarySystemBackground))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(
+                                validationState == .noTagsSelected ? Color.red.opacity(0.3) :
+                                    validationState == .maxTagsReached ? Color.orange.opacity(0.3) :
+                                    Color.clear,
+                                lineWidth: validationState == .valid ? 0 : 1
+                            )
+                    )
+            )
+            .animation(.easeInOut(duration: 0.2), value: validationState)
     }
 
     private func toggleTag(_ tag: String) {
@@ -54,6 +57,8 @@ struct TagSelectionView: View {
         }
     }
 }
+
+// MARK: - EnhancedTagChip
 
 private struct EnhancedTagChip: View {
     let text: String
@@ -80,23 +85,23 @@ private struct EnhancedTagChip: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(
                         isSelected ? Color.primaryOrange :
-                        isDisabled ? Color.gray.opacity(0.1) :
-                        Color(UIColor.systemBackground)
+                            isDisabled ? Color.gray.opacity(0.1) :
+                            Color(UIColor.systemBackground)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(
                                 isSelected ? Color.primaryOrange :
-                                isDisabled ? Color.gray.opacity(0.3) :
-                                Color.primaryOrange,
+                                    isDisabled ? Color.gray.opacity(0.3) :
+                                    Color.primaryOrange,
                                 lineWidth: 1
                             )
                     )
             )
             .foregroundColor(
                 isSelected ? .white :
-                isDisabled ? .gray :
-                .primaryOrange
+                    isDisabled ? .gray :
+                    .primaryOrange
             )
             .scaleEffect(isSelected ? 1.05 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isSelected)
@@ -106,6 +111,8 @@ private struct EnhancedTagChip: View {
         .opacity(isDisabled ? 0.6 : 1.0)
     }
 }
+
+// MARK: - TagValidationFeedback
 
 private struct TagValidationFeedback: View {
     let validationState: TagSelectionState
@@ -148,6 +155,8 @@ private struct TagValidationFeedback: View {
     }
 }
 
+// MARK: - ValidationMessage
+
 private struct ValidationMessage: View {
     let icon: String
     let message: String
@@ -189,7 +198,7 @@ private struct ValidationMessage: View {
 #Preview {
     @Previewable @State var selectedTags: Set<String> = ["熊本県全体"]
 
-    let availableTags = ["熊本県全体"] + City.allCases.map { $0.displayName }
+    let availableTags = ["熊本県全体"] + City.allCases.map(\.displayName)
 
     return VStack(spacing: 20) {
         Text("TagSelectionView Preview")

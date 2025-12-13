@@ -9,7 +9,6 @@ class CommentAPIService {
 
     private init() {}
 
-
     private func getAuthToken() -> String {
         return AuthTokenManager.shared.token ?? ""
     }
@@ -28,7 +27,6 @@ class CommentAPIService {
         return request
     }
 
-
     private func logRequest(_ request: URLRequest, context: String) {
         print("💬 [\(context)] リクエスト: \(request.httpMethod ?? "GET") \(request.url?.absoluteString ?? "")")
         print("💬 [\(context)] ヘッダー: \(request.allHTTPHeaderFields ?? [:])")
@@ -46,7 +44,6 @@ class CommentAPIService {
             print("💬 [\(context)] レスポンス: \(jsonString)")
         }
     }
-
 
     func fetchComments(postId: Int) async throws -> [Comment] {
         let endpoint = "\(baseURL)/posts/\(postId)/comments"
@@ -113,7 +110,7 @@ class CommentAPIService {
         }
 
         var imageUrl: String? = nil
-        if let image = image {
+        if let image {
             do {
                 imageUrl = try await imageUploadService.uploadImage(image)
                 print("✅ コメント画像アップロード成功: \(imageUrl ?? "")")
@@ -132,10 +129,10 @@ class CommentAPIService {
         var request = createAuthorizedRequest(url: url, method: "POST")
 
         var body: [String: Any] = [
-            "content": trimmedContent
+            "content": trimmedContent,
         ]
 
-        if let imageUrl = imageUrl {
+        if let imageUrl {
             body["image_url"] = imageUrl
         }
 
@@ -247,7 +244,6 @@ class CommentAPIService {
             throw CommentError.networkError(error)
         }
     }
-
 
     func createTextComment(postId: Int, content: String) async throws -> Comment {
         return try await createComment(postId: postId, content: content, image: nil)

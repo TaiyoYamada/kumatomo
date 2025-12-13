@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - SearchResult
+
 // 検索結果のモデル
 struct SearchResult: Codable {
     let posts: [Post]
@@ -9,6 +11,8 @@ struct SearchResult: Codable {
         case posts, pagination
     }
 }
+
+// MARK: - SearchPagination
 
 // 検索のページネーション情報
 struct SearchPagination: Codable {
@@ -22,6 +26,8 @@ struct SearchPagination: Codable {
         case posts
     }
 }
+
+// MARK: - PaginationInfo
 
 // ページネーション詳細情報
 struct PaginationInfo: Codable {
@@ -37,6 +43,8 @@ struct PaginationInfo: Codable {
         case total
     }
 }
+
+// MARK: - SearchHistory
 
 // 検索履歴のモデル
 struct SearchHistory: Identifiable, Codable {

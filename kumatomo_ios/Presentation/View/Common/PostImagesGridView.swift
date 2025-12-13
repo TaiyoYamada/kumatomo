@@ -1,10 +1,12 @@
 import SwiftUI
 
+// MARK: - PostImagesGridView
+
 struct PostImagesGridView: View {
     let images: [PostImage]
 
     init(imageUrls: [String]) {
-        self.images = imageUrls.enumerated().map { index, url in
+        images = imageUrls.enumerated().map { index, url in
             PostImage(id: index, postId: 0, imageUrl: url, displayOrder: index + 1)
         }
     }
@@ -14,7 +16,7 @@ struct PostImagesGridView: View {
     }
 
     private var imageUrls: [String] {
-        return images.map { $0.imageUrl }
+        return images.map(\.imageUrl)
     }
 
     var body: some View {
@@ -35,6 +37,7 @@ struct PostImagesGridView: View {
     }
 }
 
+// MARK: - SingleImageView
 
 struct SingleImageView: View {
     let imageURL: String
@@ -45,21 +48,21 @@ struct SingleImageView: View {
             case .empty:
                 Rectangle()
                     .fill(.ultraThinMaterial)
-                    .aspectRatio(16/9, contentMode: .fit)
+                    .aspectRatio(16 / 9, contentMode: .fit)
                     .overlay(
                         ProgressView()
                             .tint(.secondary)
                     )
-            case .success(let image):
+            case let .success(image):
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(maxHeight: 300)
                     .clipped()
-            case .failure(_):
+            case .failure:
                 Rectangle()
                     .fill(.ultraThinMaterial)
-                    .aspectRatio(16/9, contentMode: .fit)
+                    .aspectRatio(16 / 9, contentMode: .fit)
                     .overlay(
                         Image(systemName: "photo")
                             .font(.system(size: 32))
@@ -68,19 +71,20 @@ struct SingleImageView: View {
             @unknown default:
                 Rectangle()
                     .fill(.ultraThinMaterial)
-                    .aspectRatio(16/9, contentMode: .fit)
+                    .aspectRatio(16 / 9, contentMode: .fit)
             }
         }
     }
 }
 
+// MARK: - TwoImagesView
 
 struct TwoImagesView: View {
     let images: [String]
 
     var body: some View {
         HStack(spacing: 2) {
-            ForEach(0..<min(images.count, 2), id: \.self) { index in
+            ForEach(0 ..< min(images.count, 2), id: \.self) { index in
                 AsyncImage(url: URL(string: images[index])) { phase in
                     switch phase {
                     case .empty:
@@ -92,13 +96,13 @@ struct TwoImagesView: View {
                                     .scaleEffect(0.8)
                                     .tint(.secondary)
                             )
-                    case .success(let image):
+                    case let .success(image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(maxHeight: 200)
                             .clipped()
-                    case .failure(_):
+                    case .failure:
                         Rectangle()
                             .fill(.ultraThinMaterial)
                             .aspectRatio(1, contentMode: .fit)
@@ -119,6 +123,7 @@ struct TwoImagesView: View {
     }
 }
 
+// MARK: - ThreeImagesView
 
 struct ThreeImagesView: View {
     let images: [String]
@@ -135,12 +140,12 @@ struct ThreeImagesView: View {
                                 .scaleEffect(0.8)
                                 .tint(.secondary)
                         )
-                case .success(let image):
+                case let .success(image):
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .clipped()
-                case .failure(_):
+                case .failure:
                     Rectangle()
                         .fill(.ultraThinMaterial)
                         .overlay(
@@ -156,7 +161,7 @@ struct ThreeImagesView: View {
             .frame(maxWidth: .infinity)
 
             VStack(spacing: 2) {
-                ForEach(1..<min(images.count, 3), id: \.self) { index in
+                ForEach(1 ..< min(images.count, 3), id: \.self) { index in
                     AsyncImage(url: URL(string: images[index])) { phase in
                         switch phase {
                         case .empty:
@@ -167,12 +172,12 @@ struct ThreeImagesView: View {
                                         .scaleEffect(0.6)
                                         .tint(.secondary)
                                 )
-                        case .success(let image):
+                        case let .success(image):
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .clipped()
-                        case .failure(_):
+                        case .failure:
                             Rectangle()
                                 .fill(.ultraThinMaterial)
                                 .overlay(
@@ -194,13 +199,14 @@ struct ThreeImagesView: View {
     }
 }
 
+// MARK: - FourImagesView
 
 struct FourImagesView: View {
     let images: [String]
 
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 2), spacing: 2) {
-            ForEach(0..<min(images.count, 4), id: \.self) { index in
+            ForEach(0 ..< min(images.count, 4), id: \.self) { index in
                 AsyncImage(url: URL(string: images[index])) { phase in
                     switch phase {
                     case .empty:
@@ -212,13 +218,13 @@ struct FourImagesView: View {
                                     .scaleEffect(0.6)
                                     .tint(.secondary)
                             )
-                    case .success(let image):
+                    case let .success(image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 100, height: 100)
                             .clipped()
-                    case .failure(_):
+                    case .failure:
                         Rectangle()
                             .fill(.ultraThinMaterial)
                             .aspectRatio(1, contentMode: .fit)
@@ -238,13 +244,14 @@ struct FourImagesView: View {
     }
 }
 
+// MARK: - MultipleImagesView
 
 struct MultipleImagesView: View {
     let images: [String]
 
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 2), spacing: 2) {
-            ForEach(0..<min(images.count, 3), id: \.self) { index in
+            ForEach(0 ..< min(images.count, 3), id: \.self) { index in
                 AsyncImage(url: URL(string: images[index])) { phase in
                     switch phase {
                     case .empty:
@@ -256,13 +263,13 @@ struct MultipleImagesView: View {
                                     .scaleEffect(0.6)
                                     .tint(.secondary)
                             )
-                    case .success(let image):
+                    case let .success(image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 100, height: 100)
                             .clipped()
-                    case .failure(_):
+                    case .failure:
                         Rectangle()
                             .fill(.ultraThinMaterial)
                             .aspectRatio(1, contentMode: .fit)
@@ -283,7 +290,7 @@ struct MultipleImagesView: View {
                 ZStack {
                     AsyncImage(url: URL(string: images[3])) { phase in
                         switch phase {
-                        case .success(let image):
+                        case let .success(image):
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
@@ -309,15 +316,23 @@ struct MultipleImagesView: View {
     }
 }
 
-
 #if DEBUG
 struct PostImagesGridView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
             PostImagesGridView(imageUrls: ["https://example.com/image1.jpg"])
             PostImagesGridView(imageUrls: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"])
-            PostImagesGridView(imageUrls: ["https://example.com/image1.jpg", "https://example.com/image2.jpg", "https://example.com/image3.jpg"])
-            PostImagesGridView(imageUrls: ["https://example.com/image1.jpg", "https://example.com/image2.jpg", "https://example.com/image3.jpg", "https://example.com/image4.jpg"])
+            PostImagesGridView(imageUrls: [
+                "https://example.com/image1.jpg",
+                "https://example.com/image2.jpg",
+                "https://example.com/image3.jpg",
+            ])
+            PostImagesGridView(imageUrls: [
+                "https://example.com/image1.jpg",
+                "https://example.com/image2.jpg",
+                "https://example.com/image3.jpg",
+                "https://example.com/image4.jpg",
+            ])
         }
         .padding()
     }

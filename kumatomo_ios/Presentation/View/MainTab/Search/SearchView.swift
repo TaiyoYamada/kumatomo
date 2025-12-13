@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - SearchView
+
 struct SearchView: View {
     @State private var viewModel = SearchViewModel()
     @Environment(CurrentUserManager.self) private var userManager
@@ -26,20 +28,20 @@ struct SearchView: View {
             }
 
             Spacer()
+        }
+        .navigationTitle("検索")
+        .navigationBarTitleDisplayMode(.inline)
+        .sidebarButton()
+        .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button("OK") {
+                viewModel.errorMessage = nil
             }
-            .navigationTitle("検索")
-            .navigationBarTitleDisplayMode(.inline)
-            .sidebarButton()
-            .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
-                Button("OK") {
-                    viewModel.errorMessage = nil
-                }
-            } message: {
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                }
+        } message: {
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
             }
-            .withSheetRouter(sheet: $sheetDestination)
+        }
+        .withSheetRouter(sheet: $sheetDestination)
     }
 
     // 検索バー
@@ -317,11 +319,12 @@ struct SearchView: View {
     }
 }
 
+// MARK: - SearchFilterType
 
 // 検索フィルタータイプ
 enum SearchFilterType: String, CaseIterable {
-    case all = "all"
-    case posts = "posts"
+    case all
+    case posts
 
     var displayName: String {
         switch self {

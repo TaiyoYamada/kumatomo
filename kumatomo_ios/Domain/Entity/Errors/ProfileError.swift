@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - ProfileError
+
 enum ProfileError: LocalizedError {
     case invalidInput(field: String, message: String)
     case usernameNotAvailable
@@ -73,25 +75,25 @@ enum ProfileError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidInput(let field, let message):
+        case let .invalidInput(field, message):
             return "\(field): \(message)"
         case .usernameNotAvailable:
             return "このユーザーネームは既に使用されています"
-        case .usernameCheckFailed(let error):
+        case let .usernameCheckFailed(error):
             return "ユーザーネームの確認に失敗しました: \(error.localizedDescription)"
-        case .imageUploadFailed(let error):
+        case let .imageUploadFailed(error):
             return "画像のアップロードに失敗しました: \(error.localizedDescription)"
-        case .networkError(let error):
+        case let .networkError(error):
             return "ネットワークエラー: \(error.localizedDescription)"
-        case .validationFailed(let messages):
+        case let .validationFailed(messages):
             return messages.joined(separator: "\n")
-        case .profileUpdateFailed(let error):
+        case let .profileUpdateFailed(error):
             return "プロフィールの更新に失敗しました: \(error.localizedDescription)"
-        case .profileLoadFailed(let error):
+        case let .profileLoadFailed(error):
             return "プロフィールの読み込みに失敗しました: \(error.localizedDescription)"
         case .unauthorized:
             return "認証エラー: ログインし直してください"
-        case .serverError(let statusCode, let message):
+        case let .serverError(statusCode, message):
             return "サーバーエラー (コード: \(statusCode)): \(message)"
         case .offlineError:
             return "インターネット接続がありません"
@@ -99,7 +101,7 @@ enum ProfileError: LocalizedError {
             return "画像の圧縮に失敗しました"
         case .imageSelectionFailed:
             return "画像の選択に失敗しました"
-        case .imageTooLarge(let maxSize):
+        case let .imageTooLarge(maxSize):
             return "画像サイズが大きすぎます（最大: \(maxSize)MB）"
         case .unsupportedImageFormat:
             return "サポートされていない画像形式です"
@@ -119,9 +121,9 @@ enum ProfileError: LocalizedError {
             return "接続が不安定です"
         case .dataCorrupted:
             return "データが破損しています"
-        case .profileCreationFailed(let error):
+        case let .profileCreationFailed(error):
             return "プロフィールの作成に失敗しました: \(error.localizedDescription)"
-        case .profileDeletionFailed(let error):
+        case let .profileDeletionFailed(error):
             return "プロフィールの削除に失敗しました: \(error.localizedDescription)"
         case .profileNotFound:
             return "プロフィールが見つかりません"
@@ -175,7 +177,7 @@ enum ProfileError: LocalizedError {
             return "設定に問題があります"
         case .dependencyFailure:
             return "依存サービスに問題があります"
-        case .thirdPartyServiceError(let service, let error):
+        case let .thirdPartyServiceError(service, error):
             return "\(service)サービスでエラーが発生しました: \(error.localizedDescription)"
         case .cacheCorrupted:
             return "キャッシュデータが破損しています"
@@ -199,7 +201,7 @@ enum ProfileError: LocalizedError {
             return "前提条件が満たされていません"
         case .postconditionFailed:
             return "処理後の条件が満たされていません"
-        case .businessRuleViolation(let rule):
+        case let .businessRuleViolation(rule):
             return "ビジネスルール違反: \(rule)"
         case .securityViolation:
             return "セキュリティ違反が検出されました"
@@ -488,7 +490,6 @@ enum ProfileError: LocalizedError {
         }
     }
 
-
     var isRecoverable: Bool {
         switch self {
         case .invalidInput, .usernameNotAvailable, .imageSelectionFailed, .imageTooLarge, .unsupportedImageFormat:
@@ -536,7 +537,7 @@ enum ProfileError: LocalizedError {
         switch self {
         case .networkError, .connectionTimeout, .uploadTimeout, .slowConnection:
             return true
-        case .serverError(let statusCode, _):
+        case let .serverError(statusCode, _):
             return statusCode >= 500
         case .serviceUnavailable, .technicalDifficulties, .temporaryServiceIssue:
             return true
@@ -561,7 +562,7 @@ enum ProfileError: LocalizedError {
             return 5.0
         case .slowConnection:
             return 3.0
-        case .serverError(let statusCode, _):
+        case let .serverError(statusCode, _):
             return statusCode >= 500 ? 10.0 : 0.0
         case .rateLimitExceeded:
             return 300.0
@@ -588,7 +589,7 @@ enum ProfileError: LocalizedError {
             return 3
         case .slowConnection:
             return 2
-        case .serverError(let statusCode, _):
+        case let .serverError(statusCode, _):
             return statusCode >= 500 ? 2 : 0
         case .serviceUnavailable, .technicalDifficulties:
             return 2
@@ -607,7 +608,6 @@ enum ProfileError: LocalizedError {
         }
     }
 
-
     var errorCategory: ErrorCategory {
         switch self {
         case .networkError, .offlineError, .connectionTimeout, .slowConnection, .uploadTimeout:
@@ -616,7 +616,8 @@ enum ProfileError: LocalizedError {
             return .authentication
         case .invalidInput, .validationFailed, .usernameNotAvailable:
             return .validation
-        case .imageUploadFailed, .imageCompressionFailed, .imageSelectionFailed, .imageTooLarge, .unsupportedImageFormat:
+        case .imageUploadFailed, .imageCompressionFailed, .imageSelectionFailed, .imageTooLarge,
+             .unsupportedImageFormat:
             return .media
         case .serverError, .serviceUnavailable, .serverMaintenance, .technicalDifficulties:
             return .server
@@ -698,27 +699,30 @@ enum ProfileError: LocalizedError {
     }
 }
 
+// MARK: - ErrorCategory
 
 enum ErrorCategory: String, CaseIterable {
-    case network = "network"
-    case authentication = "authentication"
-    case validation = "validation"
-    case media = "media"
-    case server = "server"
-    case quota = "quota"
-    case content = "content"
-    case policy = "policy"
-    case security = "security"
-    case data = "data"
-    case compatibility = "compatibility"
-    case system = "system"
+    case network
+    case authentication
+    case validation
+    case media
+    case server
+    case quota
+    case content
+    case policy
+    case security
+    case data
+    case compatibility
+    case system
 }
 
+// MARK: - ErrorSeverity
+
 enum ErrorSeverity: String, CaseIterable {
-    case low = "low"
-    case medium = "medium"
-    case high = "high"
-    case critical = "critical"
+    case low
+    case medium
+    case high
+    case critical
 
     var priority: Int {
         switch self {
@@ -730,8 +734,10 @@ enum ErrorSeverity: String, CaseIterable {
     }
 }
 
+// MARK: - UserAction
+
 enum UserAction: String, CaseIterable {
-    case retry = "retry"
+    case retry
     case checkConnection = "check_connection"
     case correctInput = "correct_input"
     case contactSupport = "contact_support"
@@ -739,6 +745,5 @@ enum UserAction: String, CaseIterable {
     case freeStorage = "free_storage"
     case waitAndRetry = "wait_and_retry"
     case tryLater = "try_later"
-    case none = "none"
+    case none
 }
-

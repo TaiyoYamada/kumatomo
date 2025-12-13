@@ -3,6 +3,8 @@ import SwiftUI
 import Combine
 import Observation
 
+// MARK: - CurrentUserManager
+
 @MainActor
 @Observable
 class CurrentUserManager {
@@ -41,7 +43,6 @@ class CurrentUserManager {
     }
 }
 
-
 extension User {
     init(
         id: Int,
@@ -63,14 +64,14 @@ extension User {
         self.createdAt = createdAt
 
         // デフォルト値を設定
-        self.username = nil
+        username = nil
         self.profileImageURL = nil
-        self.location = nil
-        self.postCount = nil
-        self.followingCount = nil
-        self.followersCount = nil
-        self.hasCompletedSetup = nil
-        self.isVerified = nil
-        self.joinedDate = nil
+        location = nil
+        postCount = nil
+        followingCount = nil
+        followersCount = nil
+        hasCompletedSetup = nil
+        isVerified = nil
+        joinedDate = nil
     }
 }

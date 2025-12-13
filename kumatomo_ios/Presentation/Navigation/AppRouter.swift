@@ -11,7 +11,7 @@ class AppRouter {
         .bulletinboard: NavigationPath(),
         .search: NavigationPath(),
         .portal: NavigationPath(),
-        .profile: NavigationPath()
+        .profile: NavigationPath(),
     ]
 
     static let shared = AppRouter()
@@ -22,7 +22,7 @@ class AppRouter {
         Binding(
             get: { [weak self] in
                 guard let self else { return NavigationPath() }
-                return self.navigationPaths[tab] ?? NavigationPath()
+                return navigationPaths[tab] ?? NavigationPath()
             },
             set: { [weak self] newValue in
                 self?.navigationPaths[tab] = newValue
@@ -55,7 +55,6 @@ class AppRouter {
         navigationPaths[targetTab] = NavigationPath()
     }
 
-
     func navigateToPostDetail(postId: Int) {
         print("[AppRouter] navigateToPostDetail id=\(postId) currentTab=\(selectedTab)")
         append(.postDetail(postId: postId))
@@ -87,7 +86,6 @@ class AppRouter {
         append(.search, to: tab)
     }
 
-
     func goBack() {
         removeLast()
     }
@@ -101,7 +99,6 @@ class AppRouter {
         print("[AppRouter] navigate to destination=\(destination) on tab=\(targetTab)")
         append(destination, to: targetTab)
     }
-
 
     func handleDeepLink(url: URL) {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
@@ -137,7 +134,6 @@ class AppRouter {
             navigateToSettings(on: .portal)
         default:
             print("[AppRouter] deep link not handled: \(host)")
-            break
         }
     }
 }

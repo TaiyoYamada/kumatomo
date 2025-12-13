@@ -3,6 +3,7 @@ import Combine
 import UIKit
 import Observation
 
+// MARK: - OfflineQueueManager
 
 @MainActor
 @Observable
@@ -23,7 +24,6 @@ class OfflineQueueManager {
         loadPersistedQueue()
         setupNetworkMonitoring()
     }
-
 
     func enqueueOperation(_ operation: QueuedOperation) {
         if pendingOperations.count >= maxQueueSize {
@@ -55,7 +55,7 @@ class OfflineQueueManager {
     }
 
     func processQueue() async {
-        guard networkMonitor.isConnected && !isProcessingQueue else {
+        guard networkMonitor.isConnected, !isProcessingQueue else {
             return
         }
 
@@ -102,7 +102,6 @@ class OfflineQueueManager {
 
         print("📊 Queue processing complete. Processed: \(processedOperations.count), Failed: \(failedOperations.count)")
     }
-
 
     private func processOperation(_ operation: QueuedOperation) async throws {
         switch operation.type {
@@ -169,7 +168,6 @@ class OfflineQueueManager {
         _ = try await imageUploadService.uploadCoverImage(image)
     }
 
-
     private func setupNetworkMonitoring() {
         NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
             .compactMap { notification in
@@ -177,18 +175,17 @@ class OfflineQueueManager {
             }
             .removeDuplicates()
             .sink { [weak self] isConnected in
-                guard let self = self else { return }
+                guard let self else { return }
                 if isConnected {
                     Task { @MainActor in
                         await self.processQueue()
                     }
                 } else {
-                    self.queueStatus = .waiting
+                    queueStatus = .waiting
                 }
             }
             .store(in: &cancellables)
     }
-
 
     private func persistQueue() {
         do {
@@ -212,7 +209,6 @@ class OfflineQueueManager {
             UserDefaults.standard.removeObject(forKey: persistenceKey)
         }
     }
-
 
     func enqueueProfileCreation(_ user: User) {
         guard let userData = try? JSONEncoder().encode(user) else {
@@ -284,7 +280,6 @@ class OfflineQueueManager {
         enqueueOperation(operation)
     }
 
-
     func getQueueStatistics() -> QueueStatistics {
         let operationsByType = Dictionary(grouping: pendingOperations) { $0.type }
         let operationsByPriority = Dictionary(grouping: pendingOperations) { $0.priority }
@@ -298,11 +293,14 @@ class OfflineQueueManager {
             operationsByPriority: operationsByPriority.mapValues { $0.count },
             oldestOperationAge: oldestOperation?.createdAt.timeIntervalSinceNow.magnitude,
             newestOperationAge: newestOperation?.createdAt.timeIntervalSinceNow.magnitude,
-            averageRetryCount: pendingOperations.isEmpty ? 0 : Double(pendingOperations.map { $0.retryCount }.reduce(0, +)) / Double(pendingOperations.count)
+            averageRetryCount: pendingOperations
+                .isEmpty ? 0 : Double(pendingOperations.map(\.retryCount).reduce(0, +)) /
+                Double(pendingOperations.count)
         )
     }
 }
 
+// MARK: - QueuedOperation
 
 struct QueuedOperation: Codable, Identifiable {
     let id: String
@@ -321,12 +319,12 @@ struct QueuedOperation: Codable, Identifiable {
         priority: OperationPriority = .medium,
         maxRetries: Int = 3
     ) {
-        self.id = UUID().uuidString
+        id = UUID().uuidString
         self.type = type
         self.data = data
         self.priority = priority
-        self.createdAt = Date()
-        self.retryCount = 0
+        createdAt = Date()
+        retryCount = 0
         self.maxRetries = maxRetries
     }
 
@@ -360,6 +358,8 @@ struct QueuedOperation: Codable, Identifiable {
     }
 }
 
+// MARK: - OperationType
+
 enum OperationType: String, Codable, CaseIterable {
     case createProfile = "create_profile"
     case updateProfile = "update_profile"
@@ -383,11 +383,13 @@ enum OperationType: String, Codable, CaseIterable {
     }
 }
 
+// MARK: - OperationPriority
+
 enum OperationPriority: String, Codable, CaseIterable {
-    case low = "low"
-    case medium = "medium"
-    case high = "high"
-    case critical = "critical"
+    case low
+    case medium
+    case high
+    case critical
 
     var sortOrder: Int {
         switch self {
@@ -399,11 +401,13 @@ enum OperationPriority: String, Codable, CaseIterable {
     }
 }
 
+// MARK: - QueueStatus
+
 enum QueueStatus: String, CaseIterable {
-    case idle = "idle"
-    case processing = "processing"
-    case waiting = "waiting"
-    case error = "error"
+    case idle
+    case processing
+    case waiting
+    case error
 
     var displayName: String {
         switch self {
@@ -419,6 +423,8 @@ enum QueueStatus: String, CaseIterable {
     }
 }
 
+// MARK: - QueueStatistics
+
 struct QueueStatistics {
     let totalOperations: Int
     let operationsByType: [OperationType: Int]
@@ -427,7 +433,6 @@ struct QueueStatistics {
     let newestOperationAge: TimeInterval?
     let averageRetryCount: Double
 }
-
 
 extension OfflineQueueManager {
     func hasQueuedOperation(ofType type: OperationType) -> Bool {

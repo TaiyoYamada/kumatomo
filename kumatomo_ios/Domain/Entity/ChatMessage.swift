@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - ChatMessage
+
 struct ChatMessage: Identifiable, Codable, Equatable {
     let id = UUID()
     let content: String

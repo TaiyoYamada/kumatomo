@@ -15,7 +15,7 @@ class ProfileImageManager {
 
     private func compressImage(_ image: UIImage) -> Data? {
         // 画像サイズをリサイズ
-        let maxSize: CGFloat = 1024
+        let maxSize: CGFloat = 1_024
         let scale = max(maxSize / image.size.width, maxSize / image.size.height)
         let newSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
 

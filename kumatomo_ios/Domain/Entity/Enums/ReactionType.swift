@@ -1,9 +1,11 @@
 import Foundation
 
+// MARK: - ReactionType
+
 enum ReactionType: String, Codable, CaseIterable {
-    case thumbsUp = "thumbsUp"
-    case drooling = "drooling"
-    case spicy = "spicy"
+    case thumbsUp
+    case drooling
+    case spicy
 
     var emoji: String {
         switch self {
@@ -27,6 +29,8 @@ enum ReactionType: String, Codable, CaseIterable {
         }
     }
 }
+
+// MARK: - PostReactions
 
 struct PostReactions: Codable, Equatable {
     var thumbsUp: Int

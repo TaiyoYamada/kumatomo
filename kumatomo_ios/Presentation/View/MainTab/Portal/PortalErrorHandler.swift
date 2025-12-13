@@ -1,9 +1,10 @@
 import Foundation
 import SwiftUI
 
+// MARK: - PortalErrorHandler
+
 class PortalErrorHandler: ObservableObject {
     static let shared = PortalErrorHandler()
-
 
     enum PortalError: LocalizedError {
         case invalidURL(String)
@@ -16,19 +17,19 @@ class PortalErrorHandler: ObservableObject {
 
         var errorDescription: String? {
             switch self {
-            case .invalidURL(let url):
+            case let .invalidURL(url):
                 return "無効なURLです: \(url)"
             case .networkUnavailable:
                 return "インターネット接続がありません"
-            case .assetNotFound(let assetName):
+            case let .assetNotFound(assetName):
                 return "画像が見つかりません: \(assetName)"
-            case .urlCannotOpen(let url):
+            case let .urlCannotOpen(url):
                 return "このリンクを開くことができません: \(url)"
-            case .openingFailed(let url):
+            case let .openingFailed(url):
                 return "リンクを開くことができませんでした: \(url)"
             case .timerError:
                 return "スライドショーの動作に問題があります"
-            case .configurationError(let message):
+            case let .configurationError(message):
                 return "設定エラー: \(message)"
             }
         }
@@ -82,12 +83,9 @@ class PortalErrorHandler: ObservableObject {
         case error = "❌"
     }
 
-
     @MainActor private let networkMonitor = NetworkMonitor.shared
 
     private init() {}
-
-
 
     func validateURL(_ urlString: String) throws -> URL {
         let trimmedURL = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -111,11 +109,9 @@ class PortalErrorHandler: ObservableObject {
         return url
     }
 
-
     func canOpenURL(_ url: URL) -> Bool {
         return UIApplication.shared.canOpenURL(url)
     }
-
 
     @MainActor
     func openURL(_ urlString: String, completion: @escaping (Result<Void, PortalError>) -> Void) {
@@ -148,8 +144,6 @@ class PortalErrorHandler: ObservableObject {
         }
     }
 
-
-
     func validateImageAsset(_ assetName: String) -> Bool {
         if UIImage(named: assetName) != nil {
             return true
@@ -169,18 +163,14 @@ class PortalErrorHandler: ObservableObject {
         return false
     }
 
-
     func getMissingAssets(_ assetNames: [String]) -> [String] {
         return assetNames.filter { !validateImageAsset($0) }
     }
-
 
     func validateAssets(_ assetNames: [String]) -> (isValid: Bool, missingAssets: [String]) {
         let missing = getMissingAssets(assetNames)
         return (missing.isEmpty, missing)
     }
-
-
 
     func createTimer(interval: TimeInterval, repeats: Bool, block: @escaping (Timer) -> Void) -> Timer? {
         guard interval > 0 else {
@@ -192,12 +182,9 @@ class PortalErrorHandler: ObservableObject {
         return timer
     }
 
-
     func invalidateTimer(_ timer: Timer?) {
         timer?.invalidate()
     }
-
-
 
     func logError(_ error: PortalError, _ additionalInfo: String? = nil) {
         let timestamp = DateFormatter.logFormatter.string(from: Date())
@@ -216,13 +203,10 @@ class PortalErrorHandler: ObservableObject {
         #endif
     }
 
-
-
     @MainActor
     func shouldRetryForError(_ error: PortalError) -> Bool {
         return error.shouldShowRetry && networkMonitor.isConnected
     }
-
 
     func getRetryDelay(for error: PortalError, attempt: Int) -> TimeInterval {
         guard error.shouldShowRetry else { return 0 }
@@ -231,12 +215,10 @@ class PortalErrorHandler: ObservableObject {
         let maxDelay: TimeInterval = 10.0
 
         let delay = min(baseDelay * pow(2.0, Double(attempt - 1)), maxDelay)
-        let jitter = Double.random(in: 0...0.5)
+        let jitter = Double.random(in: 0 ... 0.5)
 
         return delay + jitter
     }
-
-
 
     func validatePortalConfiguration(
         slideImages: [String],
@@ -276,7 +258,6 @@ class PortalErrorHandler: ObservableObject {
     }
 }
 
-
 extension DateFormatter {
     static let logFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -284,7 +265,6 @@ extension DateFormatter {
         return formatter
     }()
 }
-
 
 extension PortalCardData {
 
@@ -295,7 +275,6 @@ extension PortalCardData {
             cardData: [self]
         )
     }
-
 
     var isValid: Bool {
         return validate().isEmpty

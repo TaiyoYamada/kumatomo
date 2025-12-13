@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - SidebarControlKey
+
 struct SidebarControlKey: EnvironmentKey {
     static let defaultValue: () -> Void = {}
 }

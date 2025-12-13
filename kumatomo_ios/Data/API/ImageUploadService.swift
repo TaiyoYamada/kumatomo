@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 
+// MARK: - ImageUploadService
 
 class ImageUploadService {
     static let shared = ImageUploadService()
@@ -63,7 +64,7 @@ class ImageUploadService {
             }
 
             // ステータスコードが200番台でない場合はエラー
-            guard (200...299).contains(httpResponse.statusCode) else {
+            guard (200 ... 299).contains(httpResponse.statusCode) else {
                 if let responseString = String(data: data, encoding: .utf8) {
                     print("🚨 サーバーエラーレスポンス (ステータス: \(httpResponse.statusCode)): \(responseString)")
                 }
@@ -74,7 +75,7 @@ class ImageUploadService {
                 let decoder = JSONDecoder()
 
                 let formatter = ISO8601DateFormatter()
-                    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
                 decoder.dateDecodingStrategy = .custom { decoder in
                     let container = try decoder.singleValueContainer()
@@ -113,7 +114,7 @@ class ImageUploadService {
 extension Data {
     mutating func append(_ string: String) {
         if let data = string.data(using: .utf8) {
-            self.append(data)
+            append(data)
         }
     }
 }

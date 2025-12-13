@@ -15,4 +15,3 @@ struct PostListResponse: Codable {
         case total
     }
 }
-

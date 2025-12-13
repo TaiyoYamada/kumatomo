@@ -18,21 +18,21 @@ enum PostAPIError: Error {
         switch self {
         case .invalidURL:
             return "無効なURLです"
-        case .networkError(let error):
+        case let .networkError(error):
             return "ネットワークエラー: \(error.localizedDescription)"
         case .invalidResponse:
             return "無効なレスポンスです"
-        case .decodingError(let error):
+        case let .decodingError(error):
             return "データの読み込みに失敗しました: \(error.localizedDescription)"
-        case .apiError(let code, let message):
+        case let .apiError(code, message):
             return "APIエラー（コード: \(code)）: \(message)"
-        case .unknownError(let error):
+        case let .unknownError(error):
             return "不明なエラー: \(error.localizedDescription)"
-        case .serverError(let message):
+        case let .serverError(message):
             return "サーバーエラー: \(message)"
         case .timeout:
             return "リクエストがタイムアウトしました"
-        case .engagementDataError(let message):
+        case let .engagementDataError(message):
             return "エンゲージメントデータエラー: \(message)"
         case .authenticationRequired:
             return "認証が必要です。ログインしてください"
@@ -58,7 +58,7 @@ enum PostAPIError: Error {
         switch self {
         case .engagementDataError:
             return true
-        case .apiError(let code, _):
+        case let .apiError(code, _):
             return code >= 500 // サーバーエラーはエンゲージメントデータ取得失敗の可能性
         default:
             return false

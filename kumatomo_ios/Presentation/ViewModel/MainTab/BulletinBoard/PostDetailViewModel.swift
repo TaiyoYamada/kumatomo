@@ -4,6 +4,8 @@ import UIKit
 import Resolver
 import Observation
 
+// MARK: - PostDetailViewModel
+
 @MainActor
 @Observable
 class PostDetailViewModel {
@@ -24,14 +26,12 @@ class PostDetailViewModel {
     var selectedCommentImage: UIImage?
     var showImagePicker: Bool = false
 
-
     @ObservationIgnored @Injected var fetchPostUseCase: FetchPostUseCase
     @ObservationIgnored @Injected var fetchCommentsUseCase: FetchCommentsUseCase
     @ObservationIgnored @Injected var createCommentUseCase: CreateCommentUseCase
     @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
     @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
     @ObservationIgnored @Injected var authRepository: AuthRepository
-
 
     var canAddComment: Bool {
         let hasText = !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -47,7 +47,6 @@ class PostDetailViewModel {
         return commentText.count > 500
     }
 
-
     func loadPostDetail(postId: Int) async {
         isLoading = true
         errorMessage = nil
@@ -56,7 +55,9 @@ class PostDetailViewModel {
             let fetchedPost = try await fetchPostUseCase.execute(postId: postId)
             post = fetchedPost
             print("✅ 投稿詳細読み込み成功: ID \(postId)")
-            print("📊 エンゲージメント: いいね\(fetchedPost.likeCount ?? 0)件, ブックマーク\(fetchedPost.bookmarkCount ?? 0)件, コメント\(fetchedPost.commentCount ?? 0)件")
+            print(
+                "📊 エンゲージメント: いいね\(fetchedPost.likeCount ?? 0)件, ブックマーク\(fetchedPost.bookmarkCount ?? 0)件, コメント\(fetchedPost.commentCount ?? 0)件"
+            )
         } catch let error as PostAPIError {
             await handlePostAPIError(error, context: "投稿詳細読み込み")
         } catch {
@@ -70,7 +71,6 @@ class PostDetailViewModel {
         guard let currentPost = post else { return }
         await loadPostDetail(postId: currentPost.id)
     }
-
 
     func loadComments(postId: Int) async {
         isLoadingComments = true
@@ -94,7 +94,6 @@ class PostDetailViewModel {
         await loadComments(postId: currentPost.id)
     }
 
-
     func toggleLike() async {
         guard var currentPost = post else {
             errorMessage = "投稿が見つかりません"
@@ -117,13 +116,17 @@ class PostDetailViewModel {
 
         print("🔄 いいね最適化更新: \(newIsLiked ? "いいね" : "いいね解除") (カウント: \(newLikeCount))")
 
-        let result = await toggleLikeUseCase.execute(postId: currentPost.id, currentState: originalIsLiked, currentCount: originalLikeCount)
+        let result = await toggleLikeUseCase.execute(
+            postId: currentPost.id,
+            currentState: originalIsLiked,
+            currentCount: originalLikeCount
+        )
         switch result {
-        case .success(let response):
+        case let .success(response):
             currentPost.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
             post = currentPost
             print("✅ いいね更新成功: \(response.isLiked ? "いいね" : "いいね解除") (サーバーカウント: \(response.likeCount))")
-        case .failure(let error):
+        case let .failure(error):
             currentPost.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
             post = currentPost
             await handleEngagementError(error, context: "いいね切り替え")
@@ -132,7 +135,6 @@ class PostDetailViewModel {
 
         isTogglingLike = false
     }
-
 
     func toggleBookmark() async {
         guard var currentPost = post else {
@@ -156,13 +158,19 @@ class PostDetailViewModel {
 
         print("🔄 ブックマーク最適化更新: \(newIsBookmarked ? "ブックマーク" : "ブックマーク解除") (カウント: \(newBookmarkCount))")
 
-        let result = await toggleBookmarkUseCase.execute(postId: currentPost.id, currentState: originalIsBookmarked, currentCount: originalBookmarkCount)
+        let result = await toggleBookmarkUseCase.execute(
+            postId: currentPost.id,
+            currentState: originalIsBookmarked,
+            currentCount: originalBookmarkCount
+        )
         switch result {
-        case .success(let response):
+        case let .success(response):
             currentPost.updateBookmarkStatus(isBookmarked: response.isBookmarked, bookmarkCount: response.bookmarkCount)
             post = currentPost
-            print("✅ ブックマーク更新成功: \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))")
-        case .failure(let error):
+            print(
+                "✅ ブックマーク更新成功: \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))"
+            )
+        case let .failure(error):
             currentPost.updateBookmarkStatus(isBookmarked: originalIsBookmarked, bookmarkCount: originalBookmarkCount)
             post = currentPost
             await handleEngagementError(error, context: "ブックマーク切り替え")
@@ -171,7 +179,6 @@ class PostDetailViewModel {
 
         isTogglingBookmark = false
     }
-
 
     func addComment(_ text: String, image: UIImage? = nil) async {
         guard let currentPost = post else {
@@ -197,7 +204,11 @@ class PostDetailViewModel {
 
         do {
             let imageData = image?.jpegData(compressionQuality: 0.8)
-            let newComment = try await createCommentUseCase.execute(postId: currentPost.id, content: trimmedText, imageData: imageData)
+            let newComment = try await createCommentUseCase.execute(
+                postId: currentPost.id,
+                content: trimmedText,
+                imageData: imageData
+            )
 
             comments.append(newComment)
             comments.sort { $0.createdAt < $1.createdAt }
@@ -238,11 +249,10 @@ class PostDetailViewModel {
         selectedCommentImage = image
     }
 
-
     func validateCommentContent(_ content: String) -> (isValid: Bool, errorMessage: String?) {
         let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if trimmedContent.isEmpty && selectedCommentImage == nil {
+        if trimmedContent.isEmpty, selectedCommentImage == nil {
             return (false, "コメント内容を入力してください")
         }
 
@@ -252,7 +262,6 @@ class PostDetailViewModel {
 
         return (true, nil)
     }
-
 
     func reset() {
         post = nil
@@ -277,46 +286,43 @@ class PostDetailViewModel {
         }
     }
 
-
     private func handlePostAPIError(_ error: PostAPIError, context: String) async {
-        let message: String
-
-        switch error {
+        let message = switch error {
         case .invalidURL:
-            message = "無効なURLです"
-        case .networkError(let err):
-            message = "ネットワークエラー: \(err.localizedDescription)"
+            "無効なURLです"
+        case let .networkError(err):
+            "ネットワークエラー: \(err.localizedDescription)"
         case .invalidResponse:
-            message = "無効なレスポンスです"
-        case .decodingError(let err):
-            message = "データの読み込みに失敗しました: \(err.localizedDescription)"
-        case .apiError(let statusCode, let apiMessage):
+            "無効なレスポンスです"
+        case let .decodingError(err):
+            "データの読み込みに失敗しました: \(err.localizedDescription)"
+        case let .apiError(statusCode, apiMessage):
             switch statusCode {
             case 401:
-                message = "認証が必要です"
+                "認証が必要です"
             case 403:
-                message = "アクセス権限がありません"
+                "アクセス権限がありません"
             case 404:
-                message = "投稿が見つかりません"
+                "投稿が見つかりません"
             case 429:
-                message = "リクエストが多すぎます。しばらく待ってからお試しください"
+                "リクエストが多すぎます。しばらく待ってからお試しください"
             default:
-                message = "APIエラー（\(statusCode)）: \(apiMessage)"
+                "APIエラー（\(statusCode)）: \(apiMessage)"
             }
-        case .serverError(let serverMessage):
-            message = "サーバーエラー: \(serverMessage)"
-        case .unknownError(let err):
-            message = "不明なエラー: \(err.localizedDescription)"
+        case let .serverError(serverMessage):
+            "サーバーエラー: \(serverMessage)"
+        case let .unknownError(err):
+            "不明なエラー: \(err.localizedDescription)"
         case .timeout:
-            message = "リクエストがタイムアウトしました"
-        case .engagementDataError(let engagementMessage):
-            message = "エンゲージメントデータエラー: \(engagementMessage)"
+            "リクエストがタイムアウトしました"
+        case let .engagementDataError(engagementMessage):
+            "エンゲージメントデータエラー: \(engagementMessage)"
         case .authenticationRequired:
-            message = "認証が必要です"
+            "認証が必要です"
         case .postNotFound:
-            message = "投稿が見つかりません"
+            "投稿が見つかりません"
         case .insufficientPermissions:
-            message = "権限が不足しています"
+            "権限が不足しています"
         }
 
         errorMessage = "\(context)エラー: \(message)"
@@ -339,7 +345,6 @@ class PostDetailViewModel {
     }
 }
 
-
 extension PostDetailViewModel {
     var formattedEngagementCounts: (likes: String, comments: String, bookmarks: String) {
         let likes = formatCount(post?.likeCount ?? 0)
@@ -350,17 +355,17 @@ extension PostDetailViewModel {
     }
 
     private func formatCount(_ count: Int) -> String {
-        if count >= 1000000 {
-            return String(format: "%.1fM", Double(count) / 1000000.0)
-        } else if count >= 1000 {
-            return String(format: "%.1fK", Double(count) / 1000.0)
+        if count >= 1_000_000 {
+            return String(format: "%.1fM", Double(count) / 1_000_000.0)
+        } else if count >= 1_000 {
+            return String(format: "%.1fK", Double(count) / 1_000.0)
         } else {
             return "\(count)"
         }
     }
 
     var isCurrentUserPostOwner: Bool {
-        guard let post = post,
+        guard let post,
               let currentUser = authRepository.currentUser else {
             return false
         }
@@ -368,7 +373,7 @@ extension PostDetailViewModel {
     }
 
     var engagementSummary: String {
-        guard let post = post else { return "" }
+        guard let post else { return "" }
         return post.engagementSummary
     }
 }

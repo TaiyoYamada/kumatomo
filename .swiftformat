@@ -2,10 +2,10 @@
 # https://github.com/nicklockwood/SwiftFormat
 
 # SwiftFormat Version
---minversion 0.58.7
+--minversion 0.54
 
 # File Options
---exclude Pods,Carthage,.build,DerivedData,vendor
+--exclude Pods,Carthage,.build,DerivedData,vendor,api,admin,docker
 
 # Format Options
 
@@ -29,7 +29,6 @@
 
 # 空行の調整
 --trimwhitespace always
---emptybraces no-space
 
 # カンマ
 --commas always
@@ -42,12 +41,6 @@
 --wraparguments before-first
 --wrapparameters before-first
 --wrapcollections before-first
---closingparen balanced
-
-# クロージャ
---closurearguments next-line
---trailingclosures true
---shortoptionals always
 
 # スペース
 --operatorfunc spaced
@@ -56,30 +49,16 @@
 # その他
 --stripunusedargs closure-only
 --ifdef no-indent
---extensionacl on-declarations
---redundanttype inferred
 
 # 数値リテラル
 --decimalgrouping 3
 --hexgrouping 4
---octalgrouping 4
---binarygrouping 4
 
 # Swift Version
 --swiftversion 5.9
 
 # 無効化するルール
---disable \
-  sortImports,\
-  blankLinesAtStartOfScope,\
-  blankLinesAtEndOfScope,\
-  redundantReturn,\
-  wrapMultilineStatementBraces
+--disable sortImports,blankLinesAtStartOfScope,blankLinesAtEndOfScope,redundantReturn,wrapMultilineStatementBraces
 
 # 有効化するルール
---enable \
-  isEmpty,\
-  markTypes,\
-  sortDeclarations,\
-  organizeDeclarations,\
-  blankLinesBetweenScopes
+--enable isEmpty,markTypes

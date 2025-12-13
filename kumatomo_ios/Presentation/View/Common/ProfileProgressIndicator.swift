@@ -1,5 +1,6 @@
 import SwiftUI
 
+// MARK: - ProfileProgressIndicator
 
 struct ProfileProgressIndicator: View {
     let progress: Double
@@ -45,7 +46,7 @@ struct ProfileProgressIndicator: View {
                 }
             }
 
-            if let onCancel = onCancel {
+            if let onCancel {
                 Button("キャンセル") {
                     onCancel()
                 }
@@ -58,6 +59,8 @@ struct ProfileProgressIndicator: View {
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
 }
+
+// MARK: - ImageUploadProgressView
 
 struct ImageUploadProgressView: View {
     @Bindable var viewModel: ProfileViewModel
@@ -104,6 +107,7 @@ struct ImageUploadProgressView: View {
     }
 }
 
+// MARK: - ProfileSuccessIndicator
 
 struct ProfileSuccessIndicator: View {
     let message: String
@@ -162,7 +166,7 @@ struct ProfileSuccessIndicator: View {
     }
 }
 
-
+// MARK: - ValidationErrorView
 
 struct ValidationErrorView: View {
     let errors: [String]
@@ -222,6 +226,7 @@ struct ValidationErrorView: View {
     }
 }
 
+// MARK: - ProfileLoadingOverlay
 
 struct ProfileLoadingOverlay: View {
     let isLoading: Bool
@@ -251,7 +256,6 @@ struct ProfileLoadingOverlay: View {
     }
 }
 
-
 #if DEBUG
 struct ProfileProgressIndicator_Previews: PreviewProvider {
     static var previews: some View {
@@ -272,7 +276,7 @@ struct ProfileProgressIndicator_Previews: PreviewProvider {
                 errors: [
                     "名前を入力してください",
                     "メールアドレスの形式が正しくありません",
-                    "ユーザーネームは3文字以上で入力してください"
+                    "ユーザーネームは3文字以上で入力してください",
                 ],
                 onDismiss: {}
             )

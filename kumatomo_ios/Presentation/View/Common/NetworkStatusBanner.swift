@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - NetworkStatusBanner
+
 struct NetworkStatusBanner: View {
     @Environment(NetworkMonitor.self) private var networkMonitor
 
@@ -27,7 +29,6 @@ struct NetworkStatusBanner: View {
         }
     }
 }
-
 
 #if DEBUG
 struct NetworkStatusBanner_Previews: PreviewProvider {

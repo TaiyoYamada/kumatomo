@@ -13,7 +13,7 @@ struct UserProfileView: View {
                 if isLoading {
                     ProgressView("読み込み中...")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let user = user {
+                } else if let user {
                     ScrollView {
                         VStack(spacing: 16) {
                             VStack(spacing: 12) {
@@ -58,7 +58,7 @@ struct UserProfileView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                } else if let errorMessage = errorMessage {
+                } else if let errorMessage {
                     VStack(spacing: 16) {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.system(size: 48))
@@ -106,7 +106,7 @@ struct UserProfileView: View {
                         profileImageURL: nil,
                         coverImageURL: nil,
                         bio: "これはサンプルのプロフィールです。",
-                        createdAt: Date(),
+                        createdAt: Date()
                     )
                 } else {
                     errorMessage = "ユーザーが見つかりません"

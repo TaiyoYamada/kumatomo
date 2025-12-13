@@ -40,7 +40,12 @@ class PostAPIService {
     }
 
     // 投稿を作成する（複数画像対応、エンゲージメントデータ付きレスポンス）
-    func createPostWithMultipleImages(userId: Int, content: String, imageUrls: [String], tags: [String] = []) async throws -> Post {
+    func createPostWithMultipleImages(
+        userId: Int,
+        content: String,
+        imageUrls: [String],
+        tags: [String] = []
+    ) async throws -> Post {
         let endpoint = "\(baseURL)/posts"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
@@ -65,7 +70,7 @@ class PostAPIService {
         var body: [String: Any] = [
             "user_id": userId,
             "content": content,
-            "image_urls": imageUrls
+            "image_urls": imageUrls,
         ]
 
         // タグがある場合は追加
@@ -98,7 +103,9 @@ class PostAPIService {
                 do {
                     let post = try decoder.decode(Post.self, from: data)
                     print("✅ 投稿作成成功: ID=\(post.id)")
-                    print("📊 初期エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    print(
+                        "📊 初期エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件"
+                    )
                     return post
                 } catch {
                     print("🚨 デコードエラー: \(error)")
@@ -161,10 +168,10 @@ class PostAPIService {
         // リクエストボディの作成
         var body: [String: Any] = [
             "user_id": userId,
-            "content": content
+            "content": content,
         ]
 
-        if let imageUrl = imageUrl, !imageUrl.isEmpty {
+        if let imageUrl, !imageUrl.isEmpty {
             body["image_url"] = imageUrl
         }
 
@@ -198,7 +205,9 @@ class PostAPIService {
                 do {
                     let post = try decoder.decode(Post.self, from: data)
                     print("✅ 投稿作成成功: ID=\(post.id)")
-                    print("📊 初期エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    print(
+                        "📊 初期エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件"
+                    )
                     return post
                 } catch {
                     print("🚨 デコードエラー: \(error)")
@@ -284,7 +293,9 @@ class PostAPIService {
 
                     // エンゲージメントデータの確認
                     for (index, post) in posts.enumerated() {
-                        print("📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                        print(
+                            "📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件"
+                        )
                         if let images = post.images, !images.isEmpty {
                             print("📸 投稿\(index + 1): \(images.count)枚の画像")
                             for (imageIndex, image) in images.enumerated() {
@@ -300,13 +311,13 @@ class PostAPIService {
                     print("🚨 デコードエラー: \(error)")
                     if let decodingError = error as? DecodingError {
                         switch decodingError {
-                        case .keyNotFound(let key, let context):
+                        case let .keyNotFound(key, context):
                             print("🔑 キーが見つかりません: \(key.stringValue) at \(context.codingPath)")
-                        case .typeMismatch(let type, let context):
+                        case let .typeMismatch(type, context):
                             print("📊 型の不一致: \(type) at \(context.codingPath)")
-                        case .valueNotFound(let type, let context):
+                        case let .valueNotFound(type, context):
                             print("⚠️ 値が見つかりません: \(type) at \(context.codingPath)")
-                        case .dataCorrupted(let context):
+                        case let .dataCorrupted(context):
                             print("🔄 データ破損: \(context.debugDescription) at \(context.codingPath)")
                         @unknown default:
                             print("🧩 その他のデコードエラー")
@@ -382,7 +393,9 @@ class PostAPIService {
 
                     // エンゲージメントデータの確認
                     for (index, post) in posts.enumerated() {
-                        print("📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                        print(
+                            "📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件"
+                        )
                     }
 
                     return posts
@@ -390,13 +403,13 @@ class PostAPIService {
                     print("🚨 デコードエラー: \(error)")
                     if let decodingError = error as? DecodingError {
                         switch decodingError {
-                        case .keyNotFound(let key, _):
+                        case let .keyNotFound(key, _):
                             print("🔑 キーが見つかりません: \(key)")
-                        case .typeMismatch(let type, _):
+                        case let .typeMismatch(type, _):
                             print("📊 型の不一致: \(type)")
-                        case .valueNotFound(let type, _):
+                        case let .valueNotFound(type, _):
                             print("⚠️ 値が見つかりません: \(type)")
-                        case .dataCorrupted(let context):
+                        case let .dataCorrupted(context):
                             print("🔄 データ破損: \(context)")
                         @unknown default:
                             print("🧩 その他のデコードエラー")
@@ -452,7 +465,7 @@ class PostAPIService {
 
         // リクエストボディの作成
         var body: [String: Any] = [
-            "content": content
+            "content": content,
         ]
 
         // タグがある場合は追加
@@ -485,7 +498,9 @@ class PostAPIService {
                 do {
                     let post = try decoder.decode(Post.self, from: data)
                     print("✅ 投稿更新成功: ID=\(post.id)")
-                    print("📊 エンゲージメント保持: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                    print(
+                        "📊 エンゲージメント保持: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件"
+                    )
                     return post
                 } catch {
                     print("🚨 デコードエラー: \(error)")
@@ -626,8 +641,12 @@ class PostAPIService {
                 do {
                     let post = try decoder.decode(Post.self, from: data)
                     print("✅ 投稿詳細取得成功: ID=\(post.id)")
-                    print("📊 エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
-                    print("👤 ユーザー状態: いいね済み=\(post.isLikedByCurrentUser ?? false), ブックマーク済み=\(post.isBookmarkedByCurrentUser ?? false)")
+                    print(
+                        "📊 エンゲージメント: いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件"
+                    )
+                    print(
+                        "👤 ユーザー状態: いいね済み=\(post.isLikedByCurrentUser ?? false), ブックマーク済み=\(post.isBookmarkedByCurrentUser ?? false)"
+                    )
                     if let comments = post.comments {
                         print("💬 コメント数: \(comments.count)件")
                     }
@@ -636,13 +655,13 @@ class PostAPIService {
                     print("🚨 デコードエラー: \(error)")
                     if let decodingError = error as? DecodingError {
                         switch decodingError {
-                        case .keyNotFound(let key, let context):
+                        case let .keyNotFound(key, context):
                             print("🔑 キーが見つかりません: \(key.stringValue) at \(context.codingPath)")
-                        case .typeMismatch(let type, let context):
+                        case let .typeMismatch(type, context):
                             print("📊 型の不一致: \(type) at \(context.codingPath)")
-                        case .valueNotFound(let type, let context):
+                        case let .valueNotFound(type, context):
                             print("⚠️ 値が見つかりません: \(type) at \(context.codingPath)")
-                        case .dataCorrupted(let context):
+                        case let .dataCorrupted(context):
                             print("🔄 データ破損: \(context.debugDescription) at \(context.codingPath)")
                         @unknown default:
                             print("🧩 その他のデコードエラー")
@@ -673,7 +692,6 @@ class PostAPIService {
             throw PostAPIError.networkError(error)
         }
     }
-
 
     // ページネーション付きで全投稿を取得する（エンゲージメントデータ付き）
     func fetchAllPosts(page: Int = 1, limit: Int = 20) async throws -> [Post] {
@@ -714,7 +732,9 @@ class PostAPIService {
 
                     // エンゲージメントデータの確認
                     for (index, post) in posts.enumerated() {
-                        print("📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件")
+                        print(
+                            "📊 投稿\(index + 1): いいね\(post.likeCount ?? 0)件, ブックマーク\(post.bookmarkCount ?? 0)件, コメント\(post.commentCount ?? 0)件"
+                        )
                     }
 
                     return posts
@@ -738,7 +758,8 @@ class PostAPIService {
 
     // 市町村別投稿を取得する
     func fetchMunicipalityPosts(municipality: String, page: Int = 1, limit: Int = 20) async throws -> [Post] {
-        let encodedMunicipality = municipality.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? municipality
+        let encodedMunicipality = municipality
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? municipality
         let endpoint = "\(baseURL)/posts/municipality/\(encodedMunicipality)?page=\(page)&limit=\(limit)"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
@@ -855,7 +876,10 @@ class PostAPIService {
     }
 
     // リアクションを切り替える
-    func toggleReaction(postId: Int, reactionType: ReactionType) async throws -> (reactions: PostReactions, userReaction: ReactionType?) {
+    func toggleReaction(
+        postId: Int,
+        reactionType: ReactionType
+    ) async throws -> (reactions: PostReactions, userReaction: ReactionType?) {
         let endpoint = "\(baseURL)/posts/\(postId)/reactions"
         guard let url = URL(string: endpoint) else {
             print("🚨 無効なURL: \(endpoint)")
@@ -877,7 +901,7 @@ class PostAPIService {
 
         // リクエストボディの作成
         let body = [
-            "reaction_type": reactionType.rawValue
+            "reaction_type": reactionType.rawValue,
         ]
 
         request.httpBody = try JSONSerialization.data(withJSONObject: body)

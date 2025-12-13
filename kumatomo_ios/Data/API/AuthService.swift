@@ -1,6 +1,8 @@
 import Foundation
 import Combine
 
+// MARK: - AuthService
+
 class AuthService: ObservableObject {
     @Published var isAuthenticated: Bool = false
     @Published var currentUser: User?
@@ -14,11 +16,11 @@ class AuthService: ObservableObject {
         print("🚀 AuthService init called")
 
         if AuthTokenManager.shared.token != nil {
-            self.isAuthenticated = true
+            isAuthenticated = true
             Task { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 do {
-                    try await self.fetchCurrentUser()
+                    try await fetchCurrentUser()
                     await MainActor.run {
                         print("✅ 自動ログイン成功: \(self.currentUser?.email ?? "不明")")
                     }
@@ -32,7 +34,6 @@ class AuthService: ObservableObject {
             }
         }
     }
-
 
     @MainActor
     func signIn(withEmail email: String, password: String) async throws {
@@ -66,7 +67,7 @@ class AuthService: ObservableObject {
         // トークンを保存
         AuthTokenManager.shared.token = authResponse.access_token
 
-        self.isAuthenticated = true
+        isAuthenticated = true
 
         // ユーザー情報の取得
         try await fetchCurrentUser()
@@ -76,8 +77,8 @@ class AuthService: ObservableObject {
     func signOut() async throws {
         guard AuthTokenManager.shared.token != nil else {
             // トークンがなければ何もしない
-            self.isAuthenticated = false
-            self.currentUser = nil
+            isAuthenticated = false
+            currentUser = nil
             return
         }
 
@@ -95,7 +96,7 @@ class AuthService: ObservableObject {
                 throw URLError(.badServerResponse)
             }
 
-            if httpResponse.statusCode != 200 && httpResponse.statusCode != 204 {
+            if httpResponse.statusCode != 200, httpResponse.statusCode != 204 {
                 throw AuthError.logoutFailed
             }
         } catch {
@@ -106,8 +107,8 @@ class AuthService: ObservableObject {
         // トークンをクリア
         AuthTokenManager.shared.clearToken()
 
-        self.isAuthenticated = false
-        self.currentUser = nil
+        isAuthenticated = false
+        currentUser = nil
     }
 
     @MainActor
@@ -132,7 +133,6 @@ class AuthService: ObservableObject {
             "password": password,
         ]
 
-
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: registrationData)
             print("📦 リクエストボディ生成成功: \(registrationData)")
@@ -152,7 +152,7 @@ class AuthService: ObservableObject {
 
             print("📡 ステータスコード: \(httpResponse.statusCode)")
 
-            if httpResponse.statusCode != 200 && httpResponse.statusCode != 201 {
+            if httpResponse.statusCode != 200, httpResponse.statusCode != 201 {
                 if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
                     print("❌ サーバーエラー: \(errorResponse.message)")
                     throw AuthError.serverError(message: errorResponse.message)
@@ -168,7 +168,7 @@ class AuthService: ObservableObject {
 
             print("✅ トークン取得成功: \(authResponse.access_token)")
             AuthTokenManager.shared.token = authResponse.access_token
-            self.isAuthenticated = true
+            isAuthenticated = true
 
             print("📥 ユーザー情報の取得を開始")
             try await fetchCurrentUser()
@@ -181,7 +181,14 @@ class AuthService: ObservableObject {
     }
 
     @MainActor
-    func updateUser(withName name: String?, profileImageURL: String?, bio: String?, location: String?, birthday: Date?, hasCompletedSetup: Bool?) async throws {
+    func updateUser(
+        withName name: String?,
+        profileImageURL: String?,
+        bio: String?,
+        location: String?,
+        birthday: Date?,
+        hasCompletedSetup: Bool?
+    ) async throws {
         guard AuthTokenManager.shared.token != nil else {
             throw AuthError.unauthorized
         }
@@ -196,29 +203,29 @@ class AuthService: ObservableObject {
 
         var updateData: [String: Any] = [:]
 
-        if let name = name {
+        if let name {
             updateData["name"] = name
         }
 
-        if let profileImageURL = profileImageURL {
+        if let profileImageURL {
             updateData["profileImageURL"] = profileImageURL
         }
 
-        if let bio = bio {
+        if let bio {
             updateData["bio"] = bio
         }
 
-        if let location = location {
+        if let location {
             updateData["location"] = location
         }
 
-        if let birthday = birthday {
+        if let birthday {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd"
             updateData["birthday"] = formatter.string(from: birthday)
         }
 
-        if let hasCompletedSetup = hasCompletedSetup {
+        if let hasCompletedSetup {
             updateData["hasCompletedSetup"] = hasCompletedSetup
             print("🔄 hasCompletedSetup送信: \(hasCompletedSetup)")
         }
@@ -234,7 +241,7 @@ class AuthService: ObservableObject {
 
         if httpResponse.statusCode == 401 {
             // 認証エラー
-            self.isAuthenticated = false
+            isAuthenticated = false
             throw AuthError.unauthorized
         }
 
@@ -248,9 +255,8 @@ class AuthService: ObservableObject {
 
         // 成功したら最新のユーザー情報を取得
         try await fetchCurrentUser()
-        print("🔄 ユーザー更新後のhasCompletedSetup: \(self.currentUser?.hasCompletedSetup ?? false)")
+        print("🔄 ユーザー更新後のhasCompletedSetup: \(currentUser?.hasCompletedSetup ?? false)")
     }
-
 
     @MainActor
     func fetchCurrentUser() async throws {
@@ -294,7 +300,7 @@ class AuthService: ObservableObject {
             if httpResponse.statusCode == 401 {
                 print("⚠️ 認証エラー（401）- トークンが無効か期限切れの可能性があります")
                 AuthTokenManager.shared.clearToken()
-                self.isAuthenticated = false
+                isAuthenticated = false
                 throw AuthError.unauthorized
             }
 
@@ -309,9 +315,11 @@ class AuthService: ObservableObject {
 
             do {
                 let userResponse = try decoder.decode(UserResponse.self, from: data)
-                self.currentUser = userResponse.data
-                self.isAuthenticated = true
-                print("✅ ユーザー情報取得成功: \(self.currentUser?.email ?? "不明"), hasCompletedSetup: \(self.currentUser?.hasCompletedSetup ?? false)")
+                currentUser = userResponse.data
+                isAuthenticated = true
+                print(
+                    "✅ ユーザー情報取得成功: \(currentUser?.email ?? "不明"), hasCompletedSetup: \(currentUser?.hasCompletedSetup ?? false)"
+                )
             } catch let decodingError {
                 print("🚨 ユーザーデータのデコードに失敗: \(decodingError)")
                 // エラーの詳細を出力
@@ -325,7 +333,6 @@ class AuthService: ObservableObject {
             throw error
         }
     }
-
 
     @MainActor
     func updateProfileImage(withImageUrl url: String) async throws {
@@ -358,7 +365,7 @@ class AuthService: ObservableObject {
 
         if httpResponse.statusCode == 401 {
             // 認証エラー
-            self.isAuthenticated = false
+            isAuthenticated = false
             throw AuthError.unauthorized
         }
 
@@ -374,11 +381,15 @@ class AuthService: ObservableObject {
     }
 }
 
+// MARK: - AuthResponse
+
 // レスポンス型定義
 struct AuthResponse: Codable {
     let access_token: String
     let token_type: String
 }
+
+// MARK: - ErrorResponse
 
 struct ErrorResponse: Codable {
     let message: String

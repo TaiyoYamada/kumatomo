@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - EngagementButtonsView
+
 struct EngagementButtonsView: View {
     let post: Post
     let showBookmark: Bool
@@ -52,7 +54,6 @@ struct EngagementButtonsView: View {
     }
 }
 
-
 extension EngagementButtonsView {
     static func timeline(
         post: Post,
@@ -84,6 +85,7 @@ extension EngagementButtonsView {
     }
 }
 
+// MARK: - EngagementSummaryView
 
 struct EngagementSummaryView: View {
     let post: Post
@@ -99,6 +101,7 @@ struct EngagementSummaryView: View {
     }
 }
 
+// MARK: - EngagementStatsView
 
 struct EngagementStatsView: View {
     let post: Post
@@ -156,7 +159,6 @@ struct EngagementStatsView: View {
         .padding(.horizontal, 16)
     }
 }
-
 
 #Preview {
     let samplePost = Post(

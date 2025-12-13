@@ -20,17 +20,17 @@ enum APIError: LocalizedError {
         switch self {
         case .invalidURL:
             return "無効なURLです"
-        case .networkError(let error):
+        case let .networkError(error):
             return "ネットワークエラー: \(error.localizedDescription)"
-        case .decodingError(let error):
+        case let .decodingError(error):
             return getDecodingErrorMessage(from: error)
-        case .encodingError(let error):
+        case let .encodingError(error):
             return "データエンコードエラー: \(error.localizedDescription)"
-        case .apiError(let statusCode, let message):
+        case let .apiError(statusCode, message):
             return "APIエラー (コード: \(statusCode)): \(message)"
-        case .serverError(let message):
+        case let .serverError(message):
             return "サーバーエラー: \(message)"
-        case .unknownError(let error):
+        case let .unknownError(error):
             return "未知のエラー: \(error.localizedDescription)"
         case .timeout:
             return "タイムアウトエラー"
@@ -90,7 +90,7 @@ enum APIError: LocalizedError {
             return "サーバーからのデータ形式が正しくありません"
         case .encodingError:
             return "送信データの形式に問題があります"
-        case .apiError(let statusCode, _):
+        case let .apiError(statusCode, _):
             return "サーバーがエラーを返しました (HTTP \(statusCode))"
         case .serverError:
             return "サーバー内部でエラーが発生しました"
@@ -115,13 +115,13 @@ enum APIError: LocalizedError {
 
     private func getDecodingErrorMessage(from error: DecodingError) -> String {
         switch error {
-        case .keyNotFound(let key, _):
+        case let .keyNotFound(key, _):
             return "データ解析エラー: キーが見つかりません (\(key.stringValue))"
-        case .valueNotFound(let type, _):
+        case let .valueNotFound(type, _):
             return "データ解析エラー: 必須の値がありません (\(type))"
-        case .typeMismatch(let type, _):
+        case let .typeMismatch(type, _):
             return "データ解析エラー: データ型が一致しません (\(type))"
-        case .dataCorrupted(let context):
+        case let .dataCorrupted(context):
             return "データ解析エラー: データが破損しています (\(context.debugDescription))"
         @unknown default:
             return "データ解析エラー: 未知のエラー"

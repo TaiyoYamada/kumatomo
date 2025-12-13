@@ -1,5 +1,6 @@
 import Foundation
 
+// MARK: - ImageUploadResponse
 
 struct ImageUploadResponse: Codable {
     let url: String
@@ -10,6 +11,8 @@ struct ImageUploadResponse: Codable {
         case message
     }
 }
+
+// MARK: - UserResponse
 
 struct UserResponse: Codable {
     let data: User

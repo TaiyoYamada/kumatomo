@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - SidebarMenuItemType
+
 enum SidebarMenuItemType: CaseIterable {
     case bookmarks, likes, coupons, notifications, help, contact, settings, logout
 
@@ -62,6 +64,7 @@ enum SidebarMenuItemType: CaseIterable {
     }
 }
 
+// MARK: Identifiable
 
 extension SidebarMenuItemType: Identifiable {
     var id: String { title }

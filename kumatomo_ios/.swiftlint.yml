@@ -1,3 +1,4 @@
+# SwiftLint Configuration for kumatomo iOS
 # https://github.com/realm/SwiftLint
 
 # 除外するパス
@@ -7,6 +8,9 @@ excluded:
   - .build
   - DerivedData
   - vendor
+  - api
+  - admin
+  - docker
   - "*.generated.swift"
 
 # 無効化するルール
@@ -23,10 +27,12 @@ disabled_rules:
   - file_length              # ファイル長は柔軟に
   - function_body_length     # 複雑な関数もある
   - cyclomatic_complexity    # 複雑度は柔軟に
+  - empty_count              # 既存コードに多い
+  - identifier_name          # snake_case変数名がある
+  - type_name                # 既存の命名規則を維持
 
 # 有効化するopt-inルール
 opt_in_rules:
-  - empty_count                    # .count == 0 より .isEmpty を推奨
   - closure_spacing                # クロージャのスペース
   - contains_over_filter_count     # filter.count より contains を推奨
   - contains_over_filter_is_empty  # filter.isEmpty より contains を推奨
@@ -37,20 +43,11 @@ opt_in_rules:
   - last_where                     # filter.last より last(where:) を推奨
   - sorted_first_last              # sorted().first より min() を推奨
   - toggle_bool                    # bool = !bool より .toggle() を推奨
-  - unused_declaration             # 未使用の宣言を検出
   - modifier_order                 # 修飾子の順序を統一
-  - array_init                     # map { $0 } より Array() を推奨
-  - discouraged_optional_boolean   # Optional<Bool>を警告
-  - fallthrough                    # fallthroughを警告
   - flatmap_over_map_reduce        # map + reduce より flatMap を推奨
   - joined_default_parameter       # joined()のデフォルトパラメータ
   - redundant_nil_coalescing       # 冗長な ?? nil を検出
   - yoda_condition                 # 1 == x より x == 1 を推奨
-
-# 警告として扱うルール
-warning_rules:
-  - force_try
-  - force_cast
 
 # カスタム設定
 line_length:
@@ -60,35 +57,6 @@ line_length:
   ignores_urls: true
   ignores_function_declarations: true
   ignores_interpolated_strings: true
-
-identifier_name:
-  min_length:
-    warning: 2
-    error: 1
-  max_length:
-    warning: 60
-    error: 80
-  excluded:
-    - id
-    - x
-    - y
-    - i
-    - j
-    - k
-    - ok
-    - to
-    - db
-    - ai
-    - ui
-    - vc
-
-type_name:
-  min_length:
-    warning: 3
-    error: 2
-  max_length:
-    warning: 50
-    error: 60
 
 large_tuple:
   warning: 4

@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - PostEngagementDetailView
+
 struct PostEngagementDetailView: View {
     let postId: Int
 
@@ -19,7 +21,7 @@ struct PostEngagementDetailView: View {
                 Color(.systemBackground)
                     .ignoresSafeArea()
 
-                if viewModel.isLoading && viewModel.post == nil {
+                if viewModel.isLoading, viewModel.post == nil {
                     PostDetailLoadingView()
                 } else if let post = viewModel.post {
                     ScrollViewReader { proxy in
@@ -27,8 +29,7 @@ struct PostEngagementDetailView: View {
                             LazyVStack(spacing: 0) {
                                 PostContentSection(
                                     post: post,
-                                    onProfileTap: {
-                                    }
+                                    onProfileTap: {}
                                 )
 
                                 EngagementSection(
@@ -142,19 +143,16 @@ struct PostEngagementDetailView: View {
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Button(action: {
-                        }) {
+                        Button(action: {}) {
                             Label("シェア", systemImage: "square.and.arrow.up")
                         }
 
                         if viewModel.isCurrentUserPostOwner {
-                            Button(role: .destructive, action: {
-                            }) {
+                            Button(role: .destructive, action: {}) {
                                 Label("削除", systemImage: "trash")
                             }
                         } else {
-                            Button(action: {
-                            }) {
+                            Button(action: {}) {
                                 Label("報告", systemImage: "exclamationmark.triangle")
                             }
                         }
@@ -169,10 +167,11 @@ struct PostEngagementDetailView: View {
                     await viewModel.loadComments(postId: postId)
                 }
             }
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
-                if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                    keyboardHeight = keyboardFrame.cgRectValue.height
-                }
+            .onReceive(NotificationCenter.default
+                .publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
+                    if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                        keyboardHeight = keyboardFrame.cgRectValue.height
+                    }
             }
             .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
                 keyboardHeight = 0
@@ -184,6 +183,7 @@ struct PostEngagementDetailView: View {
     }
 }
 
+// MARK: - PostContentSection
 
 struct PostContentSection: View {
     let post: Post
@@ -276,6 +276,7 @@ struct PostContentSection: View {
     }
 }
 
+// MARK: - EngagementSection
 
 struct EngagementSection: View {
     let post: Post
@@ -315,7 +316,6 @@ struct EngagementSection: View {
                 .padding(.vertical, 12)
             }
 
-
             EngagementButtonsView.detail(
                 post: post,
                 onLike: {
@@ -330,6 +330,7 @@ struct EngagementSection: View {
     }
 }
 
+// MARK: - CommentsSection
 
 struct CommentsSection: View {
 
@@ -339,12 +340,9 @@ struct CommentsSection: View {
     let onUserTap: ((Int) -> Void)?
     let onImageTap: ((String) -> Void)?
 
-
     @State private var expandedComments: Set<Int> = []
 
-
     private let maxContentLines: Int = 3
-
 
     init(
         comments: [Comment],
@@ -364,7 +362,7 @@ struct CommentsSection: View {
         VStack(alignment: .leading, spacing: 0) {
             sectionHeader
 
-            if isLoading && comments.isEmpty {
+            if isLoading, comments.isEmpty {
                 loadingView
             } else if comments.isEmpty {
                 emptyStateView
@@ -375,7 +373,6 @@ struct CommentsSection: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("コメントセクション、\(comments.count)件のコメント")
     }
-
 
     private var sectionHeader: some View {
         HStack {
@@ -391,7 +388,7 @@ struct CommentsSection: View {
 
             Spacer()
 
-            if isLoading && !comments.isEmpty {
+            if isLoading, !comments.isEmpty {
                 ProgressView()
                     .scaleEffect(0.8)
                     .progressViewStyle(CircularProgressViewStyle(tint: .primaryOrange))
@@ -402,10 +399,9 @@ struct CommentsSection: View {
         .background(Color(.systemBackground))
     }
 
-
     private var loadingView: some View {
         VStack(spacing: 16) {
-            ForEach(0..<3, id: \.self) { _ in
+            ForEach(0 ..< 3, id: \.self) { _ in
                 commentSkeletonView
             }
         }
@@ -444,15 +440,12 @@ struct CommentsSection: View {
         }
     }
 
-
     private var emptyStateView: some View {
-        VStack(spacing: 16) {
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 40)
+        VStack(spacing: 16) {}
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 40)
 
     }
-
 
     private var commentsListView: some View {
         LazyVStack(alignment: .leading, spacing: 0) {
@@ -484,6 +477,7 @@ struct CommentsSection: View {
     }
 }
 
+// MARK: - CommentItemView
 
 struct CommentItemView: View {
     let comment: Comment
@@ -559,6 +553,7 @@ struct CommentItemView: View {
     }
 }
 
+// MARK: - EnhancedCommentItemView
 
 struct EnhancedCommentItemView: View {
 
@@ -568,7 +563,6 @@ struct EnhancedCommentItemView: View {
     let onUserTap: ((Int) -> Void)?
     let onImageTap: ((String) -> Void)?
     let onExpandToggle: () -> Void
-
 
     private let profileImageSize: CGFloat = 36
     private let imageMaxHeight: CGFloat = 200
@@ -600,7 +594,6 @@ struct EnhancedCommentItemView: View {
         .accessibilityLabel(commentAccessibilityLabel)
     }
 
-
     private var profileImageView: some View {
         Button {
             if let userId = comment.user?.id {
@@ -616,7 +609,6 @@ struct EnhancedCommentItemView: View {
         .accessibilityLabel("ユーザープロフィール: \(comment.user?.name ?? "不明なユーザー")")
         .accessibilityHint("タップしてプロフィールを表示")
     }
-
 
     private var userInfoView: some View {
         HStack(spacing: 8) {
@@ -654,7 +646,6 @@ struct EnhancedCommentItemView: View {
         .accessibilityLabel("\(comment.user?.name ?? "不明なユーザー")、\(comment.relativeTimeString)")
     }
 
-
     private var commentContentView: some View {
         VStack(alignment: .leading, spacing: 8) {
             let shouldShowExpandButton = comment.content.components(separatedBy: .newlines).count > maxContentLines
@@ -681,7 +672,6 @@ struct EnhancedCommentItemView: View {
         }
     }
 
-
     private var commentImageView: some View {
         Group {
             if let imageUrl = comment.imageUrl, !imageUrl.isEmpty {
@@ -698,7 +688,7 @@ struct EnhancedCommentItemView: View {
                                     ProgressView()
                                         .progressViewStyle(CircularProgressViewStyle(tint: .primaryOrange))
                                 )
-                        case .success(let image):
+                        case let .success(image):
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
@@ -708,7 +698,7 @@ struct EnhancedCommentItemView: View {
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(Color(.systemGray4), lineWidth: 0.5)
                                 )
-                        case .failure(_):
+                        case .failure:
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color(.systemGray6))
                                 .frame(height: 120)
@@ -734,7 +724,6 @@ struct EnhancedCommentItemView: View {
         }
     }
 
-
     private var commentAccessibilityLabel: String {
         var label = "\(comment.user?.name ?? "不明なユーザー")のコメント、\(comment.relativeTimeString)"
 
@@ -750,12 +739,13 @@ struct EnhancedCommentItemView: View {
     }
 }
 
-
 extension View {
     func shimmer() -> some View {
-        self.modifier(ShimmerModifier())
+        modifier(ShimmerModifier())
     }
 }
+
+// MARK: - ShimmerModifier
 
 private struct ShimmerModifier: ViewModifier {
     @State private var isAnimating = false
@@ -769,7 +759,7 @@ private struct ShimmerModifier: ViewModifier {
                             colors: [
                                 Color.clear,
                                 Color.white.opacity(0.6),
-                                Color.clear
+                                Color.clear,
                             ],
                             startPoint: .leading,
                             endPoint: .trailing
@@ -789,6 +779,7 @@ private struct ShimmerModifier: ViewModifier {
     }
 }
 
+// MARK: - CommentComposeSection
 
 struct CommentComposeSection: View {
     @Bindable var viewModel: CommentViewModel
@@ -824,7 +815,7 @@ struct CommentComposeSection: View {
                     VStack(spacing: 8) {
                         TextField("コメントを追加...", text: $viewModel.commentText, axis: .vertical)
                             .textFieldStyle(PlainTextFieldStyle())
-                            .lineLimit(1...6)
+                            .lineLimit(1 ... 6)
                             .disabled(isSubmitting)
 
                         if let selectedImage = viewModel.selectedImage {
@@ -891,6 +882,7 @@ struct CommentComposeSection: View {
     }
 }
 
+// MARK: - PostDetailLoadingView
 
 struct PostDetailLoadingView: View {
     var body: some View {
@@ -905,6 +897,8 @@ struct PostDetailLoadingView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+// MARK: - PostDetailErrorView
 
 struct PostDetailErrorView: View {
     let error: String
@@ -934,6 +928,7 @@ struct PostDetailErrorView: View {
     }
 }
 
+// MARK: - ImagePicker
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
@@ -960,7 +955,10 @@ struct ImagePicker: UIViewControllerRepresentable {
             self.parent = parent
         }
 
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        func imagePickerController(
+            _ picker: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
             if let editedImage = info[.editedImage] as? UIImage {
                 parent.selectedImage = editedImage
             } else if let originalImage = info[.originalImage] as? UIImage {
@@ -975,7 +973,6 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
     }
 }
-
 
 #Preview {
     PostEngagementDetailView(postId: 1)

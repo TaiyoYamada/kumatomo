@@ -6,6 +6,8 @@ import PhotosUI
 import Resolver
 import Observation
 
+// MARK: - ProfileViewModel
+
 @MainActor
 @Observable
 class ProfileViewModel {
@@ -22,12 +24,20 @@ class ProfileViewModel {
     var hasMorePosts: Bool = true
 
     // 編集用プロパティ
-    var email: String = "" { didSet { debounce(key: "email", delay: 0.3) { [weak self] in self?.validateEmailField(self?.email ?? "") } } }
-    var name: String = "" { didSet { debounce(key: "name", delay: 0.3) { [weak self] in self?.validateNameField(self?.name ?? "") } } }
+    var email: String = "" { didSet { debounce(key: "email", delay: 0.3) { [weak self] in
+        self?.validateEmailField(self?.email ?? "")
+    } } }
+    var name: String = "" { didSet { debounce(key: "name", delay: 0.3) { [weak self] in
+        self?.validateNameField(self?.name ?? "")
+    } } }
     var username: String = "" { didSet { validateUsernameWithAvailability(username) } }
-    var bio: String = "" { didSet { debounce(key: "bio", delay: 0.3) { [weak self] in self?.validateBioField(self?.bio ?? "") } } }
-    var location: String = "" { didSet { debounce(key: "location", delay: 0.3) { [weak self] in self?.validateLocationField(self?.location ?? "") } } }
-    var birthday: Date = Date() { didSet { validateBirthdayField(birthday) } }
+    var bio: String = "" { didSet { debounce(key: "bio", delay: 0.3) { [weak self] in
+        self?.validateBioField(self?.bio ?? "")
+    } } }
+    var location: String = "" { didSet { debounce(key: "location", delay: 0.3) { [weak self] in
+        self?.validateLocationField(self?.location ?? "")
+    } } }
+    var birthday: Date = .init() { didSet { validateBirthdayField(birthday) } }
     var profileImage: UIImage?
     var coverImage: UIImage?
     var isProcessing = false
@@ -39,9 +49,9 @@ class ProfileViewModel {
     var locationValidation: ValidationResult = .valid
     var birthdayValidation: ValidationResult = .valid
 
-    var isUsernameAvailable: Bool? = nil
+    var isUsernameAvailable: Bool?
     var isValidatingUsername = false
-    var usernameCheckMessage: String? = nil
+    var usernameCheckMessage: String?
 
     var profileImageUploadProgress: Double = 0.0
     var coverImageUploadProgress: Double = 0.0
@@ -101,7 +111,7 @@ class ProfileViewModel {
     }
 
     init(userID: Int) {
-        self.profile = User(
+        profile = User(
             id: userID,
             email: "",
             name: "",
@@ -126,17 +136,17 @@ class ProfileViewModel {
     // プロフィール編集用の初期化処理を追加
     init(profile: User) {
         self.profile = profile
-        self.email = profile.email ?? ""
-        self.name = profile.name ?? ""
-        self.username = profile.username ?? ""
-        self.bio = profile.bio ?? ""
-        self.location = profile.location ?? ""
+        email = profile.email ?? ""
+        name = profile.name ?? ""
+        username = profile.username ?? ""
+        bio = profile.bio ?? ""
+        location = profile.location ?? ""
 
         // 誕生日の初期化
         if let birthdayString = profile.birthday, !birthdayString.isEmpty {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd"
-            self.birthday = formatter.date(from: birthdayString) ?? Date()
+            birthday = formatter.date(from: birthdayString) ?? Date()
         }
 
         // ユーザーストーリーを読み込む
@@ -153,7 +163,7 @@ class ProfileViewModel {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 self?.isLoading = false
-                if case .failure(let error) = completion {
+                if case let .failure(error) = completion {
                     self?.handleError(error)
                 }
             } receiveValue: { [weak self] profile in
@@ -171,7 +181,11 @@ class ProfileViewModel {
 
         Task {
             do {
-                let fetched = try await postAPIService.fetchUserPosts(userId: userID, page: currentPage, limit: postsPerPage)
+                let fetched = try await postAPIService.fetchUserPosts(
+                    userId: userID,
+                    page: currentPage,
+                    limit: postsPerPage
+                )
                 await MainActor.run {
                     self.posts = fetched
                     self.isLoading = false
@@ -188,13 +202,17 @@ class ProfileViewModel {
 
     // 追加読み込み（無限スクロール）
     func loadMoreUserPosts(userID: Int) {
-        guard !isLoadingMore && hasMorePosts else { return }
+        guard !isLoadingMore, hasMorePosts else { return }
         isLoadingMore = true
         let nextPage = currentPage + 1
 
         Task {
             do {
-                let fetched = try await postAPIService.fetchUserPosts(userId: userID, page: nextPage, limit: postsPerPage)
+                let fetched = try await postAPIService.fetchUserPosts(
+                    userId: userID,
+                    page: nextPage,
+                    limit: postsPerPage
+                )
                 await MainActor.run {
                     self.posts.append(contentsOf: fetched)
                     self.currentPage = nextPage
@@ -210,7 +228,6 @@ class ProfileViewModel {
         }
     }
 
-
     private func setupFormValidation() {
         setupFieldValidation()
         setupUsernameAvailabilityValidation()
@@ -218,19 +235,13 @@ class ProfileViewModel {
         setupValidationResultTracking()
     }
 
+    private func setupFieldValidation() {}
 
-    private func setupFieldValidation() {
-    }
+    private func setupUsernameAvailabilityValidation() {}
 
-    private func setupUsernameAvailabilityValidation() {
-    }
+    private func setupFormStateTracking() {}
 
-    private func setupFormStateTracking() {
-    }
-
-    private func setupValidationResultTracking() {
-    }
-
+    private func setupValidationResultTracking() {}
 
     private func validateEmailField(_ email: String) {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -287,16 +298,14 @@ class ProfileViewModel {
         logValidationResult(field: "birthday", result: birthdayValidation)
     }
 
-
     private func logValidationResult(field: String, result: ValidationResult) {
         switch result {
         case .valid:
             print("✅ \(field) validation: valid")
-        case .invalid(let message):
+        case let .invalid(message):
             print("❌ \(field) validation: \(message)")
         }
     }
-
 
     private func validateUsernameWithAvailability(_ username: String) {
         usernameValidationWorkItem?.cancel()
@@ -340,7 +349,7 @@ class ProfileViewModel {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 self?.isValidatingUsername = false
-                if case .failure(let error) = completion {
+                if case let .failure(error) = completion {
                     self?.handleUsernameCheckError(error)
                 }
                 self?.updateFormValidityState()
@@ -364,7 +373,6 @@ class ProfileViewModel {
         print("🔍 Username '\(username)' is \(status)")
     }
 
-
     private func handleUsernameCheckError(_ error: Error) {
         isUsernameAvailable = nil
         usernameCheckMessage = "確認に失敗しました"
@@ -373,14 +381,13 @@ class ProfileViewModel {
 
     }
 
-
     private func updateFormValidityState() {
         let fieldValidationsValid = emailValidation.isValid &&
-                                    nameValidation.isValid &&
-                                    usernameValidation.isValid &&
-                                    bioValidation.isValid &&
-                                    locationValidation.isValid &&
-                                    birthdayValidation.isValid
+            nameValidation.isValid &&
+            usernameValidation.isValid &&
+            bioValidation.isValid &&
+            locationValidation.isValid &&
+            birthdayValidation.isValid
 
         let usernameAvailabilityValid = isUsernameAvailable ?? false
         let notValidatingUsername = !isValidatingUsername
@@ -429,7 +436,6 @@ class ProfileViewModel {
         }
     }
 
-
     func getValidationSummary() -> ValidationSummary {
         return ValidationSummary(
             emailValidation: emailValidation,
@@ -458,7 +464,7 @@ class ProfileViewModel {
         let formatValidation = ProfileFormValidation.validateUsername(username)
         usernameValidation = formatValidation
 
-        if formatValidation.isValid && username != profile.username && !username.isEmpty {
+        if formatValidation.isValid, username != profile.username, !username.isEmpty {
             performUsernameAvailabilityCheck(username)
         }
 
@@ -467,7 +473,6 @@ class ProfileViewModel {
         let summary = getValidationSummary()
         print("📋 Validation summary: \(summary.isFormValid ? "✅ Valid" : "❌ Invalid")")
     }
-
 
     private func checkForUnsavedChanges() {
         enhancedCheckForUnsavedChanges()
@@ -505,10 +510,10 @@ class ProfileViewModel {
         if let image = selectedImage {
             uploadProfileImage(image) { [weak self] result in
                 switch result {
-                case .success(let url):
+                case let .success(url):
                     updatedProfile.profileImageURL = url.absoluteString
                     self?.saveProfileData(updatedProfile)
-                case .failure(let error):
+                case let .failure(error):
                     self?.handleError(error)
                 }
             }
@@ -516,7 +521,6 @@ class ProfileViewModel {
             saveProfileData(updatedProfile)
         }
     }
-
 
     @MainActor
     func createProfile() async -> Bool {
@@ -586,11 +590,11 @@ class ProfileViewModel {
             print("📤 プロフィール作成開始")
             let createdProfile = try await createProfileAsync(newProfile)
 
-            self.profile = createdProfile
+            profile = createdProfile
 
-            self.profileImage = nil
-            self.coverImage = nil
-            self.hasUnsavedChanges = false
+            profileImage = nil
+            coverImage = nil
+            hasUnsavedChanges = false
 
             resetRetryAttempts()
 
@@ -625,7 +629,7 @@ class ProfileViewModel {
                 .receive(on: DispatchQueue.main)
                 .sink { completionResult in
                     switch completionResult {
-                    case .failure(let error):
+                    case let .failure(error):
                         continuation.resume(throwing: error)
                     case .finished:
                         break
@@ -646,8 +650,8 @@ class ProfileViewModel {
         validateAllFields()
 
         let requiredFieldsValid = !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-                                    !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-                                    !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+            !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 
         if !requiredFieldsValid {
             let missingFields = getMissingRequiredFields()
@@ -713,15 +717,14 @@ class ProfileViewModel {
 
     var canCreateProfile: Bool {
         return isFormValid &&
-                !isProcessing &&
-                !isValidatingUsername &&
-                !isOffline &&
-                !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-                !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-                !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-                (isUsernameAvailable ?? false)
+            !isProcessing &&
+            !isValidatingUsername &&
+            !isOffline &&
+            !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+            !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+            !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+            (isUsernameAvailable ?? false)
     }
-
 
     var showDeleteConfirmation = false
     var isDeletingProfile = false
@@ -734,7 +737,10 @@ class ProfileViewModel {
         }
 
         guard profile.canBeDeleted() else {
-            handleError(ProfileError.serverError(statusCode: 403, message: "このプロフィールは削除できません"), context: "profile_deletion")
+            handleError(
+                ProfileError.serverError(statusCode: 403, message: "このプロフィールは削除できません"),
+                context: "profile_deletion"
+            )
             return
         }
 
@@ -782,7 +788,10 @@ class ProfileViewModel {
                 return true
             } else {
                 isDeletingProfile = false
-                handleError(ProfileError.serverError(statusCode: 500, message: "プロフィールの削除に失敗しました"), context: "profile_deletion")
+                handleError(
+                    ProfileError.serverError(statusCode: 500, message: "プロフィールの削除に失敗しました"),
+                    context: "profile_deletion"
+                )
                 return false
             }
 
@@ -811,7 +820,7 @@ class ProfileViewModel {
                 .receive(on: DispatchQueue.main)
                 .sink { completionResult in
                     switch completionResult {
-                    case .failure(let error):
+                    case let .failure(error):
                         continuation.resume(throwing: error)
                     case .finished:
                         break
@@ -860,7 +869,6 @@ class ProfileViewModel {
 
         ProfileCache.shared.removeUser(id: String(profile.id))
 
-
         print("🧹 プロフィール削除後のクリーンアップ完了")
     }
 
@@ -875,10 +883,10 @@ class ProfileViewModel {
 
     var canDeleteProfile: Bool {
         return !isProcessing &&
-                !isDeletingProfile &&
-                !isOffline &&
-                profile.id > 0 &&
-                profile.canBeDeleted()
+            !isDeletingProfile &&
+            !isOffline &&
+            profile.id > 0 &&
+            profile.canBeDeleted()
     }
 
     func getDeletionWarningMessage() -> String {
@@ -910,7 +918,6 @@ class ProfileViewModel {
 
         initiateProfileDeletion()
     }
-
 
     @MainActor
     func updateProfile() async -> Bool {
@@ -950,14 +957,14 @@ class ProfileViewModel {
             formatter.dateFormat = "yyyy-MM-dd"
             updatedProfile.birthday = formatter.string(from: birthday)
 
-            self.profile = updatedProfile
+            profile = updatedProfile
 
             // プロフィール画像があれば先にアップロード
             if let image = profileImage {
                 print("📤 プロフィール画像アップロード開始")
                 if let imageUrl = await uploadProfileImageWithProgress(image) {
                     updatedProfile.profileImageURL = imageUrl
-                    self.profile.profileImageURL = imageUrl
+                    profile.profileImageURL = imageUrl
                     print("✅ プロフィール画像アップロード成功: \(imageUrl)")
                 } else {
                     print("❌ プロフィール画像アップロード失敗")
@@ -971,7 +978,7 @@ class ProfileViewModel {
                 print("📤 カバー画像アップロード開始")
                 if let imageUrl = await uploadCoverImageWithProgress(image) {
                     updatedProfile.coverImageURL = imageUrl
-                    self.profile.coverImageURL = imageUrl
+                    profile.coverImageURL = imageUrl
                     print("✅ カバー画像アップロード成功: \(imageUrl)")
                 } else {
                     print("❌ カバー画像アップロード失敗")
@@ -985,16 +992,16 @@ class ProfileViewModel {
             var savedProfile = try await updateProfileAsync(updatedProfile)
 
             if hasUnsavedProfileImage {
-                savedProfile.profileImageURL = self.bustCache(for: savedProfile.profileImageURL)
+                savedProfile.profileImageURL = bustCache(for: savedProfile.profileImageURL)
             }
             if hasUnsavedCoverImage {
-                savedProfile.coverImageURL = self.bustCache(for: savedProfile.coverImageURL)
+                savedProfile.coverImageURL = bustCache(for: savedProfile.coverImageURL)
             }
 
             // 成功したらプロフィール情報を最終更新
-            self.profile = savedProfile
+            profile = savedProfile
 
-            self.hasUnsavedChanges = false
+            hasUnsavedChanges = false
 
             resetRetryAttempts()
 
@@ -1024,7 +1031,7 @@ class ProfileViewModel {
     }
 
     private func bustCache(for urlString: String?) -> String? {
-        guard var urlString = urlString, !urlString.isEmpty else { return nil }
+        guard var urlString, !urlString.isEmpty else { return nil }
 
         // 既存のクエリパラメータを削除して、新しいタイムスタンプだけを追加する
         if let url = URL(string: urlString), var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
@@ -1062,21 +1069,21 @@ class ProfileViewModel {
     private func rollbackProfileUpdate(_ originalProfile: User, _ originalFormState: FormState) {
         print("🔄 プロフィール更新をロールバックしています...")
 
-        self.profile = originalProfile
+        profile = originalProfile
 
-        self.email = originalFormState.email
-        self.name = originalFormState.name
-        self.username = originalFormState.username
-        self.bio = originalFormState.bio
-        self.location = originalFormState.location
-        self.birthday = originalFormState.birthday
-        self.profileImage = originalFormState.profileImage
-        self.coverImage = originalFormState.coverImage
-        self.hasUnsavedChanges = originalFormState.hasUnsavedChanges
-        self.hasUnsavedProfileImage = originalFormState.hasUnsavedProfileImage
-        self.hasUnsavedCoverImage = originalFormState.hasUnsavedCoverImage
-        self.selectedProfileItem = originalFormState.selectedProfileItem
-        self.selectedCoverItem = originalFormState.selectedCoverItem
+        email = originalFormState.email
+        name = originalFormState.name
+        username = originalFormState.username
+        bio = originalFormState.bio
+        location = originalFormState.location
+        birthday = originalFormState.birthday
+        profileImage = originalFormState.profileImage
+        coverImage = originalFormState.coverImage
+        hasUnsavedChanges = originalFormState.hasUnsavedChanges
+        hasUnsavedProfileImage = originalFormState.hasUnsavedProfileImage
+        hasUnsavedCoverImage = originalFormState.hasUnsavedCoverImage
+        selectedProfileItem = originalFormState.selectedProfileItem
+        selectedCoverItem = originalFormState.selectedCoverItem
 
         isProcessing = false
 
@@ -1113,15 +1120,25 @@ class ProfileViewModel {
     func hasFieldChanged(_ field: ProfileField) -> Bool {
         switch field {
         case .email:
-            return email.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.email?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+            return email
+                .trimmingCharacters(in: .whitespacesAndNewlines) !=
+                (profile.email?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         case .name:
-            return name.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+            return name
+                .trimmingCharacters(in: .whitespacesAndNewlines) !=
+                (profile.name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         case .username:
-            return username.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.username?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+            return username
+                .trimmingCharacters(in: .whitespacesAndNewlines) !=
+                (profile.username?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         case .bio:
-            return bio.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.bio?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+            return bio
+                .trimmingCharacters(in: .whitespacesAndNewlines) !=
+                (profile.bio?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         case .location:
-            return location.trimmingCharacters(in: .whitespacesAndNewlines) != (profile.location?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+            return location
+                .trimmingCharacters(in: .whitespacesAndNewlines) !=
+                (profile.location?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         case .birthday:
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd"
@@ -1143,7 +1160,7 @@ class ProfileViewModel {
         hasUnsavedChanges = !changedFields.isEmpty
 
         if hasUnsavedChanges {
-            print("📝 変更されたフィールド: \(changedFields.map { $0.displayName }.joined(separator: ", "))")
+            print("📝 変更されたフィールド: \(changedFields.map(\.displayName).joined(separator: ", "))")
         }
     }
 
@@ -1183,7 +1200,7 @@ class ProfileViewModel {
                 .receive(on: DispatchQueue.main)
                 .sink { completionResult in
                     switch completionResult {
-                    case .failure(let error):
+                    case let .failure(error):
                         continuation.resume(throwing: error)
                     case .finished:
                         break
@@ -1205,7 +1222,7 @@ class ProfileViewModel {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 self?.isLoading = false
-                if case .failure(let error) = completion {
+                if case let .failure(error) = completion {
                     self?.handleError(error)
                 }
             } receiveValue: { [weak self] _ in
@@ -1215,9 +1232,8 @@ class ProfileViewModel {
             .store(in: &cancellables)
     }
 
-
     func handleProfileImageSelection(_ item: PhotosPickerItem?) {
-        guard let item = item else {
+        guard let item else {
             selectedProfileItem = nil
             return
         }
@@ -1242,7 +1258,7 @@ class ProfileViewModel {
     }
 
     func handleCoverImageSelection(_ item: PhotosPickerItem?) {
-        guard let item = item else {
+        guard let item else {
             selectedCoverItem = nil
             return
         }
@@ -1268,14 +1284,22 @@ class ProfileViewModel {
 
     private func uploadProfileImageAsync(_ image: UIImage) async throws -> String {
         guard let url = await uploadProfileImageWithProgress(image) else {
-            throw ProfileError.imageUploadFailed(NSError(domain: "ProfileImageUpload", code: 0, userInfo: [NSLocalizedDescriptionKey: "プロフィール画像のアップロードに失敗しました"]))
+            throw ProfileError.imageUploadFailed(NSError(
+                domain: "ProfileImageUpload",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: "プロフィール画像のアップロードに失敗しました"]
+            ))
         }
         return url
     }
 
     private func uploadCoverImageAsync(_ image: UIImage) async throws -> String {
         guard let url = await uploadCoverImageWithProgress(image) else {
-            throw ProfileError.imageUploadFailed(NSError(domain: "CoverImageUpload", code: 0, userInfo: [NSLocalizedDescriptionKey: "カバー画像のアップロードに失敗しました"]))
+            throw ProfileError.imageUploadFailed(NSError(
+                domain: "CoverImageUpload",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: "カバー画像のアップロードに失敗しました"]
+            ))
         }
         return url
     }
@@ -1300,7 +1324,7 @@ class ProfileViewModel {
                         .sink { [weak self] completion in
                             Task { @MainActor in
                                 self?.isProfileImageUploading = false
-                                if case .failure(let error) = completion {
+                                if case let .failure(error) = completion {
                                     self?.profileImageUploadError = self?.convertToProfileError(error)
                                     continuation.resume(throwing: error)
                                 }
@@ -1353,7 +1377,7 @@ class ProfileViewModel {
                         .sink { [weak self] completion in
                             Task { @MainActor in
                                 self?.isCoverImageUploading = false
-                                if case .failure(let error) = completion {
+                                if case let .failure(error) = completion {
                                     self?.coverImageUploadError = self?.convertToProfileError(error)
                                     continuation.resume(throwing: error)
                                 }
@@ -1386,7 +1410,6 @@ class ProfileViewModel {
         return await coverImageUploadTask?.value
     }
 
-
     @MainActor
     private func updateUploadProgress(for imageType: ImageType, progress: Double) {
         switch imageType {
@@ -1407,20 +1430,19 @@ class ProfileViewModel {
             return false
         }
 
-        let maxSizeInBytes = 10 * 1024 * 1024
+        let maxSizeInBytes = 10 * 1_024 * 1_024
         if imageData.count > maxSizeInBytes {
             await handleError(ProfileError.imageTooLarge(maxSize: 10))
             return false
         }
 
-        let maxDimension: CGFloat = 2048
+        let maxDimension: CGFloat = 2_048
         if image.size.width > maxDimension || image.size.height > maxDimension {
             print("⚠️ Image dimensions exceed recommended size: \(image.size)")
         }
 
         return true
     }
-
 
     func cancelProfileImageUpload() {
         profileImageUploadTask?.cancel()
@@ -1447,7 +1469,6 @@ class ProfileViewModel {
         coverImage = nil
         checkForUnsavedChanges()
     }
-
 
     func updateProfileImage(_ image: UIImage) {
         profileImage = image
@@ -1512,7 +1533,7 @@ class ProfileViewModel {
                 }
             }
 
-            if hasUnsavedCoverImage && uploadSuccess {
+            if hasUnsavedCoverImage, uploadSuccess {
                 if let image = coverImage {
                     print("📤 カバー画像の一括アップロード開始")
                     coverImageUrl = await uploadCoverImageWithProgress(image)
@@ -1541,7 +1562,7 @@ class ProfileViewModel {
                 print("📤 画像URL付きプロフィール更新開始")
                 let savedProfile = try await updateProfileAsync(updatedProfile)
 
-                self.profile = savedProfile
+                profile = savedProfile
 
                 hasUnsavedProfileImage = false
                 hasUnsavedCoverImage = false
@@ -1555,7 +1576,14 @@ class ProfileViewModel {
 
                 return true
             } else {
-                handleError(ProfileError.imageUploadFailed(NSError(domain: "BatchImageUpload", code: 0, userInfo: [NSLocalizedDescriptionKey: "画像のアップロードに失敗しました"])), context: "batch_image_save")
+                handleError(
+                    ProfileError.imageUploadFailed(NSError(
+                        domain: "BatchImageUpload",
+                        code: 0,
+                        userInfo: [NSLocalizedDescriptionKey: "画像のアップロードに失敗しました"]
+                    )),
+                    context: "batch_image_save"
+                )
                 return false
             }
 
@@ -1573,7 +1601,7 @@ class ProfileViewModel {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 self?.isImageUploading = false
-                if case .failure(let error) = result {
+                if case let .failure(error) = result {
                     completion(.failure(error))
                 }
             } receiveValue: { url in
@@ -1592,7 +1620,7 @@ class ProfileViewModel {
         case .offlineError:
             isOffline = true
             showNetworkError = true
-        case .validationFailed(let messages):
+        case let .validationFailed(messages):
             validationErrorMessages = messages
             showValidationErrors = true
         case .networkError, .connectionTimeout, .slowConnection:
@@ -1634,14 +1662,22 @@ class ProfileViewModel {
             switch imageError {
             case .imageConversionFailed:
                 return .imageCompressionFailed
-            case .fileSizeExceeded(_, let maxSize):
-                return .imageTooLarge(maxSize: maxSize / (1024 * 1024))
+            case let .fileSizeExceeded(_, maxSize):
+                return .imageTooLarge(maxSize: maxSize / (1_024 * 1_024))
             case .unsupportedImageFormat:
                 return .unsupportedImageFormat
-            case .uploadFailed(let reason):
-                return .imageUploadFailed(NSError(domain: "ImageUpload", code: 0, userInfo: [NSLocalizedDescriptionKey: reason]))
+            case let .uploadFailed(reason):
+                return .imageUploadFailed(NSError(
+                    domain: "ImageUpload",
+                    code: 0,
+                    userInfo: [NSLocalizedDescriptionKey: reason]
+                ))
             default:
-                return .imageUploadFailed(NSError(domain: "ImageUpload", code: 0, userInfo: [NSLocalizedDescriptionKey: imageError.localizedDescription]))
+                return .imageUploadFailed(NSError(
+                    domain: "ImageUpload",
+                    code: 0,
+                    userInfo: [NSLocalizedDescriptionKey: imageError.localizedDescription]
+                ))
             }
         }
 
@@ -1688,7 +1724,6 @@ class ProfileViewModel {
         showError = false
     }
 
-
     func resetFormFields() {
         email = profile.email ?? ""
         name = profile.name ?? ""
@@ -1723,34 +1758,29 @@ class ProfileViewModel {
         clearErrors()
     }
 
-
-
-
-
     private func setupNetworkMonitoring() {
         NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] note in
-                guard let self = self else { return }
+                guard let self else { return }
                 if let isConnected = note.userInfo?["isConnected"] as? Bool {
-                    self.isOffline = !isConnected
+                    isOffline = !isConnected
                     if !isConnected {
-                        self.showNetworkError = true
+                        showNetworkError = true
                     } else {
-                        self.showNetworkError = false
-                        if self.errorMessage?.contains("ネットワーク") == true ||
-                            self.errorMessage?.contains("インターネット") == true {
-                            self.clearErrors()
+                        showNetworkError = false
+                        if errorMessage?.contains("ネットワーク") == true ||
+                            errorMessage?.contains("インターネット") == true {
+                            clearErrors()
                         }
                     }
                 }
                 if let connectionType = note.userInfo?["connectionType"] as? NetworkMonitor.ConnectionType {
-                    self.networkStatus = connectionType
+                    networkStatus = connectionType
                 }
             }
             .store(in: &cancellables)
     }
-
 
     func showSuccessMessage(_ message: String) {
         successMessage = message
@@ -1765,7 +1795,6 @@ class ProfileViewModel {
         showSuccessAlert = false
         successMessage = ""
     }
-
 
     func clearAllErrors() {
         clearErrors()
@@ -1791,7 +1820,6 @@ class ProfileViewModel {
         }
     }
 
-
     func handleOfflineScenario() {
         if !networkMonitor.isConnected {
             handleError(ProfileError.offlineError)
@@ -1806,7 +1834,6 @@ class ProfileViewModel {
         return true
     }
 
-
     func shouldRetryOperation(for error: ProfileError) -> Bool {
         return error.shouldAutoRetry && retryAttempts < maxRetryAttempts
     }
@@ -1815,6 +1842,8 @@ class ProfileViewModel {
         retryAttempts = 0
     }
 }
+
+// MARK: - FlowLayout
 
 // タグなどを整理するためのレイアウト
 struct FlowLayout: Layout {
@@ -1859,7 +1888,7 @@ struct FlowLayout: Layout {
         for subview in subviews {
             let size = subview.sizeThatFits(.unspecified)
 
-            if currentX + size.width > width && !currentRow.subviews.isEmpty {
+            if currentX + size.width > width, !currentRow.subviews.isEmpty {
                 rows.append(currentRow)
                 currentRow = Row()
                 currentX = 0
@@ -1889,6 +1918,7 @@ struct FlowLayout: Layout {
     }
 }
 
+// MARK: - FormState
 
 struct FormState {
     let email: String
@@ -1905,6 +1935,8 @@ struct FormState {
     let selectedProfileItem: PhotosPickerItem?
     let selectedCoverItem: PhotosPickerItem?
 }
+
+// MARK: - ProfileField
 
 enum ProfileField: CaseIterable {
     case email
@@ -1926,7 +1958,6 @@ enum ProfileField: CaseIterable {
             return "ユーザーネーム"
         case .bio:
             return "自己紹介"
-
         case .location:
             return "出身地"
         case .birthday:
@@ -1938,6 +1969,8 @@ enum ProfileField: CaseIterable {
         }
     }
 }
+
+// MARK: - ValidationSummary
 
 struct ValidationSummary {
     let emailValidation: ValidationResult

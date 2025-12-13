@@ -62,13 +62,22 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
         register { FetchAllPostsWithCacheUseCaseImpl(repository: resolve()) as FetchAllPostsWithCacheUseCase }
             .scope(.application)
-        register { FetchMunicipalityPostsWithCacheUseCaseImpl(repository: resolve()) as FetchMunicipalityPostsWithCacheUseCase }
-            .scope(.application)
-        register { FetchFollowingPostsWithCacheUseCaseImpl(repository: resolve()) as FetchFollowingPostsWithCacheUseCase }
-            .scope(.application)
-        register { CreatePostUseCaseImpl(postRepository: resolve(), imageUploadRepository: resolve()) as CreatePostUseCase }
-            .scope(.application)
-        register { CreatePostWithMultipleImagesUseCaseImpl(postRepository: resolve(), imageUploadRepository: resolve()) as CreatePostWithMultipleImagesUseCase }
+        register {
+            FetchMunicipalityPostsWithCacheUseCaseImpl(repository: resolve()) as FetchMunicipalityPostsWithCacheUseCase
+        }
+        .scope(.application)
+        register {
+            FetchFollowingPostsWithCacheUseCaseImpl(repository: resolve()) as FetchFollowingPostsWithCacheUseCase
+        }
+        .scope(.application)
+        register {
+            CreatePostUseCaseImpl(postRepository: resolve(), imageUploadRepository: resolve()) as CreatePostUseCase
+        }
+        .scope(.application)
+        register { CreatePostWithMultipleImagesUseCaseImpl(
+            postRepository: resolve(),
+            imageUploadRepository: resolve()
+        ) as CreatePostWithMultipleImagesUseCase }
             .scope(.application)
         register { UpdatePostUseCaseImpl(repository: resolve()) as UpdatePostUseCase }
             .scope(.application)

@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - MyProfileView
+
 struct MyProfileView: View {
     @State private var viewModel = ProfileViewModel(userID: 0)
     @State private var postviewModel = PostViewModel()
@@ -48,7 +50,7 @@ struct MyProfileView: View {
                 PostTimeline(
                     posts: viewModel.posts,
                     loading: viewModel.isLoadingMore,
-                    onRefresh: {  },
+                    onRefresh: {},
                     onLoadMore: {
                         let userId = AuthService.shared.currentUser?.id ?? 0
                         viewModel.loadMoreUserPosts(userID: userId)
@@ -63,7 +65,8 @@ struct MyProfileView: View {
                             if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
                                 var p = viewModel.posts[idx]
                                 let newIsLiked = !originalIsLiked
-                                let newLikeCount = originalIsLiked ? max(0, originalLikeCount - 1) : originalLikeCount + 1
+                                let newLikeCount = originalIsLiked ? max(0, originalLikeCount - 1) : originalLikeCount +
+                                    1
                                 p.updateLikeStatus(isLiked: newIsLiked, likeCount: newLikeCount)
                                 viewModel.posts[idx] = p
                             }
@@ -90,7 +93,7 @@ struct MyProfileView: View {
                     }
                 )
                 .environment(bulletinBoardViewModel)
-        }
+            }
         }
         .refreshable {
             let userId = AuthService.shared.currentUser?.id ?? 0
@@ -115,9 +118,10 @@ struct MyProfileView: View {
             viewModel.loadProfile(userID: userId)
             viewModel.loadUserPosts(userID: userId)
         }
-        }
+    }
 }
 
+// MARK: - ModernProfileHeaderView
 
 struct ModernProfileHeaderView: View {
     let user: User
@@ -125,10 +129,11 @@ struct ModernProfileHeaderView: View {
     let onEditTapped: () -> Void
 
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             VStack(spacing: 0) {
                 ZStack {
-                    if let coverImageURL = user.coverImageURL, !coverImageURL.isEmpty, let url = URL(string: coverImageURL) {
+                    if let coverImageURL = user.coverImageURL, !coverImageURL.isEmpty,
+                       let url = URL(string: coverImageURL) {
                         AsyncImage(url: url) { phase in
                             switch phase {
                             case .empty:
@@ -136,7 +141,7 @@ struct ModernProfileHeaderView: View {
                                     gradient: Gradient(colors: [
                                         Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.orange.opacity(0.7),
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -145,17 +150,17 @@ struct ModernProfileHeaderView: View {
                                     ProgressView()
                                         .tint(.white.opacity(0.8))
                                 )
-                            case .success(let image):
+                            case let .success(image):
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-                            case .failure(_):
+                            case .failure:
                                 // エラー時のデフォルトグラデーション
                                 LinearGradient(
                                     gradient: Gradient(colors: [
                                         Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.orange.opacity(0.7),
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -170,7 +175,7 @@ struct ModernProfileHeaderView: View {
                                     gradient: Gradient(colors: [
                                         Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.orange.opacity(0.7),
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -183,7 +188,7 @@ struct ModernProfileHeaderView: View {
                             gradient: Gradient(colors: [
                                 Color.orange.opacity(0.7),
                                 Color.purple.opacity(0.7),
-                                Color.orange.opacity(0.7)
+                                Color.orange.opacity(0.7),
                             ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -209,7 +214,7 @@ struct ModernProfileHeaderView: View {
                         gradient: Gradient(stops: [
                             .init(color: Color.clear, location: 0.0),
                             .init(color: Color.black.opacity(0.1), location: 0.7),
-                            .init(color: Color.black.opacity(0.3), location: 1.0)
+                            .init(color: Color.black.opacity(0.3), location: 1.0),
                         ]),
                         startPoint: .top,
                         endPoint: .bottom
@@ -237,11 +242,11 @@ struct ModernProfileHeaderView: View {
                                                 ProgressView()
                                                     .tint(.secondary)
                                             )
-                                    case .success(let image):
+                                    case let .success(image):
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                    case .failure(_):
+                                    case .failure:
                                         Circle()
                                             .fill(.ultraThinMaterial)
                                             .overlay(
@@ -305,6 +310,8 @@ struct ModernProfileHeaderView: View {
         .frame(height: 300)
     }
 }
+
+// MARK: - ModernProfileInfoView
 
 struct ModernProfileInfoView: View {
     let user: User
@@ -395,6 +402,8 @@ struct ModernProfileInfoView: View {
     }
 }
 
+// MARK: - ProfileStatsView
+
 struct ProfileStatsView: View {
     let user: User
 
@@ -432,6 +441,8 @@ struct ProfileStatsView: View {
     }
 }
 
+// MARK: - StatItemView
+
 struct StatItemView: View {
     let count: Int
     let label: String
@@ -439,10 +450,10 @@ struct StatItemView: View {
     var labelColor: Color = .secondary
 
     private var formattedCount: String {
-        if count >= 1000000 {
-            return String(format: "%.1fM", Double(count) / 1000000.0)
-        } else if count >= 1000 {
-            return String(format: "%.1fK", Double(count) / 1000.0)
+        if count >= 1_000_000 {
+            return String(format: "%.1fM", Double(count) / 1_000_000.0)
+        } else if count >= 1_000 {
+            return String(format: "%.1fK", Double(count) / 1_000.0)
         } else {
             return "\(count)"
         }
@@ -472,6 +483,8 @@ struct StatItemView: View {
     }
 }
 
+// MARK: - ModernPostGridView
+
 // モダンなタブセクション
 
 struct ModernPostGridView: View {
@@ -495,6 +508,8 @@ struct ModernPostGridView: View {
         .background(Color(.systemBackground))
     }
 }
+
+// MARK: - EmptyStateView
 
 struct EmptyStateView: View {
     var body: some View {
@@ -530,6 +545,8 @@ struct EmptyStateView: View {
     }
 }
 
+// MARK: - ModernPostCardView
+
 struct ModernPostCardView: View {
     let post: Post
 
@@ -545,6 +562,8 @@ struct ModernPostCardView: View {
     }
 }
 
+// MARK: - PostCardHeaderView
+
 struct PostCardHeaderView: View {
     let post: Post
 
@@ -556,14 +575,14 @@ struct PostCardHeaderView: View {
 
         if timeInterval < 60 {
             return "今"
-        } else if timeInterval < 3600 {
+        } else if timeInterval < 3_600 {
             let minutes = Int(timeInterval / 60)
             return "\(minutes)分"
-        } else if timeInterval < 86400 {
-            let hours = Int(timeInterval / 3600)
+        } else if timeInterval < 86_400 {
+            let hours = Int(timeInterval / 3_600)
             return "\(hours)時間"
         } else {
-            let days = Int(timeInterval / 86400)
+            let days = Int(timeInterval / 86_400)
             return "\(days)日"
         }
     }
@@ -603,8 +622,7 @@ struct PostCardHeaderView: View {
 
             Spacer()
 
-            Button(action: {
-            }) {
+            Button(action: {}) {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 16))
                     .foregroundColor(.secondary)
@@ -614,6 +632,8 @@ struct PostCardHeaderView: View {
         }
     }
 }
+
+// MARK: - PostCardContentView
 
 struct PostCardContentView: View {
     let post: Post
@@ -633,10 +653,9 @@ struct PostCardContentView: View {
             // 画像グリッド
 
             if let images = post.images, !images.isEmpty {
-                PostImagesGridView(imageUrls: images.map { $0.imageUrl })
+                PostImagesGridView(imageUrls: images.map(\.imageUrl))
                     .cornerRadius(16)
             }
-
 
             // タグ表示（先頭に#、オレンジ、背景なし、折返し可）
             if let tags = post.tags, !tags.isEmpty {
@@ -646,6 +665,8 @@ struct PostCardContentView: View {
         .padding(.leading, 56)
     }
 }
+
+// MARK: - PostCardActionsView
 
 struct PostCardActionsView: View {
     let post: Post
@@ -682,8 +703,7 @@ struct PostCardActionsView: View {
             Spacer()
 
             // シェア
-            Button(action: {
-            }) {
+            Button(action: {}) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.system(size: 18))
                     .foregroundColor(.secondary)

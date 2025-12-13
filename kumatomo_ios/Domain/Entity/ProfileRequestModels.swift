@@ -1,5 +1,6 @@
 import Foundation
 
+// MARK: - CreateProfileRequest
 
 struct CreateProfileRequest: Codable {
     let name: String
@@ -14,6 +15,8 @@ struct CreateProfileRequest: Codable {
     }
 }
 
+// MARK: - UpdateProfileRequest
+
 struct UpdateProfileRequest: Codable {
     let name: String?
     let email: String?
@@ -26,6 +29,8 @@ struct UpdateProfileRequest: Codable {
 
 }
 
+// MARK: - ProfileValidationResponse
+
 struct ProfileValidationResponse: Codable {
     let isValid: Bool
     let errors: [String: [String]]
@@ -37,7 +42,6 @@ struct ProfileValidationResponse: Codable {
     }
 }
 
-
 extension User {
     func toCreateRequest() -> CreateProfileRequest {
         return CreateProfileRequest(
@@ -46,7 +50,7 @@ extension User {
             username: username ?? "",
             bio: bio,
             location: location,
-            birthday: birthday,
+            birthday: birthday
         )
     }
 

@@ -11,11 +11,15 @@ class APISession: NSObject, URLSessionDelegate {
         return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }()
 
-    private override init() {
+    override private init() {
         super.init()
     }
 
-    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
         if challenge.protectionSpace.host == "localhost" {
             if let serverTrust = challenge.protectionSpace.serverTrust {
                 completionHandler(.useCredential, URLCredential(trust: serverTrust))

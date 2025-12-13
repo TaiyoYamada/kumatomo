@@ -4,6 +4,8 @@ import Combine
 import Resolver
 import Observation
 
+// MARK: - ValidationState
+
 struct ValidationState {
     let isValid: Bool
     let errors: [PostError]
@@ -36,6 +38,8 @@ struct ValidationState {
     }
 }
 
+// MARK: - ContentValidationState
+
 enum ContentValidationState: Equatable {
     case empty
     case valid
@@ -44,11 +48,15 @@ enum ContentValidationState: Equatable {
     case overLimit(currentCount: Int, maxCount: Int)
 }
 
+// MARK: - TagValidationState
+
 enum TagValidationState: Equatable {
     case noTagsSelected
     case valid
     case maxTagsReached
 }
+
+// MARK: - PostViewModel
 
 @MainActor
 @Observable
@@ -61,7 +69,7 @@ class PostViewModel {
     var tagInput: String = ""
 
     var selectedTags: Set<String> = ["熊本県全体"]
-    var availableTags: [String] { ["熊本県全体"] + City.allCases.map { $0.displayName } }
+    var availableTags: [String] { ["熊本県全体"] + City.allCases.map(\.displayName) }
 
     var posts: [Post] = []
     var userPosts: [Post] = []
@@ -91,7 +99,6 @@ class PostViewModel {
     @ObservationIgnored @Injected var deletePostUseCase: DeletePostUseCase
     @ObservationIgnored @Injected var authRepository: AuthRepository
 
-
     var canPost: Bool {
         hasValidContent && hasValidTags && !isLoading && !isSubmitting
     }
@@ -110,12 +117,11 @@ class PostViewModel {
         let hasText = !postContent.isEmpty
         let hasImages = !selectedImages.isEmpty
 
-
-        if !hasText && !hasImages {
+        if !hasText, !hasImages {
             return .failure(.noContent)
         }
 
-        if hasText && postContent.count > 300 {
+        if hasText, postContent.count > 300 {
             return .failure(.contentOverLimit(currentCount: postContent.count, maxCount: 300))
         }
         return .success(())
@@ -153,21 +159,21 @@ class PostViewModel {
         }
 
         switch validateContent() {
-        case .failure(let error):
+        case let .failure(error):
             return .failure(error)
         case .success:
             break
         }
 
         switch validateImages() {
-        case .failure(let error):
+        case let .failure(error):
             return .failure(error)
         case .success:
             break
         }
 
         switch validateTags() {
-        case .failure(let error):
+        case let .failure(error):
             return .failure(error)
         case .success:
             break
@@ -183,15 +189,15 @@ class PostViewModel {
 
         var errors: [PostError] = []
 
-        if case .failure(let error) = contentValidation {
+        if case let .failure(error) = contentValidation {
             errors.append(error)
         }
 
-        if case .failure(let error) = imageValidation {
+        if case let .failure(error) = imageValidation {
             errors.append(error)
         }
 
-        if case .failure(let error) = tagValidation {
+        if case let .failure(error) = tagValidation {
             errors.append(error)
         }
 
@@ -211,7 +217,7 @@ class PostViewModel {
         let hasImages = !selectedImages.isEmpty
         let isOverLimit = postContent.count > 500
 
-        if !hasText && !hasImages {
+        if !hasText, !hasImages {
             return .empty
         } else if isOverLimit {
             return .overLimit(currentCount: postContent.count, maxCount: 300)
@@ -233,7 +239,6 @@ class PostViewModel {
             return .valid
         }
     }
-
 
     func addTag() -> Result<Void, PostError> {
         let trimmedTag = tagInput.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -263,7 +268,6 @@ class PostViewModel {
         tags.removeAll { $0 == tag }
     }
 
-
     func toggleTag(_ tag: String) {
         if selectedTags.contains(tag) {
             if selectedTags.count > 1 {
@@ -290,18 +294,21 @@ class PostViewModel {
         editingPost = nil
     }
 
-
     func fetchAllPosts() async {
         await performAsyncOperation { self.posts = try await self.fetchAllPostsUseCase.execute(page: nil, limit: nil) }
     }
 
     func fetchUserPosts(userId: Int) async {
-        await performAsyncOperation { self.userPosts = try await self.fetchUserPostsUseCase.execute(userId: userId, page: nil, limit: nil) }
+        await performAsyncOperation { self.userPosts = try await self.fetchUserPostsUseCase.execute(
+            userId: userId,
+            page: nil,
+            limit: nil
+        ) }
     }
 
     func postPost(userId: Int, content: String) async -> Bool {
         switch validateForSubmission() {
-        case .failure(let error):
+        case let .failure(error):
             await handlePostError(error)
             return false
         case .success:
@@ -339,7 +346,7 @@ class PostViewModel {
 
     func createPostWithMultipleImages(userId: Int, content: String, images: [UIImage]) async -> Bool {
         switch validateForSubmission() {
-        case .failure(let error):
+        case let .failure(error):
             await handlePostError(error)
             return false
         case .success:
@@ -375,7 +382,6 @@ class PostViewModel {
         return false
     }
 
-
     func startEditing(_ post: Post) {
         editingPost = post
         postContent = post.content
@@ -399,7 +405,7 @@ class PostViewModel {
         }
 
         switch validateForSubmission() {
-        case .failure(let error):
+        case let .failure(error):
             await handleValidationError(error)
             return false
         case .success:
@@ -540,7 +546,6 @@ class PostViewModel {
         }
     }
 
-
     func isPostOwner(_ post: Post) -> Bool {
         guard let currentUser = authRepository.currentUser else { return false }
         return post.userId == currentUser.id
@@ -571,7 +576,6 @@ class PostViewModel {
         }
     }
 
-
     private func handleSuccessfulSubmission(_ newPost: Post) async {
         posts.insert(newPost, at: 0)
         userPosts.insert(newPost, at: 0)
@@ -589,7 +593,7 @@ class PostViewModel {
         }
     }
 
-    private func performAsyncOperation<T>(_ operation: @escaping () async throws -> T) async {
+    private func performAsyncOperation(_ operation: @escaping () async throws -> some Any) async {
         isLoading = true
         errorMessage = nil
 
@@ -603,7 +607,6 @@ class PostViewModel {
         }
     }
 
-
     private func handlePostError(_ error: PostError) async {
         errorMessage = error.localizedDescription
         print("🚨 PostError: \(error.localizedDescription)")
@@ -616,18 +619,18 @@ class PostViewModel {
         switch error {
         case .invalidURL:
             apiError = .invalidURL
-        case .networkError(let err):
+        case let .networkError(err):
             apiError = .networkError(err)
         case .invalidResponse:
             apiError = .invalidResponse
-        case .decodingError(let err):
+        case let .decodingError(err):
             if let decodingError = err as? DecodingError {
                 apiError = .decodingError(decodingError)
             } else {
                 let context = DecodingError.Context(codingPath: [], debugDescription: err.localizedDescription)
                 apiError = .decodingError(.dataCorrupted(context))
             }
-        case .apiError(let statusCode, let message):
+        case let .apiError(statusCode, message):
             switch statusCode {
             case 401:
                 apiError = .unauthorized
@@ -640,13 +643,13 @@ class PostViewModel {
             default:
                 apiError = .apiError(statusCode: statusCode, message: message)
             }
-        case .serverError(let message):
+        case let .serverError(message):
             apiError = .serverError(message: message)
-        case .unknownError(let err):
+        case let .unknownError(err):
             apiError = .unknownError(err)
         case .timeout:
             apiError = .timeout
-        case .engagementDataError(let message):
+        case let .engagementDataError(message):
             apiError = .serverError(message: "エンゲージメントデータエラー: \(message)")
             print("📊 エンゲージメントデータエラー: \(message)")
         case .authenticationRequired:
@@ -710,7 +713,6 @@ class PostViewModel {
         print("🚨 \(context)エラー: \(error.localizedDescription)")
     }
 }
-
 
 extension PostViewModel {
     func changeTab(_ tab: TabType) {

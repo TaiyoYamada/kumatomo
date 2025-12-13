@@ -3,6 +3,8 @@ import Network
 import Combine
 import Observation
 
+// MARK: - NetworkMonitor
+
 @MainActor
 @Observable
 class NetworkMonitor {
@@ -118,7 +120,7 @@ class NetworkMonitor {
         monitor.start(queue: queue)
     }
 
-    nonisolated private func stopMonitoring() {
+    private nonisolated func stopMonitoring() {
         monitor.cancel()
     }
 
@@ -131,24 +133,23 @@ class NetworkMonitor {
         isExpensive = path.isExpensive
         isConstrained = path.isConstrained
 
-        let newConnectionType: ConnectionType
-        if path.usesInterfaceType(.wifi) {
-            newConnectionType = .wifi
+        let newConnectionType: ConnectionType = if path.usesInterfaceType(.wifi) {
+            .wifi
         } else if path.usesInterfaceType(.cellular) {
-            newConnectionType = .cellular
+            .cellular
         } else if path.usesInterfaceType(.wiredEthernet) {
-            newConnectionType = .ethernet
+            .ethernet
         } else {
-            newConnectionType = .unknown
+            .unknown
         }
 
         let newQuality = calculateConnectionQuality(path: path)
 
-        if !wasConnected && isConnected {
+        if !wasConnected, isConnected {
             connectionStartTime = Date()
             lastConnectedAt = Date()
             addConnectionEvent(.connected, type: newConnectionType, quality: newQuality)
-        } else if wasConnected && !isConnected {
+        } else if wasConnected, !isConnected {
             let duration = connectionStartTime.map { Date().timeIntervalSince($0) }
             addConnectionEvent(.disconnected, type: previousType, quality: .unavailable, duration: duration)
             connectionStartTime = nil
@@ -163,7 +164,9 @@ class NetworkMonitor {
         connectionType = newConnectionType
         connectionQuality = newQuality
 
-        print("Network status changed: Connected=\(isConnected), Type=\(connectionType.displayName), Quality=\(connectionQuality.displayName), Expensive=\(isExpensive), Constrained=\(isConstrained)")
+        print(
+            "Network status changed: Connected=\(isConnected), Type=\(connectionType.displayName), Quality=\(connectionQuality.displayName), Expensive=\(isExpensive), Constrained=\(isConstrained)"
+        )
 
         NotificationCenter.default.post(
             name: .NetworkConnectivityChanged,
@@ -172,7 +175,7 @@ class NetworkMonitor {
                 "isConnected": isConnected,
                 "connectionType": newConnectionType,
                 "isExpensive": isExpensive,
-                "isConstrained": isConstrained
+                "isConstrained": isConstrained,
             ]
         )
     }
@@ -182,15 +185,13 @@ class NetworkMonitor {
             return .unavailable
         }
 
-        var quality: ConnectionQuality
-
-        switch connectionType {
+        var quality: ConnectionQuality = switch connectionType {
         case .wifi, .ethernet:
-            quality = isConstrained ? .good : .excellent
+            isConstrained ? .good : .excellent
         case .cellular:
-            quality = isExpensive || isConstrained ? .poor : .good
+            isExpensive || isConstrained ? .poor : .good
         case .unknown:
-            quality = .poor
+            .poor
         }
 
         return quality
@@ -229,7 +230,6 @@ class NetworkMonitor {
     private func performQualityCheck() {
         guard isConnected else { return }
 
-
         let currentPath = monitor.currentPath
         let newQuality = calculateConnectionQuality(path: currentPath)
 
@@ -238,7 +238,6 @@ class NetworkMonitor {
             addConnectionEvent(.qualityChanged, type: connectionType, quality: newQuality)
         }
     }
-
 
     func checkConnectivity() -> Bool {
         return isConnected
@@ -278,7 +277,6 @@ class NetworkMonitor {
 extension Notification.Name {
     static let NetworkConnectivityChanged = Notification.Name("NetworkConnectivityChanged")
 }
-
 
 extension NetworkMonitor {
     func isNetworkError(_ error: Error) -> Bool {
@@ -345,11 +343,10 @@ extension NetworkMonitor {
         let maxDelay: TimeInterval = 30.0
 
         let delay = min(baseDelay * pow(2.0, Double(attempt - 1)), maxDelay)
-        let jitter = Double.random(in: 0...1)
+        let jitter = Double.random(in: 0 ... 1)
 
         return delay + jitter
     }
-
 
     func performNetworkDiagnostics() async -> NetworkDiagnostics {
         let startTime = Date()
@@ -463,7 +460,7 @@ extension NetworkMonitor {
             let responseTime = Date().timeIntervalSince(startTime)
 
             if let httpResponse = response as? HTTPURLResponse,
-               200...299 ~= httpResponse.statusCode {
+               200 ... 299 ~= httpResponse.statusCode {
                 return DiagnosticResult(
                     success: true,
                     message: "APIサーバーは正常です",
@@ -490,6 +487,7 @@ extension NetworkMonitor {
     }
 }
 
+// MARK: - NetworkDiagnostics
 
 struct NetworkDiagnostics {
     let isConnected: Bool
@@ -550,12 +548,16 @@ struct NetworkDiagnostics {
     }
 }
 
+// MARK: - DiagnosticResult
+
 struct DiagnosticResult {
     let success: Bool
     let message: String
     let responseTime: TimeInterval
     let error: String?
 }
+
+// MARK: - NetworkHealth
 
 enum NetworkHealth {
     case excellent

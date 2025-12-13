@@ -7,14 +7,12 @@ class EngagementAPIService {
 
     private init() {}
 
-
     private func mapNetworkError(_ error: Error) -> EngagementError {
         if let urlError = error as? URLError, urlError.code == .cancelled {
             return .requestCancelled
         }
         return .networkError(error)
     }
-
 
     private func getAuthToken() -> String {
         return AuthTokenManager.shared.token ?? ""
@@ -33,7 +31,6 @@ class EngagementAPIService {
 
         return request
     }
-
 
     private func logRequest(_ request: URLRequest, context: String) {
         print("💖 [\(context)] リクエスト: \(request.httpMethod ?? "GET") \(request.url?.absoluteString ?? "")")
@@ -77,7 +74,8 @@ class EngagementAPIService {
                     if let decoded = attemptDecode(from: val) { return decoded }
                     if let nested = val as? [String: Any] {
                         for innerKey in keys {
-                            if let innerVal = nested[innerKey], let decoded = attemptDecode(from: innerVal) { return decoded }
+                            if let innerVal = nested[innerKey],
+                               let decoded = attemptDecode(from: innerVal) { return decoded }
                         }
                     }
                 }
@@ -85,13 +83,17 @@ class EngagementAPIService {
             for (_, value) in dict {
                 if let decoded = attemptDecode(from: value) { return decoded }
                 if let nested = value as? [String: Any] {
-                    for (_, v2) in nested { if let decoded = attemptDecode(from: v2) { return decoded } }
+                    for (_, v2) in nested {
+                        if let decoded = attemptDecode(from: v2) { return decoded }
+                    }
                 }
             }
         }
-        throw EngagementError.decodingError(DecodingError.typeMismatch([Post].self, .init(codingPath: [], debugDescription: "Expected posts array but got wrapped/different shape")))
+        throw EngagementError.decodingError(DecodingError.typeMismatch(
+            [Post].self,
+            .init(codingPath: [], debugDescription: "Expected posts array but got wrapped/different shape")
+        ))
     }
-
 
     func toggleLike(postId: Int) async throws -> LikeResponse {
         let endpoint = "\(baseURL)/posts/\(postId)/like"
@@ -272,7 +274,6 @@ class EngagementAPIService {
         }
     }
 
-
     func toggleBookmark(postId: Int) async throws -> BookmarkResponse {
         let endpoint = "\(baseURL)/posts/\(postId)/bookmark"
         guard let url = URL(string: endpoint) else {
@@ -296,7 +297,9 @@ class EngagementAPIService {
                 let decoder = APIHelper.makeDecoder()
                 do {
                     let bookmarkResponse = try decoder.decode(BookmarkResponse.self, from: data)
-                    print("✅ ブックマーク切り替え成功: \(bookmarkResponse.isBookmarked ? "ブックマーク" : "ブックマーク解除") (合計: \(bookmarkResponse.bookmarkCount))")
+                    print(
+                        "✅ ブックマーク切り替え成功: \(bookmarkResponse.isBookmarked ? "ブックマーク" : "ブックマーク解除") (合計: \(bookmarkResponse.bookmarkCount))"
+                    )
                     return bookmarkResponse
                 } catch {
                     if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
@@ -308,7 +311,9 @@ class EngagementAPIService {
                             ?? (root["bookmarkCount"] as? Int)
                             ?? 0
                         let fallback = BookmarkResponse(isBookmarked: isBookmarked, bookmarkCount: bookmarkCount)
-                        print("✅ ブックマーク切り替え成功(フォールバック): \(fallback.isBookmarked ? "ブックマーク" : "ブックマーク解除") (合計: \(fallback.bookmarkCount))")
+                        print(
+                            "✅ ブックマーク切り替え成功(フォールバック): \(fallback.isBookmarked ? "ブックマーク" : "ブックマーク解除") (合計: \(fallback.bookmarkCount))"
+                        )
                         return fallback
                     }
                     print("🚨 デコードエラー: \(error)")
@@ -457,7 +462,6 @@ class EngagementAPIService {
         }
     }
 
-
     func optimisticToggleLike(
         postId: Int,
         currentState: Bool,
@@ -504,7 +508,6 @@ class EngagementAPIService {
         }
     }
 
-
     func isPostLiked(postId: Int) async throws -> Bool {
         let likedPosts = try await fetchLikedPosts()
         return likedPosts.contains { $0.id == postId }
@@ -521,8 +524,8 @@ class EngagementAPIService {
 
         let (liked, bookmarked) = try await (likedPosts, bookmarkedPosts)
 
-        let likedPostIds = Set(liked.map { $0.id })
-        let bookmarkedPostIds = Set(bookmarked.map { $0.id })
+        let likedPostIds = Set(liked.map(\.id))
+        let bookmarkedPostIds = Set(bookmarked.map(\.id))
 
         var result: [Int: (isLiked: Bool, isBookmarked: Bool)] = [:]
 

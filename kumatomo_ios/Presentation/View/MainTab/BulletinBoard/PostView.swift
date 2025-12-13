@@ -1,6 +1,8 @@
 import SwiftUI
 import PhotosUI
 
+// MARK: - PostView
+
 struct PostView: View {
     let onPostSuccess: (() -> Void)?
 
@@ -22,7 +24,6 @@ struct PostView: View {
                         characterCount: viewModel.postContent.count
                     )
 
-
                     if !viewModel.selectedImages.isEmpty {
                         ImagePreviewSection(
                             selectedImages: $viewModel.selectedImages,
@@ -43,7 +44,6 @@ struct PostView: View {
                     availableTags: viewModel.availableTags
                 )
                 .padding(.top, 8)
-
 
             }
             .background(Color(UIColor.systemBackground))
@@ -87,7 +87,7 @@ struct PostView: View {
                     viewModel.resetForm()
                     dismiss()
                 }
-                Button("キャンセル", role: .cancel) { }
+                Button("キャンセル", role: .cancel) {}
             } message: {
                 Text("入力した内容は保存されません。")
             }
@@ -102,10 +102,9 @@ struct PostView: View {
             handleMultipleImageSelection(newItems)
         }
         .onAppear {
-            if viewModel.postContent.isEmpty &&
-                viewModel.selectedImages.isEmpty &&
-                viewModel.selectedTags == ["熊本県全体"] {
-            }
+            if viewModel.postContent.isEmpty,
+               viewModel.selectedImages.isEmpty,
+               viewModel.selectedTags == ["熊本県全体"] {}
         }
         .onDisappear {
             viewModel.errorMessage = nil
@@ -124,8 +123,8 @@ private extension PostView {
 
     var hasUnsavedContent: Bool {
         !viewModel.postContent.isEmpty ||
-        !viewModel.selectedImages.isEmpty ||
-        viewModel.selectedTags != ["熊本県全体"]
+            !viewModel.selectedImages.isEmpty ||
+            viewModel.selectedTags != ["熊本県全体"]
     }
 }
 
@@ -143,7 +142,7 @@ private extension PostView {
         let validation = viewModel.validateForSubmission()
 
         switch validation {
-        case .failure(let error):
+        case let .failure(error):
             viewModel.errorMessage = error.errorDescription
             return
         case .success:
@@ -170,8 +169,6 @@ private extension PostView {
         }
     }
 
-
-
     func handleMultipleImageSelection(_ newItems: [PhotosPickerItem]) {
         Task {
             var images: [UIImage] = []
@@ -190,6 +187,7 @@ private extension PostView {
     }
 }
 
+// MARK: - TextInputArea
 
 private struct TextInputArea: View {
     @Binding var content: String
@@ -268,8 +266,8 @@ private struct TextInputArea: View {
                     ProgressView(value: Double(characterCount), total: 300.0)
                         .progressViewStyle(LinearProgressViewStyle(tint:
                             isOverLimit ? .red :
-                            isNearLimit ? .orange :
-                            isWarningLimit ? .yellow : .orange
+                                isNearLimit ? .orange :
+                                isWarningLimit ? .yellow : .orange
                         ))
                         .frame(height: 2)
                         .animation(.easeInOut(duration: 0.2), value: characterCount)
@@ -293,9 +291,9 @@ private struct TextInputArea: View {
                         .fontWeight(isOverLimit || isNearLimit ? .semibold : .regular)
                         .foregroundColor(
                             isOverLimit ? .red :
-                            isNearLimit ? .orange :
-                            isWarningLimit ? .yellow :
-                            .secondary
+                                isNearLimit ? .orange :
+                                isWarningLimit ? .yellow :
+                                .secondary
                         )
 
                     Text("/300")
@@ -308,8 +306,8 @@ private struct TextInputArea: View {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(
                             isOverLimit ? Color.red.opacity(0.1) :
-                            isNearLimit ? Color.orange.opacity(0.1) :
-                            Color.clear
+                                isNearLimit ? Color.orange.opacity(0.1) :
+                                Color.clear
                         )
                 )
                 .animation(.easeInOut(duration: 0.2), value: characterCount)
@@ -359,6 +357,8 @@ private struct TextInputArea: View {
     }
 }
 
+// MARK: - ImagePreviewSection
+
 private struct ImagePreviewSection: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
@@ -394,6 +394,8 @@ private struct ImagePreviewSection: View {
         }
     }
 }
+
+// MARK: - ActionButtonsRow
 
 private struct ActionButtonsRow: View {
     @Binding var selectedImages: [UIImage]
@@ -448,7 +450,7 @@ private struct ActionButtonsRow: View {
     }
 }
 
-
+// MARK: - OverlayContent
 
 private struct OverlayContent: View {
     @Bindable var viewModel: PostViewModel
@@ -475,6 +477,8 @@ private struct OverlayContent: View {
         }
     }
 }
+
+// MARK: - ErrorOverlay
 
 private struct ErrorOverlay: View {
     let message: String
@@ -526,6 +530,8 @@ private struct ErrorOverlay: View {
             .animation(.interpolatingSpring(stiffness: 300, damping: 30), value: message)
     }
 }
+
+// MARK: - SuccessOverlay
 
 private struct SuccessOverlay: View {
     let onDismiss: () -> Void
@@ -579,6 +585,8 @@ private struct SuccessOverlay: View {
             ))
     }
 }
+
+// MARK: - LoadingOverlay
 
 private struct LoadingOverlay: View {
     var body: some View {

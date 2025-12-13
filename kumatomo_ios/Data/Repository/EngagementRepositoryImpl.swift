@@ -15,8 +15,15 @@ final class EngagementRepositoryImpl: EngagementRepository {
         return try await service.fetchBookmarkedPosts()
     }
 
-    func optimisticToggleLike(postId: Int, currentState: Bool, currentCount: Int) async -> (success: Bool, response: (isLiked: Bool, likeCount: Int)?, error: EngagementError?) {
-        let result = await service.optimisticToggleLike(postId: postId, currentState: currentState, currentCount: currentCount)
+    func optimisticToggleLike(postId: Int, currentState: Bool, currentCount: Int) async -> (success: Bool, response: (
+        isLiked: Bool,
+        likeCount: Int
+    )?, error: EngagementError?) {
+        let result = await service.optimisticToggleLike(
+            postId: postId,
+            currentState: currentState,
+            currentCount: currentCount
+        )
         if let resp = result.response {
             return (result.success, (isLiked: resp.isLiked, likeCount: resp.likeCount), result.error)
         } else {
@@ -24,8 +31,19 @@ final class EngagementRepositoryImpl: EngagementRepository {
         }
     }
 
-    func optimisticToggleBookmark(postId: Int, currentState: Bool, currentCount: Int) async -> (success: Bool, response: (isBookmarked: Bool, bookmarkCount: Int)?, error: EngagementError?) {
-        let result = await service.optimisticToggleBookmark(postId: postId, currentState: currentState, currentCount: currentCount)
+    func optimisticToggleBookmark(
+        postId: Int,
+        currentState: Bool,
+        currentCount: Int
+    ) async -> (success: Bool, response: (
+        isBookmarked: Bool,
+        bookmarkCount: Int
+    )?, error: EngagementError?) {
+        let result = await service.optimisticToggleBookmark(
+            postId: postId,
+            currentState: currentState,
+            currentCount: currentCount
+        )
         if let resp = result.response {
             return (result.success, (isBookmarked: resp.isBookmarked, bookmarkCount: resp.bookmarkCount), result.error)
         } else {
