@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+// MARK: - ProfileCache
 
 class ProfileCache: ObservableObject {
     static let shared = ProfileCache()
@@ -12,7 +13,6 @@ class ProfileCache: ObservableObject {
     private init() {
         startCacheCleanup()
     }
-
 
     func getUser(id: String) -> User? {
         return cacheQueue.sync {
@@ -63,7 +63,6 @@ class ProfileCache: ObservableObject {
         }
     }
 
-
     private func startCacheCleanup() {
         Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
             self.cleanupExpiredEntries()
@@ -87,6 +86,7 @@ class ProfileCache: ObservableObject {
     }
 }
 
+// MARK: - CachedUser
 
 private struct CachedUser {
     let user: User
@@ -96,7 +96,6 @@ private struct CachedUser {
         return Date() > expirationTime
     }
 }
-
 
 extension ProfileCache {
     struct CacheStats {
@@ -109,7 +108,7 @@ extension ProfileCache {
     func getCacheStats() -> CacheStats {
         return cacheQueue.sync {
             let total = cache.count
-            let expired = cache.values.filter { $0.isExpired }.count
+            let expired = cache.values.filter(\.isExpired).count
             let valid = total - expired
 
             return CacheStats(

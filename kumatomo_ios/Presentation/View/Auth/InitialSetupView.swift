@@ -2,6 +2,8 @@ import SwiftUI
 import Observation
 import PhotosUI
 
+// MARK: - InitialSetupView
+
 struct InitialSetupView: View {
     @Environment(AuthViewModel.self) var viewModel
     @Environment(\.dismiss) private var dismiss
@@ -15,7 +17,7 @@ struct InitialSetupView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
 
-    let locations: [String] = City.allCases.map { $0.displayName }
+    let locations: [String] = City.allCases.map(\.displayName)
 
     // フォームが有効かチェック
     var isFormValid: Bool {
@@ -35,11 +37,10 @@ struct InitialSetupView: View {
                             .fontWeight(.bold)
                             .padding(.top, 20)
 
-
                         // プロフィール画像セクション
                         VStack(spacing: 16) {
                             ZStack {
-                                if let displayImage = displayImage {
+                                if let displayImage {
                                     Image(uiImage: displayImage)
                                         .resizable()
                                         .scaledToFill()
@@ -211,7 +212,7 @@ struct InitialSetupView: View {
 
     private func loadSelectedImage() {
         Task {
-            if let selectedImage = selectedImage,
+            if let selectedImage,
                let data = try? await selectedImage.loadTransferable(type: Data.self),
                let uiImage = UIImage(data: data) {
                 await MainActor.run {
@@ -256,6 +257,8 @@ struct InitialSetupView: View {
         }
     }
 }
+
+// MARK: - FormField
 
 // フォームフィールドコンポーネント
 struct FormField: View {

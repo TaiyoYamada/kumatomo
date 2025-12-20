@@ -6,18 +6,18 @@ struct ProfileImageView: View {
 
     var body: some View {
         Group {
-            if let image = image {
+            if let image {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 90, height: 90)
                     .clipShape(Circle())
-            } else if let urlString = urlString, let url = URL(string: urlString) {
+            } else if let urlString, let url = URL(string: urlString) {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .empty:
                         placeholderImage
-                    case .success(let image):
+                    case let .success(image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)

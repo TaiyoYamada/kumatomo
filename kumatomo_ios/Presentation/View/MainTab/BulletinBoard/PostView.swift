@@ -1,6 +1,8 @@
 import SwiftUI
 import PhotosUI
 
+// MARK: - PostView
+
 struct PostView: View {
     let onPostSuccess: (() -> Void)?
 
@@ -22,23 +24,17 @@ struct PostView: View {
                         characterCount: viewModel.postContent.count
                     )
 
-
                     if !viewModel.selectedImages.isEmpty {
                         ImagePreviewSection(
                             selectedImages: $viewModel.selectedImages,
                             selectedItems: $selectedItems
                         )
                     }
-
-                    if viewModel.selectedShop != nil {
-                        ShopPreviewSection(selectedShop: $viewModel.selectedShop)
-                    }
                 }
 
                 ActionButtonsRow(
                     selectedImages: $viewModel.selectedImages,
                     selectedItems: $selectedItems,
-                    selectedShop: $viewModel.selectedShop,
                     selectedTags: $viewModel.selectedTags,
                     availableTags: viewModel.availableTags
                 )
@@ -48,7 +44,6 @@ struct PostView: View {
                     availableTags: viewModel.availableTags
                 )
                 .padding(.top, 8)
-
 
             }
             .background(Color(UIColor.systemBackground))
@@ -92,7 +87,7 @@ struct PostView: View {
                     viewModel.resetForm()
                     dismiss()
                 }
-                Button("キャンセル", role: .cancel) { }
+                Button("キャンセル", role: .cancel) {}
             } message: {
                 Text("入力した内容は保存されません。")
             }
@@ -107,11 +102,9 @@ struct PostView: View {
             handleMultipleImageSelection(newItems)
         }
         .onAppear {
-            if viewModel.postContent.isEmpty &&
-                viewModel.selectedImages.isEmpty &&
-                viewModel.selectedShop == nil &&
-                viewModel.selectedTags == ["熊本県全体"] {
-            }
+            if viewModel.postContent.isEmpty,
+               viewModel.selectedImages.isEmpty,
+               viewModel.selectedTags == ["熊本県全体"] {}
         }
         .onDisappear {
             viewModel.errorMessage = nil
@@ -130,9 +123,8 @@ private extension PostView {
 
     var hasUnsavedContent: Bool {
         !viewModel.postContent.isEmpty ||
-        !viewModel.selectedImages.isEmpty ||
-        viewModel.selectedShop != nil ||
-        viewModel.selectedTags != ["熊本県全体"]
+            !viewModel.selectedImages.isEmpty ||
+            viewModel.selectedTags != ["熊本県全体"]
     }
 }
 
@@ -150,7 +142,7 @@ private extension PostView {
         let validation = viewModel.validateForSubmission()
 
         switch validation {
-        case .failure(let error):
+        case let .failure(error):
             viewModel.errorMessage = error.errorDescription
             return
         case .success:
@@ -162,7 +154,6 @@ private extension PostView {
                 let success = await viewModel.createPostWithMultipleImages(
                     userId: currentUser.id,
                     content: viewModel.postContent,
-                    shopId: viewModel.selectedShop?.id,
                     images: viewModel.selectedImages
                 )
 
@@ -177,8 +168,6 @@ private extension PostView {
             }
         }
     }
-
-
 
     func handleMultipleImageSelection(_ newItems: [PhotosPickerItem]) {
         Task {
@@ -198,6 +187,7 @@ private extension PostView {
     }
 }
 
+// MARK: - TextInputArea
 
 private struct TextInputArea: View {
     @Binding var content: String
@@ -276,8 +266,8 @@ private struct TextInputArea: View {
                     ProgressView(value: Double(characterCount), total: 300.0)
                         .progressViewStyle(LinearProgressViewStyle(tint:
                             isOverLimit ? .red :
-                            isNearLimit ? .orange :
-                            isWarningLimit ? .yellow : .orange
+                                isNearLimit ? .orange :
+                                isWarningLimit ? .yellow : .orange
                         ))
                         .frame(height: 2)
                         .animation(.easeInOut(duration: 0.2), value: characterCount)
@@ -301,9 +291,9 @@ private struct TextInputArea: View {
                         .fontWeight(isOverLimit || isNearLimit ? .semibold : .regular)
                         .foregroundColor(
                             isOverLimit ? .red :
-                            isNearLimit ? .orange :
-                            isWarningLimit ? .yellow :
-                            .secondary
+                                isNearLimit ? .orange :
+                                isWarningLimit ? .yellow :
+                                .secondary
                         )
 
                     Text("/300")
@@ -316,8 +306,8 @@ private struct TextInputArea: View {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(
                             isOverLimit ? Color.red.opacity(0.1) :
-                            isNearLimit ? Color.orange.opacity(0.1) :
-                            Color.clear
+                                isNearLimit ? Color.orange.opacity(0.1) :
+                                Color.clear
                         )
                 )
                 .animation(.easeInOut(duration: 0.2), value: characterCount)
@@ -367,6 +357,8 @@ private struct TextInputArea: View {
     }
 }
 
+// MARK: - ImagePreviewSection
+
 private struct ImagePreviewSection: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
@@ -403,46 +395,13 @@ private struct ImagePreviewSection: View {
     }
 }
 
-private struct ShopPreviewSection: View {
-    @Binding var selectedShop: Shop?
-
-    var body: some View {
-        if let shop = selectedShop {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(shop.name)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundColor(.primary)
-
-                    if let address = shop.address {
-                        Text(address)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                }
-
-                Spacer()
-
-                Button(action: { selectedShop = nil }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(12)
-            .background(Color(UIColor.secondarySystemBackground))
-            .cornerRadius(8)
-        }
-    }
-}
+// MARK: - ActionButtonsRow
 
 private struct ActionButtonsRow: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
-    @Binding var selectedShop: Shop?
     @Binding var selectedTags: Set<String>
     let availableTags: [String]
-    @State private var showingShopPicker = false
     @State private var showingRegionalTagPicker = false
 
     var body: some View {
@@ -453,12 +412,6 @@ private struct ActionButtonsRow: View {
                 matching: .images
             ) {
                 Image(systemName: "photo")
-                    .font(.title2)
-                    .foregroundColor(.orange)
-            }
-
-            Button(action: { showingShopPicker = true }) {
-                Image(systemName: "location")
                     .font(.title2)
                     .foregroundColor(.orange)
             }
@@ -488,9 +441,6 @@ private struct ActionButtonsRow: View {
                 .foregroundColor(Color(UIColor.separator)),
             alignment: .top
         )
-        .sheet(isPresented: $showingShopPicker) {
-            ShopPickerView(selectedShop: $selectedShop)
-        }
         .sheet(isPresented: $showingRegionalTagPicker) {
             RegionalTagSelectionView(
                 selectedTags: $selectedTags,
@@ -500,7 +450,7 @@ private struct ActionButtonsRow: View {
     }
 }
 
-
+// MARK: - OverlayContent
 
 private struct OverlayContent: View {
     @Bindable var viewModel: PostViewModel
@@ -527,6 +477,8 @@ private struct OverlayContent: View {
         }
     }
 }
+
+// MARK: - ErrorOverlay
 
 private struct ErrorOverlay: View {
     let message: String
@@ -578,6 +530,8 @@ private struct ErrorOverlay: View {
             .animation(.interpolatingSpring(stiffness: 300, damping: 30), value: message)
     }
 }
+
+// MARK: - SuccessOverlay
 
 private struct SuccessOverlay: View {
     let onDismiss: () -> Void
@@ -631,6 +585,8 @@ private struct SuccessOverlay: View {
             ))
     }
 }
+
+// MARK: - LoadingOverlay
 
 private struct LoadingOverlay: View {
     var body: some View {

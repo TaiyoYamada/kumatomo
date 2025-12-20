@@ -16,7 +16,7 @@ final class APIConfig {
 
         baseURLString = raw ?? "http://localhost:8000/api"
 
-        if let url = URL(string: baseURLString), (url.scheme == "http" || url.scheme == "https") {
+        if let url = URL(string: baseURLString), url.scheme == "http" || url.scheme == "https" {
             isConfigured = true
         } else {
             isConfigured = false

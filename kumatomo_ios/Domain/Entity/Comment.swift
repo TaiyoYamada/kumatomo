@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - Comment
+
 struct Comment: Identifiable, Codable, Equatable {
     var id: Int
     var postId: Int
@@ -42,8 +44,8 @@ struct Comment: Identifiable, Codable, Equatable {
         self.userId = userId
         self.content = content
         self.imageUrl = imageUrl
-        self.createdAt = Date()
-        self.updatedAt = Date()
+        createdAt = Date()
+        updatedAt = Date()
         self.user = user
     }
 
@@ -57,17 +59,26 @@ struct Comment: Identifiable, Codable, Equatable {
         } else if let value = try alt?.decode(Int.self, forKey: .postId) {
             postId = value
         } else {
-            throw DecodingError.keyNotFound(CodingKeys.postId, .init(codingPath: decoder.codingPath, debugDescription: "postId missing"))
+            throw DecodingError.keyNotFound(
+                CodingKeys.postId,
+                .init(codingPath: decoder.codingPath, debugDescription: "postId missing")
+            )
         }
         if let value = try? container.decode(Int.self, forKey: .userId) {
             userId = value
         } else if let value = try alt?.decode(Int.self, forKey: .userId) {
             userId = value
         } else {
-            throw DecodingError.keyNotFound(CodingKeys.userId, .init(codingPath: decoder.codingPath, debugDescription: "userId missing"))
+            throw DecodingError.keyNotFound(
+                CodingKeys.userId,
+                .init(codingPath: decoder.codingPath, debugDescription: "userId missing")
+            )
         }
         content = (try? container.decode(String.self, forKey: .content)) ?? ""
-        imageUrl = (try? container.decodeIfPresent(String.self, forKey: .imageUrl)) ?? (try? alt?.decodeIfPresent(String.self, forKey: .imageUrl)) ?? nil
+        imageUrl = (try? container.decodeIfPresent(String.self, forKey: .imageUrl)) ?? (try? alt?.decodeIfPresent(
+            String.self,
+            forKey: .imageUrl
+        )) ?? nil
         user = try container.decodeIfPresent(User.self, forKey: .user)
 
         let df = DateFormatter()
@@ -84,9 +95,15 @@ struct Comment: Identifiable, Codable, Equatable {
             return nil
         }
 
-        let createdString = (try? container.decode(String.self, forKey: .createdAt)) ?? (try? alt?.decode(String.self, forKey: .createdAt))
+        let createdString = (try? container.decode(String.self, forKey: .createdAt)) ?? (try? alt?.decode(
+            String.self,
+            forKey: .createdAt
+        ))
         createdAt = createdString.flatMap(parseDate) ?? Date()
-        let updatedString = (try? container.decode(String.self, forKey: .updatedAt)) ?? (try? alt?.decode(String.self, forKey: .updatedAt))
+        let updatedString = (try? container.decode(String.self, forKey: .updatedAt)) ?? (try? alt?.decode(
+            String.self,
+            forKey: .updatedAt
+        ))
         updatedAt = updatedString.flatMap(parseDate) ?? Date()
     }
 

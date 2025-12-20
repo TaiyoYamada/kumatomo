@@ -18,7 +18,7 @@ class SearchViewModel {
 
     var hasSearchResults: Bool {
         guard let results = searchResults else { return false }
-        return !results.posts.isEmpty || !results.shops.isEmpty
+        return !results.posts.isEmpty
     }
 
     var searchHistory: [SearchHistory] {

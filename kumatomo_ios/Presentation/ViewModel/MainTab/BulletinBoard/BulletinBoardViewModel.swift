@@ -4,6 +4,8 @@ import Combine
 import Observation
 import Resolver
 
+// MARK: - BulletinBoardViewModel
+
 @MainActor
 @Observable
 class BulletinBoardViewModel {
@@ -23,7 +25,6 @@ class BulletinBoardViewModel {
     var userReactions: [Int: ReactionType] = [:]
     var bookmarkedPosts: Set<Int> = []
 
-
     @ObservationIgnored @Injected var fetchAllPostsWithCacheUseCase: FetchAllPostsWithCacheUseCase
     @ObservationIgnored @Injected var fetchMunicipalityPostsWithCacheUseCase: FetchMunicipalityPostsWithCacheUseCase
     @ObservationIgnored @Injected var fetchFollowingPostsWithCacheUseCase: FetchFollowingPostsWithCacheUseCase
@@ -34,12 +35,10 @@ class BulletinBoardViewModel {
     private let postsPerPage = 20
     private var cancellables = Set<AnyCancellable>()
 
-
     init() {
         setupBindings()
         loadUserPreferences()
     }
-
 
     func loadInitialPosts() {
         Task {
@@ -54,13 +53,12 @@ class BulletinBoardViewModel {
     }
 
     func loadMorePosts() {
-        guard !isLoadingMore && hasMorePosts else { return }
+        guard !isLoadingMore, hasMorePosts else { return }
 
         Task {
             await fetchMorePostsForCurrentTab()
         }
     }
-
 
     func changeTab(_ tab: TabType) {
         guard activeTab != tab else { return }
@@ -85,7 +83,6 @@ class BulletinBoardViewModel {
         }
     }
 
-
     func toggleLike(for post: Post) {
         Task {
             await handleLikeToggle(for: post)
@@ -108,7 +105,6 @@ class BulletinBoardViewModel {
         }
     }
 
-
     func clearCache() {
         PostCacheManager.shared.clearAllCache()
         print("📦 キャッシュをクリアしました")
@@ -126,11 +122,10 @@ class BulletinBoardViewModel {
         return NetworkMonitor.shared.getNetworkStatusMessage()
     }
 
-
     private func setupBindings() {
         NotificationCenter.default.publisher(for: .NetworkConnectivityChanged)
             .sink { [weak self] note in
-                guard let self = self else { return }
+                guard let self else { return }
                 if let isConnected = note.userInfo?["isConnected"] as? Bool, isConnected {
                     Task { @MainActor in
                         self.handleNetworkConnectivityChange()
@@ -257,8 +252,15 @@ class BulletinBoardViewModel {
 
         do {
             if NetworkMonitor.shared.isConnected {
-                let likeResult = await toggleLikeUseCase.execute(postId: postId, currentState: originalIsLiked, currentCount: originalLikeCount)
-                guard case .success(let response) = likeResult else { throw EngagementError.unknownError(NSError(domain: "toggleLike", code: -1)) }
+                let likeResult = await toggleLikeUseCase.execute(
+                    postId: postId,
+                    currentState: originalIsLiked,
+                    currentCount: originalLikeCount
+                )
+                guard case let .success(response) = likeResult else { throw EngagementError.unknownError(NSError(
+                    domain: "toggleLike",
+                    code: -1
+                )) }
 
                 updatePostInList(postId: postId) { post in
                     post.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
@@ -364,11 +366,21 @@ class BulletinBoardViewModel {
 
         do {
             if NetworkMonitor.shared.isConnected {
-                let bookmarkResult = await toggleBookmarkUseCase.execute(postId: postId, currentState: originalIsBookmarked, currentCount: originalBookmarkCount)
-                guard case .success(let response) = bookmarkResult else { throw EngagementError.unknownError(NSError(domain: "toggleBookmark", code: -1)) }
+                let bookmarkResult = await toggleBookmarkUseCase.execute(
+                    postId: postId,
+                    currentState: originalIsBookmarked,
+                    currentCount: originalBookmarkCount
+                )
+                guard case let .success(response) = bookmarkResult else { throw EngagementError.unknownError(NSError(
+                    domain: "toggleBookmark",
+                    code: -1
+                )) }
 
                 updatePostInList(postId: postId) { post in
-                    post.updateBookmarkStatus(isBookmarked: response.isBookmarked, bookmarkCount: response.bookmarkCount)
+                    post.updateBookmarkStatus(
+                        isBookmarked: response.isBookmarked,
+                        bookmarkCount: response.bookmarkCount
+                    )
                 }
 
                 if response.isBookmarked {
@@ -379,7 +391,9 @@ class BulletinBoardViewModel {
 
                 PostCacheManager.shared.cacheBookmarks(bookmarkedPosts)
 
-                print("✅ ブックマーク更新成功: \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))")
+                print(
+                    "✅ ブックマーク更新成功: \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))"
+                )
             } else {
                 print("📱 オフライン: ブックマークをローカルに保存")
             }
@@ -467,7 +481,7 @@ class BulletinBoardViewModel {
 
         print("🚨 \(context)エラー: \(self.errorMessage ?? errorMessage)")
 
-        if isNetworkError && NetworkMonitor.shared.shouldRetryNetworkRequest(error) {
+        if isNetworkError, NetworkMonitor.shared.shouldRetryNetworkRequest(error) {
             let retryDelay = NetworkMonitor.shared.getRetryDelay(for: error, attempt: 1)
             print("🔄 \(retryDelay)秒後に自動リトライします")
 
@@ -480,6 +494,7 @@ class BulletinBoardViewModel {
     }
 }
 
+// MARK: - BulletinBoardError
 
 enum BulletinBoardError: LocalizedError {
     case municipalityNotSelected

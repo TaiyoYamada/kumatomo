@@ -20,31 +20,31 @@ enum PostValidationError: LocalizedError {
         switch self {
         case .contentEmpty:
             return "投稿内容を入力してください"
-        case .contentTooShort(let currentCount, let minCount):
+        case let .contentTooShort(currentCount, minCount):
             return "投稿内容が短すぎます (\(currentCount)/\(minCount)文字以上)"
-        case .contentTooLong(let currentCount, let maxCount):
+        case let .contentTooLong(currentCount, maxCount):
             return "投稿内容が長すぎます (\(currentCount)/\(maxCount)文字以下)"
         case .titleEmpty:
             return "タイトルを入力してください"
-        case .titleTooShort(let currentCount, let minCount):
+        case let .titleTooShort(currentCount, minCount):
             return "タイトルが短すぎます (\(currentCount)/\(minCount)文字以上)"
-        case .titleTooLong(let currentCount, let maxCount):
+        case let .titleTooLong(currentCount, maxCount):
             return "タイトルが長すぎます (\(currentCount)/\(maxCount)文字以下)"
-        case .invalidCharacters(let field, let invalidChars):
+        case let .invalidCharacters(field, invalidChars):
             return "\(field)に使用できない文字が含まれています: \(invalidChars.map { String($0) }.joined(separator: ", "))"
-        case .profanityDetected(let field):
+        case let .profanityDetected(field):
             return "\(field)に不適切な言葉が含まれています"
-        case .tooManyTags(let currentCount, let maxCount):
+        case let .tooManyTags(currentCount, maxCount):
             return "タグの数が多すぎます (\(currentCount)/\(maxCount)個以下)"
         case .tagEmpty:
             return "タグを入力してください"
-        case .tagTooLong(let tagName, let currentCount, let maxCount):
+        case let .tagTooLong(tagName, currentCount, maxCount):
             return "タグ「\(tagName)」が長すぎます (\(currentCount)/\(maxCount)文字以下)"
-        case .duplicateTag(let tagName):
+        case let .duplicateTag(tagName):
             return "タグ「\(tagName)」は既に追加されています"
-        case .invalidTagCharacters(let tagName, let invalidChars):
+        case let .invalidTagCharacters(tagName, invalidChars):
             return "タグ「\(tagName)」に使用できない文字が含まれています: \(invalidChars.map { String($0) }.joined(separator: ", "))"
-        case .reservedTag(let tagName):
+        case let .reservedTag(tagName):
             return "タグ「\(tagName)」は予約語のため使用できません"
         }
     }

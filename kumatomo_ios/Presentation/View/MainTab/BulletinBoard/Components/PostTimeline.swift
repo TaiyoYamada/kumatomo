@@ -1,13 +1,15 @@
 import SwiftUI
 import Observation
 
+// MARK: - PostTimeline
+
 struct PostTimeline: View {
     let posts: [Post]
     let loading: Bool
     let onRefresh: () -> Void
     let onLoadMore: () -> Void
     var embedInScrollView: Bool = true
-    var onToggleLike: ((Post) async -> Void)? = nil
+    var onToggleLike: ((Post) async -> Void)?
 
     @Environment(BulletinBoardViewModel.self) private var bulletinBoardViewModel
     @Environment(AppRouter.self) private var appRouter
@@ -38,12 +40,12 @@ struct PostTimeline: View {
             }
 
             // 次のページを読み込んでいる時のインジケーター
-            if loading && !posts.isEmpty {
+            if loading, !posts.isEmpty {
                 PaginationLoadingView()
             }
 
             // 投稿がまだない時の表示
-            if posts.isEmpty && !loading {
+            if posts.isEmpty, !loading {
                 BulletinEmptyStateView()
                     .padding(.top, 100)
             }
@@ -65,6 +67,8 @@ struct PostTimeline: View {
     }
 }
 
+// MARK: - PostCell
+
 private struct PostCell: View {
     let post: Post
     let onTap: () -> Void
@@ -78,7 +82,7 @@ private struct PostCell: View {
                 onPostTap: onTap,
                 customOnLike: onToggleLike
             )
-                .onAppear(perform: onAppear)
+            .onAppear(perform: onAppear)
 
             // 投稿ごとの区切り線
             Rectangle()
@@ -88,6 +92,8 @@ private struct PostCell: View {
         }
     }
 }
+
+// MARK: - BulletinEmptyStateView
 
 struct BulletinEmptyStateView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize

@@ -136,41 +136,6 @@ class PostEngagementTest extends TestCase
     }
 
     /** @test */
-    public function posts_by_shop_includes_engagement_data()
-    {
-        $user = User::factory()->create();
-        $post = Post::factory()->create(['shop_id' => 1]);
-
-        // Create engagement data
-        Like::factory()->create(['post_id' => $post->id, 'user_id' => $user->id]);
-        Bookmark::factory()->create(['post_id' => $post->id, 'user_id' => $user->id]);
-
-        $response = $this->actingAs($user)
-            ->getJson("/api/shops/1/posts");
-
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => [
-                        'id',
-                        'content',
-                        'like_count',
-                        'bookmark_count',
-                        'comment_count',
-                        'is_liked_by_current_user',
-                        'is_bookmarked_by_current_user'
-                    ]
-                ]
-            ]);
-
-        $postData = $response->json('data')[0];
-        $this->assertEquals(1, $postData['like_count']);
-        $this->assertEquals(1, $postData['bookmark_count']);
-        $this->assertTrue($postData['is_liked_by_current_user']);
-        $this->assertTrue($postData['is_bookmarked_by_current_user']);
-    }
-
-    /** @test */
     public function unauthenticated_users_dont_get_engagement_status()
     {
         $post = Post::factory()->create();

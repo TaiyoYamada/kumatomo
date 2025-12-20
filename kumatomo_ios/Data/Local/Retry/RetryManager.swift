@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+// MARK: - RetryManager
 
 @MainActor
 class RetryManager: ObservableObject {
@@ -15,7 +16,6 @@ class RetryManager: ObservableObject {
     private let progressTracker = ProgressTracker.shared
 
     private init() {}
-
 
     func executeWithRetry<T>(
         operation: @escaping (CancellationToken) async throws -> T,
@@ -48,7 +48,7 @@ class RetryManager: ObservableObject {
             activeRetries.removeValue(forKey: operationId)
             cancellationTokens.removeValue(forKey: operationId)
 
-            if let progressId = progressId {
+            if let progressId {
                 if cancellationToken.isCancelled {
                     progressTracker.cancelOperation(id: progressId, reason: "Retry operation cancelled")
                 }
@@ -57,11 +57,11 @@ class RetryManager: ObservableObject {
 
         var lastError: Error?
 
-        for attempt in 0..<retryPolicy.maxAttempts {
+        for attempt in 0 ..< retryPolicy.maxAttempts {
             do {
                 try cancellationToken.throwIfCancelled()
 
-                if let progressId = progressId {
+                if let progressId {
                     let progress = Double(attempt) / Double(retryPolicy.maxAttempts)
                     progressTracker.updateProgress(
                         id: progressId,
@@ -75,7 +75,7 @@ class RetryManager: ObservableObject {
 
                 logRetrySuccess(operationId: operationId, attempt: attempt)
 
-                if let progressId = progressId {
+                if let progressId {
                     progressTracker.completeSuccessfully(id: progressId, result: result)
                 }
 
@@ -83,7 +83,8 @@ class RetryManager: ObservableObject {
 
             } catch {
                 if cancellationToken.isCancelled {
-                    throw ProgressError.operationCancelled(reason: cancellationToken.cancellationReason ?? "Operation cancelled")
+                    throw ProgressError
+                        .operationCancelled(reason: cancellationToken.cancellationReason ?? "Operation cancelled")
                 }
 
                 lastError = error
@@ -111,7 +112,7 @@ class RetryManager: ObservableObject {
                     delay: delay
                 )
 
-                if let progressId = progressId {
+                if let progressId {
                     progressTracker.updateProgress(
                         id: progressId,
                         progress: Double(attempt + 1) / Double(retryPolicy.maxAttempts),
@@ -126,7 +127,7 @@ class RetryManager: ObservableObject {
 
         logRetryFailure(operationId: operationId, finalError: lastError!)
 
-        if let progressId = progressId {
+        if let progressId {
             progressTracker.completeWithFailure(id: progressId, error: lastError!)
         }
 
@@ -158,7 +159,6 @@ class RetryManager: ObservableObject {
         return cancellationTokens[operationId] != nil
     }
 
-
     private func shouldRetry(error: Error, policy: RetryPolicy, attempt: Int) -> Bool {
         if let profileError = error as? ProfileError {
             return profileError.shouldAutoRetry
@@ -171,7 +171,7 @@ class RetryManager: ObservableObject {
             return isRetryableError(error)
         case .immediate:
             return isRetryableError(error)
-        case .custom(let shouldRetryBlock, _):
+        case let .custom(shouldRetryBlock, _):
             return shouldRetryBlock(error, attempt)
         }
     }
@@ -194,16 +194,14 @@ class RetryManager: ObservableObject {
     }
 
     private func calculateDelay(error: Error, policy: RetryPolicy, attempt: Int) -> TimeInterval {
-        let baseDelay: TimeInterval
-
-        if let profileError = error as? ProfileError {
-            baseDelay = profileError.retryDelay
+        let baseDelay: TimeInterval = if let profileError = error as? ProfileError {
+            profileError.retryDelay
         } else {
-            baseDelay = policy.baseDelay
+            policy.baseDelay
         }
 
         switch policy.strategy {
-        case .exponentialBackoff(let multiplier, let maxDelay):
+        case let .exponentialBackoff(multiplier, maxDelay):
             let delay = baseDelay * pow(multiplier, Double(attempt))
             return min(delay, maxDelay)
 
@@ -213,11 +211,10 @@ class RetryManager: ObservableObject {
         case .immediate:
             return 0
 
-        case .custom(_, let delayCalculator):
+        case let .custom(_, delayCalculator):
             return delayCalculator?(error, attempt) ?? baseDelay
         }
     }
-
 
     private func logRetryAttempt(operationId: String, attempt: Int, error: Error, delay: TimeInterval) {
         let entry = RetryHistoryEntry(
@@ -230,7 +227,9 @@ class RetryManager: ObservableObject {
 
         addToHistory(entry)
 
-        print("🔄 Retry attempt \(attempt + 1) for operation \(operationId): \(error.localizedDescription), waiting \(delay)s")
+        print(
+            "🔄 Retry attempt \(attempt + 1) for operation \(operationId): \(error.localizedDescription), waiting \(delay)s"
+        )
     }
 
     private func logRetrySuccess(operationId: String, attempt: Int) {
@@ -269,11 +268,10 @@ class RetryManager: ObservableObject {
         }
     }
 
-
     func getRetryStatistics() -> RetryStatistics {
-        let totalOperations = Set(retryHistory.map { $0.operationId }).count
-        let successfulOperations = Set(retryHistory.filter { $0.outcome == .success }.map { $0.operationId }).count
-        let failedOperations = Set(retryHistory.filter { $0.outcome == .failed }.map { $0.operationId }).count
+        let totalOperations = Set(retryHistory.map(\.operationId)).count
+        let successfulOperations = Set(retryHistory.filter { $0.outcome == .success }.map(\.operationId)).count
+        let failedOperations = Set(retryHistory.filter { $0.outcome == .failed }.map(\.operationId)).count
 
         let totalAttempts = retryHistory.count
         let averageAttempts = totalOperations > 0 ? Double(totalAttempts) / Double(totalOperations) : 0
@@ -290,7 +288,6 @@ class RetryManager: ObservableObject {
     func clearHistory() {
         retryHistory.removeAll()
     }
-
 
     private func waitWithCancellation(delay: TimeInterval, cancellationToken: CancellationToken) async throws {
         let startTime = Date()
@@ -309,6 +306,7 @@ class RetryManager: ObservableObject {
     }
 }
 
+// MARK: - RetryOperation
 
 struct RetryOperation {
     let id: String
@@ -317,6 +315,8 @@ struct RetryOperation {
     var attempts: Int = 0
     var lastError: Error?
 }
+
+// MARK: - RetryPolicy
 
 struct RetryPolicy {
     let maxAttempts: Int
@@ -348,6 +348,8 @@ struct RetryPolicy {
     )
 }
 
+// MARK: - RetryStrategy
+
 enum RetryStrategy {
     case exponentialBackoff(multiplier: Double, maxDelay: TimeInterval)
     case fixedInterval
@@ -358,6 +360,8 @@ enum RetryStrategy {
     )
 }
 
+// MARK: - RetryHistoryEntry
+
 struct RetryHistoryEntry {
     let id = UUID()
     let operationId: String
@@ -366,6 +370,8 @@ struct RetryHistoryEntry {
     let timestamp: Date
     let outcome: RetryOutcome
 }
+
+// MARK: - RetryOutcome
 
 enum RetryOutcome: Equatable {
     case retrying(delay: TimeInterval)
@@ -376,13 +382,15 @@ enum RetryOutcome: Equatable {
         switch (lhs, rhs) {
         case (.success, .success), (.failed, .failed):
             return true
-        case (.retrying(let delay1), .retrying(let delay2)):
+        case let (.retrying(delay1), .retrying(delay2)):
             return delay1 == delay2
         default:
             return false
         }
     }
 }
+
+// MARK: - RetryStatistics
 
 struct RetryStatistics {
     let totalOperations: Int
@@ -391,7 +399,6 @@ struct RetryStatistics {
     let averageAttempts: Double
     let successRate: Double
 }
-
 
 extension RetryManager {
     func executeProfileOperation<T>(

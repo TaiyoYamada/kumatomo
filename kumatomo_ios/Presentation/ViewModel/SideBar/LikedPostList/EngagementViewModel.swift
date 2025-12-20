@@ -3,6 +3,8 @@ import SwiftUI
 import Resolver
 import Observation
 
+// MARK: - EngagementViewModel
+
 @MainActor
 @Observable
 class EngagementViewModel {
@@ -29,15 +31,12 @@ class EngagementViewModel {
     var likedPostsPage: Int = 1
     var bookmarkedPostsPage: Int = 1
 
-
     @ObservationIgnored @Injected var fetchLikedPostsUseCase: FetchLikedPostsUseCase
     @ObservationIgnored @Injected var fetchBookmarkedPostsUseCase: FetchBookmarkedPostsUseCase
     @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
     @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
 
-
     private let postsPerPage = 20
-
 
     var hasLikedPosts: Bool {
         return !likedPosts.isEmpty
@@ -49,18 +48,16 @@ class EngagementViewModel {
 
     var isPerformingAnyAction: Bool {
         return isLoadingLikedPosts || isLoadingBookmarkedPosts ||
-               isRefreshingLikedPosts || isRefreshingBookmarkedPosts ||
-               !likingPostIds.isEmpty || !bookmarkingPostIds.isEmpty
+            isRefreshingLikedPosts || isRefreshingBookmarkedPosts ||
+            !likingPostIds.isEmpty || !bookmarkingPostIds.isEmpty
     }
-
 
     init() {
         print("🎯 EngagementViewModel初期化")
     }
 
-
     func loadLikedPosts(refresh: Bool = false) async {
-        guard !isLoadingLikedPosts && !isRefreshingLikedPosts else {
+        guard !isLoadingLikedPosts, !isRefreshingLikedPosts else {
             print("⚠️ いいねした投稿の読み込み中 - スキップ")
             return
         }
@@ -92,7 +89,7 @@ class EngagementViewModel {
             }
 
             hasMoreLikedPosts = fetchedPosts.count >= postsPerPage
-            if !refresh && hasMoreLikedPosts {
+            if !refresh, hasMoreLikedPosts {
                 likedPostsPage += 1
             }
 
@@ -118,13 +115,12 @@ class EngagementViewModel {
     }
 
     func loadMoreLikedPosts() async {
-        guard hasMoreLikedPosts && !isLoadingLikedPosts else { return }
+        guard hasMoreLikedPosts, !isLoadingLikedPosts else { return }
         await loadLikedPosts(refresh: false)
     }
 
-
     func loadBookmarkedPosts(refresh: Bool = false) async {
-        guard !isLoadingBookmarkedPosts && !isRefreshingBookmarkedPosts else {
+        guard !isLoadingBookmarkedPosts, !isRefreshingBookmarkedPosts else {
             print("⚠️ ブックマークした投稿の読み込み中 - スキップ")
             return
         }
@@ -142,7 +138,10 @@ class EngagementViewModel {
         print("[EngagementVM] loadBookmarkedPosts start page=\(bookmarkedPostsPage) refresh=\(refresh))")
 
         do {
-            let fetchedPosts = try await fetchBookmarkedPostsUseCase.execute(page: bookmarkedPostsPage, limit: postsPerPage)
+            let fetchedPosts = try await fetchBookmarkedPostsUseCase.execute(
+                page: bookmarkedPostsPage,
+                limit: postsPerPage
+            )
 
             if refresh {
                 bookmarkedPosts = fetchedPosts
@@ -156,11 +155,13 @@ class EngagementViewModel {
             }
 
             hasMoreBookmarkedPosts = fetchedPosts.count >= postsPerPage
-            if !refresh && hasMoreBookmarkedPosts {
+            if !refresh, hasMoreBookmarkedPosts {
                 bookmarkedPostsPage += 1
             }
 
-            print("[EngagementVM] loadBookmarkedPosts success count=\(fetchedPosts.count) total=\(bookmarkedPosts.count)")
+            print(
+                "[EngagementVM] loadBookmarkedPosts success count=\(fetchedPosts.count) total=\(bookmarkedPosts.count)"
+            )
 
         } catch let error as EngagementError {
             if case .requestCancelled = error {
@@ -182,10 +183,9 @@ class EngagementViewModel {
     }
 
     func loadMoreBookmarkedPosts() async {
-        guard hasMoreBookmarkedPosts && !isLoadingBookmarkedPosts else { return }
+        guard hasMoreBookmarkedPosts, !isLoadingBookmarkedPosts else { return }
         await loadBookmarkedPosts(refresh: false)
     }
-
 
     func toggleLike(for post: Post) async {
         guard !likingPostIds.contains(post.id) else {
@@ -208,10 +208,14 @@ class EngagementViewModel {
 
         print("🔄 いいね最適化更新: 投稿ID \(post.id) - \(newIsLiked ? "いいね" : "いいね解除") (カウント: \(newLikeCount))")
 
-        let result = await toggleLikeUseCase.execute(postId: post.id, currentState: originalIsLiked, currentCount: originalLikeCount)
+        let result = await toggleLikeUseCase.execute(
+            postId: post.id,
+            currentState: originalIsLiked,
+            currentCount: originalLikeCount
+        )
 
         switch result {
-        case .success(let response):
+        case let .success(response):
             updatePostInCollections(postId: post.id) { post in
                 post.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
             }
@@ -221,8 +225,10 @@ class EngagementViewModel {
             }
 
             await showSuccess(response.isLiked ? "いいねしました" : "いいねを取り消しました")
-            print("✅ いいね更新成功: 投稿ID \(post.id) - \(response.isLiked ? "いいね" : "いいね解除") (サーバーカウント: \(response.likeCount))")
-        case .failure(let error):
+            print(
+                "✅ いいね更新成功: 投稿ID \(post.id) - \(response.isLiked ? "いいね" : "いいね解除") (サーバーカウント: \(response.likeCount))"
+            )
+        case let .failure(error):
             updatePostInCollections(postId: post.id) { post in
                 post.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
             }
@@ -233,7 +239,6 @@ class EngagementViewModel {
 
         likingPostIds.remove(post.id)
     }
-
 
     func toggleBookmark(for post: Post) async {
         guard !bookmarkingPostIds.contains(post.id) else {
@@ -256,10 +261,14 @@ class EngagementViewModel {
 
         print("🔄 ブックマーク最適化更新: 投稿ID \(post.id) - \(newIsBookmarked ? "ブックマーク" : "ブックマーク解除") (カウント: \(newBookmarkCount))")
 
-        let result = await toggleBookmarkUseCase.execute(postId: post.id, currentState: originalIsBookmarked, currentCount: originalBookmarkCount)
+        let result = await toggleBookmarkUseCase.execute(
+            postId: post.id,
+            currentState: originalIsBookmarked,
+            currentCount: originalBookmarkCount
+        )
 
         switch result {
-        case .success(let response):
+        case let .success(response):
             updatePostInCollections(postId: post.id) { post in
                 post.updateBookmarkStatus(isBookmarked: response.isBookmarked, bookmarkCount: response.bookmarkCount)
             }
@@ -269,8 +278,10 @@ class EngagementViewModel {
             }
 
             await showSuccess(response.isBookmarked ? "ブックマークしました" : "ブックマークを取り消しました")
-            print("✅ ブックマーク更新成功: 投稿ID \(post.id) - \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))")
-        case .failure(let error):
+            print(
+                "✅ ブックマーク更新成功: 投稿ID \(post.id) - \(response.isBookmarked ? "ブックマーク" : "ブックマーク解除") (サーバーカウント: \(response.bookmarkCount))"
+            )
+        case let .failure(error):
             updatePostInCollections(postId: post.id) { post in
                 post.updateBookmarkStatus(isBookmarked: originalIsBookmarked, bookmarkCount: originalBookmarkCount)
             }
@@ -281,7 +292,6 @@ class EngagementViewModel {
 
         bookmarkingPostIds.remove(post.id)
     }
-
 
     private func updatePostInCollections(postId: Int, updateBlock: (inout Post) -> Void) {
         if let index = likedPosts.firstIndex(where: { $0.id == postId }) {
@@ -303,7 +313,7 @@ class EngagementViewModel {
 
     func getPost(byId postId: Int) -> Post? {
         return likedPosts.first { $0.id == postId } ??
-               bookmarkedPosts.first { $0.id == postId }
+            bookmarkedPosts.first { $0.id == postId }
     }
 
     func removePost(withId postId: Int) {
@@ -349,7 +359,6 @@ class EngagementViewModel {
         }
     }
 
-
     private func handleEngagementError(_ error: EngagementError, context: String) async {
         let message = "\(context)エラー: \(error.localizedDescription)"
         errorMessage = message
@@ -365,7 +374,6 @@ class EngagementViewModel {
     }
 }
 
-
 extension EngagementViewModel {
     var formattedCounts: (likedPosts: String, bookmarkedPosts: String) {
         let likedCount = formatCount(likedPosts.count)
@@ -375,10 +383,10 @@ extension EngagementViewModel {
     }
 
     private func formatCount(_ count: Int) -> String {
-        if count >= 1000000 {
-            return String(format: "%.1fM", Double(count) / 1000000.0)
-        } else if count >= 1000 {
-            return String(format: "%.1fK", Double(count) / 1000.0)
+        if count >= 1_000_000 {
+            return String(format: "%.1fM", Double(count) / 1_000_000.0)
+        } else if count >= 1_000 {
+            return String(format: "%.1fK", Double(count) / 1_000.0)
         } else {
             return "\(count)"
         }

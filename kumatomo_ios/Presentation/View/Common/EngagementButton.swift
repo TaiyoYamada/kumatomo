@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - EngagementButton
+
 struct EngagementButton: View {
     let icon: String
     let count: Int
@@ -9,7 +11,6 @@ struct EngagementButton: View {
 
     @State private var isAnimating = false
     @State private var scale: CGFloat = 1.0
-
 
     init(
         icon: String,
@@ -50,7 +51,6 @@ struct EngagementButton: View {
         .buttonStyle(PressEffectButtonStyle())
     }
 
-
     private func performAction() async {
         let impactFeedback = UIImpactFeedbackGenerator(style: .light)
         impactFeedback.impactOccurred()
@@ -65,7 +65,6 @@ struct EngagementButton: View {
             scale = 1.0
         }
     }
-
 
     private var buttonColor: Color {
         if isActive {
@@ -92,6 +91,7 @@ struct EngagementButton: View {
     }
 }
 
+// MARK: - PressEffectButtonStyle
 
 struct PressEffectButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -100,7 +100,6 @@ struct PressEffectButtonStyle: ButtonStyle {
             .animation(.easeInOut(duration: 0.08), value: configuration.isPressed)
     }
 }
-
 
 extension EngagementButton {
     static func like(
@@ -145,7 +144,6 @@ extension EngagementButton {
     }
 }
 
-
 #Preview {
     VStack(spacing: 20) {
         HStack(spacing: 16) {
@@ -153,7 +151,7 @@ extension EngagementButton {
                 print("Like tapped")
             }
 
-            EngagementButton.like(count: 1234, isLiked: true) {
+            EngagementButton.like(count: 1_234, isLiked: true) {
                 print("Unlike tapped")
             }
         }
@@ -173,7 +171,7 @@ extension EngagementButton {
                 print("Bookmark tapped")
             }
 
-            EngagementButton.bookmark(count: 12500, isBookmarked: true) {
+            EngagementButton.bookmark(count: 12_500, isBookmarked: true) {
                 print("Unbookmark tapped")
             }
         }
@@ -182,7 +180,7 @@ extension EngagementButton {
             icon: "star.fill",
             count: 999,
             isActive: true,
-            activeColor: .yellow,
+            activeColor: .yellow
         ) {
             print("Custom action")
         }

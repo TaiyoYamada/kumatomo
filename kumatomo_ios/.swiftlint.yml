@@ -1,0 +1,70 @@
+# SwiftLint Configuration for kumatomo iOS
+# https://github.com/realm/SwiftLint
+
+# 除外するパス
+excluded:
+  - Pods
+  - Carthage
+  - .build
+  - DerivedData
+  - vendor
+  - api
+  - admin
+  - docker
+  - "*.generated.swift"
+
+# 無効化するルール
+disabled_rules:
+  - trailing_whitespace      # SwiftFormatで管理
+  - opening_brace            # SwiftFormatで管理
+  - vertical_whitespace      # SwiftFormatで管理
+  - colon                    # SwiftFormatで管理
+  - comma                    # SwiftFormatで管理
+  - statement_position       # SwiftFormatで管理
+  - todo                     # TODOコメントは許可
+  - nesting                  # ネストが深くなる場合がある
+  - type_body_length         # ViewModelなどで長くなる
+  - file_length              # ファイル長は柔軟に
+  - function_body_length     # 複雑な関数もある
+  - cyclomatic_complexity    # 複雑度は柔軟に
+  - empty_count              # 既存コードに多い
+  - identifier_name          # snake_case変数名がある
+  - type_name                # 既存の命名規則を維持
+
+# 有効化するopt-inルール
+opt_in_rules:
+  - closure_spacing                # クロージャのスペース
+  - contains_over_filter_count     # filter.count より contains を推奨
+  - contains_over_filter_is_empty  # filter.isEmpty より contains を推奨
+  - contains_over_first_not_nil    # first != nil より contains を推奨
+  - empty_string                   # "" より .isEmpty を推奨
+  - first_where                    # filter.first より first(where:) を推奨
+  - force_unwrapping               # 強制アンラップを警告
+  - last_where                     # filter.last より last(where:) を推奨
+  - sorted_first_last              # sorted().first より min() を推奨
+  - toggle_bool                    # bool = !bool より .toggle() を推奨
+  - modifier_order                 # 修飾子の順序を統一
+  - flatmap_over_map_reduce        # map + reduce より flatMap を推奨
+  - joined_default_parameter       # joined()のデフォルトパラメータ
+  - redundant_nil_coalescing       # 冗長な ?? nil を検出
+  - yoda_condition                 # 1 == x より x == 1 を推奨
+
+# カスタム設定
+line_length:
+  warning: 150
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+  ignores_function_declarations: true
+  ignores_interpolated_strings: true
+
+large_tuple:
+  warning: 4
+  error: 5
+
+function_parameter_count:
+  warning: 6
+  error: 8
+
+# レポーター (Xcode用)
+reporter: "xcode"

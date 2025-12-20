@@ -7,3 +7,4 @@
 .docker/nginx
 
 .DS_Store
+AGENTS.md

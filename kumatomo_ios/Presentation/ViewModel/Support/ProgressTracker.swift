@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+// MARK: - ProgressTracker
 
 @MainActor
 class ProgressTracker: ObservableObject {
@@ -15,7 +16,6 @@ class ProgressTracker: ObservableObject {
     private let maxCompletedHistory = 50
 
     private init() {}
-
 
     func startOperation(
         id: String = UUID().uuidString,
@@ -38,7 +38,12 @@ class ProgressTracker: ObservableObject {
         return id
     }
 
-    func start(title: String = "処理中", type: OperationType = .updateProfile, estimatedDuration: TimeInterval? = nil, isCancellable: Bool = true) {
+    func start(
+        title: String = "処理中",
+        type: OperationType = .updateProfile,
+        estimatedDuration: TimeInterval? = nil,
+        isCancellable: Bool = true
+    ) {
         currentOperationId = startOperation(
             title: title,
             type: type,
@@ -61,7 +66,7 @@ class ProgressTracker: ObservableObject {
         operation.progress = min(1.0, max(0.0, progress))
         operation.lastUpdated = Date()
 
-        if let message = message {
+        if let message {
             operation.statusMessage = message
         }
 
@@ -161,7 +166,6 @@ class ProgressTracker: ObservableObject {
         print("🚫 Cancelled all operations: \(operationIds.count) operations")
     }
 
-
     func getProgress(id: String) -> Double? {
         return activeOperations[id]?.progress
     }
@@ -190,14 +194,13 @@ class ProgressTracker: ObservableObject {
         return totalProgress / Double(operations.count)
     }
 
-
     func getStatistics() -> ProgressStatistics {
         let totalCompleted = completedOperations.count
-        let successfulOperations = completedOperations.filter { $0.success }.count
+        let successfulOperations = completedOperations.filter(\.success).count
         let failedOperations = totalCompleted - successfulOperations
 
         let averageDuration = completedOperations.isEmpty ? 0 :
-            completedOperations.map { $0.duration }.reduce(0, +) / Double(totalCompleted)
+            completedOperations.map(\.duration).reduce(0, +) / Double(totalCompleted)
 
         let operationsByType = Dictionary(grouping: completedOperations) { $0.type }
             .mapValues { $0.count }
@@ -225,11 +228,12 @@ class ProgressTracker: ObservableObject {
         return completedOperations.filter { $0.duration > threshold }
     }
 
-    func getRecentFailures(since: Date = Date().addingTimeInterval(-3600)) -> [CompletedOperation] {
+    func getRecentFailures(since: Date = Date().addingTimeInterval(-3_600)) -> [CompletedOperation] {
         return completedOperations.filter { !$0.success && $0.endTime > since }
     }
 }
 
+// MARK: - ProgressOperation
 
 class ProgressOperation: ObservableObject {
     let id: String
@@ -257,14 +261,14 @@ class ProgressOperation: ObservableObject {
         self.id = id
         self.title = title
         self.type = type
-        self.startTime = Date()
-        self.lastUpdated = Date()
+        startTime = Date()
+        lastUpdated = Date()
         self.estimatedDuration = estimatedDuration
         self.isCancellable = isCancellable
-        self.cancellationToken = CancellationToken()
+        cancellationToken = CancellationToken()
 
         if let duration = estimatedDuration {
-            self.estimatedCompletion = startTime.addingTimeInterval(duration)
+            estimatedCompletion = startTime.addingTimeInterval(duration)
         }
     }
 
@@ -282,6 +286,8 @@ class ProgressOperation: ObservableObject {
     }
 }
 
+// MARK: - CancellationToken
+
 class CancellationToken: ObservableObject {
     @Published private(set) var isCancelled = false
     @Published private(set) var cancellationReason: String?
@@ -297,6 +303,8 @@ class CancellationToken: ObservableObject {
         }
     }
 }
+
+// MARK: - CompletedOperation
 
 struct CompletedOperation {
     let id: String
@@ -318,6 +326,8 @@ struct CompletedOperation {
     }
 }
 
+// MARK: - ProgressStatistics
+
 struct ProgressStatistics {
     let activeOperations: Int
     let totalCompleted: Int
@@ -329,6 +339,8 @@ struct ProgressStatistics {
     let recentOperations: [CompletedOperation]
 }
 
+// MARK: - ProgressError
+
 enum ProgressError: LocalizedError {
     case operationCancelled(reason: String)
     case operationTimeout
@@ -337,18 +349,17 @@ enum ProgressError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .operationCancelled(let reason):
+        case let .operationCancelled(reason):
             return "操作がキャンセルされました: \(reason)"
         case .operationTimeout:
             return "操作がタイムアウトしました"
-        case .operationFailed(let error):
+        case let .operationFailed(error):
             return "操作が失敗しました: \(error.localizedDescription)"
         case .invalidOperation:
             return "無効な操作です"
         }
     }
 }
-
 
 extension ProgressTracker {
     func startProfileOperation(
@@ -410,7 +421,6 @@ extension ProgressTracker {
     }
 }
 
-
 extension ProgressTracker {
     func getFormattedProgress(id: String) -> String {
         guard let operation = activeOperations[id] else { return "0%" }
@@ -423,10 +433,10 @@ extension ProgressTracker {
 
         if remaining < 60 {
             return "\(Int(remaining))秒"
-        } else if remaining < 3600 {
+        } else if remaining < 3_600 {
             return "\(Int(remaining / 60))分"
         } else {
-            return "\(Int(remaining / 3600))時間"
+            return "\(Int(remaining / 3_600))時間"
         }
     }
 
@@ -448,6 +458,8 @@ extension ProgressTracker {
         }
     }
 }
+
+// MARK: - OperationStatus
 
 enum OperationStatus {
     case notFound

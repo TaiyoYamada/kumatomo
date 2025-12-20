@@ -1,0 +1,64 @@
+# SwiftFormat Configuration for kumatomo iOS
+# https://github.com/nicklockwood/SwiftFormat
+
+# SwiftFormat Version
+--minversion 0.58.7
+
+# File Options
+--exclude Pods,Carthage,.build,DerivedData,vendor,api,admin,docker
+
+# Format Options
+
+# インデント: 4スペース
+--indent 4
+
+# 行の最大幅
+--maxwidth 120
+
+# 改行コード
+--linebreaks lf
+
+# タブをスペースに変換
+--tabwidth 4
+
+# self を削除（冗長な場合）
+--self remove
+
+# import の整理
+--importgrouping testable-last
+
+# 空行の調整
+--trimwhitespace always
+
+# カンマ
+--commas always
+
+# セミコロン
+--semicolons never
+
+# 括弧
+--allman false
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+
+# スペース
+--operatorfunc spaced
+--ranges spaced
+
+# その他
+--stripunusedargs closure-only
+--ifdef no-indent
+
+# 数値リテラル
+--decimalgrouping 3
+--hexgrouping 4
+
+# Swift Version
+--swiftversion 5.9
+
+# 無効化するルール
+--disable sortImports,blankLinesAtStartOfScope,blankLinesAtEndOfScope,redundantReturn,wrapMultilineStatementBraces
+
+# 有効化するルール
+--enable isEmpty,markTypes

@@ -20,11 +20,11 @@ enum CommentError: LocalizedError {
         switch self {
         case .emptyContent:
             return "コメント内容を入力してください"
-        case .contentTooLong(let current, let max):
+        case let .contentTooLong(current, max):
             return "コメントが長すぎます (\(current)/\(max)文字)"
-        case .imageUploadFailed(let error):
+        case let .imageUploadFailed(error):
             return "画像のアップロードに失敗しました: \(error.localizedDescription)"
-        case .networkError(let error):
+        case let .networkError(error):
             return "ネットワークエラーが発生しました: \(error.localizedDescription)"
         case .unauthorized:
             return "認証が必要です"
@@ -36,15 +36,15 @@ enum CommentError: LocalizedError {
             return "無効なURLです"
         case .invalidResponse:
             return "無効なレスポンスです"
-        case .decodingError(let error):
+        case let .decodingError(error):
             return "データの読み込みに失敗しました: \(error.localizedDescription)"
-        case .apiError(let code, let message):
+        case let .apiError(code, message):
             return "APIエラー（コード: \(code)）: \(message)"
-        case .serverError(let message):
+        case let .serverError(message):
             return "サーバーエラー: \(message)"
         case .timeout:
             return "リクエストがタイムアウトしました"
-        case .unknownError(let error):
+        case let .unknownError(error):
             return "不明なエラー: \(error.localizedDescription)"
         }
     }

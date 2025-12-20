@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - BookmarkedPostsView
+
 struct BookmarkedPostsView: View {
     @State private var engagementViewModel = EngagementViewModel()
     @Environment(CurrentUserManager.self) private var userManager
@@ -11,7 +13,7 @@ struct BookmarkedPostsView: View {
 
     var body: some View {
         ZStack {
-            if engagementViewModel.isLoadingBookmarkedPosts && engagementViewModel.bookmarkedPosts.isEmpty {
+            if engagementViewModel.isLoadingBookmarkedPosts, engagementViewModel.bookmarkedPosts.isEmpty {
                 SkeletonLoadingView()
             } else if let errorMessage = engagementViewModel.errorMessage, engagementViewModel.bookmarkedPosts.isEmpty {
                 if errorMessage.contains("ネットワーク") || errorMessage.contains("接続") {
@@ -72,12 +74,13 @@ struct BookmarkedPostsView: View {
             }
         }
         .onChange(of: engagementViewModel.successMessage) { successMessage in
-            if !successMessage.isEmpty && engagementViewModel.showSuccessMessage {
+            if !successMessage.isEmpty, engagementViewModel.showSuccessMessage {
                 print("[BookmarkedPostsView] successMessage -> \(successMessage)")
                 showToastMessage(successMessage, type: .success)
             }
         }
     }
+
     private func showToastMessage(_ message: String, type: ToastView.ToastType) {
         toastMessage = message
         toastType = type
@@ -87,6 +90,7 @@ struct BookmarkedPostsView: View {
     }
 }
 
+// MARK: - BookmarkedPostsTimeline
 
 private struct BookmarkedPostsTimeline: View {
     let posts: [Post]
@@ -114,7 +118,7 @@ private struct BookmarkedPostsTimeline: View {
                     )
                 }
 
-                if loading && !posts.isEmpty {
+                if loading, !posts.isEmpty {
                     PaginationLoadingView()
                 }
             }
@@ -129,6 +133,7 @@ private struct BookmarkedPostsTimeline: View {
     }
 }
 
+// MARK: - BookmarkedPostCell
 
 private struct BookmarkedPostCell: View {
     let post: Post
@@ -154,6 +159,7 @@ private struct BookmarkedPostCell: View {
     }
 }
 
+// MARK: - BookmarkedPostCardView
 
 private struct BookmarkedPostCardView: View {
     let post: Post
@@ -171,6 +177,7 @@ private struct BookmarkedPostCardView: View {
     }
 }
 
+// MARK: - BookmarkedPostsEmptyStateView
 
 private struct BookmarkedPostsEmptyStateView: View {
     @Environment(AppRouter.self) private var appRouter
@@ -253,7 +260,6 @@ private struct BookmarkedPostsEmptyStateView: View {
         .accessibilityIdentifier("bookmarked_posts_empty_state")
     }
 }
-
 
 #Preview {
     BookmarkedPostsView()

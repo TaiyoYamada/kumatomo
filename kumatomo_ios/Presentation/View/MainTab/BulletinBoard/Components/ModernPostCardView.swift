@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - TimelinePostCardView
+
 struct TimelinePostCardView: View {
     let post: Post
     let onPostTap: (() -> Void)?
@@ -16,7 +18,6 @@ struct TimelinePostCardView: View {
 
     @Environment(\.openURL) private var openURL
 
-
     init(post: Post, onPostTap: (() -> Void)? = nil, customOnLike: ((Post) async -> Void)? = nil) {
         self.post = post
         self.onPostTap = onPostTap
@@ -31,10 +32,10 @@ struct TimelinePostCardView: View {
 
         if timeInterval < 60 {
             return "今"
-        } else if timeInterval < 3600 {
+        } else if timeInterval < 3_600 {
             return "\(Int(timeInterval / 60))分前"
-        } else if timeInterval < 86400 {
-            return "\(Int(timeInterval / 3600))時間前"
+        } else if timeInterval < 86_400 {
+            return "\(Int(timeInterval / 3_600))時間前"
         } else {
             let formatter = DateFormatter()
             formatter.dateFormat = "M月d日"
@@ -132,24 +133,24 @@ struct TimelinePostCardView: View {
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
 
-                        if let username = post.user?.username, !username.isEmpty {
-                            Text("@\(username)")
+                            if let username = post.user?.username, !username.isEmpty {
+                                Text("@\(username)")
+                                    .font(.system(size: adaptiveTimestampSize))
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
+                            }
+
+                            Text("・")
+                                .foregroundColor(.secondary)
+
+                            Text(formattedDate)
                                 .font(.system(size: adaptiveTimestampSize))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
-                        }
 
-                        Text("・")
-                            .foregroundColor(.secondary)
-
-                        Text(formattedDate)
-                            .font(.system(size: adaptiveTimestampSize))
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-
-                        Spacer()
+                            Spacer()
                         }
 
                         PostContentView(content: post.content)
@@ -160,9 +161,9 @@ struct TimelinePostCardView: View {
                             PostMediaView(imageUrl: imageUrl)
                         }
 
-                    if let tags = post.tags, !tags.isEmpty {
-                        CategoryTagsView(tags: tags)
-                    }
+                        if let tags = post.tags, !tags.isEmpty {
+                            CategoryTagsView(tags: tags)
+                        }
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
@@ -196,19 +197,16 @@ struct TimelinePostCardView: View {
 
     }
 
-
-
     private func navigateToUserProfile(userId: Int) {
         appRouter.navigateToUserProfile(userId: userId)
     }
 }
 
-
-
-
 #Preview {
     TimelinePostCardViewPreview()
 }
+
+// MARK: - TimelinePostCardViewPreview
 
 struct TimelinePostCardViewPreview: View {
     var body: some View {
@@ -256,6 +254,7 @@ struct TimelinePostCardViewPreview: View {
     }
 }
 
+// MARK: - PostContentView
 
 struct PostContentView: View {
     let content: String
@@ -310,22 +309,24 @@ struct PostContentView: View {
     }
 }
 
+// MARK: - PostMediaView
+
 struct PostMediaView: View {
     let images: [PostImage]?
     let imageUrl: String?
 
     init(images: [PostImage]) {
         self.images = images
-        self.imageUrl = nil
+        imageUrl = nil
     }
 
     init(imageUrl: String) {
-        self.images = nil
+        images = nil
         self.imageUrl = imageUrl
     }
 
     var body: some View {
-        if let images = images, !images.isEmpty {
+        if let images, !images.isEmpty {
             AsyncImage(url: URL(string: images.first!.imageUrl)) { image in
                 image
                     .resizable()
@@ -344,7 +345,7 @@ struct PostMediaView: View {
             .accessibilityLabel("投稿画像")
             .accessibilityHint("投稿に添付された画像")
             .accessibilityIdentifier("post_image")
-        } else if let imageUrl = imageUrl, !imageUrl.isEmpty {
+        } else if let imageUrl, !imageUrl.isEmpty {
             AsyncImage(url: URL(string: imageUrl)) { image in
                 image
                     .resizable()
@@ -366,6 +367,8 @@ struct PostMediaView: View {
         }
     }
 }
+
+// MARK: - CategoryTagsView
 
 struct CategoryTagsView: View {
     let tags: [String]

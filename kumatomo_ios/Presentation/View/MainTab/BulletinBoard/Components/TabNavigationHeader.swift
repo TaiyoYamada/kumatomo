@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - TabNavigationHeader
+
 struct TabNavigationHeader: View {
     let activeTab: TabType
     let selectedMunicipality: String?
@@ -70,6 +72,8 @@ struct TabNavigationHeader: View {
     }
 }
 
+// MARK: - TabButton
+
 struct TabButton: View {
     let title: String
     let isActive: Bool
@@ -137,6 +141,8 @@ struct TabButton: View {
     }
 }
 
+// MARK: - MunicipalityPickerView
+
 struct MunicipalityPickerView: View {
     let selectedMunicipality: String?
     let onSelection: (String) -> Void
@@ -146,7 +152,7 @@ struct MunicipalityPickerView: View {
     @State private var searchText = ""
 
     private var allCities: [String] {
-        City.allCases.map { $0.displayName }
+        City.allCases.map(\.displayName)
     }
 
     private var filteredCities: [String] {
@@ -243,6 +249,8 @@ struct MunicipalityPickerView: View {
         }
     }
 }
+
+// MARK: - RegionFilterButton
 
 struct RegionFilterButton: View {
     let title: String

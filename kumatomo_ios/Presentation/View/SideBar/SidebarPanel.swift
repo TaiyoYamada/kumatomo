@@ -1,6 +1,8 @@
 import SwiftUI
 import UIKit
 
+// MARK: - SidebarPanel
+
 struct SidebarPanel: View {
     let user: User?
     let onClose: () -> Void
@@ -10,7 +12,7 @@ struct SidebarPanel: View {
 
     var body: some View {
 
-        GeometryReader { geometry in
+        GeometryReader { _ in
             VStack(spacing: 0) {
                 Spacer().frame(height: UIApplication.shared.windows.first?.safeAreaInsets.top ?? 44)
 
@@ -66,8 +68,6 @@ struct SidebarPanel: View {
             return .coupons
         case .settings:
             return .settings
-        case .kumamonAI:
-            return .kumamonAI
         default:
             return .settings
         }
@@ -87,14 +87,10 @@ struct SidebarPanel: View {
                 router.navigateToBookmarkedPosts(on: .portal)
             case .likes:
                 router.navigateToLikedPosts(on: .portal)
-            case .favoriteShops:
-                router.navigate(to: .favoritesList, on: .portal)
             case .coupons:
                 router.navigate(to: .coupons, on: .portal)
             case .settings:
                 router.navigateToSettings(on: .portal)
-            case .kumamonAI:
-                router.navigate(to: .kumamonAI, on: .portal)
             default:
                 break
             }
@@ -109,12 +105,14 @@ struct SidebarPanel: View {
     }
 }
 
+// MARK: - SidebarHeader
+
 struct SidebarHeader: View {
     let user: User?
 
     var body: some View {
         HStack(spacing: 12) {
-            if let user = user {
+            if let user {
                 AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
                     image
                         .resizable()
@@ -149,6 +147,8 @@ struct SidebarHeader: View {
     }
 }
 
+// MARK: - SidebarMenuItemContent
+
 struct SidebarMenuItemContent: View {
     let icon: String
     let title: String
@@ -166,7 +166,7 @@ struct SidebarMenuItemContent: View {
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.primary)
 
-                if let subtitle = subtitle {
+                if let subtitle {
                     Text(subtitle)
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
@@ -179,6 +179,8 @@ struct SidebarMenuItemContent: View {
         .background(Color.gray.opacity(0.001))
     }
 }
+
+// MARK: - SidebarMenuItemView
 
 struct SidebarMenuItemView: View {
     let icon: String
@@ -199,7 +201,7 @@ struct SidebarMenuItemView: View {
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
 
-                    if let subtitle = subtitle {
+                    if let subtitle {
                         Text(subtitle)
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
@@ -214,6 +216,8 @@ struct SidebarMenuItemView: View {
         .background(Color.gray.opacity(0.001))
     }
 }
+
+// MARK: - SidebarLinkItem
 
 struct SidebarLinkItem: View {
     let icon: String

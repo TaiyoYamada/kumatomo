@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - PostEditView
+
 struct PostEditView: View {
     @Bindable var viewModel: PostViewModel
     @Environment(\.dismiss) private var dismiss
@@ -18,17 +20,12 @@ struct PostEditView: View {
                             characterCount: viewModel.postContent.count
                         )
 
-                        ShopEditCard(
-                            selectedShop: $viewModel.selectedShop,
-                            onPickShop: { sheetDestination = .shopPicker(selectedShop: $viewModel.selectedShop) }
-                        )
-
                         TagsEditCard(
                             tags: $viewModel.tags,
                             tagInput: $viewModel.tagInput,
                             onAddTag: {
                                 let result = viewModel.addTag()
-                                if case .failure(let error) = result {
+                                if case let .failure(error) = result {
                                     viewModel.errorMessage = error.localizedDescription
                                 }
                             },
@@ -73,8 +70,8 @@ struct PostEditView: View {
 private extension PostEditView {
     var canUpdate: Bool {
         !viewModel.postContent.isEmpty &&
-        viewModel.postContent.count <= 300 &&
-        !viewModel.isUpdating
+            viewModel.postContent.count <= 300 &&
+            !viewModel.isUpdating
     }
 }
 
@@ -88,6 +85,8 @@ private extension PostEditView {
         }
     }
 }
+
+// MARK: - ContentEditCard
 
 private struct ContentEditCard: View {
     @Binding var content: String
@@ -150,93 +149,7 @@ private struct ContentEditCard: View {
     }
 }
 
-private struct ShopEditCard: View {
-    @Binding var selectedShop: Shop?
-    let onPickShop: () -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("お店")
-                    .font(.headline.weight(.medium))
-                    .foregroundStyle(.primary)
-
-                Spacer()
-
-                Text("任意")
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Color.secondary)
-                    .cornerRadius(4)
-            }
-
-            Button(action: { onPickShop() }) {
-                HStack {
-                    if let shop = selectedShop {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(shop.name)
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.primary)
-
-                            if let address = shop.address {
-                                Text(address)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
-                            }
-
-                            if let genre = shop.genre {
-                                Text(genre.displayName)
-                                    .font(.caption)
-                                    .foregroundStyle(.orange)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.orange.opacity(0.1))
-                                    .cornerRadius(4)
-                            }
-                        }
-                    } else {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundStyle(.secondary)
-
-                            Text("お店を検索・選択")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    Spacer()
-
-                    if selectedShop != nil {
-                        Button(action: { selectedShop = nil }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.secondary)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    } else {
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(12)
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-            }
-            .buttonStyle(PlainButtonStyle())
-        }
-        .padding(16)
-        .background(Color(UIColor.systemBackground))
-        .cornerRadius(12)
-        .shadow(
-            color: .black.opacity(0.05),
-            radius: 2,
-            y: 1
-        )
-    }
-}
+// MARK: - TagsEditCard
 
 private struct TagsEditCard: View {
     @Binding var tags: [String]
@@ -320,6 +233,8 @@ private struct TagsEditCard: View {
     }
 }
 
+// MARK: - ImageEditNote
+
 private struct ImageEditNote: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -348,6 +263,8 @@ private struct ImageEditNote: View {
     }
 }
 
+// MARK: - CharacterCounter
+
 private struct CharacterCounter: View {
     let count: Int
     let maxCount: Int
@@ -375,6 +292,8 @@ private struct CharacterCounter: View {
     }
 }
 
+// MARK: - UpdateButton
+
 private struct UpdateButton: View {
     let isEnabled: Bool
     let isLoading: Bool
@@ -389,6 +308,8 @@ private struct UpdateButton: View {
             .animation(.easeInOut(duration: 0.3), value: isLoading)
     }
 }
+
+// MARK: - OverlayContent
 
 private struct OverlayContent: View {
     @Bindable var viewModel: PostViewModel
@@ -415,6 +336,8 @@ private struct OverlayContent: View {
         }
     }
 }
+
+// MARK: - ErrorOverlay
 
 private struct ErrorOverlay: View {
     let message: String
@@ -453,6 +376,8 @@ private struct ErrorOverlay: View {
             .animation(.interpolatingSpring(stiffness: 300, damping: 30), value: message)
     }
 }
+
+// MARK: - SuccessOverlay
 
 private struct SuccessOverlay: View {
     let onDismiss: () -> Void
@@ -504,6 +429,8 @@ private struct SuccessOverlay: View {
             ))
     }
 }
+
+// MARK: - LoadingOverlay
 
 private struct LoadingOverlay: View {
     var body: some View {

@@ -21,15 +21,15 @@ enum PostError: LocalizedError {
         switch self {
         case .contentEmpty:
             return "投稿内容を入力してください"
-        case .contentOverLimit(let currentCount, let maxCount):
+        case let .contentOverLimit(currentCount, maxCount):
             return "文字数制限を超えています (\(currentCount)/\(maxCount)文字)"
-        case .tagLimitExceeded(let currentCount, let maxCount):
+        case let .tagLimitExceeded(currentCount, maxCount):
             return "タグの数が上限を超えています (\(currentCount)/\(maxCount)個)"
-        case .duplicateTag(let tagName):
+        case let .duplicateTag(tagName):
             return "タグ「\(tagName)」は既に追加されています"
         case .tagEmpty:
             return "タグを入力してください"
-        case .tagTooLong(let tagName, let currentCount, let maxCount):
+        case let .tagTooLong(tagName, currentCount, maxCount):
             return "タグ「\(tagName)」が長すぎます (\(currentCount)/\(maxCount)文字)"
         case .invalidImageData:
             return "画像データが無効です"
@@ -37,7 +37,7 @@ enum PostError: LocalizedError {
             return "投稿処理中です。しばらくお待ちください"
         case .noImagesSelected:
             return "写真を選択してください"
-        case .tooManyImages(let currentCount, let maxCount):
+        case let .tooManyImages(currentCount, maxCount):
             return "写真の枚数が上限を超えています (\(currentCount)/\(maxCount)枚)"
         case .noContentOrImages:
             return "投稿するには、テキストまたは写真が必要です"

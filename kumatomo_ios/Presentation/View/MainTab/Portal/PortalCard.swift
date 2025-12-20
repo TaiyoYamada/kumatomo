@@ -1,9 +1,10 @@
 import SwiftUI
 
+// MARK: - PortalCardGrid
+
 struct PortalCardGrid: View {
     let cards: [PortalCardData]
     @Environment(NetworkMonitor.self) private var networkMonitor
-
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -18,6 +19,7 @@ struct PortalCardGrid: View {
     }
 }
 
+// MARK: - PortalCardView
 
 struct PortalCardView: View {
     let cardData: PortalCardData
@@ -59,12 +61,11 @@ struct PortalCardView: View {
             withAnimation(.easeInOut(duration: 0.08)) { isPressed = pressing }
         }, perform: {})
         .alert("エラー", isPresented: $showingError) {
-            Button("OK") { }
+            Button("OK") {}
         } message: {
             Text(errorMessage)
         }
     }
-
 
     private func handleCardTap() {
         let generator = UIImpactFeedbackGenerator(style: .light)
@@ -76,7 +77,7 @@ struct PortalCardView: View {
                 case .success:
                     break
 
-                case .failure(let error):
+                case let .failure(error):
                     showError(error.userFriendlyMessage)
                     PortalErrorHandler.shared.logError(error, "Portal card '\(cardData.title)' error")
                 }

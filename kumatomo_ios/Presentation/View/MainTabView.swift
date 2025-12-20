@@ -53,22 +53,6 @@ struct MainTabView: View {
                 }
                 .tag(TabSelection.portal)
 
-                // お店一覧タブ
-                NavigationStack(path: appRouter.pathBinding(for: .shop)) {
-                    ShopListView()
-                        .environment(userManager)
-                        .environment(sidebarState)
-                        .environment(\.openSidebar, sidebarState.open)
-                        .withAppRouter()
-                        .navigationTitle("お店一覧")
-                }
-                .environment(appRouter)
-                .tabItem {
-                    Image(systemName: "storefront.fill")
-                    Text("お店")
-                }
-                .tag(TabSelection.shop)
-
                 NavigationStack(path: appRouter.pathBinding(for: .profile)) {
                     MyProfileView()
                         .environment(userManager)

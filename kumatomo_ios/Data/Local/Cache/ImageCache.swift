@@ -12,4 +12,3 @@ class ImageCache: ObservableObject {
         print("🧹 Image cache cleared")
     }
 }
-

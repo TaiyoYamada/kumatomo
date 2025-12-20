@@ -154,44 +154,6 @@ services:
         networks:
             - sail
 
-    ollama:
-        image: 'ollama/ollama:latest'
-        # ports:
-        #     - '${FORWARD_OLLAMA_PORT:-11434}:11434'
-        volumes:
-            - 'sail-ollama:/root/.ollama'
-        networks:
-            - sail
-        environment:
-            - OLLAMA_HOST=0.0.0.0
-            - OLLAMA_ORIGINS=*
-        # healthcheck:
-        #     test:
-        #         - CMD
-        #         - curl
-        #         - '-f'
-        #         - 'http://localhost:11434/api/tags'
-        #     retries: 3
-        #     timeout: 10s
-        #     interval: 30s
-        restart: unless-stopped
-
-    ollama-init:
-        image: 'ollama/ollama:latest'
-        volumes:
-            - 'sail-ollama:/root/.ollama'
-            - './docker/ollama/init-ollama.sh:/init-ollama.sh'
-        networks:
-            - sail
-        environment:
-            - OLLAMA_HOST=ollama:11434
-            - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma3:4b}
-        depends_on:
-            ollama:
-                condition: service_started
-                # condition: service_healthy # こっちがいいけど、コンテナ作れなくなるから一旦やめる
-        command: ["/bin/bash", "/init-ollama.sh"]
-        restart: "no" 
 networks:
     sail:
         driver: bridge
@@ -201,6 +163,4 @@ volumes:
     sail-redis:
         driver: local
     sail-meilisearch:
-        driver: local
-    sail-ollama:
         driver: local

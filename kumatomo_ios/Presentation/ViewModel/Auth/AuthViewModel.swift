@@ -13,7 +13,7 @@ final class AuthViewModel {
     var accounts: [User] = []
     var selectedAccount: User?
 
-    var hasCompletedSetup: Bool? = nil
+    var hasCompletedSetup: Bool?
     var email = ""
     var password = ""
     var name = ""
@@ -25,12 +25,12 @@ final class AuthViewModel {
     var profileImage: UIImage?
     var selectedImage: PhotosPickerItem?
 
-    var errorMessage:String? = ""
+    var errorMessage: String? = ""
     var isLoading = false
 
     // - サービス依存性
 
-    @ObservationIgnored @Injected var authRepository: AuthRepository       // 認証・ユーザー取得
+    @ObservationIgnored @Injected var authRepository: AuthRepository // 認証・ユーザー取得
     @ObservationIgnored @Injected var imageUploader: ImageUploadRepository // 画像アップロード
     @ObservationIgnored @Injected var signInUseCase: SignInUseCase
     @ObservationIgnored @Injected var signOutUseCase: SignOutUseCase
@@ -41,18 +41,17 @@ final class AuthViewModel {
 
     init() {
         // 初期状態をサービスから取得
-        self.isAuthenticated = authRepository.isAuthenticated
-        self.currentUser = authRepository.currentUser
+        isAuthenticated = authRepository.isAuthenticated
+        currentUser = authRepository.currentUser
 
-        if let currentUser = currentUser {
-            self.hasCompletedSetup = currentUser.hasCompletedSetup
+        if let currentUser {
+            hasCompletedSetup = currentUser.hasCompletedSetup
         } else {
-            self.hasCompletedSetup = nil
+            hasCompletedSetup = nil
         }
 
         addSubscribers()
     }
-
 
     private func addSubscribers() {
         // 認証状態の変化を監視
@@ -67,19 +66,18 @@ final class AuthViewModel {
         authRepository.currentUserPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
-                guard let self = self else { return }
-                self.currentUser = user
+                guard let self else { return }
+                currentUser = user
 
-                if let user = user {
+                if let user {
                     print("DEBUG: ユーザー情報更新 - hasCompletedSetup: \(user.hasCompletedSetup ?? false)")
-                    self.hasCompletedSetup = user.hasCompletedSetup
+                    hasCompletedSetup = user.hasCompletedSetup
                 } else {
-                    self.hasCompletedSetup = nil
+                    hasCompletedSetup = nil
                 }
             }
             .store(in: &cancellables)
     }
-
 
     @MainActor
     func signIn() async {
@@ -134,8 +132,6 @@ final class AuthViewModel {
 
     // - プロフィール画像アップロード
 
-
-
     private func handleSubmit() {
         guard isFormValid else { return }
         isLoading = true
@@ -148,10 +144,8 @@ final class AuthViewModel {
                     profileImageURL = try await uploadProfileImage(image)
                 }
 
-
                 // 初期設定完了を記録
                 self.hasCompletedSetup = true
-
 
                 // ユーザー情報を更新
                 try await updateUserUseCase.execute(
@@ -162,7 +156,6 @@ final class AuthViewModel {
                     birthday: birthDate,
                     hasCompletedSetup: true
                 )
-
 
                 await MainActor.run {
                     isLoading = false
@@ -231,7 +224,6 @@ final class AuthViewModel {
             dateFormatter.dateFormat = "yyyy-MM-dd"
             let birthdayString = dateFormatter.string(from: birthDate)
 
-
             try await updateUserUseCase.execute(
                 name: name,
                 profileImageURL: profileImageURL,
@@ -240,7 +232,6 @@ final class AuthViewModel {
                 birthday: birthDate,
                 hasCompletedSetup: true
             )
-
 
             isLoading = false
             return true

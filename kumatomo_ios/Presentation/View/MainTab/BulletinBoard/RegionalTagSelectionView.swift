@@ -1,12 +1,14 @@
 import SwiftUI
 
+// MARK: - RegionalTagSelectionView
+
 struct RegionalTagSelectionView: View {
     @Binding var selectedTags: Set<String>
     let availableTags: [String]
     @Environment(\.dismiss) private var dismiss
 
     private var regionalTags: [String] {
-        City.allCases.map { $0.displayName }
+        City.allCases.map(\.displayName)
     }
 
     private var visibleSelectedCount: Int {
@@ -97,6 +99,8 @@ struct RegionalTagSelectionView: View {
     }
 }
 
+// MARK: - RegionalTagRow
+
 private struct RegionalTagRow: View {
     let tag: String
     let isSelected: Bool
@@ -106,9 +110,9 @@ private struct RegionalTagRow: View {
 
     var body: some View {
         Button(action: {
-            if isSelected && canDeselect {
+            if isSelected, canDeselect {
                 onTap()
-            } else if !isSelected && canSelect {
+            } else if !isSelected, canSelect {
                 onTap()
             }
         }) {
@@ -135,11 +139,11 @@ private struct RegionalTagRow: View {
 
                 Spacer()
 
-                if isSelected && !canDeselect {
+                if isSelected, !canDeselect {
                     Image(systemName: "lock.fill")
                         .font(.caption)
                         .foregroundColor(.gray)
-                } else if !isSelected && !canSelect {
+                } else if !isSelected, !canSelect {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.caption)
                         .foregroundColor(.orange)

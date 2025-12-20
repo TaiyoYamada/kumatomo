@@ -153,30 +153,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the favorites made by the user.
-     */
-    public function favorites()
-    {
-        return $this->hasMany(Favorite::class);
-    }
-
-    /**
-     * Get shops favorited by the user.
-     */
-    public function favoritedShops()
-    {
-        return $this->belongsToMany(Shop::class, 'favorites')->withTimestamps();
-    }
-
-    /**
-     * Get the shop proposals made by the user.
-     */
-    public function shopProposals()
-    {
-        return $this->hasMany(ShopProposal::class);
-    }
-
-    /**
      * Get comprehensive validation rules for user profile
      * 
      * @param int|null $userId User ID to ignore for unique validation (for updates)

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -11,14 +10,14 @@ use Illuminate\Validation\ValidationException;
 class SearchController extends Controller
 {
     /**
-     * 統合検索（投稿とお店を同時に検索）
+     * 統合検索（投稿を検索）
      */
     public function search(Request $request): JsonResponse
     {
         try {
             $request->validate([
                 'q' => 'required|string|min:1|max:100',
-                'type' => 'nullable|string|in:posts,shops,all',
+                'type' => 'nullable|string|in:posts,all',
                 'page' => 'integer|min:1',
                 'per_page' => 'integer|min:1|max:50'
             ]);
@@ -30,7 +29,6 @@ class SearchController extends Controller
 
             $results = [
                 'posts' => [],
-                'shops' => [],
                 'pagination' => [
                     'current_page' => $page,
                     'per_page' => $perPage
@@ -39,7 +37,7 @@ class SearchController extends Controller
 
             // 投稿を検索
             if ($type === 'all' || $type === 'posts') {
-                $posts = Post::with(['user', 'shop', 'images'])
+                $posts = Post::with(['user', 'images'])
                     ->where('content', 'LIKE', "%{$query}%")
                     ->orderBy('created_at', 'desc')
                     ->paginate($perPage, ['*'], 'posts_page', $page);
@@ -50,20 +48,6 @@ class SearchController extends Controller
                     'last_page' => $posts->lastPage(),
                     'per_page' => $posts->perPage(),
                     'total' => $posts->total(),
-                ];
-            }
-
-            // お店を検索
-            if ($type === 'all' || $type === 'shops') {
-                $shops = Shop::search($query)
-                    ->paginate($perPage, ['*'], 'shops_page', $page);
-
-                $results['shops'] = $shops->items();
-                $results['pagination']['shops'] = [
-                    'current_page' => $shops->currentPage(),
-                    'last_page' => $shops->lastPage(),
-                    'per_page' => $shops->perPage(),
-                    'total' => $shops->total(),
                 ];
             }
 

@@ -1,8 +1,12 @@
 import Foundation
 
+// MARK: - FetchBookmarkedPostsUseCase
+
 protocol FetchBookmarkedPostsUseCase {
     func execute(page: Int?, limit: Int?) async throws -> [Post]
 }
+
+// MARK: - FetchBookmarkedPostsUseCaseImpl
 
 final class FetchBookmarkedPostsUseCaseImpl: FetchBookmarkedPostsUseCase {
     private let repository: EngagementRepository
@@ -15,4 +19,3 @@ final class FetchBookmarkedPostsUseCaseImpl: FetchBookmarkedPostsUseCase {
         try await repository.fetchBookmarkedPosts(page: page, limit: limit)
     }
 }
-

@@ -1,5 +1,6 @@
 import SwiftUI
 
+// MARK: - BookmarkListView
 
 struct BookmarkListView: View {
     var body: some View {
@@ -23,6 +24,8 @@ struct BookmarkListView: View {
     }
 }
 
+// MARK: - LikeListView
+
 struct LikeListView: View {
     var body: some View {
         VStack(spacing: 12) {
@@ -45,6 +48,8 @@ struct LikeListView: View {
     }
 }
 
+// MARK: - CouponsView
+
 struct CouponsView: View {
     var body: some View {
         VStack(spacing: 12) {
@@ -66,6 +71,8 @@ struct CouponsView: View {
         .navigationBarTitleDisplayMode(.large)
     }
 }
+
+// MARK: - SettingsView
 
 struct SettingsView: View {
     var body: some View {

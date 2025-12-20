@@ -8,7 +8,7 @@ enum CategoryType: String, Codable, CaseIterable {
     case other = "その他"
 
     var displayName: String {
-        return self.rawValue
+        return rawValue
     }
 
     var color: Color {
@@ -37,4 +37,3 @@ enum CategoryType: String, Codable, CaseIterable {
         }
     }
 }
-

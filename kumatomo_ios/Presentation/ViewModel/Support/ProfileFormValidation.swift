@@ -1,6 +1,8 @@
 import Foundation
 import UIKit
 
+// MARK: - ValidationResult
+
 enum ValidationResult: Equatable {
     case valid
     case invalid(message: String)
@@ -18,13 +20,15 @@ enum ValidationResult: Equatable {
         switch self {
         case .valid:
             return nil
-        case .invalid(let message):
+        case let .invalid(message):
             return message
         }
     }
 }
 
-struct ProfileFormValidation {
+// MARK: - ProfileFormValidation
+
+enum ProfileFormValidation {
 
     static func validateName(_ name: String) -> ValidationResult {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -109,7 +113,7 @@ struct ProfileFormValidation {
     }
 
     static func validateBirthday(_ birthday: Date?) -> ValidationResult {
-        guard let birthday = birthday else {
+        guard let birthday else {
             return .valid
         }
 

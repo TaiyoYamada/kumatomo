@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Post;
-use App\Models\Shop;
 use App\Models\PostImage;
 use App\Services\ImageService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,7 +24,6 @@ class PostTest extends TestCase
     public function test_can_create_post_with_multiple_images()
     {
         $user = User::factory()->create();
-        $shop = Shop::factory()->create();
 
         $images = [
             UploadedFile::fake()->image('image1.jpg'),
@@ -35,7 +33,6 @@ class PostTest extends TestCase
 
         $response = $this->actingAs($user)->postJson('/api/posts', [
             'content' => 'テスト投稿です',
-            'shop_id' => $shop->id,
             'images' => $images,
             'tags' => ['テスト', 'グルメ'],
         ]);
@@ -44,10 +41,8 @@ class PostTest extends TestCase
         $response->assertJsonStructure([
             'id',
             'content',
-            'shop_id',
             'tags',
             'user' => ['id', 'name'],
-            'shop' => ['id', 'name'],
             'images' => [
                 '*' => ['id', 'image_url', 'display_order']
             ]
@@ -56,7 +51,6 @@ class PostTest extends TestCase
         // データベースに保存されているかチェック
         $this->assertDatabaseHas('posts', [
             'content' => 'テスト投稿です',
-            'shop_id' => $shop->id,
             'user_id' => $user->id,
         ]);
 
@@ -120,12 +114,10 @@ class PostTest extends TestCase
     public function test_can_update_post()
     {
         $user = User::factory()->create();
-        $shop = Shop::factory()->create();
         $post = Post::factory()->create(['user_id' => $user->id]);
 
         $response = $this->actingAs($user)->putJson("/api/posts/{$post->id}", [
             'content' => '更新された投稿です',
-            'shop_id' => $shop->id,
             'tags' => ['更新', 'テスト'],
         ]);
 
@@ -133,7 +125,6 @@ class PostTest extends TestCase
         $this->assertDatabaseHas('posts', [
             'id' => $post->id,
             'content' => '更新された投稿です',
-            'shop_id' => $shop->id,
         ]);
     }
 
@@ -177,43 +168,11 @@ class PostTest extends TestCase
         $this->assertDatabaseHas('posts', ['id' => $post->id]);
     }
 
-    public function test_can_get_posts_by_shop()
-    {
-        $user = User::factory()->create();
-        $shop = Shop::factory()->create();
-        
-        // お店に関連する投稿を3つ作成
-        Post::factory()->count(3)->create([
-            'user_id' => $user->id,
-            'shop_id' => $shop->id,
-        ]);
-
-        // 他のお店の投稿も作成（結果に含まれないはず）
-        $otherShop = Shop::factory()->create();
-        Post::factory()->create([
-            'user_id' => $user->id,
-            'shop_id' => $otherShop->id,
-        ]);
-
-        $response = $this->actingAs($user)->getJson("/api/shops/{$shop->id}/posts");
-
-        $response->assertStatus(200);
-        $response->assertJsonCount(3, 'data');
-        
-        // 全ての投稿が指定されたお店のものかチェック
-        $posts = $response->json('data');
-        foreach ($posts as $post) {
-            $this->assertEquals($shop->id, $post['shop_id']);
-        }
-    }
-
     public function test_posts_include_relationships()
     {
         $user = User::factory()->create();
-        $shop = Shop::factory()->create();
         $post = Post::factory()->create([
             'user_id' => $user->id,
-            'shop_id' => $shop->id,
         ]);
         
         PostImage::factory()->count(2)->create(['post_id' => $post->id]);
@@ -226,7 +185,6 @@ class PostTest extends TestCase
                 'id',
                 'content',
                 'user' => ['id', 'name'],
-                'shop' => ['id', 'name'],
                 'images' => [
                     '*' => ['id', 'image_url', 'display_order']
                 ]

@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - AIResponse
+
 struct AIResponse: Codable, Equatable {
     let message: String
     let timestamp: String
@@ -20,6 +22,8 @@ struct AIResponse: Codable, Equatable {
         self.success = success
     }
 }
+
+// MARK: - AIErrorResponse
 
 struct AIErrorResponse: Codable, Equatable {
     let error: Bool

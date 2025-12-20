@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - PostUserImageView
+
 struct PostUserImageView: View {
     let imageURL: String?
     let size: CGFloat
@@ -11,7 +13,7 @@ struct PostUserImageView: View {
 
     var body: some View {
         Group {
-            if let imageURL = imageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
+            if let imageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .empty:
@@ -22,11 +24,11 @@ struct PostUserImageView: View {
                                     .scaleEffect(0.6)
                                     .tint(.secondary)
                             )
-                    case .success(let image):
+                    case let .success(image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                    case .failure(_):
+                    case .failure:
                         Circle()
                             .fill(.ultraThinMaterial)
                             .overlay(
@@ -59,7 +61,6 @@ struct PostUserImageView: View {
         }
     }
 }
-
 
 #if DEBUG
 struct PostUserImageView_Previews: PreviewProvider {

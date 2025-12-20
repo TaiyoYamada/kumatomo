@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - SearchAPIService
+
 class SearchAPIService {
     static let shared = SearchAPIService()
 
@@ -11,13 +13,18 @@ class SearchAPIService {
     }
 
     // 統合検索を実行する
-    func search(query: String, type: SearchFilterType = .all, page: Int = 1, perPage: Int = 10) async throws -> (SearchResult, String, SearchFilterType) {
+    func search(
+        query: String,
+        type: SearchFilterType = .all,
+        page: Int = 1,
+        perPage: Int = 10
+    ) async throws -> (SearchResult, String, SearchFilterType) {
         var urlComponents = URLComponents(string: "\(baseURL)/search")!
         var queryItems: [URLQueryItem] = [
             URLQueryItem(name: "q", value: query),
             URLQueryItem(name: "type", value: type.rawValue),
             URLQueryItem(name: "page", value: String(page)),
-            URLQueryItem(name: "per_page", value: String(perPage))
+            URLQueryItem(name: "per_page", value: String(perPage)),
         ]
 
         urlComponents.queryItems = queryItems
@@ -88,6 +95,8 @@ class SearchAPIService {
         }
     }
 }
+
+// MARK: - SearchAPIResponse
 
 private struct SearchAPIResponse: Codable {
     let data: SearchResult

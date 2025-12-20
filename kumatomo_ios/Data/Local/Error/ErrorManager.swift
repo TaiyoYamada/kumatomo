@@ -3,6 +3,8 @@ import SwiftUI
 import Combine
 import Observation
 
+// MARK: - ErrorManager
+
 @MainActor
 @Observable
 class ErrorManager {
@@ -30,7 +32,6 @@ class ErrorManager {
             }
             .store(in: &cancellables)
     }
-
 
     func handleError(_ error: Error, context: String = "") {
         let appError = AppError.from(error, context: context)
@@ -83,7 +84,6 @@ class ErrorManager {
         }
     }
 
-
     private func addToHistory(_ error: AppError) {
         errorHistory.insert(error, at: 0)
 
@@ -95,7 +95,6 @@ class ErrorManager {
     func clearHistory() {
         errorHistory.removeAll()
     }
-
 
     private func logError(_ error: AppError) {
         let logMessage = """
@@ -117,7 +116,6 @@ class ErrorManager {
         #endif
     }
 
-
     func getErrorStatistics() -> ErrorStatistics {
         let totalErrors = errorHistory.count
         let networkErrors = errorHistory.filter { $0.errorType == .network }.count
@@ -134,6 +132,7 @@ class ErrorManager {
     }
 }
 
+// MARK: - AppError
 
 struct AppError: Identifiable, Equatable {
     let id = UUID()
@@ -161,7 +160,6 @@ struct AppError: Identifiable, Equatable {
     static func == (lhs: AppError, rhs: AppError) -> Bool {
         lhs.id == rhs.id
     }
-
 
     static func from(_ error: Error, context: String = "") -> AppError {
         if let apiError = error as? APIError {
@@ -280,12 +278,12 @@ struct AppError: Identifiable, Equatable {
         )
     }
 
-
     private static func isRetryableAPIError(_ error: APIError) -> Bool {
         switch error {
         case .networkError, .timeout, .serverError:
             return true
-        case .unauthorized, .forbidden, .notFound, .decodingError, .encodingError, .invalidURL, .invalidResponse, .userNotFound:
+        case .unauthorized, .forbidden, .notFound, .decodingError, .encodingError, .invalidURL, .invalidResponse,
+             .userNotFound:
             return false
         case .rateLimitExceeded:
             return true
@@ -310,6 +308,7 @@ struct AppError: Identifiable, Equatable {
     }
 }
 
+// MARK: - ErrorStatistics
 
 struct ErrorStatistics {
     let totalErrors: Int
@@ -329,6 +328,7 @@ struct ErrorStatistics {
     }
 }
 
+// MARK: - ErrorRetryManager
 
 class ErrorRetryManager {
     private var retryAttempts: [String: Int] = [:]

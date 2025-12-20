@@ -10,16 +10,16 @@ extension Int {
         let absValue = abs(self)
 
         switch absValue {
-        case 0..<1000:
+        case 0 ..< 1_000:
             return "\(self)"
-        case 1000..<1_000_000:
-            let thousands = Double(self) / 1000.0
+        case 1_000 ..< 1_000_000:
+            let thousands = Double(self) / 1_000.0
             if thousands.truncatingRemainder(dividingBy: 1) == 0 {
                 return "\(Int(thousands))K"
             } else {
                 return String(format: "%.1fK", thousands)
             }
-        case 1_000_000..<1_000_000_000:
+        case 1_000_000 ..< 1_000_000_000:
             let millions = Double(self) / 1_000_000.0
             if millions.truncatingRemainder(dividingBy: 1) == 0 {
                 return "\(Int(millions))M"
@@ -37,7 +37,7 @@ extension Int {
     }
 }
 
-extension Optional where Wrapped == Int {
+extension Int? {
 
     func formatCount() -> String {
         return (self ?? 0).formatCount()

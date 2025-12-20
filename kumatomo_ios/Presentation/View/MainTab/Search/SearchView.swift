@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - SearchView
+
 struct SearchView: View {
     @State private var viewModel = SearchViewModel()
     @Environment(CurrentUserManager.self) private var userManager
@@ -11,9 +13,6 @@ struct SearchView: View {
         VStack(spacing: 0) {
             // 検索バー
             searchBar
-
-            // フィルターセグメント
-            filterSegment
 
             // コンテンツ
             if viewModel.isLoading {
@@ -29,20 +28,20 @@ struct SearchView: View {
             }
 
             Spacer()
+        }
+        .navigationTitle("検索")
+        .navigationBarTitleDisplayMode(.inline)
+        .sidebarButton()
+        .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button("OK") {
+                viewModel.errorMessage = nil
             }
-            .navigationTitle("検索")
-            .navigationBarTitleDisplayMode(.inline)
-            .sidebarButton()
-            .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
-                Button("OK") {
-                    viewModel.errorMessage = nil
-                }
-            } message: {
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                }
+        } message: {
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
             }
-            .withSheetRouter(sheet: $sheetDestination)
+        }
+        .withSheetRouter(sheet: $sheetDestination)
     }
 
     // 検索バー
@@ -52,7 +51,7 @@ struct SearchView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
 
-                TextField("投稿やお店を検索", text: $viewModel.searchText)
+                TextField("投稿を検索", text: $viewModel.searchText)
                     .textFieldStyle(PlainTextFieldStyle())
                     .onSubmit {
                         viewModel.performSearch()
@@ -84,21 +83,6 @@ struct SearchView: View {
         }
         .padding(.horizontal)
         .padding(.top, 8)
-    }
-
-    // フィルターセグメント
-    private var filterSegment: some View {
-        Picker("フィルター", selection: $viewModel.selectedFilter) {
-            ForEach(SearchFilterType.allCases, id: \.self) { filter in
-                Text(filter.displayName).tag(filter)
-            }
-        }
-        .pickerStyle(SegmentedPickerStyle())
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .onChange(of: viewModel.selectedFilter) { newFilter in
-            viewModel.changeFilter(to: newFilter)
-        }
     }
 
     // ローディング表示
@@ -181,23 +165,12 @@ struct SearchView: View {
             LazyVStack(spacing: 16) {
                 if let results = viewModel.searchResults {
                     // 投稿結果
-                    if !results.posts.isEmpty && (viewModel.selectedFilter == .all || viewModel.selectedFilter == .posts) {
+                    if !results.posts.isEmpty {
                         searchSectionHeader(title: "投稿", count: results.posts.count)
 
                         ForEach(results.posts) { post in
                             PostSearchResultCard(post: post) {
                                 sheetDestination = .postDetail(post.id)
-                            }
-                        }
-                    }
-
-                    // お店結果
-                    if !results.shops.isEmpty && (viewModel.selectedFilter == .all || viewModel.selectedFilter == .shops) {
-                        searchSectionHeader(title: "お店", count: results.shops.count)
-
-                        ForEach(results.shops) { shop in
-                            ShopSearchResultCard(shop: shop) {
-                                appRouter.navigateToShopDetail(shopId: shop.id)
                             }
                         }
                     }
@@ -248,7 +221,7 @@ struct SearchView: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 50))
                 .foregroundColor(.gray)
-            Text("投稿やお店を検索")
+            Text("投稿を検索")
                 .font(.headline)
                 .foregroundColor(.gray)
                 .padding(.top, 8)
@@ -286,17 +259,6 @@ struct SearchView: View {
                     }
 
                     Spacer()
-
-                    // お店情報
-                    if let shop = post.shop {
-                        Text(shop.name)
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.orange.opacity(0.1))
-                            .cornerRadius(8)
-                    }
                 }
 
                 // 投稿内容
@@ -355,98 +317,14 @@ struct SearchView: View {
             }
         }
     }
-
-    // お店検索結果カード
-    struct ShopSearchResultCard: View {
-        let shop: Shop
-        let onTap: () -> Void
-
-                @Environment(LocationManager.self) private var locationManager
-
-        var body: some View {
-            HStack(spacing: 12) {
-                // お店画像
-                AsyncImage(url: ImageURLNormalizer.normalize(shop.imageUrl)) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } placeholder: {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                }
-                .frame(width: 80, height: 80)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .onAppear {
-                    #if DEBUG
-                    ImageDebugLogger.logImage(shop.imageUrl, context: "Search:shopId=\(shop.id)")
-                    #endif
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    // お店名と距離
-                    HStack {
-                        Text(shop.name)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .lineLimit(1)
-
-                        Spacer()
-
-                        if let distance = locationManager.distanceFromUser(to: shop) {
-                            Text(distance)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(4)
-                        }
-                    }
-
-                    // ジャンル
-                    if let genre = shop.genre {
-                        Text(genre.displayName)
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(Color.orange.opacity(0.1))
-                            .cornerRadius(6)
-                    }
-
-                    // 住所
-                    if let address = shop.address {
-                        Text(address)
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .lineLimit(2)
-                    }
-
-                    Spacer()
-                }
-
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-                    .font(.caption)
-            }
-            .padding()
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                onTap()
-            }
-        }
-    }
 }
 
+// MARK: - SearchFilterType
 
 // 検索フィルタータイプ
 enum SearchFilterType: String, CaseIterable {
-    case all = "all"
-    case posts = "posts"
-    case shops = "shops"
+    case all
+    case posts
 
     var displayName: String {
         switch self {
@@ -454,8 +332,6 @@ enum SearchFilterType: String, CaseIterable {
             return "すべて"
         case .posts:
             return "投稿"
-        case .shops:
-            return "お店"
         }
     }
 }

@@ -4,6 +4,8 @@ import UIKit
 import Resolver
 import Observation
 
+// MARK: - CommentViewModel
+
 @MainActor
 @Observable
 class CommentViewModel {
@@ -19,18 +21,15 @@ class CommentViewModel {
     var isValidating: Bool = false
     var validationError: String?
 
-
     private let maxCharacterCount = 500
-    private let maxImageSizeBytes = 10 * 1024 * 1024
-    private let maxImageDimension: CGFloat = 2048
-
+    private let maxImageSizeBytes = 10 * 1_024 * 1_024
+    private let maxImageDimension: CGFloat = 2_048
 
     @ObservationIgnored let createCommentUseCase: CreateCommentUseCase
 
     init(createCommentUseCase: CreateCommentUseCase = Resolver.resolve()) {
         self.createCommentUseCase = createCommentUseCase
     }
-
 
     var canSubmit: Bool {
         let hasValidText = !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -84,14 +83,13 @@ class CommentViewModel {
         return hasText || hasImage
     }
 
-
     func validateContent() {
         isValidating = true
         validationError = nil
 
         let trimmedText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if trimmedText.isEmpty && selectedImage == nil && !commentText.isEmpty {
+        if trimmedText.isEmpty, selectedImage == nil, !commentText.isEmpty {
             validationError = "コメント内容を入力するか、画像を選択してください"
             isValidating = false
             return
@@ -121,8 +119,8 @@ class CommentViewModel {
         }
 
         if imageData.count > maxImageSizeBytes {
-            let sizeMB = Double(imageData.count) / (1024 * 1024)
-            let maxSizeMB = Double(maxImageSizeBytes) / (1024 * 1024)
+            let sizeMB = Double(imageData.count) / (1_024 * 1_024)
+            let maxSizeMB = Double(maxImageSizeBytes) / (1_024 * 1_024)
             return (false, "画像サイズが大きすぎます（\(String(format: "%.1f", sizeMB))MB/\(String(format: "%.0f", maxSizeMB))MB）")
         }
 
@@ -137,7 +135,7 @@ class CommentViewModel {
     func validateForSubmission() -> (isValid: Bool, errorMessage: String?) {
         let trimmedText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if trimmedText.isEmpty && selectedImage == nil {
+        if trimmedText.isEmpty, selectedImage == nil {
             return (false, "コメント内容を入力するか、画像を選択してください")
         }
 
@@ -151,7 +149,6 @@ class CommentViewModel {
 
         return (true, nil)
     }
-
 
     func submitComment(postId: Int) async -> Bool {
         guard !isSubmitting else { return false }
@@ -169,7 +166,11 @@ class CommentViewModel {
             let trimmedText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
 
             let imageData = selectedImage?.jpegData(compressionQuality: 0.8)
-            let comment = try await createCommentUseCase.execute(postId: postId, content: trimmedText, imageData: imageData)
+            let comment = try await createCommentUseCase.execute(
+                postId: postId,
+                content: trimmedText,
+                imageData: imageData
+            )
 
             clearForm()
 
@@ -190,7 +191,6 @@ class CommentViewModel {
             return false
         }
     }
-
 
     func clearForm() {
         commentText = ""
@@ -229,12 +229,10 @@ class CommentViewModel {
         }
 
         let aspectRatio = size.width / size.height
-        let newSize: CGSize
-
-        if size.width > size.height {
-            newSize = CGSize(width: maxImageDimension, height: maxImageDimension / aspectRatio)
+        let newSize = if size.width > size.height {
+            CGSize(width: maxImageDimension, height: maxImageDimension / aspectRatio)
         } else {
-            newSize = CGSize(width: maxImageDimension * aspectRatio, height: maxImageDimension)
+            CGSize(width: maxImageDimension * aspectRatio, height: maxImageDimension)
         }
 
         UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
@@ -246,7 +244,6 @@ class CommentViewModel {
 
         return resizedImage ?? image
     }
-
 
     func handleTextChange(_ newText: String) {
         commentText = newText
@@ -265,7 +262,6 @@ class CommentViewModel {
             return ""
         }
     }
-
 
     private func showSuccess(_ message: String) async {
         successMessage = message
@@ -286,52 +282,49 @@ class CommentViewModel {
         }
     }
 
-
     private func handleCommentError(_ error: CommentError) async {
-        let message: String
-
-        switch error {
+        let message = switch error {
         case .emptyContent:
-            message = "コメント内容を入力してください"
-        case .contentTooLong(let current, let max):
-            message = "コメントが長すぎます（\(current)/\(max)文字）"
-        case .imageUploadFailed(let uploadError):
-            message = "画像のアップロードに失敗しました: \(uploadError.localizedDescription)"
-        case .networkError(let networkError):
-            message = "ネットワークエラーが発生しました: \(networkError.localizedDescription)"
+            "コメント内容を入力してください"
+        case let .contentTooLong(current, max):
+            "コメントが長すぎます（\(current)/\(max)文字）"
+        case let .imageUploadFailed(uploadError):
+            "画像のアップロードに失敗しました: \(uploadError.localizedDescription)"
+        case let .networkError(networkError):
+            "ネットワークエラーが発生しました: \(networkError.localizedDescription)"
         case .unauthorized:
-            message = "認証が必要です。ログインしてください"
+            "認証が必要です。ログインしてください"
         case .postNotFound:
-            message = "投稿が見つかりません"
+            "投稿が見つかりません"
         case .commentNotFound:
-            message = "コメントが見つかりません"
+            "コメントが見つかりません"
         case .invalidURL:
-            message = "無効なURLです"
+            "無効なURLです"
         case .invalidResponse:
-            message = "無効なレスポンスです"
-        case .decodingError(let decodingError):
-            message = "データの読み込みに失敗しました: \(decodingError.localizedDescription)"
-        case .apiError(let code, let apiMessage):
+            "無効なレスポンスです"
+        case let .decodingError(decodingError):
+            "データの読み込みに失敗しました: \(decodingError.localizedDescription)"
+        case let .apiError(code, apiMessage):
             switch code {
             case 401:
-                message = "認証が必要です"
+                "認証が必要です"
             case 403:
-                message = "アクセス権限がありません"
+                "アクセス権限がありません"
             case 404:
-                message = "投稿が見つかりません"
+                "投稿が見つかりません"
             case 422:
-                message = "入力内容に問題があります: \(apiMessage)"
+                "入力内容に問題があります: \(apiMessage)"
             case 429:
-                message = "リクエストが多すぎます。しばらく待ってからお試しください"
+                "リクエストが多すぎます。しばらく待ってからお試しください"
             default:
-                message = "APIエラー（\(code)）: \(apiMessage)"
+                "APIエラー（\(code)）: \(apiMessage)"
             }
-        case .serverError(let serverMessage):
-            message = "サーバーエラー: \(serverMessage)"
+        case let .serverError(serverMessage):
+            "サーバーエラー: \(serverMessage)"
         case .timeout:
-            message = "リクエストがタイムアウトしました"
-        case .unknownError(let unknownError):
-            message = "不明なエラー: \(unknownError.localizedDescription)"
+            "リクエストがタイムアウトしました"
+        case let .unknownError(unknownError):
+            "不明なエラー: \(unknownError.localizedDescription)"
         }
 
         await showError(message)
@@ -343,7 +336,6 @@ class CommentViewModel {
         await showError(message)
         print("🚨 CommentViewModel: GenericError - \(message)")
     }
-
 
     func reset() {
         commentText = ""
@@ -380,7 +372,6 @@ class CommentViewModel {
     }
 }
 
-
 extension CommentViewModel {
     var validationStatus: ValidationStatus {
         if isValidating {
@@ -401,7 +392,6 @@ extension CommentViewModel {
         case invalid
     }
 }
-
 
 #if DEBUG
 extension CommentViewModel {

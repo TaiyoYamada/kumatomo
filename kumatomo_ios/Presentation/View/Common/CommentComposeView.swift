@@ -2,16 +2,16 @@ import SwiftUI
 import Observation
 import PhotosUI
 
+// MARK: - CommentComposeView
+
 struct CommentComposeView: View {
     @Bindable var viewModel: CommentViewModel
     let onSubmit: () async -> Void
-
 
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showImagePicker = false
     @State private var textFieldHeight: CGFloat = 40
     @FocusState private var isTextFieldFocused: Bool
-
 
     private let maxTextFieldHeight: CGFloat = 120
     private let minTextFieldHeight: CGFloat = 40
@@ -56,7 +56,6 @@ struct CommentComposeView: View {
         }
     }
 
-
     private var profileImageView: some View {
         AsyncImage(url: URL(string: CurrentUserManager.shared.currentUser?.profileImageURL ?? "")) { image in
             image
@@ -75,7 +74,6 @@ struct CommentComposeView: View {
         .clipShape(Circle())
         .accessibilityLabel("プロフィール画像")
     }
-
 
     private var textInputArea: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -103,7 +101,7 @@ struct CommentComposeView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .focused($isTextFieldFocused)
-                    .lineLimit(1...6)
+                    .lineLimit(1 ... 6)
                     .onChange(of: viewModel.commentText) { _, newText in
                         viewModel.handleTextChange(newText)
                     }
@@ -126,7 +124,6 @@ struct CommentComposeView: View {
             characterCountView
         }
     }
-
 
     private var characterCountView: some View {
         HStack {
@@ -161,7 +158,6 @@ struct CommentComposeView: View {
         }
     }
 
-
     private func selectedImagePreview(_ image: UIImage) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -195,7 +191,6 @@ struct CommentComposeView: View {
         .transition(.opacity.combined(with: .scale))
     }
 
-
     private var actionButtonsRow: some View {
         HStack(spacing: 16) {
             PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
@@ -212,7 +207,6 @@ struct CommentComposeView: View {
             submitButton
         }
     }
-
 
     private var submitButton: some View {
         Button {
@@ -253,7 +247,6 @@ struct CommentComposeView: View {
         }
     }
 
-
     private func errorMessageView(_ message: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
@@ -275,7 +268,6 @@ struct CommentComposeView: View {
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
 
-
     private var successMessageView: some View {
         HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
@@ -296,7 +288,6 @@ struct CommentComposeView: View {
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
 
-
     private func updateTextFieldHeight(_ newHeight: CGFloat) {
         let calculatedHeight = max(minTextFieldHeight, min(newHeight, maxTextFieldHeight))
         if abs(textFieldHeight - calculatedHeight) > 1 {
@@ -307,7 +298,7 @@ struct CommentComposeView: View {
     }
 
     private func handlePhotoSelection(_ item: PhotosPickerItem?) {
-        guard let item = item else { return }
+        guard let item else { return }
 
         Task {
             do {
@@ -335,12 +326,9 @@ struct CommentComposeView: View {
     }
 }
 
-
 extension CommentComposeView {
-    private func handleKeyboardEvents() {
-    }
+    private func handleKeyboardEvents() {}
 }
-
 
 #Preview("Default State") {
     VStack {

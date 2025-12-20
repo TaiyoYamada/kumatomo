@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - PostCacheManager
+
 class PostCacheManager: ObservableObject {
     static let shared = PostCacheManager()
 
@@ -18,7 +20,6 @@ class PostCacheManager: ObservableObject {
     }
 
     private init() {}
-
 
     func cacheAllPosts(_ posts: [Post]) {
         do {
@@ -121,7 +122,6 @@ class PostCacheManager: ObservableObject {
         }
     }
 
-
     func cacheReactions(_ reactions: [Int: PostReactions]) {
         do {
             let data = try JSONEncoder().encode(reactions)
@@ -172,7 +172,6 @@ class PostCacheManager: ObservableObject {
         }
     }
 
-
     private func isCacheValid(timestampKey: String) -> Bool {
         let timestamp = userDefaults.double(forKey: timestampKey)
         guard timestamp > 0 else { return false }
@@ -190,7 +189,7 @@ class PostCacheManager: ObservableObject {
             CacheKeys.followingPosts,
             CacheKeys.followingPostsTimestamp,
             CacheKeys.reactions,
-            CacheKeys.bookmarks
+            CacheKeys.bookmarks,
         ]
 
         for key in keys {
@@ -206,7 +205,7 @@ class PostCacheManager: ObservableObject {
         let allKeys = Array(userDefaults.dictionaryRepresentation().keys)
         let municipalityKeys = allKeys.filter {
             $0.hasPrefix(CacheKeys.municipalityPosts) ||
-            $0.hasPrefix(CacheKeys.municipalityPostsTimestamp)
+                $0.hasPrefix(CacheKeys.municipalityPostsTimestamp)
         }
 
         for key in municipalityKeys {
@@ -225,7 +224,7 @@ class PostCacheManager: ObservableObject {
             CacheKeys.allPosts,
             CacheKeys.followingPosts,
             CacheKeys.reactions,
-            CacheKeys.bookmarks
+            CacheKeys.bookmarks,
         ]
 
         for key in keys {
@@ -237,7 +236,7 @@ class PostCacheManager: ObservableObject {
 
         let timestamps = [
             userDefaults.double(forKey: CacheKeys.allPostsTimestamp),
-            userDefaults.double(forKey: CacheKeys.followingPostsTimestamp)
+            userDefaults.double(forKey: CacheKeys.followingPostsTimestamp),
         ].compactMap { $0 > 0 ? Date(timeIntervalSince1970: $0) : nil }
 
         if let latest = timestamps.max() {
@@ -248,12 +247,11 @@ class PostCacheManager: ObservableObject {
     }
 }
 
-
 extension PostAPIService {
     func fetchAllPostsWithCache(page: Int = 1, limit: Int = 20, useCache: Bool = true) async throws -> [Post] {
         let isConnected = await NetworkMonitor.shared.isConnected
 
-        if useCache && (!isConnected || page == 1) {
+        if useCache, !isConnected || page == 1 {
             if let cachedPosts = PostCacheManager.shared.getCachedAllPosts() {
                 return Array(cachedPosts.prefix(limit))
             }
@@ -276,10 +274,15 @@ extension PostAPIService {
         }
     }
 
-    func fetchMunicipalityPostsWithCache(municipality: String, page: Int = 1, limit: Int = 20, useCache: Bool = true) async throws -> [Post] {
+    func fetchMunicipalityPostsWithCache(
+        municipality: String,
+        page: Int = 1,
+        limit: Int = 20,
+        useCache: Bool = true
+    ) async throws -> [Post] {
         let isConnected = await NetworkMonitor.shared.isConnected
 
-        if useCache && (!isConnected || page == 1) {
+        if useCache, !isConnected || page == 1 {
             if let cachedPosts = PostCacheManager.shared.getCachedMunicipalityPosts(municipality: municipality) {
                 return Array(cachedPosts.prefix(limit))
             }
@@ -305,7 +308,7 @@ extension PostAPIService {
     func fetchFollowingPostsWithCache(page: Int = 1, limit: Int = 20, useCache: Bool = true) async throws -> [Post] {
         let isConnected = await NetworkMonitor.shared.isConnected
 
-        if useCache && (!isConnected || page == 1) {
+        if useCache, !isConnected || page == 1 {
             if let cachedPosts = PostCacheManager.shared.getCachedFollowingPosts() {
                 return Array(cachedPosts.prefix(limit))
             }

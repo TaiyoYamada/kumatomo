@@ -1,7 +1,6 @@
 import SwiftUI
 import Observation
 
-
 struct PortalView: View {
     @Environment(\.openSidebar) private var openSidebar
     @Environment(CurrentUserManager.self) private var userManager
@@ -11,38 +10,25 @@ struct PortalView: View {
 
     var body: some View {
         ScrollView {
-                LazyVStack(spacing: 24) {
-                    VStack(spacing: 0) {
-                        PortalAdvertisingSlideshow()
-                    }
-                    .padding(.top, 8)
-
-                    VStack(spacing: 10) {
-                        HStack {
-                            Text("サービス一覧")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-                        PortalCardGrid(cards: samplePortalCards)
-                    }
-
-                    VStack {
-                        HStack {
-                            Text("おすすめのお店")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-
-                        RecommendedShopCarouselView(shops: sampleShops)
-                    }
+            LazyVStack(spacing: 24) {
+                VStack(spacing: 0) {
+                    PortalAdvertisingSlideshow()
                 }
-                .padding(.bottom, 16)
+                .padding(.top, 8)
+
+                VStack(spacing: 10) {
+                    HStack {
+                        Text("サービス一覧")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    PortalCardGrid(cards: samplePortalCards)
+                }
+            }
+            .padding(.bottom, 16)
         }
         .scrollIndicators(.hidden)
         .background(Color(.systemGroupedBackground))
@@ -68,7 +54,7 @@ struct PortalView: View {
             }
         }
         .alert("ネットワーク接続", isPresented: $showingNetworkAlert) {
-            Button("OK") { }
+            Button("OK") {}
         } message: {
             Text(networkMonitor.getNetworkStatusMessage())
         }
@@ -80,7 +66,6 @@ struct PortalView: View {
             }
         }
     }
-
 
     private var networkStatusBanner: some View {
         HStack(spacing: 12) {

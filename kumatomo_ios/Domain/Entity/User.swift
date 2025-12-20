@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - User
+
 struct User: Codable, Identifiable, Equatable {
     var id: Int
     var email: String?
@@ -23,21 +25,21 @@ struct User: Codable, Identifiable, Equatable {
 extension User {
 
     func validateEmail() -> ValidationResult {
-        guard let email = self.email else {
+        guard let email else {
             return .invalid(message: "メールアドレスが設定されていません")
         }
         return ProfileFormValidation.validateEmail(email)
     }
 
     func validateName() -> ValidationResult {
-        guard let name = self.name else {
+        guard let name else {
             return .invalid(message: "名前が設定されていません")
         }
         return ProfileFormValidation.validateName(name)
     }
 
     func validateUsername() -> ValidationResult {
-        guard let username = self.username else {
+        guard let username else {
             return .invalid(message: "ユーザーネームが設定されていません")
         }
         return ProfileFormValidation.validateUsername(username)
@@ -72,11 +74,10 @@ extension User {
         )
     }
 
-
     var isProfileComplete: Bool {
         return email != nil && !email!.isEmpty &&
-               name != nil && !name!.isEmpty &&
-               username != nil && !username!.isEmpty
+            name != nil && !name!.isEmpty &&
+            username != nil && !username!.isEmpty
     }
 
     func updatedProfile(
@@ -91,18 +92,20 @@ extension User {
     ) -> User {
         var updatedUser = self
 
-        if let email = email { updatedUser.email = email }
-        if let name = name { updatedUser.name = name }
-        if let username = username { updatedUser.username = username }
-        if let bio = bio { updatedUser.bio = bio }
-        if let location = location { updatedUser.location = location }
-        if let birthday = birthday { updatedUser.birthday = birthday }
-        if let profileImageURL = profileImageURL { updatedUser.profileImageURL = profileImageURL }
-        if let coverImageURL = coverImageURL { updatedUser.coverImageURL = coverImageURL }
+        if let email { updatedUser.email = email }
+        if let name { updatedUser.name = name }
+        if let username { updatedUser.username = username }
+        if let bio { updatedUser.bio = bio }
+        if let location { updatedUser.location = location }
+        if let birthday { updatedUser.birthday = birthday }
+        if let profileImageURL { updatedUser.profileImageURL = profileImageURL }
+        if let coverImageURL { updatedUser.coverImageURL = coverImageURL }
 
         return updatedUser
     }
 }
+
+// MARK: - CreateUserRequest
 
 struct CreateUserRequest: Codable {
     var id: Int
@@ -111,7 +114,7 @@ struct CreateUserRequest: Codable {
 
 extension CreateUserRequest {
     init(from user: User) {
-        self.id = user.id
-        self.email = user.email
+        id = user.id
+        email = user.email
     }
 }

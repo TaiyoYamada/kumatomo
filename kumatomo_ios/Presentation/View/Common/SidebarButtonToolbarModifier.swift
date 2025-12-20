@@ -1,6 +1,8 @@
 import SwiftUI
 import Observation
 
+// MARK: - SidebarButtonToolbarModifier
+
 struct SidebarButtonToolbarModifier: ViewModifier {
     @Environment(\.openSidebar) private var openSidebar
     @Environment(CurrentUserManager.self) private var userManager
@@ -9,7 +11,7 @@ struct SidebarButtonToolbarModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.toolbar {
-            if show && !sidebarState.isPresented {
+            if show, !sidebarState.isPresented {
                 ToolbarItem(placement: .navigationBarLeading) {
                     ProfileIconButton(user: userManager.currentUser) {
                         openSidebar()
@@ -22,6 +24,6 @@ struct SidebarButtonToolbarModifier: ViewModifier {
 
 extension View {
     func sidebarButton(show: Bool = true) -> some View {
-        self.modifier(SidebarButtonToolbarModifier(show: show))
+        modifier(SidebarButtonToolbarModifier(show: show))
     }
 }

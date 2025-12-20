@@ -26,7 +26,7 @@ enum APIHelper {
                 "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
                 "yyyy-MM-dd'T'HH:mm:ssXXXXX",
                 "yyyy-MM-dd'T'HH:mm:ss'Z'",
-                "yyyy-MM-dd HH:mm:ss"
+                "yyyy-MM-dd HH:mm:ss",
             ]
             let df = DateFormatter()
             df.locale = Locale(identifier: "en_US_POSIX")
@@ -62,7 +62,7 @@ enum APIHelper {
             "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
             "yyyy-MM-dd'T'HH:mm:ssXXXXX",
             "yyyy-MM-dd'T'HH:mm:ss'Z'",
-            "yyyy-MM-dd HH:mm:ss"
+            "yyyy-MM-dd HH:mm:ss",
         ]
         let df = DateFormatter()
         df.locale = Locale(identifier: "en_US_POSIX")

@@ -29,7 +29,7 @@ enum AuthError: Error, LocalizedError {
             return "プロフィールの更新に失敗しました"
         case .userNotFound:
             return "ユーザー情報が見つかりません"
-        case .serverError(let message):
+        case let .serverError(message):
             return message
         }
     }

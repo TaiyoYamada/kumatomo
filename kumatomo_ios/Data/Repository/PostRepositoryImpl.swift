@@ -27,12 +27,22 @@ final class PostRepositoryImpl: PostRepository {
         try await service.createPost(userId: userId, content: content, imageUrl: imageUrl, tags: tags)
     }
 
-    func createPostWithMultipleImages(userId: Int, content: String, shopId: Int?, imageUrls: [String], tags: [String]) async throws -> Post {
-        try await service.createPostWithMultipleImages(userId: userId, content: content, shopId: shopId, imageUrls: imageUrls, tags: tags)
+    func createPostWithMultipleImages(
+        userId: Int,
+        content: String,
+        imageUrls: [String],
+        tags: [String]
+    ) async throws -> Post {
+        try await service.createPostWithMultipleImages(
+            userId: userId,
+            content: content,
+            imageUrls: imageUrls,
+            tags: tags
+        )
     }
 
-    func updatePost(postId: Int, content: String, shopId: Int?, tags: [String]) async throws -> Post {
-        try await service.updatePost(postId: postId, content: content, shopId: shopId, tags: tags)
+    func updatePost(postId: Int, content: String, tags: [String]) async throws -> Post {
+        try await service.updatePost(postId: postId, content: content, tags: tags)
     }
 
     func deletePost(postId: Int) async throws {
@@ -43,7 +53,10 @@ final class PostRepositoryImpl: PostRepository {
         try await service.fetchPost(postId: postId)
     }
 
-    func toggleReaction(postId: Int, reactionType: ReactionType) async throws -> (reactions: PostReactions, userReaction: ReactionType?) {
+    func toggleReaction(
+        postId: Int,
+        reactionType: ReactionType
+    ) async throws -> (reactions: PostReactions, userReaction: ReactionType?) {
         try await service.toggleReaction(postId: postId, reactionType: reactionType)
     }
 
@@ -55,8 +68,18 @@ final class PostRepositoryImpl: PostRepository {
         try await service.fetchAllPostsWithCache(page: page, limit: limit, useCache: useCache)
     }
 
-    func fetchMunicipalityPostsWithCache(municipality: String, page: Int, limit: Int, useCache: Bool) async throws -> [Post] {
-        try await service.fetchMunicipalityPostsWithCache(municipality: municipality, page: page, limit: limit, useCache: useCache)
+    func fetchMunicipalityPostsWithCache(
+        municipality: String,
+        page: Int,
+        limit: Int,
+        useCache: Bool
+    ) async throws -> [Post] {
+        try await service.fetchMunicipalityPostsWithCache(
+            municipality: municipality,
+            page: page,
+            limit: limit,
+            useCache: useCache
+        )
     }
 
     func fetchFollowingPostsWithCache(page: Int, limit: Int, useCache: Bool) async throws -> [Post] {

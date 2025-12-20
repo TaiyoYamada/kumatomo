@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - PostImage
+
 struct PostImage: Identifiable, Codable, Equatable {
     var id: Int
     var postId: Int?
@@ -13,7 +15,7 @@ struct PostImage: Identifiable, Codable, Equatable {
         case postId = "post_id"
         case imageUrl = "image_url"
         case imageUrlAlt = "imageUrl"
-        case url = "url"               // シンプル版
+        case url // シンプル版
         case displayOrder = "display_order"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
@@ -23,7 +25,7 @@ struct PostImage: Identifiable, Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         // 利用可能なキーをログ出力
-        let availableKeys = container.allKeys.map { $0.stringValue }
+        let availableKeys = container.allKeys.map(\.stringValue)
         print("🔍 PostImage利用可能キー: \(availableKeys)")
 
         id = try container.decode(Int.self, forKey: .id)
@@ -40,7 +42,13 @@ struct PostImage: Identifiable, Codable, Equatable {
             print("🔍 urlキーを使用")
         } else {
             print("🚨 画像URLキーが見つかりません。利用可能キー: \(availableKeys)")
-            throw DecodingError.keyNotFound(CodingKeys.imageUrl, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "image_url, imageUrl, url のいずれのキーも見つかりません"))
+            throw DecodingError.keyNotFound(
+                CodingKeys.imageUrl,
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "image_url, imageUrl, url のいずれのキーも見つかりません"
+                )
+            )
         }
 
         displayOrder = try container.decodeIfPresent(Int.self, forKey: .displayOrder) ?? 1
@@ -67,7 +75,7 @@ extension PostImage {
         self.postId = postId
         self.imageUrl = imageUrl
         self.displayOrder = displayOrder
-        self.createdAt = Date()
-        self.updatedAt = Date()
+        createdAt = Date()
+        updatedAt = Date()
     }
 }

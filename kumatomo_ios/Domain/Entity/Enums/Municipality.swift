@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - Municipality
+
 enum Municipality: String, CaseIterable, Codable {
     // 熊本市
     case kumamotoChuo = "熊本市中央区"
@@ -57,7 +59,7 @@ enum Municipality: String, CaseIterable, Codable {
     case reihoku = "苓北町"
 
     var displayName: String {
-        return self.rawValue
+        return rawValue
     }
 
     var region: Region {
@@ -83,6 +85,8 @@ enum Municipality: String, CaseIterable, Codable {
         }
     }
 }
+
+// MARK: - Region
 
 enum Region: String, CaseIterable {
     case kumamotoCity = "熊本市"

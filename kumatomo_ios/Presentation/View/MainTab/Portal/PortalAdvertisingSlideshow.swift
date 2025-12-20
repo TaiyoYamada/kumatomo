@@ -17,7 +17,7 @@ struct PortalAdvertisingSlideshow: View {
                 emptyStateView
             } else {
                 TabView(selection: $currentSlideIndex) {
-                    ForEach(0..<slideImages.count, id: \.self) { index in
+                    ForEach(0 ..< slideImages.count, id: \.self) { index in
                         slideImageView(for: index)
                             .tag(index)
                     }
@@ -42,7 +42,7 @@ struct PortalAdvertisingSlideshow: View {
             restartTimer()
         }
         .onChange(of: networkMonitor.isConnected) { _, isConnected in
-            if isConnected && hasValidImages {
+            if isConnected, hasValidImages {
                 restartTimer()
             } else {
                 stopTimer()
@@ -50,10 +50,9 @@ struct PortalAdvertisingSlideshow: View {
         }
     }
 
-
     private func startTimer() {
 
-        guard slideImages.count > 1 && hasValidImages else { return }
+        guard slideImages.count > 1, hasValidImages else { return }
 
         timer = PortalErrorHandler.shared.createTimer(
             interval: slideDuration,
@@ -69,19 +68,15 @@ struct PortalAdvertisingSlideshow: View {
         }
     }
 
-
     private func stopTimer() {
         PortalErrorHandler.shared.invalidateTimer(timer)
         timer = nil
     }
 
-
     private func restartTimer() {
         stopTimer()
         startTimer()
     }
-
-
 
     private func validateImages() {
         let validation = PortalErrorHandler.shared.validateAssets(slideImages)
@@ -94,7 +89,6 @@ struct PortalAdvertisingSlideshow: View {
         }
     }
 
-
     @ViewBuilder
     private func slideImageView(for index: Int) -> some View {
         let imageName = slideImages[index]
@@ -102,14 +96,13 @@ struct PortalAdvertisingSlideshow: View {
         if PortalErrorHandler.shared.validateImageAsset(imageName) {
             Image(imageName)
                 .resizable()
-                .aspectRatio(16/9, contentMode: .fill)
+                .aspectRatio(16 / 9, contentMode: .fill)
                 .clipped()
                 .cornerRadius(12)
         } else {
             placeholderView(for: index, imageName: imageName, isError: true)
         }
     }
-
 
     @ViewBuilder
     private func placeholderView(for index: Int, imageName: String, isError: Bool = false) -> some View {
@@ -145,11 +138,10 @@ struct PortalAdvertisingSlideshow: View {
                 }
                 .padding()
             }
-            .aspectRatio(16/9, contentMode: .fill)
+            .aspectRatio(16 / 9, contentMode: .fill)
             .clipped()
             .cornerRadius(12)
     }
-
 
     private var emptyStateView: some View {
         Rectangle()
@@ -172,7 +164,6 @@ struct PortalAdvertisingSlideshow: View {
             }
             .cornerRadius(12)
     }
-
 
     private var networkStatusIndicator: some View {
         HStack(spacing: 4) {

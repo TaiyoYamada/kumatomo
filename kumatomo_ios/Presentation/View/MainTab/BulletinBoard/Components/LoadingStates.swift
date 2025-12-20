@@ -1,12 +1,13 @@
 import SwiftUI
 
+// MARK: - SkeletonLoadingView
 
 struct SkeletonLoadingView: View {
     @State private var isAnimating = false
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(0..<5, id: \.self) { index in
+            ForEach(0 ..< 5, id: \.self) { _ in
                 SkeletonPostItem()
 
                 Rectangle()
@@ -23,6 +24,8 @@ struct SkeletonLoadingView: View {
         }
     }
 }
+
+// MARK: - SkeletonPostItem
 
 struct SkeletonPostItem: View {
     @State private var shimmerOffset: CGFloat = -200
@@ -72,7 +75,7 @@ struct SkeletonPostItem: View {
                     .shimmer(offset: shimmerOffset)
 
                 HStack(spacing: 16) {
-                    ForEach(0..<3, id: \.self) { _ in
+                    ForEach(0 ..< 3, id: \.self) { _ in
                         HStack(spacing: 4) {
                             Circle()
                                 .fill(Color.gray.opacity(0.3))
@@ -107,6 +110,7 @@ struct SkeletonPostItem: View {
     }
 }
 
+// MARK: - ErrorStateView
 
 struct ErrorStateView: View {
     let error: String
@@ -211,6 +215,8 @@ struct ErrorStateView: View {
     }
 }
 
+// MARK: - NetworkErrorView
+
 struct NetworkErrorView: View {
     let onRetry: () -> Void
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -313,6 +319,7 @@ struct NetworkErrorView: View {
     }
 }
 
+// MARK: - PaginationLoadingView
 
 struct PaginationLoadingView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -358,6 +365,8 @@ struct PaginationLoadingView: View {
     }
 }
 
+// MARK: - RefreshLoadingView
+
 struct RefreshLoadingView: View {
     var body: some View {
         HStack {
@@ -373,6 +382,7 @@ struct RefreshLoadingView: View {
     }
 }
 
+// MARK: - ShimmerEffect
 
 struct ShimmerEffect: ViewModifier {
     let offset: CGFloat
@@ -386,7 +396,7 @@ struct ShimmerEffect: ViewModifier {
                             colors: [
                                 Color.clear,
                                 Color.white.opacity(0.6),
-                                Color.clear
+                                Color.clear,
                             ],
                             startPoint: .leading,
                             endPoint: .trailing
@@ -402,10 +412,11 @@ struct ShimmerEffect: ViewModifier {
 
 extension View {
     func shimmer(offset: CGFloat) -> some View {
-        self.modifier(ShimmerEffect(offset: offset))
+        modifier(ShimmerEffect(offset: offset))
     }
 }
 
+// MARK: - ToastView
 
 struct ToastView: View {
     let message: String

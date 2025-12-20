@@ -20,7 +20,7 @@ class PostController extends Controller
 
     public function index(Request $request)
     {
-        $posts = Post::with(['user', 'shop', 'images'])->latest()->get();
+        $posts = Post::with(['user', 'images'])->latest()->get();
         
         // Add engagement data for authenticated users
         if ($request->user()) {
@@ -59,7 +59,6 @@ class PostController extends Controller
         // カスタムバリデーション: contentまたは画像のいずれかが必要
         $request->validate([
             'content' => 'nullable|string|max:500',
-            'shop_id' => 'nullable|integer|exists:shops,id',
             'images' => 'nullable|array|max:5',
             'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:5120', // 画像ファイルの場合
             'image_urls' => 'nullable|array|max:5', // 画像URLの配列
@@ -94,7 +93,6 @@ class PostController extends Controller
             $postData = [
                 'user_id' => $request->user()->id,
                 'content' => $validated['content'] ?? '', // 空の場合は空文字列
-                'shop_id' => $validated['shop_id'] ?? null,
                 'tags' => $validated['tags'] ?? null,
             ];
 
@@ -176,7 +174,7 @@ class PostController extends Controller
             DB::commit();
 
             // 作成後のPostオブジェクトをリロードしてログ出力
-            $createdPost = $post->load(['user', 'shop', 'images']);
+            $createdPost = $post->load(['user', 'images']);
             
             \Log::info('作成された投稿の詳細', [
                 'post_id' => $createdPost->id,
@@ -199,7 +197,7 @@ class PostController extends Controller
 
     public function show(Request $request, Post $post)
     {
-        $post->load(['user', 'shop', 'images', 'comments.user:id,name,username,profile_image_url']);
+        $post->load(['user', 'images', 'comments.user:id,name,username,profile_image_url']);
         
         // Add engagement data for authenticated users
         if ($request->user()) {
@@ -229,14 +227,13 @@ class PostController extends Controller
 
         $validated = $request->validate([
             'content' => 'required|string|max:500',
-            'shop_id' => 'nullable|integer|exists:shops,id',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:20',
         ]);
 
         $post->update($validated);
 
-        return response()->json($post->load(['user', 'shop', 'images']));
+        return response()->json($post->load(['user', 'images']));
     }
 
     public function destroy(Request $request, Post $post)
@@ -312,7 +309,7 @@ class PostController extends Controller
 
         $query = Post::query()
             ->whereRaw("JSON_SEARCH(tags, 'one', ?) IS NOT NULL", [$pattern])
-            ->with(['user', 'shop', 'images'])
+            ->with(['user', 'images'])
             ->latest();
 
         // ページネーション（簡易）
@@ -353,7 +350,7 @@ class PostController extends Controller
         $limit = (int)($validated['limit'] ?? 20);
 
         $posts = $user->stories()
-            ->with(['user', 'shop', 'images'])
+            ->with(['user', 'images'])
             ->latest()
             ->forPage($page, $limit)
             ->get();
@@ -372,45 +369,6 @@ class PostController extends Controller
             });
         }
         
-        return response()->json($posts);
-    }
-
-    /**
-     * 特定のお店の投稿を一覧取得
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $shopId
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function indexByShop(Request $request, int $shopId)
-    {
-        $validated = $request->validate([
-            'page' => 'nullable|integer|min:1',
-            'per_page' => 'nullable|integer|min:1|max:50',
-        ]);
-
-        $page = $validated['page'] ?? 1;
-        $perPage = $validated['per_page'] ?? 10;
-
-        $posts = Post::where('shop_id', $shopId)
-            ->with(['user', 'shop', 'images'])
-            ->latest()
-            ->paginate($perPage, ['*'], 'page', $page);
-
-        // Add engagement data for authenticated users
-        if ($request->user()) {
-            $userId = $request->user()->id;
-            $posts->getCollection()->transform(function ($post) use ($userId) {
-                $engagementData = $post->getEngagementDataForUser($userId);
-                $post->like_count = $engagementData['like_count'];
-                $post->bookmark_count = $engagementData['bookmark_count'];
-                $post->comment_count = $engagementData['comment_count'];
-                $post->is_liked_by_current_user = $engagementData['is_liked_by_current_user'];
-                $post->is_bookmarked_by_current_user = $engagementData['is_bookmarked_by_current_user'];
-                return $post;
-            });
-        }
-
         return response()->json($posts);
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+// MARK: - OfflineDataCache
 
 @MainActor
 class OfflineDataCache: ObservableObject {
@@ -13,7 +14,7 @@ class OfflineDataCache: ObservableObject {
     private let networkMonitor = NetworkMonitor.shared
     private var cancellables = Set<AnyCancellable>()
     private let maxCacheSize = 50
-    private let defaultTTL: TimeInterval = 3600
+    private let defaultTTL: TimeInterval = 3_600
     private let persistenceKey = "ProfileCache"
 
     private init() {
@@ -21,7 +22,6 @@ class OfflineDataCache: ObservableObject {
         setupNetworkMonitoring()
         startCacheCleanupTimer()
     }
-
 
     func cacheProfile(_ profile: User, ttl: TimeInterval? = nil) {
         let cachedProfile = CachedProfile(
@@ -87,7 +87,6 @@ class OfflineDataCache: ObservableObject {
             print("🧹 Cleaned up \(expiredKeys.count) expired cache entries")
         }
     }
-
 
     func hasValidCachedProfile(id: String) -> Bool {
         guard let cachedProfile = cachedProfiles[id] else {
@@ -162,7 +161,6 @@ class OfflineDataCache: ObservableObject {
         )
     }
 
-
     private func removeOldestCacheEntry() {
         guard let oldestEntry = cachedProfiles.min(by: { $0.value.lastAccessed < $1.value.lastAccessed }) else {
             return
@@ -195,7 +193,6 @@ class OfflineDataCache: ObservableObject {
             .store(in: &cancellables)
     }
 
-
     private func persistCache() {
         do {
             let data = try JSONEncoder().encode(cachedProfiles)
@@ -225,10 +222,9 @@ class OfflineDataCache: ObservableObject {
         }
     }
 
-
     func getCacheStatistics() -> CacheStatistics {
         let now = Date()
-        let expiredCount = cachedProfiles.values.filter { $0.isExpired }.count
+        let expiredCount = cachedProfiles.values.filter(\.isExpired).count
         let validCount = cachedProfiles.count - expiredCount
 
         let totalSize = cachedProfiles.values.reduce(0) { result, cachedProfile in
@@ -254,6 +250,7 @@ class OfflineDataCache: ObservableObject {
     }
 }
 
+// MARK: - CachedProfile
 
 struct CachedProfile: Codable {
     let profile: User
@@ -267,7 +264,7 @@ struct CachedProfile: Codable {
         self.cachedAt = cachedAt
         self.ttl = ttl
         self.source = source
-        self.lastAccessed = cachedAt
+        lastAccessed = cachedAt
     }
 
     var isExpired: Bool {
@@ -286,16 +283,20 @@ struct CachedProfile: Codable {
     }
 }
 
+// MARK: - CacheSource
+
 enum CacheSource: String, Codable {
-    case network = "network"
-    case offline = "offline"
-    case manual = "manual"
+    case network
+    case offline
+    case manual
 }
 
+// MARK: - CacheStatus
+
 enum CacheStatus: String, CaseIterable {
-    case idle = "idle"
-    case syncing = "syncing"
-    case error = "error"
+    case idle
+    case syncing
+    case error
 
     var displayName: String {
         switch self {
@@ -309,6 +310,8 @@ enum CacheStatus: String, CaseIterable {
     }
 }
 
+// MARK: - CacheValidationResult
+
 struct CacheValidationResult {
     let totalEntries: Int
     let validEntries: Int
@@ -319,6 +322,8 @@ struct CacheValidationResult {
         return corruptedEntries == 0 && expiredEntries < totalEntries / 2
     }
 }
+
+// MARK: - CacheStatistics
 
 struct CacheStatistics {
     let totalEntries: Int
@@ -331,14 +336,13 @@ struct CacheStatistics {
     let hitRate: Double
 
     var totalSizeMB: Double {
-        return Double(totalSizeBytes) / (1024 * 1024)
+        return Double(totalSizeBytes) / (1_024 * 1_024)
     }
 
     var averageAgeMinutes: Double {
         return averageAgeSeconds / 60
     }
 }
-
 
 extension OfflineDataCache {
     func preloadProfiles(_ profiles: [User]) {
@@ -358,7 +362,7 @@ extension OfflineDataCache {
         }
 
         if let lastSync = lastSyncDate {
-            return Date().timeIntervalSince(lastSync) > 3600
+            return Date().timeIntervalSince(lastSync) > 3_600
         }
 
         return true

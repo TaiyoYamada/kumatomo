@@ -1,14 +1,14 @@
 import Foundation
 
+// MARK: - SidebarMenuItemType
+
 enum SidebarMenuItemType: CaseIterable {
-    case kumamonAI, bookmarks, likes, favoriteShops, coupons, notifications, help, contact, settings, logout
+    case bookmarks, likes, coupons, notifications, help, contact, settings, logout
 
     var icon: String {
         switch self {
-        case .kumamonAI: return "bubble.left.and.bubble.right"
         case .bookmarks: return "bookmark.fill"
         case .likes: return "heart.fill"
-        case .favoriteShops: return "star.fill"
         case .coupons: return "ticket.fill"
         case .notifications: return "bell.fill"
         case .help: return "questionmark.circle.fill"
@@ -20,10 +20,8 @@ enum SidebarMenuItemType: CaseIterable {
 
     var title: String {
         switch self {
-        case .kumamonAI: return "くまモンAI"
         case .bookmarks: return "ブックマーク"
         case .likes: return "いいね"
-        case .favoriteShops: return "お気に入り店舗"
         case .coupons: return "クーポン"
         case .notifications: return "お知らせ"
         case .help: return "ヘルプ"
@@ -35,10 +33,8 @@ enum SidebarMenuItemType: CaseIterable {
 
     var subtitle: String? {
         switch self {
-        case .kumamonAI: return "AIに相談する"
         case .bookmarks: return "保存した投稿"
         case .likes: return "いいねした投稿"
-        case .favoriteShops: return "保存したお店"
         case .coupons: return "利用可能なクーポン"
         case .settings: return "アプリの設定"
         case .logout: return "サインアウトします"
@@ -62,12 +58,13 @@ enum SidebarMenuItemType: CaseIterable {
 
     var isPrimarySection: Bool {
         switch self {
-        case .kumamonAI, .bookmarks, .likes, .favoriteShops, .coupons: return true
+        case .bookmarks, .likes, .coupons: return true
         default: return false
         }
     }
 }
 
+// MARK: Identifiable
 
 extension SidebarMenuItemType: Identifiable {
     var id: String { title }
