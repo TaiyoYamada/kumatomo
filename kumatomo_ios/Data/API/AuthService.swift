@@ -38,7 +38,7 @@ final class AuthService: ObservableObject {
     func signIn(withEmail email: String, password: String) async throws {
         let response: AuthResponse = try await client.post(AuthEndpoint.login(email: email, password: password))
 
-        AuthTokenManager.shared.token = response.access_token
+        AuthTokenManager.shared.token = response.accessToken
         isAuthenticated = true
 
         try await fetchCurrentUser()
@@ -70,7 +70,7 @@ final class AuthService: ObservableObject {
         let response: AuthResponse = try await client.post(AuthEndpoint.register(email: email, password: password))
 
         print("✅ トークン取得成功")
-        AuthTokenManager.shared.token = response.access_token
+        AuthTokenManager.shared.token = response.accessToken
         isAuthenticated = true
 
         try await fetchCurrentUser()
@@ -159,8 +159,8 @@ final class AuthService: ObservableObject {
 // MARK: - AuthResponse
 
 struct AuthResponse: Codable {
-    let access_token: String
-    let token_type: String
+    let accessToken: String
+    let tokenType: String
 }
 
 // MARK: - ErrorResponse
