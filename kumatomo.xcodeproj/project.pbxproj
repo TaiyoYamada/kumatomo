@@ -10,6 +10,11 @@
 		E5A685602EEDAD5D008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A6855F2EEDAD5D008E8034 /* Resolver */; };
 		E5A685622EEDAD6A008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A685612EEDAD6A008E8034 /* Resolver */; };
 		E5A685642EEDAD79008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A685632EEDAD79008E8034 /* Resolver */; };
+		E5CDAC752EF6EED900F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC742EF6EED900F58A49 /* Factory */; };
+		E5CDAC772EF6EED900F58A49 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC762EF6EED900F58A49 /* FactoryTesting */; };
+		E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC782EF6EEE500F58A49 /* Factory */; };
+		E5CDAC7B2EF6EEED00F58A49 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */; };
+		E5CDAC7D2EF6EEF200F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC7C2EF6EEF200F58A49 /* Factory */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -102,6 +107,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */,
+				E5CDAC772EF6EED900F58A49 /* FactoryTesting in Frameworks */,
 				E5A685642EEDAD79008E8034 /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -110,6 +117,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5CDAC7D2EF6EEF200F58A49 /* Factory in Frameworks */,
+				E5CDAC7B2EF6EEED00F58A49 /* FactoryTesting in Frameworks */,
 				E5A685622EEDAD6A008E8034 /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,6 +128,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E5A685602EEDAD5D008E8034 /* Resolver in Frameworks */,
+				E5CDAC752EF6EED900F58A49 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,6 +188,8 @@
 			name = kumatomoTests;
 			packageProductDependencies = (
 				E5A685632EEDAD79008E8034 /* Resolver */,
+				E5CDAC762EF6EED900F58A49 /* FactoryTesting */,
+				E5CDAC782EF6EEE500F58A49 /* Factory */,
 			);
 			productName = kumatomoTests;
 			productReference = E51A7E8E2EED6BCF00842CE5 /* kumatomoTests.xctest */;
@@ -202,6 +214,8 @@
 			name = kumatomoUITests;
 			packageProductDependencies = (
 				E5A685612EEDAD6A008E8034 /* Resolver */,
+				E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */,
+				E5CDAC7C2EF6EEF200F58A49 /* Factory */,
 			);
 			productName = kumatomoUITests;
 			productReference = E51A7E9D2EED6BE000842CE5 /* kumatomoUITests.xctest */;
@@ -228,6 +242,7 @@
 			name = kumatomo;
 			packageProductDependencies = (
 				E5A6855F2EEDAD5D008E8034 /* Resolver */,
+				E5CDAC742EF6EED900F58A49 /* Factory */,
 			);
 			productName = kumatomo;
 			productReference = E5CD33332E43698300ACDA82 /* kumatomo.app */;
@@ -268,6 +283,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */,
+				E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E5CD33342E43698300ACDA82 /* Products */;
@@ -1309,6 +1325,14 @@
 				minimumVersion = 1.5.1;
 			};
 		};
+		E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1326,6 +1350,31 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */;
 			productName = Resolver;
+		};
+		E5CDAC742EF6EED900F58A49 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		E5CDAC762EF6EED900F58A49 /* FactoryTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryTesting;
+		};
+		E5CDAC782EF6EEE500F58A49 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryTesting;
+		};
+		E5CDAC7C2EF6EEF200F58A49 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
