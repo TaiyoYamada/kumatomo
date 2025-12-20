@@ -1,6 +1,6 @@
 import Foundation
 import SwiftUI
-import Resolver
+import Factory
 import Observation
 
 @MainActor
@@ -13,7 +13,7 @@ class SearchViewModel {
     var selectedFilter: SearchFilterType = .all
     var showingSearchHistory = false
 
-    @ObservationIgnored @Injected var searchUseCase: SearchUseCase
+    @ObservationIgnored @Injected(\.searchUseCase) var searchUseCase
     private let historyManager = SearchHistoryManager.shared
 
     var hasSearchResults: Bool {

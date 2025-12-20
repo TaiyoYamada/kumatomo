@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import UIKit
-import Resolver
+import Factory
 import Observation
 
 // MARK: - PostDetailViewModel
@@ -26,12 +26,12 @@ class PostDetailViewModel {
     var selectedCommentImage: UIImage?
     var showImagePicker: Bool = false
 
-    @ObservationIgnored @Injected var fetchPostUseCase: FetchPostUseCase
-    @ObservationIgnored @Injected var fetchCommentsUseCase: FetchCommentsUseCase
-    @ObservationIgnored @Injected var createCommentUseCase: CreateCommentUseCase
-    @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
-    @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
-    @ObservationIgnored @Injected var authRepository: AuthRepository
+    @ObservationIgnored @Injected(\.fetchPostUseCase) var fetchPostUseCase
+    @ObservationIgnored @Injected(\.fetchCommentsUseCase) var fetchCommentsUseCase
+    @ObservationIgnored @Injected(\.createCommentUseCase) var createCommentUseCase
+    @ObservationIgnored @Injected(\.toggleLikeUseCase) var toggleLikeUseCase
+    @ObservationIgnored @Injected(\.toggleBookmarkUseCase) var toggleBookmarkUseCase
+    @ObservationIgnored @Injected(\.authRepository) var authRepository
 
     var canAddComment: Bool {
         let hasText = !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

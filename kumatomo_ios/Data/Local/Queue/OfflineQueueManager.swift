@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import UIKit
 import Observation
+import Factory
 
 // MARK: - OfflineQueueManager
 
@@ -19,6 +20,10 @@ class OfflineQueueManager {
     private var cancellables = Set<AnyCancellable>()
     private let maxQueueSize = 100
     private let persistenceKey = "OfflineQueue"
+
+    // DI Services
+    @ObservationIgnored @Injected(\.userAPIService) var userAPIService
+    @ObservationIgnored @Injected(\.imageUploadService) var imageUploadService
 
     private init() {
         loadPersistedQueue()
@@ -124,7 +129,6 @@ class OfflineQueueManager {
             throw ProfileError.dataCorrupted
         }
 
-        let userAPIService = UserAPIService()
         _ = try await userAPIService.createProfile(user)
     }
 
@@ -134,7 +138,6 @@ class OfflineQueueManager {
             throw ProfileError.dataCorrupted
         }
 
-        let userAPIService = UserAPIService()
         _ = try await userAPIService.updateProfile(user)
     }
 
@@ -144,7 +147,6 @@ class OfflineQueueManager {
             throw ProfileError.dataCorrupted
         }
 
-        let userAPIService = UserAPIService()
         _ = try await userAPIService.deleteProfile(userID: userID)
     }
 
@@ -154,7 +156,6 @@ class OfflineQueueManager {
             throw ProfileError.dataCorrupted
         }
 
-        let imageUploadService = ImageUploadService()
         _ = try await imageUploadService.uploadProfileImage(image)
     }
 
@@ -164,7 +165,6 @@ class OfflineQueueManager {
             throw ProfileError.dataCorrupted
         }
 
-        let imageUploadService = ImageUploadService()
         _ = try await imageUploadService.uploadCoverImage(image)
     }
 

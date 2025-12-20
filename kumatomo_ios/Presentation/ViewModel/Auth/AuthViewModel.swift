@@ -2,7 +2,7 @@ import Foundation
 import PhotosUI
 import SwiftUI
 import Combine
-import Resolver
+import Factory
 import Observation
 
 @MainActor
@@ -30,12 +30,12 @@ final class AuthViewModel {
 
     // - サービス依存性
 
-    @ObservationIgnored @Injected var authRepository: AuthRepository // 認証・ユーザー取得
-    @ObservationIgnored @Injected var imageUploader: ImageUploadRepository // 画像アップロード
-    @ObservationIgnored @Injected var signInUseCase: SignInUseCase
-    @ObservationIgnored @Injected var signOutUseCase: SignOutUseCase
-    @ObservationIgnored @Injected var createUserUseCase: CreateUserUseCase
-    @ObservationIgnored @Injected var updateUserUseCase: UpdateUserUseCase
+    @ObservationIgnored @Injected(\.authRepository) var authRepository
+    @ObservationIgnored @Injected(\.imageUploadRepository) var imageUploader
+    @ObservationIgnored @Injected(\.signInUseCase) var signInUseCase
+    @ObservationIgnored @Injected(\.signOutUseCase) var signOutUseCase
+    @ObservationIgnored @Injected(\.createUserUseCase) var createUserUseCase
+    @ObservationIgnored @Injected(\.updateUserUseCase) var updateUserUseCase
 
     private var cancellables = Set<AnyCancellable>()
 

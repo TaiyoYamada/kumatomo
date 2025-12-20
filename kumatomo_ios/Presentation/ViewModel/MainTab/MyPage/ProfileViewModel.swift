@@ -3,7 +3,7 @@ import Foundation
 import UIKit
 import Combine
 import PhotosUI
-import Resolver
+import Factory
 import Observation
 
 // MARK: - ProfileViewModel
@@ -83,10 +83,10 @@ class ProfileViewModel {
         return isFormValid && hasUnsavedChanges && !isProcessing && !isValidatingUsername && !isOffline
     }
 
-    @ObservationIgnored @Injected var userAPIService: UserAPIService
-    @ObservationIgnored @Injected var postAPIService: PostAPIService
-    @ObservationIgnored private let imageManager = ProfileImageManager()
-    private let imageUploadService = ImageUploadService() // 追加: 画像アップロードサービス
+    @ObservationIgnored @Injected(\.userAPIService) var userAPIService
+    @ObservationIgnored @Injected(\.postAPIService) var postAPIService
+    @ObservationIgnored @Injected(\.profileImageManager) var imageManager
+    @ObservationIgnored @Injected(\.imageUploadService) var imageUploadService
     private let errorHandler = ProfileErrorHandler.shared
     private let networkMonitor = NetworkMonitor.shared
     private var cancellables = Set<AnyCancellable>()

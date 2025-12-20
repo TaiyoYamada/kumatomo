@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import Combine
-import Resolver
+import Factory
 import Observation
 
 // MARK: - ValidationState
@@ -88,16 +88,16 @@ class PostViewModel {
     var isDeleting: Bool = false
     var isUpdating: Bool = false
 
-    @ObservationIgnored @Injected var fetchAllPostsUseCase: FetchAllPostsUseCase
-    @ObservationIgnored @Injected var fetchUserPostsUseCase: FetchUserPostsUseCase
-    @ObservationIgnored @Injected var fetchMunicipalityPostsUseCase: FetchMunicipalityPostsUseCase
-    @ObservationIgnored @Injected var fetchFollowingPostsUseCase: FetchFollowingPostsUseCase
-    @ObservationIgnored @Injected var fetchPostUseCase: FetchPostUseCase
-    @ObservationIgnored @Injected var createPostUseCase: CreatePostUseCase
-    @ObservationIgnored @Injected var createPostWithMultipleImagesUseCase: CreatePostWithMultipleImagesUseCase
-    @ObservationIgnored @Injected var updatePostUseCase: UpdatePostUseCase
-    @ObservationIgnored @Injected var deletePostUseCase: DeletePostUseCase
-    @ObservationIgnored @Injected var authRepository: AuthRepository
+    @ObservationIgnored @Injected(\.fetchAllPostsUseCase) var fetchAllPostsUseCase
+    @ObservationIgnored @Injected(\.fetchUserPostsUseCase) var fetchUserPostsUseCase
+    @ObservationIgnored @Injected(\.fetchMunicipalityPostsUseCase) var fetchMunicipalityPostsUseCase
+    @ObservationIgnored @Injected(\.fetchFollowingPostsUseCase) var fetchFollowingPostsUseCase
+    @ObservationIgnored @Injected(\.fetchPostUseCase) var fetchPostUseCase
+    @ObservationIgnored @Injected(\.createPostUseCase) var createPostUseCase
+    @ObservationIgnored @Injected(\.createPostWithMultipleImagesUseCase) var createPostWithMultipleImagesUseCase
+    @ObservationIgnored @Injected(\.updatePostUseCase) var updatePostUseCase
+    @ObservationIgnored @Injected(\.deletePostUseCase) var deletePostUseCase
+    @ObservationIgnored @Injected(\.authRepository) var authRepository
 
     var canPost: Bool {
         hasValidContent && hasValidTags && !isLoading && !isSubmitting

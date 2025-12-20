@@ -1,5 +1,4 @@
 import SwiftUI
-import Resolver
 
 @main
 struct kumatomoApp: App {
@@ -7,7 +6,7 @@ struct kumatomoApp: App {
 
     @MainActor
     init() {
-        Resolver.registerAllServices()
+
         print("👉 現在のAPI_BASE_URL:", APIConfig.shared.baseURLString)
     }
 

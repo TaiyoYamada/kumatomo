@@ -1,6 +1,6 @@
 import Foundation
 import SwiftUI
-import Resolver
+import Factory
 import Observation
 
 // MARK: - EngagementViewModel
@@ -31,10 +31,10 @@ class EngagementViewModel {
     var likedPostsPage: Int = 1
     var bookmarkedPostsPage: Int = 1
 
-    @ObservationIgnored @Injected var fetchLikedPostsUseCase: FetchLikedPostsUseCase
-    @ObservationIgnored @Injected var fetchBookmarkedPostsUseCase: FetchBookmarkedPostsUseCase
-    @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
-    @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
+    @ObservationIgnored @Injected(\.fetchLikedPostsUseCase) var fetchLikedPostsUseCase
+    @ObservationIgnored @Injected(\.fetchBookmarkedPostsUseCase) var fetchBookmarkedPostsUseCase
+    @ObservationIgnored @Injected(\.toggleLikeUseCase) var toggleLikeUseCase
+    @ObservationIgnored @Injected(\.toggleBookmarkUseCase) var toggleBookmarkUseCase
 
     private let postsPerPage = 20
 

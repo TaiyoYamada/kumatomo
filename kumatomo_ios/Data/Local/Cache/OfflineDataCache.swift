@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Factory
 
 // MARK: - OfflineDataCache
 
@@ -103,7 +104,7 @@ class OfflineDataCache: ObservableObject {
 
         cacheStatus = .syncing
 
-        let userAPIService = UserAPIService()
+        let userAPIService = Container.shared.userAPIService()
         var syncedCount = 0
         var failedCount = 0
 

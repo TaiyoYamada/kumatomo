@@ -1,12 +1,11 @@
 import Foundation
 import Combine
-
-@MainActor
+import Factory
 
 final class UserRepositoryImpl: UserRepository {
     private let service: UserAPIService
 
-    init(service: UserAPIService = .init()) {
+    init(service: UserAPIService = Container.shared.userAPIService()) {
         self.service = service
     }
 

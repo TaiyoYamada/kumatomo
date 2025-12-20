@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import UIKit
-import Resolver
+import Factory
 import Observation
 
 // MARK: - CommentViewModel
@@ -25,11 +25,9 @@ class CommentViewModel {
     private let maxImageSizeBytes = 10 * 1_024 * 1_024
     private let maxImageDimension: CGFloat = 2_048
 
-    @ObservationIgnored let createCommentUseCase: CreateCommentUseCase
+    @ObservationIgnored @Injected(\.createCommentUseCase) var createCommentUseCase
 
-    init(createCommentUseCase: CreateCommentUseCase = Resolver.resolve()) {
-        self.createCommentUseCase = createCommentUseCase
-    }
+    init() {}
 
     var canSubmit: Bool {
         let hasValidText = !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

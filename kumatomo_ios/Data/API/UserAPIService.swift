@@ -12,12 +12,12 @@ struct UsernameAvailabilityResponse: Codable {
 // MARK: - UserAPIService
 
 final class UserAPIService {
-    static let shared = UserAPIService()
-
-    private let client = APIClient.shared
+    private let client: APIClient
 
     // internal init for dependency injection
-    init() {}
+    init(client: APIClient) {
+        self.client = client
+    }
 
     // MARK: - Profile Fetching
 

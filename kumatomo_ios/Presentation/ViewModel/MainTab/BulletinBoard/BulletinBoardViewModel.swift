@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import Combine
 import Observation
-import Resolver
+import Factory
 
 // MARK: - BulletinBoardViewModel
 
@@ -25,12 +25,12 @@ class BulletinBoardViewModel {
     var userReactions: [Int: ReactionType] = [:]
     var bookmarkedPosts: Set<Int> = []
 
-    @ObservationIgnored @Injected var fetchAllPostsWithCacheUseCase: FetchAllPostsWithCacheUseCase
-    @ObservationIgnored @Injected var fetchMunicipalityPostsWithCacheUseCase: FetchMunicipalityPostsWithCacheUseCase
-    @ObservationIgnored @Injected var fetchFollowingPostsWithCacheUseCase: FetchFollowingPostsWithCacheUseCase
-    @ObservationIgnored @Injected var toggleLikeUseCase: ToggleLikeUseCase
-    @ObservationIgnored @Injected var toggleBookmarkUseCase: ToggleBookmarkUseCase
-    @ObservationIgnored @Injected var toggleReactionUseCase: ToggleReactionUseCase
+    @ObservationIgnored @Injected(\.fetchAllPostsWithCacheUseCase) var fetchAllPostsWithCacheUseCase
+    @ObservationIgnored @Injected(\.fetchMunicipalityPostsWithCacheUseCase) var fetchMunicipalityPostsWithCacheUseCase
+    @ObservationIgnored @Injected(\.fetchFollowingPostsWithCacheUseCase) var fetchFollowingPostsWithCacheUseCase
+    @ObservationIgnored @Injected(\.toggleLikeUseCase) var toggleLikeUseCase
+    @ObservationIgnored @Injected(\.toggleBookmarkUseCase) var toggleBookmarkUseCase
+    @ObservationIgnored @Injected(\.toggleReactionUseCase) var toggleReactionUseCase
     private var currentPage = 1
     private let postsPerPage = 20
     private var cancellables = Set<AnyCancellable>()
