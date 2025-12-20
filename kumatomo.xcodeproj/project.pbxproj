@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E5A685602EEDAD5D008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A6855F2EEDAD5D008E8034 /* Resolver */; };
-		E5A685622EEDAD6A008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A685612EEDAD6A008E8034 /* Resolver */; };
-		E5A685642EEDAD79008E8034 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = E5A685632EEDAD79008E8034 /* Resolver */; };
 		E5CDAC752EF6EED900F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC742EF6EED900F58A49 /* Factory */; };
 		E5CDAC772EF6EED900F58A49 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC762EF6EED900F58A49 /* FactoryTesting */; };
 		E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC782EF6EEE500F58A49 /* Factory */; };
@@ -109,7 +106,6 @@
 			files = (
 				E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */,
 				E5CDAC772EF6EED900F58A49 /* FactoryTesting in Frameworks */,
-				E5A685642EEDAD79008E8034 /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +115,6 @@
 			files = (
 				E5CDAC7D2EF6EEF200F58A49 /* Factory in Frameworks */,
 				E5CDAC7B2EF6EEED00F58A49 /* FactoryTesting in Frameworks */,
-				E5A685622EEDAD6A008E8034 /* Resolver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,7 +122,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5A685602EEDAD5D008E8034 /* Resolver in Frameworks */,
 				E5CDAC752EF6EED900F58A49 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -187,7 +181,6 @@
 			);
 			name = kumatomoTests;
 			packageProductDependencies = (
-				E5A685632EEDAD79008E8034 /* Resolver */,
 				E5CDAC762EF6EED900F58A49 /* FactoryTesting */,
 				E5CDAC782EF6EEE500F58A49 /* Factory */,
 			);
@@ -213,7 +206,6 @@
 			);
 			name = kumatomoUITests;
 			packageProductDependencies = (
-				E5A685612EEDAD6A008E8034 /* Resolver */,
 				E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */,
 				E5CDAC7C2EF6EEF200F58A49 /* Factory */,
 			);
@@ -241,7 +233,6 @@
 			);
 			name = kumatomo;
 			packageProductDependencies = (
-				E5A6855F2EEDAD5D008E8034 /* Resolver */,
 				E5CDAC742EF6EED900F58A49 /* Factory */,
 			);
 			productName = kumatomo;
@@ -282,7 +273,6 @@
 			mainGroup = E5CD332A2E43698300ACDA82;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */,
 				E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -1317,14 +1307,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/hmlongco/Resolver";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.5.1;
-			};
-		};
 		E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Factory";
@@ -1336,21 +1318,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E5A6855F2EEDAD5D008E8034 /* Resolver */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */;
-			productName = Resolver;
-		};
-		E5A685612EEDAD6A008E8034 /* Resolver */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */;
-			productName = Resolver;
-		};
-		E5A685632EEDAD79008E8034 /* Resolver */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E5A6855E2EEDAD5D008E8034 /* XCRemoteSwiftPackageReference "Resolver" */;
-			productName = Resolver;
-		};
 		E5CDAC742EF6EED900F58A49 /* Factory */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
