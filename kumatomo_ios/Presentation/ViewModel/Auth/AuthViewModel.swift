@@ -70,10 +70,15 @@ final class AuthViewModel {
                 currentUser = user
 
                 if let user {
-                    print("DEBUG: ユーザー情報更新 - hasCompletedSetup: \(user.hasCompletedSetup ?? false)")
-                    hasCompletedSetup = user.hasCompletedSetup
+                    // 値が変更された場合のみ更新してViewの再描画を抑制
+                    if hasCompletedSetup != user.hasCompletedSetup {
+                        print("DEBUG: ユーザー情報更新 - hasCompletedSetup: \(user.hasCompletedSetup ?? false)")
+                        hasCompletedSetup = user.hasCompletedSetup
+                    }
                 } else {
-                    hasCompletedSetup = nil
+                    if hasCompletedSetup != nil {
+                        hasCompletedSetup = nil
+                    }
                 }
             }
             .store(in: &cancellables)

@@ -9,6 +9,7 @@ class AppRouter {
 
     private(set) var navigationPaths: [TabSelection: NavigationPath] = [
         .bulletinboard: NavigationPath(),
+        .shop: NavigationPath(),
         .search: NavigationPath(),
         .portal: NavigationPath(),
         .profile: NavigationPath(),

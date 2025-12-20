@@ -129,8 +129,10 @@ class ProfileViewModel {
             isVerified: false,
             joinedDate: ""
         )
-        loadProfile(userID: userID)
-        loadUserPosts(userID: userID)
+        if userID != 0 {
+            loadProfile(userID: userID)
+            loadUserPosts(userID: userID)
+        }
     }
 
     // プロフィール編集用の初期化処理を追加

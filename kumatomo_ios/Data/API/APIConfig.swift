@@ -2,6 +2,8 @@ import Foundation
 
 final class APIConfig {
     static let shared = APIConfig()
+//    static let googlePlacesAPIKey = "AIzaSyAtd_-c8zY8W5Mi2vDaSw1CNeUcvrdEmYk"
+    static let googlePlacesAPIKey = "API"
 
     let baseURLString: String
     let isConfigured: Bool

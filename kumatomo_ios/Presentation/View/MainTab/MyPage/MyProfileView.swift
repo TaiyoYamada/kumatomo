@@ -114,9 +114,16 @@ struct MyProfileView: View {
             }
         }
         .onAppear {
-            let userId = AuthService.shared.currentUser?.id ?? 0
-            viewModel.loadProfile(userID: userId)
-            viewModel.loadUserPosts(userID: userId)
+            if let user = userManager.currentUser, user.id != 0 {
+                viewModel.loadProfile(userID: user.id)
+                viewModel.loadUserPosts(userID: user.id)
+            }
+        }
+        .onChange(of: userManager.currentUser) { _, newUser in
+            if let user = newUser, user.id != 0 {
+                viewModel.loadProfile(userID: user.id)
+                viewModel.loadUserPosts(userID: user.id)
+            }
         }
     }
 }
