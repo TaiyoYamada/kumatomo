@@ -33,6 +33,10 @@ extension Container {
         self { SearchRepositoryImpl() }.singleton
     }
 
+    var announcementRepository: Factory<AnnouncementRepositoryProtocol> {
+        self { AnnouncementRepository() }.singleton
+    }
+
     // MARK: - Services
 
     var postAPIService: Factory<PostAPIService> {
@@ -57,6 +61,10 @@ extension Container {
 
     var userAPIService: Factory<UserAPIService> {
         self { UserAPIService(client: .shared) }.singleton
+    }
+
+    var announcementAPIService: Factory<AnnouncementAPIService> {
+        self { .shared }.singleton
     }
 
     var authService: Factory<AuthService> {
@@ -105,6 +113,12 @@ extension Container {
 
     var searchUseCase: Factory<SearchUseCase> {
         self { SearchUseCaseImpl(repository: self.searchRepository()) }.singleton
+    }
+
+    // MARK: - Use Cases (Announcement)
+
+    var fetchAnnouncementsUseCase: Factory<FetchAnnouncementsUseCaseProtocol> {
+        self { FetchAnnouncementsUseCase(repository: self.announcementRepository()) }.singleton
     }
 
     // MARK: - Use Cases (Post)

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminPostController;
+use App\Http\Controllers\AdminAnnouncementController;
 use App\Http\Controllers\PortalSlideController;
 use App\Http\Controllers\UnifiedImageUploadController;
 
@@ -13,6 +14,10 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureAdmin::class])
         // Dashboard stats
         Route::get('/stats/users', [AdminUserController::class, 'stats']);
         Route::get('/stats/posts', [AdminPostController::class, 'stats']);
+        Route::get('/stats/announcements', [AdminAnnouncementController::class, 'stats']);
+
+        // Announcements Management
+        Route::apiResource('announcements', AdminAnnouncementController::class);
 
         // User management
         Route::get('/users', [AdminUserController::class, 'index']);

@@ -14,6 +14,7 @@ import {
     useSidebar,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Megaphone as SpeakerIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -56,6 +57,15 @@ const menuItems = [
         icon: (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+        ),
+    },
+    {
+        title: 'お知らせ',
+        href: '/announcements',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.25a1.75 1.75 0 003.5 0V5.882a1.75 1.75 0 00-3.5 0zM12 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 12a1 1 0 00-1 1v1a1 1 0 002 0v-1a1 1 0 00-1-1zM20 12a1 1 0 00-1 1v1a1 1 0 002 0v-1a1 1 0 00-1-1z" />
             </svg>
         ),
     },

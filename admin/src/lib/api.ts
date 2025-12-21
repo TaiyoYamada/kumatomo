@@ -116,6 +116,32 @@ class ApiClient {
             body: JSON.stringify({ order }),
         });
     }
+
+    // Announcements
+    async getAnnouncements(token: string, params?: { page?: number; per_page?: number; search?: string }): Promise<PaginatedResponse<Announcement>> {
+        const query = params ? `?${new URLSearchParams(params as Record<string, any>)}` : '';
+        return this.request(`/admin/announcements${query}`, { token });
+    }
+
+    async createAnnouncement(token: string, data: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>): Promise<Announcement> {
+        return this.request('/admin/announcements', {
+            method: 'POST',
+            token,
+            body: JSON.stringify(data),
+        });
+    }
+
+    async updateAnnouncement(token: string, id: number, data: Partial<Announcement>): Promise<Announcement> {
+        return this.request(`/admin/announcements/${id}`, {
+            method: 'PUT',
+            token,
+            body: JSON.stringify(data),
+        });
+    }
+
+    async deleteAnnouncement(token: string, id: number): Promise<{ message: string }> {
+        return this.request(`/admin/announcements/${id}`, { method: 'DELETE', token });
+    }
 }
 
 export class ApiError extends Error {
@@ -179,6 +205,17 @@ export interface PortalSlide {
     updated_at?: string;
 }
 
+export interface Announcement {
+    id: number;
+    title: string;
+    content: string;
+    published_at: string | null;
+    is_active: boolean;
+    priority: number;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface UserStats {
     total_users: number;
     admin_users: number;
@@ -193,6 +230,7 @@ export interface PostStats {
     new_posts_this_week: number;
     new_posts_this_month: number;
 }
+
 
 export interface PaginatedResponse<T> {
     data: T[];

@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PortalSlideController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\SearchController;
@@ -28,6 +30,9 @@ Route::get('/municipalities', [MunicipalityController::class, 'index']);
 // Auth (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Public Announcements
+Route::get('/announcements', [AnnouncementController::class, 'index']);
 
 
 // Authenticated user endpoints

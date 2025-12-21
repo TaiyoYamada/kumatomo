@@ -6,7 +6,10 @@ struct PortalView: View {
     @Environment(CurrentUserManager.self) private var userManager
     @Environment(NetworkMonitor.self) private var networkMonitor
 
+    @State private var viewModel = PortalViewModel()
     @State private var showingNetworkAlert = false
+    @State private var showingAllAnnouncements = false
+    @State private var selectedAnnouncement: Announcement?
 
     var body: some View {
         ScrollView {
@@ -15,6 +18,47 @@ struct PortalView: View {
                     PortalAdvertisingSlideshow()
                 }
                 .padding(.top, 8)
+
+                // Announcements Section
+                if !viewModel.recentAnnouncements.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("運営からのお知らせ")
+                                .font(.title3)
+                                .fontWeight(.bold)
+
+                            Spacer()
+
+                            Button {
+                                showingAllAnnouncements = true
+                            } label: {
+                                Text("すべて見る")
+                                    .font(.subheadline)
+                                    .foregroundColor(.orange)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+
+                        VStack(spacing: 1) {
+                            ForEach(viewModel.recentAnnouncements) { announcement in
+                                Button {
+                                    selectedAnnouncement = announcement
+                                } label: {
+                                    PortalAnnouncementRow(announcement: announcement)
+                                }
+                                .buttonStyle(.plain)
+
+                                if announcement.id != viewModel.recentAnnouncements.last?.id {
+                                    Divider()
+                                        .padding(.leading, 16)
+                                }
+                            }
+                        }
+                        .background(Color(.secondarySystemGroupedBackground))
+                        .cornerRadius(12)
+                        .padding(.horizontal, 16)
+                    }
+                }
 
                 VStack(spacing: 10) {
                     HStack {
@@ -64,6 +108,12 @@ struct PortalView: View {
             } else {
                 Color.clear.frame(height: 8)
             }
+        }
+        .sheet(isPresented: $showingAllAnnouncements) {
+            AnnouncementListView(announcements: viewModel.announcements)
+        }
+        .task {
+            await viewModel.loadAnnouncements()
         }
     }
 
