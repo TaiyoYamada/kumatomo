@@ -13,5 +13,11 @@
 	</dict>
 	<key>UIDesignRequiresCompatibility</key>
 	<true/>
+	
+	<!-- Location Services -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>現在地周辺のお店や投稿を表示するために位置情報を使用します。</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>現在地周辺のお店や投稿を表示するために位置情報を使用します。</string>
 </dict>
 </plist>
