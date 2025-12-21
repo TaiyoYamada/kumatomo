@@ -1,15 +1,6 @@
 import Foundation
 import CoreLocation
 
-// MARK: - GooglePlacesClientError
-
-enum GooglePlacesClientError: Error {
-    case invalidURL
-    case networkError(Error)
-    case decodingError(Error)
-    case apiError(String)
-}
-
 // MARK: - GooglePlacesClient
 
 final class GooglePlacesClient: Sendable {
@@ -112,11 +103,11 @@ extension GooglePlacesClient {
         let (data, response) = try await session.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw GooglePlacesClientError.networkError(NSError(domain: "Invalid Response", code: 0))
+            throw PlaceError.networkError(NSError(domain: "Invalid Response", code: 0))
         }
 
         guard (200 ... 299).contains(httpResponse.statusCode) else {
-            throw GooglePlacesClientError.apiError("Status: \(httpResponse.statusCode)")
+            throw PlaceError.apiError("Status: \(httpResponse.statusCode)")
         }
 
         let decoder = JSONDecoder()

@@ -1,15 +1,5 @@
 import Foundation
 
-// MARK: - ShopReviewError
-
-enum ShopReviewError: Error {
-    case invalidURL
-    case networkError(Error)
-    case decodingError(Error)
-    case apiError(Int, String)
-    case unauthorized
-}
-
 // MARK: - ShopReviewAPIService
 
 class ShopReviewAPIService: Sendable {

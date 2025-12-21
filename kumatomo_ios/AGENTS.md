@@ -4,7 +4,7 @@
 
 ## 🎯 Purpose
 
-このファイルは、AI coding assistants（Copilot, Claude, Cursor, etc.）がkumatomo_iosプロジェクトで効果的にコード生成・支援を行うためのガイドラインを定義します。
+このファイルは、AI coding assistantsがkumatomo_iosプロジェクトで効果的にコード生成・支援を行うためのガイドラインを定義します。
 
 ---
 
@@ -71,6 +71,39 @@ kumatomo_ios/
    Domain → Data
    Presentation → Data (直接参照)
 ```
+
+---
+
+## 📁 File Granularity Rule
+
+### 原則
+
+**1ファイルにつき、1つの struct / class / enum / protocol のみを定義してください。**
+
+- 各ファイルは単一の型・単一の責務を持つこと
+- 複数の型を1つのファイルにまとめないこと
+
+```swift
+// ✅ OK
+struct Shop { }
+
+// ❌ NG
+struct Shop { }
+enum ShopCategory { }
+
+
+### 例外（許可されるケース）
+以下のケースのみ、同一ファイル内での定義を許可します：
+
+- View とその Preview
+- ViewModel 専用の小さな enum（例: ViewState, SheetState）
+- fileprivate な Helper 型
+
+### AI Assistants への指示（重要）
+- 新しい型を追加する場合は、必ず新しいファイルを作成してください
+- 既存ファイル内に複数の型が存在するのを見つけた場合は、 責務ごとにファイルを分割してください
+- ファイル分割が発生した場合でも、既存のアーキテクチャルール （Clean Architecture の依存関係）を必ず守ってください
+
 
 ---
 
@@ -273,6 +306,7 @@ swiftlint lint kumatomo_ios/
 ```
 
 ---
+
 
 ## 📚 References
 
