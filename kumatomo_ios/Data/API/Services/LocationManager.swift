@@ -1,6 +1,6 @@
-import Foundation
-import CoreLocation
 import Combine
+import CoreLocation
+import Foundation
 import Observation
 
 // MARK: - LocationManager
@@ -42,11 +42,7 @@ class LocationManager: NSObject {
             return
         }
 
-        guard CLLocationManager.locationServicesEnabled() else {
-            locationError = .locationServicesDisabled
-            return
-        }
-
+        // Start location updates - errors will be handled in didFailWithError delegate
         locationManager.startUpdatingLocation()
         isLocationEnabled = true
         locationError = nil
@@ -70,11 +66,7 @@ class LocationManager: NSObject {
             return
         }
 
-        guard CLLocationManager.locationServicesEnabled() else {
-            completion(.failure(.locationServicesDisabled))
-            return
-        }
-
+        // Request location - errors will be handled in didFailWithError delegate
         locationManager.requestLocation()
     }
 
@@ -110,63 +102,77 @@ class LocationManager: NSObject {
 // MARK: CLLocationManagerDelegate
 
 extension LocationManager: CLLocationManagerDelegate {
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        Task { @MainActor in
+            guard let location = locations.last else { return }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
+            let locationAge = -location.timestamp.timeIntervalSinceNow
+            guard locationAge < 5.0, location.horizontalAccuracy < 100 else { return }
 
-        let locationAge = -location.timestamp.timeIntervalSinceNow
-        guard locationAge < 5.0, location.horizontalAccuracy < 100 else { return }
+            userLocation = location
+            locationError = nil
+            NotificationCenter.default.post(name: .LocationUpdated, object: self, userInfo: ["userLocation": location])
 
-        userLocation = location
-        locationError = nil
-        NotificationCenter.default.post(name: .LocationUpdated, object: self, userInfo: ["userLocation": location])
-
-        if let completion = locationUpdateCompletion {
-            completion(.success(location))
-            locationUpdateCompletion = nil
-            manager.stopUpdatingLocation()
+            if let completion = locationUpdateCompletion {
+                completion(.success(location))
+                locationUpdateCompletion = nil
+                manager.stopUpdatingLocation()
+            }
         }
     }
 
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        let locationError: LocationError = if let clError = error as? CLError {
-            switch clError.code {
-            case .denied:
-                .permissionDenied
-            case .locationUnknown:
-                .locationUnavailable
-            case .network:
-                .networkError
-            default:
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        Task { @MainActor in
+            let locationError: LocationError = if let clError = error as? CLError {
+                switch clError.code {
+                case .denied:
+                    .permissionDenied
+                case .locationUnknown:
+                    .locationUnavailable
+                case .network:
+                    .networkError
+                default:
+                    .unknown
+                }
+            } else {
                 .unknown
             }
-        } else {
-            .unknown
-        }
 
-        self.locationError = locationError
-        NotificationCenter.default.post(name: .LocationErrorChanged, object: self, userInfo: ["error": locationError])
+            self.locationError = locationError
+            NotificationCenter.default.post(
+                name: .LocationErrorChanged,
+                object: self,
+                userInfo: ["error": locationError]
+            )
 
-        if let completion = locationUpdateCompletion {
-            completion(.failure(locationError))
-            locationUpdateCompletion = nil
+            if let completion = locationUpdateCompletion {
+                completion(.failure(locationError))
+                locationUpdateCompletion = nil
+            }
         }
     }
 
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        authorizationStatus = status
-        NotificationCenter.default.post(name: .LocationAuthorizationChanged, object: self, userInfo: ["status": status])
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        Task { @MainActor in
+            let status = manager.authorizationStatus
+            authorizationStatus = status
+            NotificationCenter.default.post(
+                name: .LocationAuthorizationChanged,
+                object: self,
+                userInfo: ["status": status]
+            )
 
-        switch status {
-        case .authorizedWhenInUse, .authorizedAlways:
-            startLocationUpdates()
-        case .denied, .restricted:
-            stopLocationUpdates()
-            locationError = .permissionDenied
-        case .notDetermined:
-            locationError = nil
-        @unknown default:
-            locationError = .unknown
+            switch status {
+            case .authorizedWhenInUse, .authorizedAlways:
+                startLocationUpdates()
+            case .denied, .restricted:
+                stopLocationUpdates()
+                locationError = .permissionDenied
+            case .notDetermined:
+                locationError = nil
+            @unknown default:
+                locationError = .unknown
+            }
         }
     }
 }
