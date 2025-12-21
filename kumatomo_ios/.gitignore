@@ -1,3 +1,22 @@
 # AI Agent Configuration
 
-kumatomo.xcodeproj/project.xcworkspace/xcuserdata/yamadataiyou.xcuserdatad/UserInterfaceState.xcuserstate
+# Config files containing API keys (xcconfig)
+Config/
+
+# Xcode user-specific files
+*.xcuserstate
+xcuserdata/
+
+# Build artifacts
+DerivedData/
+build/
+
+# CocoaPods (if used)
+Pods/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# OS files
+.DS_Store
