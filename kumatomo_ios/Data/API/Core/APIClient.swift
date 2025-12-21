@@ -1,4 +1,4 @@
-import Combine
+import Alamofire
 import Foundation
 
 // MARK: - APIClient
@@ -6,18 +6,24 @@ import Foundation
 // Domain層のAPIErrorを使用
 // APIError は Domain/Entity/Errors/APIError.swift で定義済み
 
-/// URLSessionベースの共通APIクライアント
-final class APIClient {
+/// AlamofireベースのAPIクライアント
+final class APIClient: @unchecked Sendable {
     static let shared = APIClient()
 
     private let baseURL: String
-    private let session: URLSession
+    private let session: Session
     private let decoder: JSONDecoder
 
     private init() {
         baseURL = APIConfig.shared.baseURLString
-        session = URLSession.shared
         decoder = APIHelper.makeDecoder()
+
+        // localhost用TrustManager設定（開発用）
+        let evaluators: [String: ServerTrustEvaluating] = [
+            "localhost": DisabledTrustEvaluator(),
+        ]
+        let manager = ServerTrustManager(allHostsMustBeEvaluated: false, evaluators: evaluators)
+        session = Session(serverTrustManager: manager)
     }
 
     // MARK: - Public Methods
@@ -44,145 +50,157 @@ final class APIClient {
 
     /// 汎用リクエスト（戻り値あり）
     func request<T: Decodable>(_ endpoint: APIEndpoint) async throws -> T {
-        let urlRequest = try buildURLRequest(endpoint)
+        let url = baseURL + endpoint.path
+        let method = httpMethod(from: endpoint.method)
+
+        var headers: HTTPHeaders = [
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        ]
+
+        if endpoint.requiresAuth, let token = AuthTokenManager.shared.token, !token.isEmpty {
+            headers.add(.authorization(bearerToken: token))
+        }
+
+        if let customHeaders = endpoint.headers {
+            for (key, value) in customHeaders {
+                headers.add(name: key, value: value)
+            }
+        }
 
         #if DEBUG
-        print("📡 \(endpoint.method.rawValue) リクエスト: \(urlRequest.url?.absoluteString ?? "")")
-        if let body = urlRequest.httpBody, let bodyString = String(data: body, encoding: .utf8) {
-            print("📡 ボディ: \(bodyString)")
+        print("📡 \(endpoint.method.rawValue) リクエスト: \(url)")
+        if let body = endpoint.body {
+            print("📡 ボディ: \(body)")
         }
         #endif
 
-        let (data, response) = try await performRequest(urlRequest)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.unknownError(NSError(
-                domain: "APIClient",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid response"]
-            ))
+        let dataRequest: DataRequest
+        if let queryParams = endpoint.queryParameters, !queryParams.isEmpty {
+            let stringParams = queryParams.mapValues { "\($0)" }
+            dataRequest = session.request(
+                url,
+                method: method,
+                parameters: stringParams,
+                encoding: URLEncoding.queryString,
+                headers: headers
+            )
+        } else if let body = endpoint.body {
+            dataRequest = session.request(
+                url,
+                method: method,
+                parameters: body,
+                encoding: JSONEncoding.default,
+                headers: headers
+            )
+        } else {
+            dataRequest = session.request(url, method: method, headers: headers)
         }
 
+        let response = await dataRequest
+            .validate(statusCode: 200 ..< 300)
+            .serializingData()
+            .response
+
         #if DEBUG
-        print("📡 ステータスコード: \(httpResponse.statusCode)")
-        if let jsonString = String(data: data, encoding: .utf8) {
+        print("📡 ステータスコード: \(response.response?.statusCode ?? -1)")
+        if let data = response.data, let jsonString = String(data: data, encoding: .utf8) {
             print("📡 レスポンス: \(jsonString.prefix(500))")
         }
         #endif
 
-        // ステータスコードチェック
-        guard (200 ... 299).contains(httpResponse.statusCode) else {
-            throw handleHTTPError(statusCode: httpResponse.statusCode, data: data)
-        }
-
-        do {
-            let decoded = try decoder.decode(T.self, from: data)
-            return decoded
-        } catch let decodingError as DecodingError {
-            #if DEBUG
-            print("🚨 デコードエラー: \(decodingError)")
-            #endif
-            throw APIError.decodingError(decodingError)
-        } catch {
-            throw APIError.unknownError(error)
+        switch response.result {
+        case let .success(data):
+            do {
+                let decoded = try decoder.decode(T.self, from: data)
+                return decoded
+            } catch let decodingError as DecodingError {
+                #if DEBUG
+                print("🚨 デコードエラー: \(decodingError)")
+                #endif
+                throw APIError.decodingError(decodingError)
+            } catch {
+                throw APIError.unknownError(error)
+            }
+        case let .failure(afError):
+            throw handleAlamofireError(afError, data: response.data)
         }
     }
 
     /// 汎用リクエスト（戻り値なし）
     func requestVoid(_ endpoint: APIEndpoint) async throws {
-        let urlRequest = try buildURLRequest(endpoint)
+        let url = baseURL + endpoint.path
+        let method = httpMethod(from: endpoint.method)
 
-        let (data, response) = try await performRequest(urlRequest)
+        var headers: HTTPHeaders = [
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        ]
 
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.unknownError(NSError(
-                domain: "APIClient",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid response"]
-            ))
+        if endpoint.requiresAuth, let token = AuthTokenManager.shared.token, !token.isEmpty {
+            headers.add(.authorization(bearerToken: token))
         }
 
-        guard (200 ... 299).contains(httpResponse.statusCode) else {
-            throw handleHTTPError(statusCode: httpResponse.statusCode, data: data)
+        let dataRequest: DataRequest = if let body = endpoint.body {
+            session.request(
+                url,
+                method: method,
+                parameters: body,
+                encoding: JSONEncoding.default,
+                headers: headers
+            )
+        } else {
+            session.request(url, method: method, headers: headers)
+        }
+
+        let response = await dataRequest
+            .validate(statusCode: 200 ..< 300)
+            .serializingData()
+            .response
+
+        if case let .failure(afError) = response.result {
+            throw handleAlamofireError(afError, data: response.data)
         }
     }
 
     // MARK: - Private Methods
 
-    private func buildURLRequest(_ endpoint: APIEndpoint) throws -> URLRequest {
-        var urlString = baseURL + endpoint.path
-
-        // クエリパラメータを追加
-        if let queryParams = endpoint.queryParameters, !queryParams.isEmpty {
-            var components = URLComponents(string: urlString)
-            components?.queryItems = queryParams.compactMap { key, value in
-                URLQueryItem(name: key, value: "\(value)")
-            }
-            if let url = components?.url {
-                urlString = url.absoluteString
-            }
-        }
-
-        guard let url = URL(string: urlString) else {
-            throw APIError.unknownError(NSError(
-                domain: "APIClient",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid URL: \(urlString)"]
-            ))
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = endpoint.method.rawValue
-
-        // ヘッダー設定
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        if endpoint.requiresAuth, let token = AuthTokenManager.shared.token, !token.isEmpty {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        if let customHeaders = endpoint.headers {
-            for (key, value) in customHeaders {
-                request.setValue(value, forHTTPHeaderField: key)
-            }
-        }
-
-        // ボディ設定
-        if let body = endpoint.body {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
-        }
-
-        return request
-    }
-
-    private func performRequest(_ request: URLRequest) async throws -> (Data, URLResponse) {
-        do {
-            return try await session.data(for: request)
-        } catch let urlError as URLError {
-            throw APIError.networkError(urlError)
-        } catch {
-            throw APIError.unknownError(error)
+    private func httpMethod(from method: HTTPMethod) -> Alamofire.HTTPMethod {
+        switch method {
+        case .get: return .get
+        case .post: return .post
+        case .put: return .put
+        case .patch: return .patch
+        case .delete: return .delete
         }
     }
 
-    private func handleHTTPError(statusCode: Int, data: Data) -> APIError {
-        switch statusCode {
-        case 401:
-            return .unauthorized
-        case 403:
-            return .forbidden
-        case 404:
-            return .notFound
-        case 429:
-            return .rateLimitExceeded
-        case 500 ... 599:
-            let message = String(data: data, encoding: .utf8) ?? "サーバーエラー"
-            return .serverError(message: message)
-        default:
-            let message = String(data: data, encoding: .utf8) ?? "APIエラー"
-            return .apiError(statusCode: statusCode, message: message)
+    private func handleAlamofireError(_ error: AFError, data: Data?) -> APIError {
+        if let statusCode = error.responseCode {
+            switch statusCode {
+            case 401:
+                return .unauthorized
+            case 403:
+                return .forbidden
+            case 404:
+                return .notFound
+            case 429:
+                return .rateLimitExceeded
+            case 500 ... 599:
+                let message = data.flatMap { String(data: $0, encoding: .utf8) } ?? "サーバーエラー"
+                return .serverError(message: message)
+            default:
+                let message = data.flatMap { String(data: $0, encoding: .utf8) } ?? "APIエラー"
+                return .apiError(statusCode: statusCode, message: message)
+            }
         }
+
+        // ネットワークエラーの場合
+        if let urlError = error.underlyingError as? URLError {
+            return .networkError(urlError)
+        }
+
+        return .unknownError(error)
     }
 }
 

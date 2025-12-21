@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E5AFC0852EF7000100CD0A1E /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E5AFC0842EF7000100CD0A1E /* Alamofire */; };
+		E5BFD6FA2EF7A08900CEFBF5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E5BFD6F92EF7A08900CEFBF5 /* Alamofire */; };
+		E5BFD6FC2EF7A08F00CEFBF5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E5BFD6FB2EF7A08F00CEFBF5 /* Alamofire */; };
 		E5CDAC752EF6EED900F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC742EF6EED900F58A49 /* Factory */; };
 		E5CDAC772EF6EED900F58A49 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC762EF6EED900F58A49 /* FactoryTesting */; };
 		E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC782EF6EEE500F58A49 /* Factory */; };
@@ -104,6 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5BFD6FA2EF7A08900CEFBF5 /* Alamofire in Frameworks */,
 				E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */,
 				E5CDAC772EF6EED900F58A49 /* FactoryTesting in Frameworks */,
 			);
@@ -113,6 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5BFD6FC2EF7A08F00CEFBF5 /* Alamofire in Frameworks */,
 				E5CDAC7D2EF6EEF200F58A49 /* Factory in Frameworks */,
 				E5CDAC7B2EF6EEED00F58A49 /* FactoryTesting in Frameworks */,
 			);
@@ -122,6 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5AFC0852EF7000100CD0A1E /* Alamofire in Frameworks */,
 				E5CDAC752EF6EED900F58A49 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -183,6 +189,7 @@
 			packageProductDependencies = (
 				E5CDAC762EF6EED900F58A49 /* FactoryTesting */,
 				E5CDAC782EF6EEE500F58A49 /* Factory */,
+				E5BFD6F92EF7A08900CEFBF5 /* Alamofire */,
 			);
 			productName = kumatomoTests;
 			productReference = E51A7E8E2EED6BCF00842CE5 /* kumatomoTests.xctest */;
@@ -208,6 +215,7 @@
 			packageProductDependencies = (
 				E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */,
 				E5CDAC7C2EF6EEF200F58A49 /* Factory */,
+				E5BFD6FB2EF7A08F00CEFBF5 /* Alamofire */,
 			);
 			productName = kumatomoUITests;
 			productReference = E51A7E9D2EED6BE000842CE5 /* kumatomoUITests.xctest */;
@@ -233,6 +241,7 @@
 			);
 			name = kumatomo;
 			packageProductDependencies = (
+				E5AFC0842EF7000100CD0A1E /* Alamofire */,
 				E5CDAC742EF6EED900F58A49 /* Factory */,
 			);
 			productName = kumatomo;
@@ -273,6 +282,7 @@
 			mainGroup = E5CD332A2E43698300ACDA82;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				E5AFC0832EF7000100CD0A1E /* XCRemoteSwiftPackageReference "Alamofire" */,
 				E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -1307,6 +1317,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E5AFC0832EF7000100CD0A1E /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.9.1;
+			};
+		};
 		E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Factory";
@@ -1318,6 +1336,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E5AFC0842EF7000100CD0A1E /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5AFC0832EF7000100CD0A1E /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		E5BFD6F92EF7A08900CEFBF5 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5AFC0832EF7000100CD0A1E /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		E5BFD6FB2EF7A08F00CEFBF5 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5AFC0832EF7000100CD0A1E /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		E5CDAC742EF6EED900F58A49 /* Factory */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
