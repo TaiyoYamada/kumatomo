@@ -154,10 +154,8 @@ class PortalErrorHandler: ObservableObject {
         }
 
         let extensions = ["png", "jpg", "jpeg", "gif", "heic"]
-        for ext in extensions {
-            if Bundle.main.path(forResource: assetName, ofType: ext) != nil {
-                return true
-            }
+        for ext in extensions where Bundle.main.path(forResource: assetName, ofType: ext) != nil {
+            return true
         }
 
         return false

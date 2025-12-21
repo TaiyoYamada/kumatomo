@@ -29,7 +29,9 @@ class ProfileImageManager {
 
     private func uploadImageToServer(_ imageData: Data) -> AnyPublisher<URL, Error> {
         // モック: 実際には適切なストレージサービスへのアップロード処理を実装
-        let mockURL = URL(string: "https://example.com/images/profile_\(UUID().uuidString).jpg")!
+        guard let mockURL = URL(string: "https://example.com/images/profile_\(UUID().uuidString).jpg") else {
+            return Fail(error: ImagePickerError.compressionFailed).eraseToAnyPublisher()
+        }
 
         return Just(mockURL)
             .setFailureType(to: Error.self)

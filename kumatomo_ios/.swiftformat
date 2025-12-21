@@ -61,4 +61,7 @@
 --disable sortImports,blankLinesAtStartOfScope,blankLinesAtEndOfScope,redundantReturn,wrapMultilineStatementBraces
 
 # 有効化するルール
---enable isEmpty,markTypes
+--enable isEmpty,markTypes,modifierOrder
+
+# Modifier Order（SwiftLintに合わせて nonisolated を private の前に配置）
+--modifierorder nonisolated,override,private,fileprivate,internal,public,open,final,static,class,lazy,weak,unowned,required,convenience,mutating,nonmutating

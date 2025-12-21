@@ -326,8 +326,8 @@ struct PostMediaView: View {
     }
 
     var body: some View {
-        if let images, !images.isEmpty {
-            AsyncImage(url: URL(string: images.first!.imageUrl)) { image in
+        if let images, !images.isEmpty, let firstImage = images.first {
+            AsyncImage(url: URL(string: firstImage.imageUrl)) { image in
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)

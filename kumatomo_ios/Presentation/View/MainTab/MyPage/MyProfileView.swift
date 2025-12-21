@@ -8,7 +8,7 @@ struct MyProfileView: View {
     @State private var bulletinBoardViewModel = BulletinBoardViewModel()
     @State private var showingNewPost = false
     @State private var selectedTab = 0
-    @State private var sheetDestination: SheetDestination? = nil
+    @State private var sheetDestination: SheetDestination?
     @State private var scrollOffset: CGFloat = 0
     @Environment(\.openSidebar) private var openSidebar
     @Environment(CurrentUserManager.self) private var userManager

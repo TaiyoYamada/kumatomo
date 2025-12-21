@@ -374,7 +374,7 @@ extension CommentViewModel {
     var validationStatus: ValidationStatus {
         if isValidating {
             return .validating
-        } else if let _ = validationError {
+        } else if validationError != nil {
             return .invalid
         } else if hasContent {
             return .valid

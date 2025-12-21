@@ -120,7 +120,7 @@ class NetworkMonitor {
         monitor.start(queue: queue)
     }
 
-    private nonisolated func stopMonitoring() {
+    nonisolated private func stopMonitoring() {
         monitor.cancel()
     }
 
@@ -387,7 +387,14 @@ extension NetworkMonitor {
         let startTime = Date()
 
         do {
-            let url = URL(string: "https://www.google.com")!
+            guard let url = URL(string: "https://www.google.com") else {
+                return DiagnosticResult(
+                    success: false,
+                    message: "無効なURL",
+                    responseTime: 0,
+                    error: "Invalid URL"
+                )
+            }
             let request = URLRequest(url: url, timeoutInterval: 5.0)
             let (_, response) = try await URLSession.shared.data(for: request)
 
@@ -425,7 +432,14 @@ extension NetworkMonitor {
 
         do {
             let host = "api.example.com"
-            let url = URL(string: "https://\(host)")!
+            guard let url = URL(string: "https://\(host)") else {
+                return DiagnosticResult(
+                    success: false,
+                    message: "無効なURL",
+                    responseTime: 0,
+                    error: "Invalid URL"
+                )
+            }
             let request = URLRequest(url: url, timeoutInterval: 3.0)
 
             _ = try await URLSession.shared.data(for: request)
@@ -453,7 +467,14 @@ extension NetworkMonitor {
 
         do {
             let baseURL = APIConfig.shared.baseURLString
-            let healthURL = URL(string: "\(baseURL)/health")!
+            guard let healthURL = URL(string: "\(baseURL)/health") else {
+                return DiagnosticResult(
+                    success: false,
+                    message: "無効なURL",
+                    responseTime: 0,
+                    error: "Invalid URL"
+                )
+            }
             let request = URLRequest(url: healthURL, timeoutInterval: 10.0)
 
             let (_, response) = try await URLSession.shared.data(for: request)
