@@ -1,0 +1,4 @@
+
+API_SCHEME = https
+API_HOST = your-ngrok-url.ngrok-free.app
+GOOGLE_PLACES_API_KEY = YOUR_GOOGLE_PLACES_API_KEY_HERE

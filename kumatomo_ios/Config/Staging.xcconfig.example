@@ -1,0 +1,4 @@
+
+API_SCHEME = https
+API_HOST = staging.kumatomo.com
+GOOGLE_PLACES_API_KEY = YOUR_GOOGLE_PLACES_API_KEY_HERE

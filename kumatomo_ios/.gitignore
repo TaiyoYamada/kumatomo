@@ -1,7 +1,8 @@
 # AI Agent Configuration
 
 # Config files containing API keys (xcconfig)
-Config/
+Config/*.xcconfig
+!Config/*.xcconfig.example
 
 # Xcode user-specific files
 *.xcuserstate
