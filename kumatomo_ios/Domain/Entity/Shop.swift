@@ -10,6 +10,7 @@ struct Shop: Identifiable, Hashable, Sendable {
     let rating: Double?
     let category: ShopCategory?
     let iconURL: URL?
+    let openingHours: [String]?
 
     struct Coordinate: Hashable, Sendable {
         let latitude: Double

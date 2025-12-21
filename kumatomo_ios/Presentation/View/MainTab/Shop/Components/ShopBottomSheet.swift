@@ -163,6 +163,22 @@ struct ShopBottomSheet: View {
                         Label(isOpen ? "営業中" : "営業時間外", systemImage: "clock")
                             .foregroundColor(isOpen ? .green : .red)
                     }
+
+                    // 営業時間
+                    if let openingHours = shop.openingHours, !openingHours.isEmpty {
+                        DisclosureGroup {
+                            VStack(alignment: .leading, spacing: 4) {
+                                ForEach(openingHours, id: \.self) { hours in
+                                    Text(hours)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(.top, 4)
+                        } label: {
+                            Label("営業時間", systemImage: "calendar")
+                        }
+                    }
                 }
                 .font(.subheadline)
 

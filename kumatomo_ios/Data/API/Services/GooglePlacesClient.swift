@@ -62,7 +62,7 @@ extension GooglePlacesClient {
 
         let requestBody: [String: Any] = [
             "includedTypes": types,
-            "maxResultCount": 50,
+            "maxResultCount": 20,
             "locationRestriction": [
                 "circle": [
                     "center": [
@@ -163,7 +163,8 @@ private struct GooglePlaceDTO: Decodable {
             isOpen: isOpenNow,
             rating: rating,
             category: mappedCategory,
-            iconURL: nil
+            iconURL: nil,
+            openingHours: regularOpeningHours?.weekdayDescriptions
         )
     }
 }
@@ -185,4 +186,5 @@ private struct LocationDTO: Decodable {
 
 private struct OpeningHoursDTO: Decodable {
     let openNow: Bool?
+    let weekdayDescriptions: [String]?
 }
