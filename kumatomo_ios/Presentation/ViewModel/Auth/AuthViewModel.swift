@@ -1,14 +1,14 @@
 import Foundation
 import PhotosUI
 import SwiftUI
-import Combine
 import Factory
-import Observation
 
 @MainActor
 @Observable
 final class AuthViewModel {
-    var isAuthenticated: Bool = false
+    // MARK: - Properties
+
+    var isAuthenticated = false
     var currentUser: User?
     var accounts: [User] = []
     var selectedAccount: User?
@@ -18,8 +18,7 @@ final class AuthViewModel {
     var password = ""
     var name = ""
     var bio = ""
-    var birthDate: Date =
-        Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
+    var birthDate: Date = Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
     var location = ""
     var birthday = Date()
     var profileImage: UIImage?
@@ -28,7 +27,7 @@ final class AuthViewModel {
     var errorMessage: String? = ""
     var isLoading = false
 
-    // - サービス依存性
+    // MARK: - Dependencies
 
     @ObservationIgnored @Injected(\.authRepository) var authRepository
     @ObservationIgnored @Injected(\.imageUploadRepository) var imageUploader
@@ -37,51 +36,51 @@ final class AuthViewModel {
     @ObservationIgnored @Injected(\.createUserUseCase) var createUserUseCase
     @ObservationIgnored @Injected(\.updateUserUseCase) var updateUserUseCase
 
-    private var cancellables = Set<AnyCancellable>()
+    @ObservationIgnored private var observationTask: Task<Void, Never>?
+
+    // MARK: - Initializer
 
     init() {
         // 初期状態をサービスから取得
         isAuthenticated = authRepository.isAuthenticated
         currentUser = authRepository.currentUser
+        hasCompletedSetup = currentUser?.hasCompletedSetup
 
-        if let currentUser {
-            hasCompletedSetup = currentUser.hasCompletedSetup
-        } else {
-            hasCompletedSetup = nil
-        }
-
-        addSubscribers()
+        startObserving()
     }
 
-    private func addSubscribers() {
-        // 認証状態の変化を監視
-        authRepository.isAuthenticatedPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isAuth in
-                self?.isAuthenticated = isAuth
-            }
-            .store(in: &cancellables)
+    deinit {
+        observationTask?.cancel()
+    }
 
-        // ユーザー情報の変化を監視
-        authRepository.currentUserPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] user in
-                guard let self else { return }
-                currentUser = user
+    // MARK: - Private Methods
 
-                if let user {
-                    // 値が変更された場合のみ更新してViewの再描画を抑制
-                    if hasCompletedSetup != user.hasCompletedSetup {
-                        print("DEBUG: ユーザー情報更新 - hasCompletedSetup: \(user.hasCompletedSetup ?? false)")
-                        hasCompletedSetup = user.hasCompletedSetup
-                    }
-                } else {
-                    if hasCompletedSetup != nil {
-                        hasCompletedSetup = nil
-                    }
+    private func startObserving() {
+        observationTask = Task { [weak self] in
+            guard let self else { return }
+
+            // 認証状態とユーザー情報の変化を監視（async stream）
+            for await user in authRepository.currentUserPublisher.values {
+                guard !Task.isCancelled else { break }
+
+                // 認証状態の更新（重複更新を防止）
+                let newAuthState = authRepository.isAuthenticated
+                if isAuthenticated != newAuthState {
+                    isAuthenticated = newAuthState
+                }
+
+                // ユーザー情報の更新（ID が変わった場合のみ）
+                if currentUser?.id != user?.id {
+                    currentUser = user
+                }
+
+                // hasCompletedSetup の更新（値が変わった場合のみ）
+                let newSetupState = user?.hasCompletedSetup
+                if hasCompletedSetup != newSetupState {
+                    hasCompletedSetup = newSetupState
                 }
             }
-            .store(in: &cancellables)
+        }
     }
 
     @MainActor
