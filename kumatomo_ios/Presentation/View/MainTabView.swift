@@ -26,21 +26,6 @@ struct MainTabView: View {
                 }
                 .tag(TabSelection.bulletinboard)
 
-                NavigationStack(path: appRouter.pathBinding(for: .shop)) {
-                    ShopTabView()
-                        .environment(userManager)
-                        .environment(sidebarState)
-                        .environment(\.openSidebar, sidebarState.open)
-                        .withAppRouter()
-                        .navigationTitle("お店")
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .tabItem {
-                    Image(systemName: "storefront.fill")
-                    Text("お店")
-                }
-                .tag(TabSelection.shop)
-
                 NavigationStack(path: appRouter.pathBinding(for: .search)) {
                     SearchView()
                         .environment(userManager)
@@ -67,6 +52,21 @@ struct MainTabView: View {
                     Text("ポータル")
                 }
                 .tag(TabSelection.portal)
+
+                NavigationStack(path: appRouter.pathBinding(for: .shop)) {
+                    ShopTabView()
+                        .environment(userManager)
+                        .environment(sidebarState)
+                        .environment(\.openSidebar, sidebarState.open)
+                        .withAppRouter()
+                        .navigationTitle("お店")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+                .tabItem {
+                    Image(systemName: "storefront.fill")
+                    Text("お店")
+                }
+                .tag(TabSelection.shop)
 
                 NavigationStack(path: appRouter.pathBinding(for: .profile)) {
                     MyProfileView()
