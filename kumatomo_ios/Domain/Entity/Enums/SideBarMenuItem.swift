@@ -3,13 +3,12 @@ import Foundation
 // MARK: - SidebarMenuItemType
 
 enum SidebarMenuItemType: CaseIterable {
-    case bookmarks, likes, coupons, notifications, help, contact, settings, logout
+    case bookmarks, likes, notifications, help, contact, settings, logout
 
     var icon: String {
         switch self {
         case .bookmarks: return "bookmark.fill"
         case .likes: return "heart.fill"
-        case .coupons: return "ticket.fill"
         case .notifications: return "bell.fill"
         case .help: return "questionmark.circle.fill"
         case .contact: return "envelope.fill"
@@ -22,7 +21,6 @@ enum SidebarMenuItemType: CaseIterable {
         switch self {
         case .bookmarks: return "ブックマーク"
         case .likes: return "いいね"
-        case .coupons: return "クーポン"
         case .notifications: return "お知らせ"
         case .help: return "ヘルプ"
         case .contact: return "お問い合わせ"
@@ -35,7 +33,6 @@ enum SidebarMenuItemType: CaseIterable {
         switch self {
         case .bookmarks: return "保存した投稿"
         case .likes: return "いいねした投稿"
-        case .coupons: return "利用可能なクーポン"
         case .settings: return "アプリの設定"
         case .logout: return "サインアウトします"
         case .notifications, .help, .contact: return nil
@@ -58,7 +55,7 @@ enum SidebarMenuItemType: CaseIterable {
 
     var isPrimarySection: Bool {
         switch self {
-        case .bookmarks, .likes, .coupons: return true
+        case .bookmarks, .likes: return true
         default: return false
         }
     }

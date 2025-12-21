@@ -207,12 +207,12 @@ final class ShopViewModel {
                 !shops.contains { $0.id == newShop.id }
             }
             shops.append(contentsOf: newShops)
-            
+
             // 最大件数を超えたら古いものから削除
             if shops.count > maxShopsCount {
                 shops = Array(shops.suffix(maxShopsCount))
             }
-            
+
             errorMessage = nil
             hasPerformedInitialSearch = true
             lastSearchedLocation = location

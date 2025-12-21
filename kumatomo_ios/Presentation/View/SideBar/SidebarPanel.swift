@@ -64,8 +64,6 @@ struct SidebarPanel: View {
             return .bookmarkedPosts
         case .likes:
             return .likedPosts
-        case .coupons:
-            return .coupons
         case .settings:
             return .settings
         default:
@@ -87,8 +85,6 @@ struct SidebarPanel: View {
                 router.navigateToBookmarkedPosts(on: .portal)
             case .likes:
                 router.navigateToLikedPosts(on: .portal)
-            case .coupons:
-                router.navigate(to: .coupons, on: .portal)
             case .settings:
                 router.navigateToSettings(on: .portal)
             default:

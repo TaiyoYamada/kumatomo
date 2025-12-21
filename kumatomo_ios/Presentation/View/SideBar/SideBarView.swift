@@ -48,30 +48,6 @@ struct LikeListView: View {
     }
 }
 
-// MARK: - CouponsView
-
-struct CouponsView: View {
-    var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "ticket.fill")
-                .font(.system(size: 64))
-                .foregroundColor(.orange)
-
-            Text("クーポン")
-                .font(.title2)
-                .fontWeight(.semibold)
-
-            Text("利用可能なクーポンがここに表示されます")
-                .foregroundColor(.secondary)
-
-            Spacer()
-        }
-        .padding()
-        .navigationTitle("クーポン")
-        .navigationBarTitleDisplayMode(.large)
-    }
-}
-
 // MARK: - SettingsView
 
 struct SettingsView: View {

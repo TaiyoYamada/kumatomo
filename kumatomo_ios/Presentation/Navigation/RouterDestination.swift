@@ -6,7 +6,6 @@ enum RouterDestination: Hashable {
     case myProfile // マイプロフィール画面
     case bookmarks // ブックマーク画面
     case likes // いいね一覧画面
-    case coupons // クーポン画面
     case settings // 設定画面
     case search // 検索画面
     case signUp // サインアップ画面
@@ -39,8 +38,6 @@ extension View {
             case .likes:
                 LikedPostsView()
                     .environment(CurrentUserManager.shared)
-            case .coupons:
-                PlaceholderView(title: "クーポン")
             case .settings:
                 PlaceholderView(title: "設定")
             case .search:
