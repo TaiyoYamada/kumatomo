@@ -15,6 +15,7 @@ final class ShopViewModel {
     var bottomSheetState: BottomSheetState = .hidden
     var userLocation: CLLocationCoordinate2D?
     var errorMessage: String?
+    var isSearching: Bool = false
 
     // Reviews
     var selectedShopReviews: [Comment] = []
@@ -26,8 +27,16 @@ final class ShopViewModel {
     private let shopReviewService: ShopReviewAPIService
 
     // Internal State
-    private var tasks: [Task<Void, Never>] = []
     private var hasPerformedInitialSearch: Bool = false
+    private var lastSearchedLocation: CLLocationCoordinate2D?
+    private var debounceTask: Task<Void, Never>?
+
+    // デバウンス時間（秒）
+    private let debounceInterval: TimeInterval = 1.0
+    // 最小移動距離（メートル）
+    private let minimumMovementDistance: Double = 300.0
+    // 最大保持件数
+    private let maxShopsCount: Int = 300
 
     enum BottomSheetState {
         case hidden
@@ -100,6 +109,34 @@ final class ShopViewModel {
         }
     }
 
+    /// マップの中心座標が変更された時に呼ばれる
+    func onMapRegionChanged(center: CLLocationCoordinate2D) {
+        // 前回のデバウンスタスクをキャンセル
+        debounceTask?.cancel()
+
+        // 新しいデバウンスタスクを開始
+        debounceTask = Task {
+            do {
+                try await Task.sleep(for: .seconds(debounceInterval))
+            } catch {
+                // キャンセルされた場合は何もしない
+                return
+            }
+
+            // 最小移動距離チェック
+            if let lastLocation = lastSearchedLocation {
+                let distance = self.distance(from: lastLocation, to: center)
+                if distance < minimumMovementDistance {
+                    print("📍 移動距離が小さいため検索をスキップ: \(Int(distance))m")
+                    return
+                }
+            }
+
+            print("🗺️ マップ移動検出: 新しい地域を検索")
+            await executeSearch(location: center)
+        }
+    }
+
     // MARK: - Private Methods
 
     private func setupLocationUpdates() {
@@ -155,8 +192,8 @@ final class ShopViewModel {
     }
 
     private func executeSearch(location: CLLocationCoordinate2D) async {
-        if isFetchingReviews { return } // Simple guard, though reviews are separate.
-        // Actually, we should guard against multiple simultaneous searches?
+        if isSearching { return }
+        isSearching = true
 
         do {
             print("🚀 Executing search with query: \(searchQuery), category: \(selectedCategory?.displayName ?? "All")")
@@ -165,14 +202,34 @@ final class ShopViewModel {
                 category: selectedCategory,
                 location: location
             )
-            shops = results
+            // 累積表示: 重複を除外して新しいお店を追加
+            let newShops = results.filter { newShop in
+                !shops.contains { $0.id == newShop.id }
+            }
+            shops.append(contentsOf: newShops)
+            
+            // 最大件数を超えたら古いものから削除
+            if shops.count > maxShopsCount {
+                shops = Array(shops.suffix(maxShopsCount))
+            }
+            
             errorMessage = nil
             hasPerformedInitialSearch = true
-            print("✅ Search completed found \(results.count) shops")
+            lastSearchedLocation = location
+            print("✅ Search completed: +\(newShops.count) new shops, total \(shops.count) shops")
         } catch {
             print("❌ Search failed: \(error)")
             errorMessage = "検索に失敗しました: \(error.localizedDescription)"
-            hasPerformedInitialSearch = true // Even on failure, stop auto-loop
+            hasPerformedInitialSearch = true
         }
+
+        isSearching = false
+    }
+
+    /// 2点間の距離を計算（メートル）
+    private func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
+        let fromLocation = CLLocation(latitude: from.latitude, longitude: from.longitude)
+        let toLocation = CLLocation(latitude: to.latitude, longitude: to.longitude)
+        return fromLocation.distance(from: toLocation)
     }
 }

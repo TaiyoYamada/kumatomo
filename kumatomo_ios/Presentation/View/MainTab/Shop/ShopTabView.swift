@@ -28,9 +28,9 @@ struct ShopTabView: View {
                 MapCompass()
                 MapScaleView()
             }
-            .onMapCameraChange { _ in
-                // Optional: Update search area when map moves manually?
-                // Spec says: "Map move/zoom does NOT call API", so we don't do anything here.
+            .onMapCameraChange { context in
+                // マップが移動したら新しい地域を検索
+                viewModel.onMapRegionChanged(center: context.region.center)
             }
             .onTapGesture {
                 viewModel.onMapTapped()
