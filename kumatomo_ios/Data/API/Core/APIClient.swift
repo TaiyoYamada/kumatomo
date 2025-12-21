@@ -20,7 +20,7 @@ final class APIClient: @unchecked Sendable {
 
         // localhost用TrustManager設定（開発用）
         let evaluators: [String: ServerTrustEvaluating] = [
-            "localhost": DisabledTrustEvaluator(),
+            "localhost": DisabledTrustEvaluator()
         ]
         let manager = ServerTrustManager(allHostsMustBeEvaluated: false, evaluators: evaluators)
         session = Session(serverTrustManager: manager)
@@ -55,7 +55,7 @@ final class APIClient: @unchecked Sendable {
 
         var headers: HTTPHeaders = [
             "Accept": "application/json",
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
         ]
 
         if endpoint.requiresAuth, let token = AuthTokenManager.shared.token, !token.isEmpty {
@@ -134,7 +134,7 @@ final class APIClient: @unchecked Sendable {
 
         var headers: HTTPHeaders = [
             "Accept": "application/json",
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
         ]
 
         if endpoint.requiresAuth, let token = AuthTokenManager.shared.token, !token.isEmpty {

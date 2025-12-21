@@ -13,7 +13,7 @@ class ImageUploadService: @unchecked Sendable {
     private init() {
         // localhost用TrustManager設定（開発用）
         let evaluators: [String: ServerTrustEvaluating] = [
-            "localhost": DisabledTrustEvaluator(),
+            "localhost": DisabledTrustEvaluator()
         ]
         let manager = ServerTrustManager(allHostsMustBeEvaluated: false, evaluators: evaluators)
         session = Session(serverTrustManager: manager)

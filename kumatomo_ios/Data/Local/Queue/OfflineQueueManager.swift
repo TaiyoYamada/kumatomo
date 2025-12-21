@@ -124,7 +124,7 @@ class OfflineQueueManager {
     }
 
     private func processCreateProfile(_ operation: QueuedOperation) async throws {
-        guard let userData = operation.data["user"] as? Data,
+        guard let userData = operation.data["user"],
               let user = try? JSONDecoder().decode(User.self, from: userData) else {
             throw ProfileError.dataCorrupted
         }
@@ -133,7 +133,7 @@ class OfflineQueueManager {
     }
 
     private func processUpdateProfile(_ operation: QueuedOperation) async throws {
-        guard let userData = operation.data["user"] as? Data,
+        guard let userData = operation.data["user"],
               let user = try? JSONDecoder().decode(User.self, from: userData) else {
             throw ProfileError.dataCorrupted
         }
@@ -151,7 +151,7 @@ class OfflineQueueManager {
     }
 
     private func processUploadProfileImage(_ operation: QueuedOperation) async throws {
-        guard let imageData = operation.data["imageData"] as? Data,
+        guard let imageData = operation.data["imageData"],
               let image = UIImage(data: imageData) else {
             throw ProfileError.dataCorrupted
         }
@@ -160,7 +160,7 @@ class OfflineQueueManager {
     }
 
     private func processUploadCoverImage(_ operation: QueuedOperation) async throws {
-        guard let imageData = operation.data["imageData"] as? Data,
+        guard let imageData = operation.data["imageData"],
               let image = UIImage(data: imageData) else {
             throw ProfileError.dataCorrupted
         }
@@ -241,9 +241,13 @@ class OfflineQueueManager {
     }
 
     func enqueueProfileDeletion(userID: String) {
+        guard let userIDData = userID.data(using: .utf8) else {
+            print("❌ Failed to encode userID for offline queue")
+            return
+        }
         let operation = QueuedOperation(
             type: .deleteProfile,
-            data: ["userID": userID.data(using: .utf8)!],
+            data: ["userID": userIDData],
             priority: .high
         )
 

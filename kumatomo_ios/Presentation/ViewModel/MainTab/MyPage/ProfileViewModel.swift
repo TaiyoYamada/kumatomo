@@ -1513,8 +1513,8 @@ class ProfileViewModel {
             return false
         }
 
-        var profileImageUrl: String? = nil
-        var coverImageUrl: String? = nil
+        var profileImageUrl: String?
+        var coverImageUrl: String?
         var uploadSuccess = true
 
         clearAllErrors()
@@ -1527,8 +1527,8 @@ class ProfileViewModel {
                     if profileImageUrl == nil {
                         print("❌ プロフィール画像のアップロードに失敗しました")
                         uploadSuccess = false
-                    } else {
-                        print("✅ プロフィール画像のアップロード成功: \(profileImageUrl!)")
+                    } else if let url = profileImageUrl {
+                        print("✅ プロフィール画像のアップロード成功: \(url)")
                     }
                 } else {
                     print("🗑️ プロフィール画像が削除されました")
@@ -1542,8 +1542,8 @@ class ProfileViewModel {
                     if coverImageUrl == nil {
                         print("❌ カバー画像のアップロードに失敗しました")
                         uploadSuccess = false
-                    } else {
-                        print("✅ カバー画像のアップロード成功: \(coverImageUrl!)")
+                    } else if let url = coverImageUrl {
+                        print("✅ カバー画像のアップロード成功: \(url)")
                     }
                 } else {
                     print("🗑️ カバー画像が削除されました")

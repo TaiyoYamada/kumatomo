@@ -12,7 +12,7 @@ class AppRouter {
         .shop: NavigationPath(),
         .search: NavigationPath(),
         .portal: NavigationPath(),
-        .profile: NavigationPath(),
+        .profile: NavigationPath()
     ]
 
     static let shared = AppRouter()

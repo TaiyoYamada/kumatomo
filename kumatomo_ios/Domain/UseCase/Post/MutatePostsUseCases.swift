@@ -42,7 +42,7 @@ final class CreatePostUseCaseImpl: CreatePostUseCase {
     }
 
     func execute(userId: Int, content: String, tags: [String], imageData: Data?) async throws -> Post {
-        var imageUrl: String? = nil
+        var imageUrl: String?
         if let data = imageData {
             imageUrl = try await imageUploadRepository.uploadImage(data, endpoint: "/upload-image")
         }

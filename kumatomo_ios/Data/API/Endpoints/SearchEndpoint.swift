@@ -27,7 +27,7 @@ enum SearchEndpoint: APIEndpoint {
                 "q": query,
                 "type": type.rawValue,
                 "page": page,
-                "per_page": perPage,
+                "per_page": perPage
             ]
         }
     }

@@ -40,5 +40,5 @@ let samplePortalCards: [PortalCardData] = [
         iconName: "cross.case.fill",
         imageName: "portal_card_6",
         externalURL: "https://www.iryou.teikyouseido.mhlw.go.jp/znk-web/juminkanja/S2310/initialize?pref=43"
-    ),
+    )
 ]

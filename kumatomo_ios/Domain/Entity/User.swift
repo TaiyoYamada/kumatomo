@@ -75,9 +75,10 @@ extension User {
     }
 
     var isProfileComplete: Bool {
-        return email != nil && !email!.isEmpty &&
-            name != nil && !name!.isEmpty &&
-            username != nil && !username!.isEmpty
+        guard let email, !email.isEmpty,
+              let name, !name.isEmpty,
+              let username, !username.isEmpty else { return false }
+        return true
     }
 
     func updatedProfile(

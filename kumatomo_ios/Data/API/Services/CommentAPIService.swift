@@ -42,7 +42,7 @@ class CommentAPIService {
             throw CommentError.contentTooLong(currentCount: trimmedContent.count, maxCount: maxLength)
         }
 
-        var imageUrl: String? = nil
+        var imageUrl: String?
         if let image {
             do {
                 imageUrl = try await imageUploadService.uploadImage(image)

@@ -108,7 +108,7 @@ class OfflineDataCache: ObservableObject {
         var syncedCount = 0
         var failedCount = 0
 
-        for (profileId, cachedProfile) in cachedProfiles {
+        for (profileId, _) in cachedProfiles {
             do {
                 let freshProfile = try await userAPIService.fetchProfileAsync(userID: profileId)
 

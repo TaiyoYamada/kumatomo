@@ -78,7 +78,7 @@ struct Comment: Identifiable, Codable, Equatable {
         imageUrl = (try? container.decodeIfPresent(String.self, forKey: .imageUrl)) ?? (try? alt?.decodeIfPresent(
             String.self,
             forKey: .imageUrl
-        )) ?? nil
+        ))
         user = try container.decodeIfPresent(User.self, forKey: .user)
 
         let df = DateFormatter()
@@ -135,7 +135,8 @@ extension Comment {
     }
 
     var hasImage: Bool {
-        return imageUrl != nil && !imageUrl!.isEmpty
+        guard let url = imageUrl else { return false }
+        return !url.isEmpty
     }
 
     var hasContent: Bool {

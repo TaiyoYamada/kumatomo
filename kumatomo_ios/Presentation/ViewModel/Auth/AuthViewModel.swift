@@ -143,7 +143,7 @@ final class AuthViewModel {
         Task {
             do {
                 // プロフィール画像がある場合はアップロード
-                var profileImageURL: String? = nil
+                var profileImageURL: String?
                 if let image = profileImage {
                     profileImageURL = try await uploadProfileImage(image)
                 }
@@ -218,15 +218,12 @@ final class AuthViewModel {
 
         do {
             // 画像がある場合はアップロード
-            var profileImageURL: String? = nil
+            var profileImageURL: String?
             if let image = profileImage {
                 profileImageURL = try await uploadProfileImage(image)
             }
 
             // プロフィール情報を更新
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
-            let birthdayString = dateFormatter.string(from: birthDate)
 
             try await updateUserUseCase.execute(
                 name: name,

@@ -8,11 +8,6 @@ struct LikeResponse: Codable, Equatable {
 
     // CodingKeys removed: APIClient uses .convertFromSnakeCase decoder strategy
     // which automatically converts is_liked -> isLiked, like_count -> likeCount
-
-    init(isLiked: Bool, likeCount: Int) {
-        self.isLiked = isLiked
-        self.likeCount = likeCount
-    }
 }
 
 // MARK: - BookmarkResponse
@@ -23,11 +18,6 @@ struct BookmarkResponse: Codable, Equatable {
 
     // CodingKeys removed: APIClient uses .convertFromSnakeCase decoder strategy
     // which automatically converts is_bookmarked -> isBookmarked, bookmark_count -> bookmarkCount
-
-    init(isBookmarked: Bool, bookmarkCount: Int) {
-        self.isBookmarked = isBookmarked
-        self.bookmarkCount = bookmarkCount
-    }
 }
 
 // MARK: - EngagementStatus

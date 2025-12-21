@@ -30,8 +30,8 @@
 # 空行の調整
 --trimwhitespace always
 
-# カンマ
---commas always
+# カンマ（SwiftLintのtrailing_commaルールに準拠）
+--commas inline
 
 # セミコロン
 --semicolons never

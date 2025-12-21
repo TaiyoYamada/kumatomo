@@ -9,7 +9,6 @@ final class PlaceRepositoryImpl: PlaceRepositoryProtocol, Sendable {
     }
 
     func fetchNearbyShops(location: CLLocationCoordinate2D, category: ShopCategory?) async throws -> [Shop] {
-        let types = category?.googlePlaceTypes ?? ShopCategory.allCases.flatMap(\.googlePlaceTypes)
         // If category is nil, fetch "all" supported types or top-level types.
         // Google Places API might error if too many includedTypes.
         // For "Nearby", if no category is selected, we usually want "everything around" or defaults.
@@ -24,7 +23,7 @@ final class PlaceRepositoryImpl: PlaceRepositoryProtocol, Sendable {
             "shopping_mall",
             "hospital",
             "school",
-            "gym",
+            "gym"
         ]
         let targetTypes = category?.googlePlaceTypes ?? defaultTypes
 

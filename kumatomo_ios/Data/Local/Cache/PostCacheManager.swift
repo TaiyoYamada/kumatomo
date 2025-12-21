@@ -189,7 +189,7 @@ class PostCacheManager: ObservableObject {
             CacheKeys.followingPosts,
             CacheKeys.followingPostsTimestamp,
             CacheKeys.reactions,
-            CacheKeys.bookmarks,
+            CacheKeys.bookmarks
         ]
 
         for key in keys {
@@ -224,7 +224,7 @@ class PostCacheManager: ObservableObject {
             CacheKeys.allPosts,
             CacheKeys.followingPosts,
             CacheKeys.reactions,
-            CacheKeys.bookmarks,
+            CacheKeys.bookmarks
         ]
 
         for key in keys {
@@ -236,7 +236,7 @@ class PostCacheManager: ObservableObject {
 
         let timestamps = [
             userDefaults.double(forKey: CacheKeys.allPostsTimestamp),
-            userDefaults.double(forKey: CacheKeys.followingPostsTimestamp),
+            userDefaults.double(forKey: CacheKeys.followingPostsTimestamp)
         ].compactMap { $0 > 0 ? Date(timeIntervalSince1970: $0) : nil }
 
         if let latest = timestamps.max() {

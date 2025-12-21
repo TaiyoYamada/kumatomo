@@ -13,19 +13,22 @@ final class GooglePlacesClient: Sendable {
     }
 
     func nearbySearch(location: CLLocationCoordinate2D, type: String?) async throws -> [Shop] {
-        var components = URLComponents(string: "https://places.googleapis.com/v1/places:searchNearby")!
+        guard let components = URLComponents(string: "https://places.googleapis.com/v1/places:searchNearby") else {
+            throw PlaceError.networkError(NSError(domain: "Invalid URL", code: 0))
+        }
 
+        let includedTypes: [String] = type.map { [$0] } ?? []
         let requestBody: [String: Any] = [
-            "includedTypes": type != nil ? [type!] : [],
+            "includedTypes": includedTypes,
             "locationRestriction": [
                 "circle": [
                     "center": [
                         "latitude": location.latitude,
-                        "longitude": location.longitude,
+                        "longitude": location.longitude
                     ],
-                    "radius": 1_000.0, // 1km radius
-                ],
-            ],
+                    "radius": 1_000.0
+                ]
+            ]
         ]
 
         // If type is nil or empty, we might want to search generically or use a different endpoint.
@@ -37,7 +40,10 @@ final class GooglePlacesClient: Sendable {
         // Wait, Google Places API New (v1) requires FieldMask.
         // And searchNearby is POST.
 
-        return try await performRequest(url: components.url!, method: "POST", body: requestBody)
+        guard let url = components.url else {
+            throw PlaceError.networkError(NSError(domain: "Invalid URL", code: 0))
+        }
+        return try await performRequest(url: url, method: "POST", body: requestBody)
     }
 
     // Changing strategy: Use "places:searchNearby" for category search and "places:searchText" for text search.
@@ -50,7 +56,9 @@ final class GooglePlacesClient: Sendable {
 
 extension GooglePlacesClient {
     func searchNearby(location: CLLocationCoordinate2D, types: [String]) async throws -> [Shop] {
-        let url = URL(string: "https://places.googleapis.com/v1/places:searchNearby")!
+        guard let url = URL(string: "https://places.googleapis.com/v1/places:searchNearby") else {
+            throw PlaceError.networkError(NSError(domain: "Invalid URL", code: 0))
+        }
 
         let requestBody: [String: Any] = [
             "includedTypes": types,
@@ -59,18 +67,20 @@ extension GooglePlacesClient {
                 "circle": [
                     "center": [
                         "latitude": location.latitude,
-                        "longitude": location.longitude,
+                        "longitude": location.longitude
                     ],
-                    "radius": 1_500.0,
-                ],
-            ],
+                    "radius": 1_500.0
+                ]
+            ]
         ]
 
         return try await performRequest(url: url, method: "POST", body: requestBody)
     }
 
     func searchText(query: String, location: CLLocationCoordinate2D) async throws -> [Shop] {
-        let url = URL(string: "https://places.googleapis.com/v1/places:searchText")!
+        guard let url = URL(string: "https://places.googleapis.com/v1/places:searchText") else {
+            throw PlaceError.networkError(NSError(domain: "Invalid URL", code: 0))
+        }
 
         let requestBody: [String: Any] = [
             "textQuery": query,
@@ -78,11 +88,11 @@ extension GooglePlacesClient {
                 "circle": [
                     "center": [
                         "latitude": location.latitude,
-                        "longitude": location.longitude,
+                        "longitude": location.longitude
                     ],
-                    "radius": 1_000.0,
-                ],
-            ],
+                    "radius": 1_000.0
+                ]
+            ]
         ]
 
         return try await performRequest(url: url, method: "POST", body: requestBody)
@@ -137,11 +147,8 @@ private struct GooglePlaceDTO: Decodable {
 
     func toEntity() -> Shop {
         let mappedCategory = types?.compactMap { typeString -> ShopCategory? in
-            // Simple mapping logic - first match wins
-            for category in ShopCategory.allCases {
-                if category.googlePlaceTypes.contains(typeString) {
-                    return category
-                }
+            for category in ShopCategory.allCases where category.googlePlaceTypes.contains(typeString) {
+                return category
             }
             return nil
         }.first ?? .other

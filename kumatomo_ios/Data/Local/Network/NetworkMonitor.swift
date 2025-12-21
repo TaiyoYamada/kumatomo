@@ -175,7 +175,7 @@ class NetworkMonitor {
                 "isConnected": isConnected,
                 "connectionType": newConnectionType,
                 "isExpensive": isExpensive,
-                "isConstrained": isConstrained,
+                "isConstrained": isConstrained
             ]
         )
     }
@@ -185,7 +185,7 @@ class NetworkMonitor {
             return .unavailable
         }
 
-        var quality: ConnectionQuality = switch connectionType {
+        let quality: ConnectionQuality = switch connectionType {
         case .wifi, .ethernet:
             isConstrained ? .good : .excellent
         case .cellular:

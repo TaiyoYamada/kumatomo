@@ -77,7 +77,7 @@ class ProfileErrorHandler {
         switch imageError {
         case .imageConversionFailed:
             return .imageCompressionFailed
-        case let .fileSizeExceeded(currentSize, maxSize):
+        case let .fileSizeExceeded(_, maxSize):
             return .imageTooLarge(maxSize: maxSize / (1_024 * 1_024))
         case .unsupportedImageFormat:
             return .unsupportedImageFormat
@@ -93,7 +93,7 @@ class ProfileErrorHandler {
             return .serverError(statusCode: statusCode, message: message)
         case .timeout:
             return .uploadTimeout
-        case let .imageTooLarge(_, _, maxWidth, maxHeight):
+        case .imageTooLarge:
             return .imageTooLarge(maxSize: 10)
         default:
             return .imageUploadFailed(NSError(
@@ -169,7 +169,7 @@ class ProfileErrorHandler {
             "Recoverable": String(error.isRecoverable),
             "AutoRetry": String(error.shouldAutoRetry),
             "RetryCount": String(retryCount),
-            "NetworkStatus": networkMonitor.isConnected ? "Connected" : "Offline",
+            "NetworkStatus": networkMonitor.isConnected ? "Connected" : "Offline"
         ]
 
         print("🚨 ProfileError: \(errorInfo)")
@@ -209,7 +209,7 @@ class ProfileErrorHandler {
                 code: 0,
                 userInfo: [
                     NSLocalizedDescriptionKey: "\(imageType)のアップロードに失敗しました",
-                    NSUnderlyingErrorKey: originalError,
+                    NSUnderlyingErrorKey: originalError
                 ]
             ))
         default:
@@ -230,7 +230,7 @@ class ProfileErrorHandler {
             code: 0,
             userInfo: [
                 NSLocalizedDescriptionKey: "\(operation)中にネットワークエラーが発生しました",
-                NSUnderlyingErrorKey: error,
+                NSUnderlyingErrorKey: error
             ]
         ))
 
@@ -251,7 +251,7 @@ extension ProfileErrorHandler {
         if error.isRecoverable, retryAction != nil {
             return Alert(
                 title: Text("エラーが発生しました"),
-                message: Text(message + (recovery != nil ? "\n\n\(recovery!)" : "")),
+                message: Text(message + (recovery.map { "\n\n\($0)" } ?? "")),
                 primaryButton: .default(Text("再試行")) {
                     Task {
                         await self.retryLastAction()
@@ -264,7 +264,7 @@ extension ProfileErrorHandler {
         } else {
             return Alert(
                 title: Text("エラーが発生しました"),
-                message: Text(message + (recovery != nil ? "\n\n\(recovery!)" : "")),
+                message: Text(message + (recovery.map { "\n\n\($0)" } ?? "")),
                 dismissButton: .default(Text("OK")) {
                     self.clearError()
                 }

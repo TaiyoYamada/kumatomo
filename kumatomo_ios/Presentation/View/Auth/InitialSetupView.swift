@@ -11,8 +11,8 @@ struct InitialSetupView: View {
     @State private var username: String = ""
     @State private var selectedLocation: String = ""
     @State private var birthday: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date()) ?? Date()
-    @State private var selectedImage: PhotosPickerItem? = nil
-    @State private var displayImage: UIImage? = nil
+    @State private var selectedImage: PhotosPickerItem?
+    @State private var displayImage: UIImage?
     @State private var isSubmitting = false
     @State private var showAlert = false
     @State private var alertMessage = ""

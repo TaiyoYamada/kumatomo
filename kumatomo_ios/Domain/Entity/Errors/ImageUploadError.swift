@@ -27,7 +27,7 @@ enum ImageUploadError: LocalizedError {
             return "画像の変換に失敗しました"
         case .unsupportedImageFormat:
             return "対応していない画像形式です"
-        case let .decodingFailed(error):
+        case .decodingFailed:
             return "レスポンスの解析に失敗しました"
         case let .uploadFailed(reason):
             return "画像のアップロードに失敗しました: \(reason)"

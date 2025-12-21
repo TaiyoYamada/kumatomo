@@ -325,13 +325,13 @@ struct PostImagesGridView_Previews: PreviewProvider {
             PostImagesGridView(imageUrls: [
                 "https://example.com/image1.jpg",
                 "https://example.com/image2.jpg",
-                "https://example.com/image3.jpg",
+                "https://example.com/image3.jpg"
             ])
             PostImagesGridView(imageUrls: [
                 "https://example.com/image1.jpg",
                 "https://example.com/image2.jpg",
                 "https://example.com/image3.jpg",
-                "https://example.com/image4.jpg",
+                "https://example.com/image4.jpg"
             ])
         }
         .padding()

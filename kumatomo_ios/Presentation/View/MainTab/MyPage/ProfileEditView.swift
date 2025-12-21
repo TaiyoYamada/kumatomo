@@ -189,7 +189,7 @@ struct ProfileEditView: View {
                     errorHandler.handleError(
                         ProfileError.profileUpdateFailed(
                             NSError(domain: "ProfileEdit", code: 0, userInfo: [
-                                NSLocalizedDescriptionKey: viewModel.errorMessage ?? "不明なエラー",
+                                NSLocalizedDescriptionKey: viewModel.errorMessage ?? "不明なエラー"
                             ])
                         )
                     )
@@ -609,7 +609,7 @@ struct ProfileImageEditRow: View {
         LinearGradient(
             gradient: Gradient(colors: [
                 Color.orange.opacity(0.6),
-                Color.purple.opacity(0.6),
+                Color.purple.opacity(0.6)
             ]),
             startPoint: .topLeading,
             endPoint: .bottomTrailing

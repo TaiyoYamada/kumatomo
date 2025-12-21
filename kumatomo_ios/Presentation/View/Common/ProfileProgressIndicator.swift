@@ -276,7 +276,7 @@ struct ProfileProgressIndicator_Previews: PreviewProvider {
                 errors: [
                     "名前を入力してください",
                     "メールアドレスの形式が正しくありません",
-                    "ユーザーネームは3文字以上で入力してください",
+                    "ユーザーネームは3文字以上で入力してください"
                 ],
                 onDismiss: {}
             )

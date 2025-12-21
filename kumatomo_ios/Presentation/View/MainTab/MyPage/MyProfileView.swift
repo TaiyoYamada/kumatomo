@@ -148,7 +148,7 @@ struct ModernProfileHeaderView: View {
                                     gradient: Gradient(colors: [
                                         Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7),
+                                        Color.orange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -167,7 +167,7 @@ struct ModernProfileHeaderView: View {
                                     gradient: Gradient(colors: [
                                         Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7),
+                                        Color.orange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -182,7 +182,7 @@ struct ModernProfileHeaderView: View {
                                     gradient: Gradient(colors: [
                                         Color.orange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7),
+                                        Color.orange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -195,7 +195,7 @@ struct ModernProfileHeaderView: View {
                             gradient: Gradient(colors: [
                                 Color.orange.opacity(0.7),
                                 Color.purple.opacity(0.7),
-                                Color.orange.opacity(0.7),
+                                Color.orange.opacity(0.7)
                             ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -221,7 +221,7 @@ struct ModernProfileHeaderView: View {
                         gradient: Gradient(stops: [
                             .init(color: Color.clear, location: 0.0),
                             .init(color: Color.black.opacity(0.1), location: 0.7),
-                            .init(color: Color.black.opacity(0.3), location: 1.0),
+                            .init(color: Color.black.opacity(0.3), location: 1.0)
                         ]),
                         startPoint: .top,
                         endPoint: .bottom

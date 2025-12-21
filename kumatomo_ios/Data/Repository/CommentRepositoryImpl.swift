@@ -13,7 +13,7 @@ final class CommentRepositoryImpl: CommentRepository {
     }
 
     func createComment(postId: Int, content: String, imageData: Data?) async throws -> Comment {
-        var uiImage: UIImage? = nil
+        var uiImage: UIImage?
         if let data = imageData { uiImage = UIImage(data: data) }
         return try await service.createComment(postId: postId, content: content, image: uiImage)
     }

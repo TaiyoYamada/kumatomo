@@ -3,7 +3,7 @@ import Foundation
 // MARK: - ShopReviewAPIService
 
 /// APIClient経由のショップレビューAPIサービス
-class ShopReviewAPIService: Sendable {
+class ShopReviewAPIService: @unchecked Sendable {
     static let shared = ShopReviewAPIService()
     private let client = APIClient.shared
 

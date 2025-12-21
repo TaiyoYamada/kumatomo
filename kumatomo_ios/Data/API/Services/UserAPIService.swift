@@ -62,7 +62,7 @@ final class UserAPIService {
                         "name": user.name ?? "",
                         "email": user.email ?? "",
                         "bio": user.bio ?? "",
-                        "location": user.location ?? "",
+                        "location": user.location ?? ""
                     ]
                     let response: UserResponse = try await self.client.post(UserEndpoint.updateProfile(data: data))
                     promise(.success(response.data))
@@ -81,7 +81,7 @@ final class UserAPIService {
             "name": user.name ?? "",
             "email": user.email ?? "",
             "bio": user.bio ?? "",
-            "location": user.location ?? "",
+            "location": user.location ?? ""
         ]
         let response: UserResponse = try await client.post(UserEndpoint.updateProfile(data: data))
         return response.data
@@ -97,7 +97,7 @@ final class UserAPIService {
                     var data: [String: Any] = [
                         "name": user.name ?? "",
                         "bio": user.bio ?? "",
-                        "location": user.location ?? "",
+                        "location": user.location ?? ""
                     ]
                     // 画像URLも含める
                     if let profileImageURL = user.profileImageURL {
@@ -122,7 +122,7 @@ final class UserAPIService {
         var data: [String: Any] = [
             "name": user.name ?? "",
             "bio": user.bio ?? "",
-            "location": user.location ?? "",
+            "location": user.location ?? ""
         ]
         // 画像URLも含める
         if let profileImageURL = user.profileImageURL {

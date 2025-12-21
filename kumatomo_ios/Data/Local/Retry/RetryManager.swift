@@ -125,13 +125,17 @@ class RetryManager: ObservableObject {
             }
         }
 
-        logRetryFailure(operationId: operationId, finalError: lastError!)
-
-        if let progressId {
-            progressTracker.completeWithFailure(id: progressId, error: lastError!)
+        guard let finalError = lastError else {
+            throw ProgressError.operationCancelled(reason: "Unknown error")
         }
 
-        throw lastError!
+        logRetryFailure(operationId: operationId, finalError: finalError)
+
+        if let progressId {
+            progressTracker.completeWithFailure(id: progressId, error: finalError)
+        }
+
+        throw finalError
     }
 
     func cancelRetry(operationId: String, reason: String = "User cancelled") {
