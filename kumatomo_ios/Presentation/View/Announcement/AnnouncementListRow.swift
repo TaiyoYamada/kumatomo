@@ -44,9 +44,7 @@ struct AnnouncementListRow: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 0)
     }
 }

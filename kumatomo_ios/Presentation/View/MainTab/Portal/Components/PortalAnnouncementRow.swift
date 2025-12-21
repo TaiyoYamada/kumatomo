@@ -38,8 +38,7 @@ struct PortalAnnouncementRow: View {
                 .font(.caption)
                 .foregroundColor(.gray.opacity(0.5))
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(Color(.secondarySystemGroupedBackground))
+        .padding(.vertical, 4)
+        .contentShape(Rectangle()) // タップ領域確保
     }
 }

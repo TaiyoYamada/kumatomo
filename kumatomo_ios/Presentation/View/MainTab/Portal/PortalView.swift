@@ -78,19 +78,16 @@ struct PortalView: View {
                             ForEach(viewModel.recentAnnouncements) { announcement in
                                 NavigationLink(value: announcement) {
                                     PortalAnnouncementRow(announcement: announcement)
+                                        .padding(.vertical, 8) // Row内のパディング調整
                                 }
                                 .buttonStyle(PlainButtonStyle())
 
                                 if announcement.id != viewModel.recentAnnouncements.last?.id {
                                     Divider()
-                                        .padding(.leading, 56)
                                 }
                             }
                         }
-                        .background(Color(.secondarySystemGroupedBackground))
-                        .cornerRadius(20)
                         .padding(.horizontal, 20)
-                        .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 5)
                     }
                 }
             }

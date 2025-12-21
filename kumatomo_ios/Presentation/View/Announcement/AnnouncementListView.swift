@@ -5,7 +5,7 @@ struct AnnouncementListView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 16) {
+            LazyVStack(spacing: 0) {
                 if announcements.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "bell.slash")
@@ -24,6 +24,10 @@ struct AnnouncementListView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         .contentShape(Rectangle())
+
+                        if announcement.id != announcements.last?.id {
+                            Divider()
+                        }
                     }
                 }
             }
