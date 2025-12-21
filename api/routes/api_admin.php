@@ -1,26 +1,43 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminShopController;
-use App\Http\Controllers\ShopProposalController;
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminPostController;
+use App\Http\Controllers\PortalSlideController;
 use App\Http\Controllers\UnifiedImageUploadController;
 
-// Admin routes must be authenticated
-Route::middleware('auth:sanctum')
+// Admin routes - requires auth:sanctum and EnsureAdmin middleware
+Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureAdmin::class])
     ->prefix('admin')
     ->group(function () {
-        // Shop management
-        Route::get('/shops', [AdminShopController::class, 'index']);
-        Route::post('/shops', [AdminShopController::class, 'store']);
-        Route::get('/shops/{id}', [AdminShopController::class, 'show']);
-        Route::put('/shops/{id}', [AdminShopController::class, 'update']);
-        Route::delete('/shops/{id}', [AdminShopController::class, 'destroy']);
+        // Dashboard stats
+        Route::get('/stats/users', [AdminUserController::class, 'stats']);
+        Route::get('/stats/posts', [AdminPostController::class, 'stats']);
 
-        // Shop proposal management
-        Route::get('/shop-proposals', [ShopProposalController::class, 'adminIndex']);
-        Route::post('/shop-proposals/{proposal}/approve', [ShopProposalController::class, 'approve']);
-        Route::post('/shop-proposals/{proposal}/reject', [ShopProposalController::class, 'reject']);
+        // User management
+        Route::get('/users', [AdminUserController::class, 'index']);
+        Route::get('/users/{id}', [AdminUserController::class, 'show']);
+        Route::put('/users/{id}', [AdminUserController::class, 'update']);
+        Route::delete('/users/{id}', [AdminUserController::class, 'destroy']);
 
-        // Admin shop image upload (reuses unified uploader)
-        Route::post('/shops/upload-image', [UnifiedImageUploadController::class, 'upload']);
+        // Post management
+        Route::get('/posts', [AdminPostController::class, 'index']);
+        Route::get('/posts/{id}', [AdminPostController::class, 'show']);
+        Route::delete('/posts/{id}', [AdminPostController::class, 'destroy']);
+
+        // Portal slides management
+        Route::get('/portal-slides', [PortalSlideController::class, 'index']);
+        Route::post('/portal-slides', [PortalSlideController::class, 'store']);
+        Route::get('/portal-slides/{id}', [PortalSlideController::class, 'show']);
+        Route::put('/portal-slides/{id}', [PortalSlideController::class, 'update']);
+        Route::delete('/portal-slides/{id}', [PortalSlideController::class, 'destroy']);
+        Route::post('/portal-slides/reorder', [PortalSlideController::class, 'reorder']);
+
+        // Image upload (reuses unified uploader)
+        Route::post('/upload-image', [UnifiedImageUploadController::class, 'upload']);
     });
+
+// Public portal slides endpoint (for iOS app)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/portal-slides', [PortalSlideController::class, 'publicIndex']);
+});

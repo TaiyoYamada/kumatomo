@@ -32,6 +32,7 @@ class User extends Authenticatable
         'profile_image_url', // プロフィールアイコンのURL
         'cover_image_url', // カバー画像のURL
         'has_completed_setup',
+        'is_admin',
         'created_at',
     ];
 
@@ -43,6 +44,7 @@ class User extends Authenticatable
         'followers_count' => 'integer',
         'following_count' => 'integer',
         'has_completed_setup' => 'boolean',
+        'is_admin' => 'boolean',
         'password' => 'hashed',
     ];
 
