@@ -13,72 +13,101 @@ struct PortalView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 24) {
+            VStack(spacing: 32) {
+                // Slideshow Section
                 VStack(spacing: 0) {
                     PortalAdvertisingSlideshow()
                 }
                 .padding(.top, 8)
 
+                // Services Section
+                VStack(spacing: 16) {
+                    HStack {
+                        Text("サービス一覧")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 20)
+
+                    PortalCardGrid(cards: samplePortalCards)
+                }
+
                 // Announcements Section
-                if !viewModel.recentAnnouncements.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("運営からのお知らせ")
-                                .font(.title3)
-                                .fontWeight(.bold)
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        Text("運営からのお知らせ")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
 
-                            Spacer()
+                        Spacer()
 
+                        if !viewModel.recentAnnouncements.isEmpty {
                             Button {
                                 showingAllAnnouncements = true
                             } label: {
                                 Text("すべて見る")
                                     .font(.subheadline)
+                                    .fontWeight(.medium)
                                     .foregroundColor(.orange)
                             }
                         }
-                        .padding(.horizontal, 16)
+                    }
+                    .padding(.horizontal, 20)
 
-                        VStack(spacing: 1) {
+                    if viewModel.recentAnnouncements.isEmpty {
+                        // Empty State
+                        VStack(spacing: 12) {
+                            Image(systemName: "bell.slash")
+                                .font(.system(size: 32))
+                                .foregroundColor(.secondary.opacity(0.3))
+                            Text("お知らせはありません")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary.opacity(0.7))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 32)
+                        .background(Color(.secondarySystemGroupedBackground))
+                        .cornerRadius(20)
+                        .padding(.horizontal, 20)
+                    } else {
+                        // Announcement List (Summary)
+                        VStack(spacing: 0) {
                             ForEach(viewModel.recentAnnouncements) { announcement in
-                                Button {
-                                    selectedAnnouncement = announcement
-                                } label: {
+                                NavigationLink(value: announcement) {
                                     PortalAnnouncementRow(announcement: announcement)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(PlainButtonStyle())
 
                                 if announcement.id != viewModel.recentAnnouncements.last?.id {
                                     Divider()
-                                        .padding(.leading, 16)
+                                        .padding(.leading, 56)
                                 }
                             }
                         }
                         .background(Color(.secondarySystemGroupedBackground))
-                        .cornerRadius(12)
-                        .padding(.horizontal, 16)
+                        .cornerRadius(20)
+                        .padding(.horizontal, 20)
+                        .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 5)
                     }
-                }
-
-                VStack(spacing: 10) {
-                    HStack {
-                        Text("サービス一覧")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
-                    PortalCardGrid(cards: samplePortalCards)
                 }
             }
-            .padding(.bottom, 16)
+            .padding(.bottom, 32)
         }
         .scrollIndicators(.hidden)
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("ポータル")
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Image("portal_logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 50)
+            }
+
             ToolbarItem(placement: .navigationBarLeading) {
                 ProfileIconButton(
                     user: userManager.currentUser,
@@ -109,8 +138,11 @@ struct PortalView: View {
                 Color.clear.frame(height: 8)
             }
         }
-        .sheet(isPresented: $showingAllAnnouncements) {
+        .navigationDestination(isPresented: $showingAllAnnouncements) {
             AnnouncementListView(announcements: viewModel.announcements)
+        }
+        .navigationDestination(for: Announcement.self) { announcement in
+            AnnouncementDetailView(announcement: announcement)
         }
         .task {
             await viewModel.loadAnnouncements()

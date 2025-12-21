@@ -11,10 +11,11 @@ struct PortalCardGrid: View {
             LazyHStack(spacing: 16) {
                 ForEach(cards) { card in
                     PortalCardView(cardData: card)
-                        .frame(width: 100, height: 120)
+                        .frame(width: 85) // 少し幅を調整
                 }
             }
             .padding(.horizontal, 16)
+            .padding(.bottom, 8)
         }
     }
 }
@@ -27,38 +28,41 @@ struct PortalCardView: View {
     @State private var isPressed = false
     @State private var showingError = false
     @State private var errorMessage = ""
-    @State private var imageLoadError = false
     @Environment(NetworkMonitor.self) private var networkMonitor
 
     var body: some View {
         Button(action: handleCardTap) {
-
-            VStack(spacing: 10) {
+            VStack(spacing: 8) {
+                // Circular Icon container
                 ZStack {
                     Circle()
-                        .fill(Color.accentColor.opacity(0.12))
-                        .frame(width: 56, height: 56)
+                        .fill(Color(.secondarySystemGroupedBackground))
+                        .frame(width: 64, height: 64)
+                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+
                     Image(systemName: cardData.iconName)
-                        .font(.system(size: 26, weight: .semibold))
+                        .font(.system(size: 28, weight: .regular))
                         .foregroundColor(.accentColor)
                 }
+                .scaleEffect(isPressed ? 0.92 : 1.0)
+                .animation(.easeOut(duration: 0.1), value: isPressed)
 
+                // Title
                 Text(cardData.title)
-                    .font(.footnote)
-                    .fontWeight(.semibold)
+                    .font(.caption)
+                    .fontWeight(.medium)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
-                    .minimumScaleFactor(0.9)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(height: 32, alignment: .top) // テキストエリアの高さを固定して揃える
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, 4)
         }
-
         .buttonStyle(PlainButtonStyle())
         .disabled(!networkMonitor.isConnected && !isValidURL)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(.easeInOut(duration: 0.08)) { isPressed = pressing }
+            isPressed = pressing
         }, perform: {})
         .alert("エラー", isPresented: $showingError) {
             Button("OK") {}
@@ -74,9 +78,7 @@ struct PortalCardView: View {
         PortalErrorHandler.shared.openURL(cardData.externalURL) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success:
-                    break
-
+                case .success: break
                 case let .failure(error):
                     showError(error.userFriendlyMessage)
                     PortalErrorHandler.shared.logError(error, "Portal card '\(cardData.title)' error")
@@ -91,11 +93,6 @@ struct PortalCardView: View {
     }
 
     private var isValidURL: Bool {
-        do {
-            _ = try PortalErrorHandler.shared.validateURL(cardData.externalURL)
-            return true
-        } catch {
-            return false
-        }
+        (try? PortalErrorHandler.shared.validateURL(cardData.externalURL)) != nil
     }
 }
