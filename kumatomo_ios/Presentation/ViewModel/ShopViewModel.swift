@@ -70,7 +70,9 @@ final class ShopViewModel {
 
     func onSearchQueryChanged(_ query: String) {
         searchQuery = query
-        // Debounce logic could be added here or in View
+        // 検索クエリが変更されたら累積リストをクリア
+        shops = []
+        lastSearchedLocation = nil
         performSearch(isUserInitiated: true)
     }
 
@@ -80,6 +82,9 @@ final class ShopViewModel {
         } else {
             selectedCategory = category
         }
+        // カテゴリが変更されたら累積リストをクリア
+        shops = []
+        lastSearchedLocation = nil
         performSearch(isUserInitiated: true)
     }
 
@@ -107,6 +112,14 @@ final class ShopViewModel {
             bottomSheetState = .hidden
             selectedShop = nil
         }
+    }
+
+    /// 指定した座標で検索を実行（現在地ボタン用）
+    func searchAtLocation(_ location: CLLocationCoordinate2D) async {
+        // デバウンスをキャンセル
+        debounceTask?.cancel()
+        // 即座に検索実行
+        await executeSearch(location: location)
     }
 
     /// マップの中心座標が変更された時に呼ばれる

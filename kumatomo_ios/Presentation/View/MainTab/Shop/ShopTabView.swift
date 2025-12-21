@@ -6,6 +6,7 @@ import MapKit
 struct ShopTabView: View {
     @State private var viewModel = ShopViewModel()
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
+    @Environment(\.openSidebar) private var openSidebar
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -24,7 +25,6 @@ struct ShopTabView: View {
                 }
             }
             .mapControls {
-                MapUserLocationButton()
                 MapCompass()
                 MapScaleView()
             }
@@ -57,6 +57,14 @@ struct ShopTabView: View {
                     .ignoresSafeArea()
             )
 
+            // 現在地ボタン（右下）
+            CurrentLocationButton {
+                moveToCurrentLocation()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            .padding(.trailing, 16)
+            .padding(.bottom, viewModel.bottomSheetState != .hidden ? 220 : 32)
+
             // Bottom Sheet
             if viewModel.bottomSheetState != .hidden {
                 ShopBottomSheet(
@@ -68,6 +76,9 @@ struct ShopTabView: View {
                 .transition(.move(edge: .bottom))
             }
         }
+        .navigationTitle("お店")
+        .navigationBarTitleDisplayMode(.inline)
+        .sidebarButton()
         .onAppear {
             viewModel.onAppear()
         }
@@ -79,6 +90,50 @@ struct ShopTabView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+    }
+
+    /// 現在地に移動して検索を実行
+    private func moveToCurrentLocation() {
+        LocationManager.shared.requestOneTimeLocation { result in
+            switch result {
+            case let .success(location):
+                withAnimation {
+                    position = .region(MKCoordinateRegion(
+                        center: location.coordinate,
+                        latitudinalMeters: 1_500,
+                        longitudinalMeters: 1_500
+                    ))
+                }
+                // 現在地周辺を検索
+                Task {
+                    await viewModel.searchAtLocation(location.coordinate)
+                }
+            case let .failure(error):
+                print("❌ 現在地取得失敗: \(error)")
+            }
+        }
+    }
+}
+
+// MARK: - CurrentLocationButton
+
+struct CurrentLocationButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(Color(.systemBackground))
+                    .frame(width: 50, height: 50)
+                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+
+                Image(systemName: "location.fill")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(.orange)
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

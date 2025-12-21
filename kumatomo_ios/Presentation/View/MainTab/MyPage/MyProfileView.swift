@@ -101,6 +101,7 @@ struct MyProfileView: View {
             viewModel.loadUserPosts(userID: userId)
         }
         .navigationBarTitleDisplayMode(.inline)
+        .sidebarButton()
         .withSheetRouter(sheet: $sheetDestination)
         .overlay {
             if viewModel.isLoading {
