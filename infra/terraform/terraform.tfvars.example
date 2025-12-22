@@ -1,0 +1,9 @@
+# Example terraform.tfvars
+# Copy this to terraform.tfvars and fill in your values
+# terraform.tfvars is in .gitignore (DO NOT commit secrets)
+
+# Your home IP for RDS access (CIDR format)
+my_ip = "YOUR_IP_HERE/32"
+
+# Database password (generate a strong password)
+db_password = "CHANGE_THIS_TO_STRONG_PASSWORD"
