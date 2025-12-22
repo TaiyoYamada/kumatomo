@@ -39,7 +39,8 @@ extension View {
                 LikedPostsView()
                     .environment(CurrentUserManager.shared)
             case .settings:
-                PlaceholderView(title: "設定")
+                SettingsView()
+                    .environment(CurrentUserManager.shared)
             case .search:
                 SearchView()
             case .signUp:

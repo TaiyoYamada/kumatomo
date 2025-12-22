@@ -18,7 +18,10 @@ struct kumatomoApp: App {
                 .environment(NetworkMonitor.shared)
                 .environment(LocationManager.shared)
                 .environment(ProfileErrorHandler.shared)
-                .environment(\.font, .custom("HelveticaNeue-RoundedBold", size: 16))
+                .environment(
+                    \.font,
+                    .system(size: 16, weight: .bold, design: .rounded)
+                )
         }
     }
 }
