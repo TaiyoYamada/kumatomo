@@ -6,8 +6,10 @@ struct kumatomoApp: App {
 
     @MainActor
     init() {
-
         print("👉 現在のAPI_BASE_URL:", APIConfig.shared.baseURLString)
+
+        // ナビゲーションバーの外観をオレンジ色に設定
+        configureNavigationBarAppearance()
     }
 
     var body: some Scene {
@@ -23,5 +25,38 @@ struct kumatomoApp: App {
                     .system(size: 16, weight: .bold, design: .rounded)
                 )
         }
+    }
+
+    /// ナビゲーションバーの外観を設定
+    private func configureNavigationBarAppearance() {
+
+        let lightOrangeColor = UIColor(red: 1.0, green: 0.541, blue: 0.396, alpha: 1.0)
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = lightOrangeColor
+
+        // タイトルの色を白に設定
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
+        ]
+
+        // 戻るボタンのテキストを非表示に
+        let backButtonAppearance = UIBarButtonItemAppearance()
+        backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
+        appearance.backButtonAppearance = backButtonAppearance
+
+        // すべてのナビゲーションバーに適用
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+
+        // ナビゲーションバーのアイテム（ボタン）の色を白に
+        UINavigationBar.appearance().tintColor = .white
     }
 }

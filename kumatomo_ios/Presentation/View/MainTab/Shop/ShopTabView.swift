@@ -78,6 +78,9 @@ struct ShopTabView: View {
         }
         .navigationTitle("お店")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color.lightOrange, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .sidebarButton()
         .onAppear {
             viewModel.onAppear()
