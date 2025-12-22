@@ -4,17 +4,15 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PortalSlideController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageUploadController;
-use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ImageController;
-use App\Http\Controllers\AIController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\BookmarkController;
-use App\Http\Controllers\FavoriteController;
-use App\Http\Controllers\ShopProposalController;
 use App\Http\Controllers\MunicipalityController;
 
 // Public health/test endpoint
@@ -32,6 +30,9 @@ Route::get('/municipalities', [MunicipalityController::class, 'index']);
 // Auth (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Public Announcements
+Route::get('/announcements', [AnnouncementController::class, 'index']);
 
 
 // Authenticated user endpoints
@@ -64,7 +65,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/posts/{post}', [PostController::class, 'update']);
     Route::delete('/posts/{post}', [PostController::class, 'destroy']);
     Route::get('/users/{user}/posts', [PostController::class, 'indexByUser']);
-    Route::get('/shops/{shopId}/posts', [PostController::class, 'indexByShop']);
 
     // Comments
     Route::get('/posts/{postId}/comments', [CommentController::class, 'index']);
@@ -81,41 +81,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/posts/{postId}/bookmark', [BookmarkController::class, 'destroy']);
     Route::get('/user/bookmarked-posts', [BookmarkController::class, 'bookmarkedPosts']);
 
-    // Favorites
-    Route::get('/favorites', [FavoriteController::class, 'index']);
-    Route::post('/favorites/toggle/{shop}', [FavoriteController::class, 'toggle']);
-    Route::delete('/favorites/{favorite}', [FavoriteController::class, 'destroy']);
-    Route::get('/favorites/stats', [FavoriteController::class, 'stats']);
-
     // Images delivery (public path)
     Route::get('/images/{path}', [ImageController::class, 'show'])->where('path', '.*');
 
     // Unified search
     Route::get('/search', [SearchController::class, 'search']);
 
-    // AI Chat
-    Route::post('/ai/chat', [AIController::class, 'chat']);
-
-        // AI Health (public)
-    Route::get('/ai/health', [AIController::class, 'health']);
-
     // Public profile creation (for onboarding)
     Route::post('/users', [UserController::class, 'store']);
-
-    // Public shop endpoints
-    Route::get('/shops', [ShopController::class, 'index']);
-    Route::get('/shops/search', [ShopController::class, 'search']);
-    Route::get('/shops/{id}', [ShopController::class, 'show']);
-    Route::get('/shops/{id}/posts', [ShopController::class, 'posts']);
-
-    // Public favorite check endpoint
-    Route::get('/favorites/check/{shop}', [FavoriteController::class, 'check']);
-
-    // Shop proposals (user)
-    Route::get('/shop-proposals', [ShopProposalController::class, 'index']);
-    Route::post('/shop-proposals', [ShopProposalController::class, 'store']);
-    Route::get('/shop-proposals/{proposal}', [ShopProposalController::class, 'show']);
-    Route::put('/shop-proposals/{proposal}', [ShopProposalController::class, 'update']);
-    Route::delete('/shop-proposals/{proposal}', [ShopProposalController::class, 'destroy']);
-    Route::get('/shop-proposals-status', [ShopProposalController::class, 'status']);
 });

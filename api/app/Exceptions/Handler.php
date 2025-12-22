@@ -46,9 +46,12 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        return $request->expectsJson()
-            ? $this->jsonErrorResponse('認証が必要です', 401, 'AUTHENTICATION_REQUIRED')
-            : abort(401, 'Unauthenticated.');
+        // Force JSON for API routes even if client didn't send Accept header
+        if ($request->is('api/*') || $request->expectsJson()) {
+            return $this->jsonErrorResponse('認証が必要です', 401, 'AUTHENTICATION_REQUIRED');
+        }
+
+        return abort(401, 'Unauthenticated.');
     }
 
     public function register(): void
@@ -63,7 +66,8 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e)
     {
-        if ($request->expectsJson()) {
+        // Force JSON responses for API routes regardless of Accept header
+        if ($request->is('api/*') || $request->expectsJson()) {
             return $this->handleApiException($request, $e);
         }
 

@@ -37,6 +37,7 @@ class UserResource extends JsonResource
             'followingCount' => $this->following_count ?? 0,
             'followersCount' => $this->followers_count ?? 0,
             'hasCompletedSetup' => $this->has_completed_setup ?? false,
+            'isAdmin' => $this->is_admin ?? false,
             'isVerified' => false,
             'joinedDate' => $this->created_at?->format('Y年m月d日'),
             'createdAt' => $this->created_at?->toIso8601String(),

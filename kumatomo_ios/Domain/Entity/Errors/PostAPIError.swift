@@ -1,0 +1,67 @@
+import Foundation
+
+enum PostAPIError: Error {
+    case invalidURL
+    case networkError(Error)
+    case invalidResponse
+    case decodingError(Error)
+    case apiError(Int, String)
+    case unknownError(Error)
+    case serverError(String)
+    case timeout
+    case engagementDataError(String)
+    case authenticationRequired
+    case postNotFound
+    case insufficientPermissions
+
+    var localizedDescription: String {
+        switch self {
+        case .invalidURL:
+            return "無効なURLです"
+        case let .networkError(error):
+            return "ネットワークエラー: \(error.localizedDescription)"
+        case .invalidResponse:
+            return "無効なレスポンスです"
+        case let .decodingError(error):
+            return "データの読み込みに失敗しました: \(error.localizedDescription)"
+        case let .apiError(code, message):
+            return "APIエラー（コード: \(code)）: \(message)"
+        case let .unknownError(error):
+            return "不明なエラー: \(error.localizedDescription)"
+        case let .serverError(message):
+            return "サーバーエラー: \(message)"
+        case .timeout:
+            return "リクエストがタイムアウトしました"
+        case let .engagementDataError(message):
+            return "エンゲージメントデータエラー: \(message)"
+        case .authenticationRequired:
+            return "認証が必要です。ログインしてください"
+        case .postNotFound:
+            return "投稿が見つかりません"
+        case .insufficientPermissions:
+            return "この操作を実行する権限がありません"
+        }
+    }
+
+    var isRecoverable: Bool {
+        switch self {
+        case .networkError, .timeout, .serverError:
+            return true
+        case .engagementDataError:
+            return true // エンゲージメントデータのエラーは通常リトライ可能
+        default:
+            return false
+        }
+    }
+
+    var isEngagementRelated: Bool {
+        switch self {
+        case .engagementDataError:
+            return true
+        case let .apiError(code, _):
+            return code >= 500 // サーバーエラーはエンゲージメントデータ取得失敗の可能性
+        default:
+            return false
+        }
+    }
+}

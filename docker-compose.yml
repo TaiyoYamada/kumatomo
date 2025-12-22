@@ -28,7 +28,7 @@ services:
             - meilisearch
             - mailpit
             - selenium
-    
+
     # nginx:  # HTTPに戻すためコメントアウト（SSL証明書設定は保持）
     #     image: nginx:alpine
     #     ports:
@@ -43,7 +43,7 @@ services:
     #     depends_on:
     #         - laravel.test
     #     restart: unless-stopped
-            
+
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -109,7 +109,7 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
-    
+
     # minio:
     #     image: 'minio/minio:latest'
     #     ports:
@@ -140,58 +140,21 @@ services:
         networks:
             - sail
 
-    vue.admin:
+    next.admin:
         build:
             context: ./admin
             dockerfile: Dockerfile
-        # ports:
-        #     - '3000:3000'
+        ports:
+            - '3000:3000'
         volumes:
             - ./admin:/app
             - /app/node_modules
-        command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+            - /app/.next
+        command: sh -c "npm install && npm run dev"
         working_dir: /app
         networks:
             - sail
 
-    ollama:
-        image: 'ollama/ollama:latest'
-        # ports:
-        #     - '${FORWARD_OLLAMA_PORT:-11434}:11434'
-        volumes:
-            - 'sail-ollama:/root/.ollama'
-        networks:
-            - sail
-        environment:
-            - OLLAMA_HOST=0.0.0.0
-            - OLLAMA_ORIGINS=*
-        # healthcheck:
-        #     test:
-        #         - CMD
-        #         - curl
-        #         - '-f'
-        #         - 'http://localhost:11434/api/tags'
-        #     retries: 3
-        #     timeout: 10s
-        #     interval: 30s
-        restart: unless-stopped
-
-    ollama-init:
-        image: 'ollama/ollama:latest'
-        volumes:
-            - 'sail-ollama:/root/.ollama'
-            - './docker/ollama/init-ollama.sh:/init-ollama.sh'
-        networks:
-            - sail
-        environment:
-            - OLLAMA_HOST=ollama:11434
-            - OLLAMA_MODEL=${OLLAMA_MODEL:-gemma3:4b}
-        depends_on:
-            ollama:
-                condition: service_started
-                # condition: service_healthy # こっちがいいけど、コンテナ作れなくなるから一旦やめる
-        command: ["/bin/bash", "/init-ollama.sh"]
-        restart: "no" 
 networks:
     sail:
         driver: bridge
@@ -201,6 +164,4 @@ volumes:
     sail-redis:
         driver: local
     sail-meilisearch:
-        driver: local
-    sail-ollama:
         driver: local

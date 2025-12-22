@@ -32,6 +32,7 @@ class User extends Authenticatable
         'profile_image_url', // プロフィールアイコンのURL
         'cover_image_url', // カバー画像のURL
         'has_completed_setup',
+        'is_admin',
         'created_at',
     ];
 
@@ -43,6 +44,7 @@ class User extends Authenticatable
         'followers_count' => 'integer',
         'following_count' => 'integer',
         'has_completed_setup' => 'boolean',
+        'is_admin' => 'boolean',
         'password' => 'hashed',
     ];
 
@@ -150,30 +152,6 @@ class User extends Authenticatable
     public function bookmarkedPosts()
     {
         return $this->belongsToMany(Post::class, 'bookmarks')->withTimestamps();
-    }
-
-    /**
-     * Get the favorites made by the user.
-     */
-    public function favorites()
-    {
-        return $this->hasMany(Favorite::class);
-    }
-
-    /**
-     * Get shops favorited by the user.
-     */
-    public function favoritedShops()
-    {
-        return $this->belongsToMany(Shop::class, 'favorites')->withTimestamps();
-    }
-
-    /**
-     * Get the shop proposals made by the user.
-     */
-    public function shopProposals()
-    {
-        return $this->hasMany(ShopProposal::class);
     }
 
     /**

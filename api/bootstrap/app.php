@@ -22,8 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // APIルートに適用されるミドルウェアグループ（auth:sanctumが使える）
+        // ステートフル認証（CSRF必須）ではなくトークンベース認証を使用
         $middleware->group('api', [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
     })

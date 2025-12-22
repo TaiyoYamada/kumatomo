@@ -17,7 +17,6 @@ class Post extends Model
         'content',
         'image_url',
         'tags',
-        'shop_id',
     ];
 
     protected $casts = [
@@ -27,14 +26,6 @@ class Post extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * この投稿が関連するお店を取得。
-     */
-    public function shop()
-    {
-        return $this->belongsTo(Shop::class);
     }
 
     /**
