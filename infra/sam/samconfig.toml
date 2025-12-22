@@ -1,8 +1,14 @@
 version = 0.1
+[default.global.parameters]
+region = "ap-northeast-1"
+
 [default.deploy.parameters]
 stack_name = "kumatomo-api"
-region = "ap-northeast-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 # S3 bucket for deployment artifacts (created automatically by SAM)
 # s3_bucket = ""
+resolve_s3 = true
+s3_prefix = "kumatomo-api"
+parameter_overrides = "Environment=\"prod\" ProjectName=\"kumatomo\""
+image_repositories = []

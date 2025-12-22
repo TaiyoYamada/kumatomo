@@ -36,7 +36,7 @@ Resources:
       FunctionName: !Sub '${ProjectName}-web'
       Description: Laravel web handler
       Handler: public/index.php
-      CodeUri: ../api
+      CodeUri: ../../api
       Layers:
         - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:php-84-fpm:5'
       Events:
@@ -55,6 +55,8 @@ Resources:
             ParameterName: !Sub '${ProjectName}/${Environment}/*'
         - S3CrudPolicy:
             BucketName: !Sub '${ProjectName}-media-${Environment}'
+    Metadata:
+      BuildMethod: makefile
 
   # ===========================================================================
   # Artisan Function (CLI commands)
@@ -65,7 +67,7 @@ Resources:
       FunctionName: !Sub '${ProjectName}-artisan'
       Description: Laravel Artisan CLI
       Handler: artisan
-      CodeUri: ../api
+      CodeUri: ../../api
       Timeout: 720  # 12 minutes for migrations
       Layers:
         - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:php-84:5'
@@ -75,6 +77,8 @@ Resources:
             ParameterName: !Sub '${ProjectName}/${Environment}/*'
         - S3CrudPolicy:
             BucketName: !Sub '${ProjectName}-media-${Environment}'
+    Metadata:
+      BuildMethod: makefile
 
 Outputs:
   ApiEndpoint:
