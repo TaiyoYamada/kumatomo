@@ -34,9 +34,15 @@ class ProfileViewModel {
     var bio: String = "" { didSet { debounce(key: "bio", delay: 0.3) { [weak self] in
         self?.validateBioField(self?.bio ?? "")
     } } }
-    var location: String = "" { didSet { debounce(key: "location", delay: 0.3) { [weak self] in
-        self?.validateLocationField(self?.location ?? "")
-    } } }
+    var location: String = ""
+    var selectedCity: City? {
+        didSet {
+            location = selectedCity?.rawValue ?? ""
+            locationValidation = .valid
+            checkForUnsavedChanges()
+        }
+    }
+
     var birthday: Date = .init() { didSet { validateBirthdayField(birthday) } }
     var profileImage: UIImage?
     var coverImage: UIImage?
@@ -143,6 +149,11 @@ class ProfileViewModel {
         username = profile.username ?? ""
         bio = profile.bio ?? ""
         location = profile.location ?? ""
+
+        // 出身地の初期化（City enumから検索）
+        if let locationString = profile.location {
+            selectedCity = City.allCases.first { $0.rawValue == locationString }
+        }
 
         // 誕生日の初期化
         if let birthdayString = profile.birthday, !birthdayString.isEmpty {

@@ -44,14 +44,6 @@ struct ProfileEditView: View {
 
                 Section("基本情報") {
                     ProfileFormRow(
-                        title: "メールアドレス",
-                        text: $viewModel.email,
-                        placeholder: "メールアドレスを入力してください",
-                        validation: viewModel.emailValidation,
-                        keyboardType: .emailAddress
-                    )
-
-                    ProfileFormRow(
                         title: "名前",
                         text: $viewModel.name,
                         placeholder: "名前を入力してください",
@@ -96,11 +88,8 @@ struct ProfileEditView: View {
                         validation: viewModel.bioValidation
                     )
 
-                    ProfileFormRow(
-                        title: "出身地",
-                        text: $viewModel.location,
-                        placeholder: "出身地を入力してください",
-                        validation: viewModel.locationValidation
+                    ProfileCityPickerRow(
+                        selectedCity: $viewModel.selectedCity
                     )
 
                     ProfileDatePickerRow(
