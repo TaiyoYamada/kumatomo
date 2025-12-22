@@ -1,0 +1,67 @@
+name: Deploy API
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'api/**'
+      - 'infra/sam/**'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-1
+  SAM_TEMPLATE: infra/sam/template.yaml
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, json, curl, pdo, pdo_mysql
+          coverage: none
+
+      - name: Install Composer dependencies
+        working-directory: api
+        run: |
+          composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup SAM CLI
+        uses: aws-actions/setup-sam@v2
+
+      - name: SAM Build
+        run: sam build --template ${{ env.SAM_TEMPLATE }}
+
+      - name: SAM Deploy
+        run: |
+          sam deploy \
+            --template-file .aws-sam/build/template.yaml \
+            --stack-name kumatomo-api \
+            --capabilities CAPABILITY_IAM \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Output API Endpoint
+        run: |
+          aws cloudformation describe-stacks \
+            --stack-name kumatomo-api \
+            --query 'Stacks[0].Outputs[?OutputKey==`ApiEndpoint`].OutputValue' \
+            --output text

@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: kumatomo Laravel API with Bref
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+  ProjectName:
+    Type: String
+    Default: kumatomo
+
+Globals:
+  Function:
+    Timeout: 28  # API Gateway has 29s timeout
+    MemorySize: 1024
+    Runtime: provided.al2023
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        APP_ENV: production
+        APP_DEBUG: 'false'
+        LOG_CHANNEL: stderr
+        SESSION_DRIVER: cookie
+        # SSM parameters are fetched at runtime
+        SSM_PREFIX: !Sub '/${ProjectName}/${Environment}'
+
+Resources:
+  # ===========================================================================
+  # Web Function (HTTP requests)
+  # ===========================================================================
+  WebFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-web'
+      Description: Laravel web handler
+      Handler: public/index.php
+      CodeUri: ../api
+      Layers:
+        - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:php-83-fpm:72'
+      Events:
+        HttpApi:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+        RootHttpApi:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: !Sub '${ProjectName}/${Environment}/*'
+        - S3CrudPolicy:
+            BucketName: !Sub '${ProjectName}-media-${Environment}'
+
+  # ===========================================================================
+  # Artisan Function (CLI commands)
+  # ===========================================================================
+  ArtisanFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-artisan'
+      Description: Laravel Artisan CLI
+      Handler: artisan
+      CodeUri: ../api
+      Timeout: 720  # 12 minutes for migrations
+      Layers:
+        - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:php-83:72'
+        - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:console:72'
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: !Sub '${ProjectName}/${Environment}/*'
+        - S3CrudPolicy:
+            BucketName: !Sub '${ProjectName}-media-${Environment}'
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+  WebFunctionArn:
+    Description: Web Lambda function ARN
+    Value: !GetAtt WebFunction.Arn
+  ArtisanFunctionArn:
+    Description: Artisan Lambda function ARN
+    Value: !GetAtt ArtisanFunction.Arn

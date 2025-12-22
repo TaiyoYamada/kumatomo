@@ -1,0 +1,92 @@
+name: Deploy Admin
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'admin/**'
+      - '.github/workflows/deploy-admin.yml'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-1
+  S3_BUCKET: kumatomo-admin-prod
+  API_STACK_NAME: kumatomo-api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: admin/package-lock.json
+
+      - name: Install dependencies
+        working-directory: admin
+        run: npm ci
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get API Endpoint from Stack Outputs
+        id: api
+        run: |
+          API_URL=$(aws cloudformation describe-stacks \
+            --stack-name ${{ env.API_STACK_NAME }} \
+            --query 'Stacks[0].Outputs[?OutputKey==`ApiEndpoint`].OutputValue' \
+            --output text)
+          echo "endpoint=$API_URL" >> $GITHUB_OUTPUT
+
+      - name: Get CloudFront Distribution ID
+        id: cloudfront
+        run: |
+          # Get from Terraform outputs via SSM or CloudFormation
+          # For now, using terraform output stored in SSM
+          DIST_ID=$(aws ssm get-parameter \
+            --name "/kumatomo/prod/cloudfront_distribution_id" \
+            --query 'Parameter.Value' \
+            --output text 2>/dev/null || echo "")
+          echo "distribution_id=$DIST_ID" >> $GITHUB_OUTPUT
+
+      - name: Build (static export)
+        working-directory: admin
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ steps.api.outputs.endpoint }}
+
+      - name: Sync to S3
+        working-directory: admin
+        run: |
+          aws s3 sync out/ s3://${{ env.S3_BUCKET }}/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "*.html" \
+            --exclude "_next/data/*"
+          
+          aws s3 sync out/ s3://${{ env.S3_BUCKET }}/ \
+            --delete \
+            --cache-control "public, max-age=0, must-revalidate" \
+            --include "*.html" \
+            --include "_next/data/*"
+
+      - name: Invalidate CloudFront
+        if: steps.cloudfront.outputs.distribution_id != ''
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ steps.cloudfront.outputs.distribution_id }} \
+            --paths "/*"
+
