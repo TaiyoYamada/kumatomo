@@ -3,13 +3,12 @@ import Foundation
 // MARK: - SidebarMenuItemType
 
 enum SidebarMenuItemType: CaseIterable {
-    case bookmarks, likes, notifications, help, contact, settings, logout
+    case bookmarks, likes, help, contact, settings, logout
 
     var icon: String {
         switch self {
         case .bookmarks: return "bookmark.fill"
         case .likes: return "heart.fill"
-        case .notifications: return "bell.fill"
         case .help: return "questionmark.circle.fill"
         case .contact: return "envelope.fill"
         case .settings: return "gearshape.fill"
@@ -21,7 +20,6 @@ enum SidebarMenuItemType: CaseIterable {
         switch self {
         case .bookmarks: return "ブックマーク"
         case .likes: return "いいね"
-        case .notifications: return "お知らせ"
         case .help: return "ヘルプ"
         case .contact: return "お問い合わせ"
         case .settings: return "設定"
@@ -35,20 +33,20 @@ enum SidebarMenuItemType: CaseIterable {
         case .likes: return "いいねした投稿"
         case .settings: return "アプリの設定"
         case .logout: return "サインアウトします"
-        case .notifications, .help, .contact: return nil
+        case .help, .contact: return nil
         }
     }
 
     var isExternalLink: Bool {
         switch self {
-        case .notifications, .help, .contact: return true
+        case .help, .contact: return true
         default: return false
         }
     }
 
     var externalURL: String? {
         switch self {
-        case .notifications, .help, .contact: return "https://www.notion.so/274db424e42280019ed4d3cbbcd9540d"
+        case .help, .contact: return "https://www.notion.so/274db424e42280019ed4d3cbbcd9540d"
         default: return nil
         }
     }
