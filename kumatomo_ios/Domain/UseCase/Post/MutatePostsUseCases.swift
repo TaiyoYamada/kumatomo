@@ -35,8 +35,8 @@ protocol ToggleReactionUseCase {
 
 final class CreatePostUseCaseImpl: CreatePostUseCase {
     private let postRepository: PostRepository
-    private let imageUploadRepository: ImageUploadRepository
-    init(postRepository: PostRepository, imageUploadRepository: ImageUploadRepository) {
+    private let imageUploadRepository: ImageUploadRepositoryProtocol
+    init(postRepository: PostRepository, imageUploadRepository: ImageUploadRepositoryProtocol) {
         self.postRepository = postRepository
         self.imageUploadRepository = imageUploadRepository
     }
@@ -54,8 +54,8 @@ final class CreatePostUseCaseImpl: CreatePostUseCase {
 
 final class CreatePostWithMultipleImagesUseCaseImpl: CreatePostWithMultipleImagesUseCase {
     private let postRepository: PostRepository
-    private let imageUploadRepository: ImageUploadRepository
-    init(postRepository: PostRepository, imageUploadRepository: ImageUploadRepository) {
+    private let imageUploadRepository: ImageUploadRepositoryProtocol
+    init(postRepository: PostRepository, imageUploadRepository: ImageUploadRepositoryProtocol) {
         self.postRepository = postRepository
         self.imageUploadRepository = imageUploadRepository
     }

@@ -75,7 +75,7 @@ class BookmarkController extends Controller
 
         try {
             $bookmarkedPosts = $user->bookmarkedPosts()
-                ->with(['user:id,name,username,profile_image_url', 'shop', 'images'])
+                ->with(['user:id,name,username,profile_image_url', 'images'])
                 ->withPivot('created_at')
                 ->orderByPivot('created_at', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);

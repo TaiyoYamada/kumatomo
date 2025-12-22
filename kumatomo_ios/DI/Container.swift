@@ -9,7 +9,7 @@ extension Container {
         self { PostRepositoryImpl() }.singleton
     }
 
-    var imageUploadRepository: Factory<ImageUploadRepository> {
+    var imageUploadRepository: Factory<ImageUploadRepositoryProtocol> {
         self { ImageUploadRepositoryImpl() }.singleton
     }
 
@@ -17,7 +17,7 @@ extension Container {
         self { AuthRepositoryImpl() }.singleton
     }
 
-    var userRepository: Factory<UserRepository> {
+    var userRepository: Factory<UserRepositoryProtocol> {
         self { UserRepositoryImpl() }.singleton
     }
 
@@ -211,5 +211,23 @@ extension Container {
 
     var updateUserUseCase: Factory<UpdateUserUseCase> {
         self { UpdateUserUseCaseImpl(repository: self.authRepository()) }.singleton
+    }
+
+    // MARK: - Use Cases (Profile)
+
+    var validateProfileUseCase: Factory<ValidateProfileUseCaseProtocol> {
+        self { ValidateProfileUseCase() }.singleton
+    }
+
+    var checkUsernameAvailabilityUseCase: Factory<CheckUsernameAvailabilityUseCaseProtocol> {
+        self { CheckUsernameAvailabilityUseCase(userRepository: self.userRepository()) }.singleton
+    }
+
+    var updateProfileUseCase: Factory<UpdateProfileUseCaseProtocol> {
+        self { UpdateProfileUseCase(userRepository: self.userRepository()) }.singleton
+    }
+
+    var uploadProfileImageUseCase: Factory<UploadProfileImageUseCaseProtocol> {
+        self { UploadProfileImageUseCase(imageUploadRepository: self.imageUploadRepository()) }.singleton
     }
 }

@@ -24,56 +24,6 @@ struct User: Codable, Identifiable, Equatable {
 
 extension User {
 
-    func validateEmail() -> ValidationResult {
-        guard let email else {
-            return .invalid(message: "メールアドレスが設定されていません")
-        }
-        return ProfileFormValidation.validateEmail(email)
-    }
-
-    func validateName() -> ValidationResult {
-        guard let name else {
-            return .invalid(message: "名前が設定されていません")
-        }
-        return ProfileFormValidation.validateName(name)
-    }
-
-    func validateUsername() -> ValidationResult {
-        guard let username else {
-            return .invalid(message: "ユーザーネームが設定されていません")
-        }
-        return ProfileFormValidation.validateUsername(username)
-    }
-
-    func validateBio() -> ValidationResult {
-        return ProfileFormValidation.validateBio(bio ?? "")
-    }
-
-    func validateLocation() -> ValidationResult {
-        return ProfileFormValidation.validateLocation(location ?? "")
-    }
-
-    func validateBirthday() -> ValidationResult {
-        var birthdayDate: Date?
-        if let birthdayString = birthday {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd"
-            birthdayDate = formatter.date(from: birthdayString)
-        }
-        return ProfileFormValidation.validateBirthday(birthdayDate)
-    }
-
-    func validateProfile() -> [String] {
-        return ProfileFormValidation.validateCompleteProfile(
-            name: name ?? "",
-            username: username ?? "",
-            email: email ?? "",
-            bio: bio ?? "",
-            location: location ?? "",
-            birthday: nil
-        )
-    }
-
     var isProfileComplete: Bool {
         guard let email, !email.isEmpty,
               let name, !name.isEmpty,

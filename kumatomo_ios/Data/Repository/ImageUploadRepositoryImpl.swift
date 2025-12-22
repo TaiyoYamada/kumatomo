@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-final class ImageUploadRepositoryImpl: ImageUploadRepository {
+final class ImageUploadRepositoryImpl: ImageUploadRepositoryProtocol {
     private let service: ImageUploadService
 
     init(service: ImageUploadService = .shared) {

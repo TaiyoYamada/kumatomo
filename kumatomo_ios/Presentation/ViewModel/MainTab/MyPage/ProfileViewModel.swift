@@ -93,6 +93,7 @@ class ProfileViewModel {
     @ObservationIgnored @Injected(\.postAPIService) var postAPIService
     @ObservationIgnored @Injected(\.profileImageManager) var imageManager
     @ObservationIgnored @Injected(\.imageUploadService) var imageUploadService
+    @ObservationIgnored @Injected(\.validateProfileUseCase) var validateProfileUseCase
     private let errorHandler = ProfileErrorHandler.shared
     private let networkMonitor = NetworkMonitor.shared
     private var cancellables = Set<AnyCancellable>()
@@ -262,7 +263,7 @@ class ProfileViewModel {
         if trimmedEmail.isEmpty {
             emailValidation = .valid
         } else {
-            emailValidation = ProfileFormValidation.validateEmail(trimmedEmail)
+            emailValidation = validateProfileUseCase.validateEmail(trimmedEmail)
         }
 
         updateFormValidityState()
@@ -271,14 +272,14 @@ class ProfileViewModel {
 
     private func validateNameField(_ name: String) {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        nameValidation = ProfileFormValidation.validateName(trimmedName)
+        nameValidation = validateProfileUseCase.validateName(trimmedName)
         updateFormValidityState()
         logValidationResult(field: "name", result: nameValidation)
     }
 
     private func validateBioField(_ bio: String) {
         let trimmedBio = bio.trimmingCharacters(in: .whitespacesAndNewlines)
-        bioValidation = ProfileFormValidation.validateBio(trimmedBio)
+        bioValidation = validateProfileUseCase.validateBio(trimmedBio)
 
         let characterCount = bio.count
         let maxCharacters = 500
@@ -293,13 +294,13 @@ class ProfileViewModel {
 
     private func validateLocationField(_ location: String) {
         let trimmedLocation = location.trimmingCharacters(in: .whitespacesAndNewlines)
-        locationValidation = ProfileFormValidation.validateLocation(trimmedLocation)
+        locationValidation = validateProfileUseCase.validateLocation(trimmedLocation)
         updateFormValidityState()
         logValidationResult(field: "location", result: locationValidation)
     }
 
     private func validateBirthdayField(_ birthday: Date) {
-        birthdayValidation = ProfileFormValidation.validateBirthday(birthday)
+        birthdayValidation = validateProfileUseCase.validateBirthday(birthday)
 
         let calendar = Calendar.current
         let ageComponents = calendar.dateComponents([.year], from: birthday, to: Date())
@@ -323,7 +324,7 @@ class ProfileViewModel {
     private func validateUsernameWithAvailability(_ username: String) {
         usernameValidationWorkItem?.cancel()
 
-        let formatValidation = ProfileFormValidation.validateUsername(username)
+        let formatValidation = validateProfileUseCase.validateUsername(username)
         usernameValidation = formatValidation
 
         if !formatValidation.isValid {
@@ -474,7 +475,7 @@ class ProfileViewModel {
         validateLocationField(location)
         validateBirthdayField(birthday)
 
-        let formatValidation = ProfileFormValidation.validateUsername(username)
+        let formatValidation = validateProfileUseCase.validateUsername(username)
         usernameValidation = formatValidation
 
         if formatValidation.isValid, username != profile.username, !username.isEmpty {

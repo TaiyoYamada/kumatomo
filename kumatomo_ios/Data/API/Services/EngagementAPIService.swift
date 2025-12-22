@@ -37,12 +37,18 @@ final class EngagementAPIService {
 
     /// いいねした投稿を取得
     func fetchLikedPosts(page: Int? = nil, limit: Int? = nil) async throws -> [Post] {
-        try await client.get(EngagementEndpoint.fetchLikedPosts(page: page, limit: limit))
+        let response: PaginatedResponse<Post> = try await client.get(
+            EngagementEndpoint.fetchLikedPosts(page: page, limit: limit)
+        )
+        return response.data
     }
 
     /// ブックマークした投稿を取得
     func fetchBookmarkedPosts(page: Int? = nil, limit: Int? = nil) async throws -> [Post] {
-        try await client.get(EngagementEndpoint.fetchBookmarkedPosts(page: page, limit: limit))
+        let response: PaginatedResponse<Post> = try await client.get(
+            EngagementEndpoint.fetchBookmarkedPosts(page: page, limit: limit)
+        )
+        return response.data
     }
 
     // MARK: - Optimistic Updates
