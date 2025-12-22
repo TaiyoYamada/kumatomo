@@ -38,7 +38,7 @@ Resources:
       Handler: public/index.php
       CodeUri: ../api
       Layers:
-        - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:php-83-fpm:72'
+        - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:php-84-fpm:5'
       Events:
         HttpApi:
           Type: HttpApi
@@ -68,7 +68,7 @@ Resources:
       CodeUri: ../api
       Timeout: 720  # 12 minutes for migrations
       Layers:
-        - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:php-83:72'
+        - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:php-84:5'
         - !Sub 'arn:aws:lambda:${AWS::Region}:534081306603:layer:console:72'
       Policies:
         - SSMParameterReadPolicy:
