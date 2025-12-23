@@ -38,12 +38,12 @@ struct TabNavigationHeader: View {
                     action: { onTabChange(.all) }
                 )
 
-                // 市町村タブ
-                TabButton(
-                    title: selectedMunicipality ?? "市町村",
+                // 市町村タブ（アクティブ時のみドロップダウン表示）
+                MunicipalityTabButton(
+                    selectedMunicipality: selectedMunicipality,
                     isActive: activeTab == .municipality,
-                    action: {
-                        onTabChange(.municipality)
+                    onTabTap: { onTabChange(.municipality) },
+                    onPickerTap: {
                         sheetDestination = .municipalityPicker(selected: selectedMunicipality) { municipality in
                             onMunicipalityChange(municipality)
                             sheetDestination = nil
@@ -138,6 +138,79 @@ struct TabButton: View {
         .accessibilityHint(isActive ? "選択中のタブ" : "タップして\(title)タブに切り替え")
         .accessibilityAddTraits(isActive ? .isSelected : [])
         .accessibilityIdentifier("tab_button_\(title.replacingOccurrences(of: " ", with: "_"))")
+    }
+}
+
+// MARK: - MunicipalityTabButton
+
+struct MunicipalityTabButton: View {
+    let selectedMunicipality: String?
+    let isActive: Bool
+    let onTabTap: () -> Void
+    let onPickerTap: () -> Void
+
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var displayTitle: String {
+        selectedMunicipality ?? "市町村"
+    }
+
+    private var adaptiveFontSize: CGFloat {
+        switch dynamicTypeSize {
+        case .xSmall, .small: return 13
+        case .medium: return 15
+        case .large: return 16
+        case .xLarge: return 17
+        case .xxLarge: return 18
+        case .xxxLarge: return 20
+        default: return 15
+        }
+    }
+
+    private var adaptiveHeight: CGFloat {
+        switch dynamicTypeSize {
+        case .xSmall, .small, .medium: return 46
+        case .large: return 48
+        case .xLarge: return 50
+        case .xxLarge: return 52
+        case .xxxLarge: return 56
+        default: return 46
+        }
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 4) {
+                // タブタイトル（タップでタブ切り替え）
+                Button(action: onTabTap) {
+                    Text(displayTitle)
+                        .font(.system(size: adaptiveFontSize, weight: .medium))
+                        .foregroundColor(isActive ? Color(hex: "1DA1F2") : Color(hex: "6B7280"))
+                        .minimumScaleFactor(0.8)
+                        .lineLimit(1)
+                }
+                .buttonStyle(PlainButtonStyle())
+
+                // ドロップダウン矢印（アクティブ時のみ表示）
+                if isActive {
+                    Button(action: onPickerTap) {
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(Color(hex: "1DA1F2"))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .accessibilityLabel("市町村を変更")
+                    .accessibilityHint("タップして市町村を選択")
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: adaptiveHeight)
+
+            Rectangle()
+                .fill(isActive ? Color(hex: "1DA1F2") : Color.clear)
+                .frame(height: 2)
+        }
+        .frame(minHeight: 44)
     }
 }
 
