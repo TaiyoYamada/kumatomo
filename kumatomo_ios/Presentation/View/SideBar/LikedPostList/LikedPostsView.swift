@@ -58,6 +58,10 @@ struct LikedPostsView: View {
         }
         .navigationTitle("いいねした投稿")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .tint(.white)
         .onAppear {
             print("[LikedPostsView] onAppear")
         }

@@ -112,6 +112,10 @@ struct SettingsView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("設定")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .tint(.white)
     }
 
     // MARK: - Private

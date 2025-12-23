@@ -153,6 +153,10 @@ struct PostDetailView: View {
                 }
             }
         }
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .tint(.white)
         .onAppear {
             Task {
                 await loadAllData()
