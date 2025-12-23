@@ -365,17 +365,12 @@ private struct ImagePreviewSection: View {
 
     @State private var previewingImageIndex: Int? = nil
 
-    // 1枚なら大きく、複数ならグリッド表示
-    private var imageHeight: CGFloat {
-        selectedImages.count == 1 ? 200 : 120
-    }
+    // 画像の高さ（統一）
+    private var imageHeight: CGFloat { 120 }
 
+    // 常に2列グリッド（1枚でも横幅を抑える）
     private var columns: [GridItem] {
-        if selectedImages.count == 1 {
-            return [GridItem(.flexible())]
-        } else {
-            return Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
-        }
+        Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
     }
 
     var body: some View {
