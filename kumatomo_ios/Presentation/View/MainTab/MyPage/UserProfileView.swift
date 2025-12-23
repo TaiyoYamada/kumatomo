@@ -3,8 +3,6 @@ import Factory
 
 // MARK: - UserProfileView
 
-/// 他ユーザーのプロフィール表示View
-/// MyProfileViewと同様のモダンUIを採用
 struct UserProfileView: View {
     let userId: Int
     @Environment(CurrentUserManager.self) private var userManager

@@ -1,7 +1,5 @@
 import SwiftUI
 
-// MARK: - ProfileCityPickerRow
-
 struct ProfileCityPickerRow: View {
     @Binding var selectedCity: City?
 
@@ -34,8 +32,6 @@ struct ProfileCityPickerRow: View {
         .padding(.vertical, 4)
     }
 }
-
-// MARK: - Preview
 
 #Preview {
     List {

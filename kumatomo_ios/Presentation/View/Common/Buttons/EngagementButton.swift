@@ -49,15 +49,17 @@ struct EngagementButton: View {
                     inactiveColor: Color.primary.opacity(0.6),
                     animationType: iconAnimationType
                 )
+                .frame(width: 24, height: 24)
                 .overlay {
-                    // パーティクルオーバーレイ（レイアウトに影響しない）
+                    // Core Animation パーティクルオーバーレイ（レイアウトに影響しない）
                     if animationType == .like || animationType == .bookmark {
-                        CoreAnimationOverlay(
+                        CoreAnimationEffectView(
                             isActive: showParticles,
-                            color: activeColor,
-                            animationType: animationType == .like ? .like : .bookmark
+                            color: UIColor(activeColor),
+                            effectType: animationType == .like ? .like : .bookmark
                         )
-                        .frame(width: 50, height: 50)
+                        .frame(width: 60, height: 60)
+                        .allowsHitTesting(false)
                     }
                 }
 
