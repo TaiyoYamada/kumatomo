@@ -1,5 +1,5 @@
 import Foundation
-import Alamofire // For HTTPMethod if needed in base, but here we likely use custom enum or Alamofire's
+import Alamofire
 
 enum AnnouncementEndpoint: APIEndpoint {
     case fetchAnnouncements

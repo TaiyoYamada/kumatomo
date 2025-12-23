@@ -20,35 +20,33 @@ struct UserProfileView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack {
-                if isLoading {
-                    ProgressView("読み込み中...")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let user {
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            profileHeader(user: user)
-                            statsSection(user: user)
-                            Divider()
-                            postsSection
-                        }
+        VStack {
+            if isLoading {
+                ProgressView("読み込み中...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let user {
+                ScrollView {
+                    VStack(spacing: 16) {
+                        profileHeader(user: user)
+                        statsSection(user: user)
+                        Divider()
+                        postsSection
                     }
-                } else if let errorMessage {
-                    errorView(message: errorMessage)
                 }
+            } else if let errorMessage {
+                errorView(message: errorMessage)
             }
-            .navigationTitle("プロフィール")
-            .navigationBarTitleDisplayMode(.inline)
-            .task {
-                await loadUserProfile()
-            }
-            .sheet(isPresented: $showingFollowers) {
-                FollowersListView(userId: userId, userName: user?.name)
-            }
-            .sheet(isPresented: $showingFollowing) {
-                FollowingListView(userId: userId, userName: user?.name)
-            }
+        }
+        .navigationTitle("プロフィール")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await loadUserProfile()
+        }
+        .sheet(isPresented: $showingFollowers) {
+            FollowersListView(userId: userId, userName: user?.name)
+        }
+        .sheet(isPresented: $showingFollowing) {
+            FollowingListView(userId: userId, userName: user?.name)
         }
     }
 

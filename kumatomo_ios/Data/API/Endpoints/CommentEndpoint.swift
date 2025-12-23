@@ -1,8 +1,6 @@
 import Foundation
 
-// MARK: - CommentEndpoint
-
-/// コメントAPI用エンドポイント定義
+// コメントAPI用エンドポイント定義
 enum CommentEndpoint: APIEndpoint {
     case fetchComments(postId: Int)
     case createComment(postId: Int, content: String, imageUrl: String?)
