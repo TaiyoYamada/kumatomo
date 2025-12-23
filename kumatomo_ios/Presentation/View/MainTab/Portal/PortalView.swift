@@ -102,7 +102,7 @@ struct PortalView: View {
                 Image("portal_logo")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 60)
+                    .frame(height: 70)
             }
 
             ToolbarItem(placement: .navigationBarLeading) {
