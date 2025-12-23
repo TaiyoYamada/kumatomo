@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - PostContentSection
+
 struct PostContentSection: View {
     let post: Post
     let onProfileTap: () -> Void
@@ -787,9 +789,4 @@ struct ImagePicker: UIViewControllerRepresentable {
             parent.dismiss()
         }
     }
-}
-
-#Preview {
-    PostEngagementDetailView(postId: 1)
-        .environment(CurrentUserManager.shared)
 }
