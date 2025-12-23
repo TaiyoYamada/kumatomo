@@ -10,6 +10,8 @@ struct MyProfileView: View {
     @State private var selectedTab = 0
     @State private var sheetDestination: SheetDestination?
     @State private var scrollOffset: CGFloat = 0
+    @State private var showingFollowers = false
+    @State private var showingFollowing = false
     @Environment(\.openSidebar) private var openSidebar
     @Environment(CurrentUserManager.self) private var userManager
 
@@ -35,9 +37,13 @@ struct MyProfileView: View {
                     .padding(.bottom, 12)
 
                 // 統計情報（投稿数含む）
-                ProfileStatsView(user: viewModel.profile)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 12)
+                ProfileStatsView(
+                    user: viewModel.profile,
+                    onFollowersTapped: { showingFollowers = true },
+                    onFollowingTapped: { showingFollowing = true }
+                )
+                .padding(.horizontal, 20)
+                .padding(.bottom, 12)
 
                 // お気に入りセクションはサイドバーの独立画面へ移動
 
@@ -103,6 +109,12 @@ struct MyProfileView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sidebarButton()
         .withSheetRouter(sheet: $sheetDestination)
+        .sheet(isPresented: $showingFollowers) {
+            FollowersListView(userId: viewModel.profile.id, userName: viewModel.profile.name)
+        }
+        .sheet(isPresented: $showingFollowing) {
+            FollowingListView(userId: viewModel.profile.id, userName: viewModel.profile.name)
+        }
         .overlay {
             if viewModel.isLoading {
                 Color.black.opacity(0.3)
@@ -414,6 +426,8 @@ struct ModernProfileInfoView: View {
 
 struct ProfileStatsView: View {
     let user: User
+    var onFollowersTapped: (() -> Void)?
+    var onFollowingTapped: (() -> Void)?
 
     var body: some View {
         HStack(spacing: 0) {
@@ -428,20 +442,26 @@ struct ProfileStatsView: View {
             Spacer()
 
             // フォロー中
-            StatItemView(
-                count: user.followingCount ?? 0,
-                label: "フォロー中",
-                isClickable: true
-            )
+            Button(action: { onFollowingTapped?() }) {
+                StatItemView(
+                    count: user.followingCount ?? 0,
+                    label: "フォロー中",
+                    isClickable: false
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
 
             Spacer()
 
             // フォロワー
-            StatItemView(
-                count: user.followersCount ?? 0,
-                label: "フォロワー",
-                isClickable: true
-            )
+            Button(action: { onFollowersTapped?() }) {
+                StatItemView(
+                    count: user.followersCount ?? 0,
+                    label: "フォロワー",
+                    isClickable: false
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
 
             Spacer()
         }

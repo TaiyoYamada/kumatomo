@@ -371,26 +371,32 @@ struct UserProfileStatsView: View {
             Spacer()
 
             // フォロー中
-            Button(action: onFollowingTapped) {
+            Button {
+                onFollowingTapped()
+            } label: {
                 StatItemView(
                     count: user.followingCount ?? 0,
                     label: "フォロー中",
-                    isClickable: true
+                    isClickable: false
                 )
+                .contentShape(Rectangle())
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
 
             Spacer()
 
             // フォロワー
-            Button(action: onFollowersTapped) {
+            Button {
+                onFollowersTapped()
+            } label: {
                 StatItemView(
                     count: user.followersCount ?? 0,
                     label: "フォロワー",
-                    isClickable: true
+                    isClickable: false
                 )
+                .contentShape(Rectangle())
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
 
             Spacer()
         }
