@@ -7,7 +7,7 @@ struct MyProfileView: View {
     @State private var postviewModel = PostViewModel()
     @State private var bulletinBoardViewModel = BulletinBoardViewModel()
     @State private var showingNewPost = false
-    @State private var selectedTab = 0
+    @State private var selectedTab: ProfileTab = .posts
     @State private var sheetDestination: SheetDestination?
     @State private var scrollOffset: CGFloat = 0
     @State private var showingFollowers = false
@@ -17,88 +17,16 @@ struct MyProfileView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 0) {
-                // カバー画像とプロフィール
-                ModernProfileHeaderView(
-                    user: viewModel.profile,
-                    scrollOffset: 0,
-                    onEditTapped: {
-                        sheetDestination = .profileEdit(viewModel.profile, onProfileUpdated: {
-                            let userId = AuthService.shared.currentUser?.id ?? 0
-                            viewModel.loadProfile(userID: userId)
-                            viewModel.loadUserPosts(userID: userId)
-                        })
-                    }
-                )
+            LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                // プロフィールヘッダーセクション
+                profileHeaderSection
 
-                // プロフィール情報
-                ModernProfileInfoView(user: viewModel.profile)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 12)
-
-                // 統計情報（投稿数含む）
-                ProfileStatsView(
-                    user: viewModel.profile,
-                    onFollowersTapped: { showingFollowers = true },
-                    onFollowingTapped: { showingFollowing = true }
-                )
-                .padding(.horizontal, 20)
-                .padding(.bottom, 12)
-
-                // お気に入りセクションはサイドバーの独立画面へ移動
-
-                // 区切り線
-                Rectangle()
-                    .fill(Color(UIColor.separator))
-                    .frame(height: 1)
-
-                // 掲示板と同じタイムライン（内部スクロールなし）
-                PostTimeline(
-                    posts: viewModel.posts,
-                    loading: viewModel.isLoadingMore,
-                    onRefresh: {},
-                    onLoadMore: {
-                        let userId = AuthService.shared.currentUser?.id ?? 0
-                        viewModel.loadMoreUserPosts(userID: userId)
-                    },
-                    embedInScrollView: false,
-                    onToggleLike: { post in
-                        let postId = post.id
-                        let originalIsLiked = post.isLikedByCurrentUser ?? false
-                        let originalLikeCount = post.likeCount ?? 0
-
-                        await MainActor.run {
-                            if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
-                                var p = viewModel.posts[idx]
-                                let newIsLiked = !originalIsLiked
-                                let newLikeCount = originalIsLiked ? max(0, originalLikeCount - 1) : originalLikeCount +
-                                    1
-                                p.updateLikeStatus(isLiked: newIsLiked, likeCount: newLikeCount)
-                                viewModel.posts[idx] = p
-                            }
-                        }
-
-                        do {
-                            let response = try await EngagementAPIService.shared.toggleLike(postId: postId)
-                            await MainActor.run {
-                                if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
-                                    var p = viewModel.posts[idx]
-                                    p.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
-                                    viewModel.posts[idx] = p
-                                }
-                            }
-                        } catch {
-                            await MainActor.run {
-                                if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
-                                    var p = viewModel.posts[idx]
-                                    p.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
-                                    viewModel.posts[idx] = p
-                                }
-                            }
-                        }
-                    }
-                )
-                .environment(bulletinBoardViewModel)
+                // タブ付きコンテンツセクション
+                Section {
+                    tabContent
+                } header: {
+                    ProfileTabSelectorView(selectedTab: $selectedTab)
+                }
             }
         }
         .refreshable {
@@ -136,6 +64,109 @@ struct MyProfileView: View {
             if let user = newUser, user.id != 0 {
                 viewModel.loadProfile(userID: user.id)
                 viewModel.loadUserPosts(userID: user.id)
+            }
+        }
+    }
+
+    // MARK: - Profile Header Section
+
+    private var profileHeaderSection: some View {
+        VStack(spacing: 0) {
+            // カバー画像とプロフィール
+            ModernProfileHeaderView(
+                user: viewModel.profile,
+                scrollOffset: 0,
+                onEditTapped: {
+                    sheetDestination = .profileEdit(viewModel.profile, onProfileUpdated: {
+                        let userId = AuthService.shared.currentUser?.id ?? 0
+                        viewModel.loadProfile(userID: userId)
+                        viewModel.loadUserPosts(userID: userId)
+                    })
+                }
+            )
+
+            // プロフィール情報
+            ModernProfileInfoView(user: viewModel.profile)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 12)
+
+            // 統計情報（投稿数含む）
+            ProfileStatsView(
+                user: viewModel.profile,
+                onFollowersTapped: { showingFollowers = true },
+                onFollowingTapped: { showingFollowing = true }
+            )
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
+        }
+    }
+
+    // MARK: - Tab Content
+
+    @ViewBuilder
+    private var tabContent: some View {
+        switch selectedTab {
+        case .posts:
+            PostTimeline(
+                posts: viewModel.posts,
+                loading: viewModel.isLoadingMore,
+                onRefresh: {},
+                onLoadMore: {
+                    let userId = AuthService.shared.currentUser?.id ?? 0
+                    viewModel.loadMoreUserPosts(userID: userId)
+                },
+                embedInScrollView: false,
+                onToggleLike: { post in
+                    await handleToggleLike(post: post)
+                }
+            )
+            .environment(bulletinBoardViewModel)
+
+        case .photos:
+            ProfilePhotoGridView(
+                posts: viewModel.posts,
+                loading: viewModel.isLoadingMore,
+                onLoadMore: {
+                    let userId = AuthService.shared.currentUser?.id ?? 0
+                    viewModel.loadMoreUserPosts(userID: userId)
+                }
+            )
+        }
+    }
+
+    // MARK: - Like Toggle Handler
+
+    private func handleToggleLike(post: Post) async {
+        let postId = post.id
+        let originalIsLiked = post.isLikedByCurrentUser ?? false
+        let originalLikeCount = post.likeCount ?? 0
+
+        await MainActor.run {
+            if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                var p = viewModel.posts[idx]
+                let newIsLiked = !originalIsLiked
+                let newLikeCount = originalIsLiked ? max(0, originalLikeCount - 1) : originalLikeCount + 1
+                p.updateLikeStatus(isLiked: newIsLiked, likeCount: newLikeCount)
+                viewModel.posts[idx] = p
+            }
+        }
+
+        do {
+            let response = try await EngagementAPIService.shared.toggleLike(postId: postId)
+            await MainActor.run {
+                if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                    var p = viewModel.posts[idx]
+                    p.updateLikeStatus(isLiked: response.isLiked, likeCount: response.likeCount)
+                    viewModel.posts[idx] = p
+                }
+            }
+        } catch {
+            await MainActor.run {
+                if let idx = viewModel.posts.firstIndex(where: { $0.id == postId }) {
+                    var p = viewModel.posts[idx]
+                    p.updateLikeStatus(isLiked: originalIsLiked, likeCount: originalLikeCount)
+                    viewModel.posts[idx] = p
+                }
             }
         }
     }
@@ -226,7 +257,7 @@ struct ModernProfileHeaderView: View {
                         )
                     }
                 }
-                .frame(height: min(220, UIScreen.main.bounds.height * 0.25))
+                .frame(height: min(150, UIScreen.main.bounds.height * 0.18))
                 .clipped()
                 .overlay(
                     // グラデーションオーバーレイ - より洗練された効果
@@ -248,8 +279,8 @@ struct ModernProfileHeaderView: View {
                             // 外側の白い境界線
                             Circle()
                                 .fill(Color(.systemBackground))
-                                .frame(width: 108, height: 108)
-                                .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
+                                .frame(width: 90, height: 90)
+                                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
 
                             // 内側のプロフィール画像
                             if let imageURL = user.profileImageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
@@ -284,7 +315,7 @@ struct ModernProfileHeaderView: View {
                                             )
                                     }
                                 }
-                                .frame(width: 100, height: 100)
+                                .frame(width: 84, height: 84)
                                 .clipShape(Circle())
                             } else {
                                 Circle()
@@ -294,10 +325,10 @@ struct ModernProfileHeaderView: View {
                                             .font(.system(size: 42))
                                             .foregroundColor(.secondary)
                                     )
-                                    .frame(width: 100, height: 100)
+                                    .frame(width: 84, height: 84)
                             }
                         }
-                        .offset(y: -54)
+                        .offset(y: -45)
 
                         Spacer()
                     }
@@ -327,7 +358,7 @@ struct ModernProfileHeaderView: View {
                 .padding(.bottom, 16)
             }
         }
-        .frame(height: 300)
+        .frame(height: 230)
     }
 }
 

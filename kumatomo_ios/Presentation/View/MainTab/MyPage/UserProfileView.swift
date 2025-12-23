@@ -12,6 +12,7 @@ struct UserProfileView: View {
     @State private var viewModel: ProfileViewModel
     @State private var bulletinBoardViewModel = BulletinBoardViewModel()
     @State private var followViewModel = FollowViewModel()
+    @State private var selectedTab: ProfileTab = .posts
     @State private var isFollowing = false
     @State private var showingFollowers = false
     @State private var showingFollowing = false
@@ -27,61 +28,21 @@ struct UserProfileView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 0) {
+            LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
                 if viewModel.isLoading {
                     loadingView
                 } else if viewModel.errorMessage != nil {
                     errorView
                 } else {
-                    // カバー画像とプロフィール
-                    UserProfileHeaderView(
-                        user: viewModel.profile,
-                        isFollowing: isFollowing,
-                        isFollowLoading: followViewModel.isFollowActionInProgress,
-                        isCurrentUser: isCurrentUser,
-                        onFollowTapped: {
-                            Task {
-                                isFollowing = await followViewModel.toggleFollow(
-                                    userId: userId,
-                                    isCurrentlyFollowing: isFollowing
-                                )
-                            }
-                        }
-                    )
+                    // プロフィールヘッダーセクション
+                    profileHeaderSection
 
-                    // プロフィール情報
-                    ModernProfileInfoView(user: viewModel.profile)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 12)
-
-                    // 統計情報
-                    UserProfileStatsView(
-                        user: viewModel.profile,
-                        onFollowersTapped: { showingFollowers = true },
-                        onFollowingTapped: { showingFollowing = true }
-                    )
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 12)
-
-                    // 区切り線
-                    Rectangle()
-                        .fill(Color(UIColor.separator))
-                        .frame(height: 1)
-
-                    // 投稿タイムライン
-                    PostTimeline(
-                        posts: viewModel.posts,
-                        loading: viewModel.isLoadingMore,
-                        onRefresh: {},
-                        onLoadMore: {
-                            viewModel.loadMoreUserPosts(userID: userId)
-                        },
-                        embedInScrollView: false,
-                        onToggleLike: { post in
-                            await handleToggleLike(post: post)
-                        }
-                    )
-                    .environment(bulletinBoardViewModel)
+                    // タブ付きコンテンツセクション
+                    Section {
+                        tabContent
+                    } header: {
+                        ProfileTabSelectorView(selectedTab: $selectedTab)
+                    }
                 }
             }
         }
@@ -109,6 +70,73 @@ struct UserProfileView: View {
         }
         .task {
             await loadFollowStatus()
+        }
+    }
+
+    // MARK: - Profile Header Section
+
+    private var profileHeaderSection: some View {
+        VStack(spacing: 0) {
+            // カバー画像とプロフィール
+            UserProfileHeaderView(
+                user: viewModel.profile,
+                isFollowing: isFollowing,
+                isFollowLoading: followViewModel.isFollowActionInProgress,
+                isCurrentUser: isCurrentUser,
+                onFollowTapped: {
+                    Task {
+                        isFollowing = await followViewModel.toggleFollow(
+                            userId: userId,
+                            isCurrentlyFollowing: isFollowing
+                        )
+                    }
+                }
+            )
+
+            // プロフィール情報
+            ModernProfileInfoView(user: viewModel.profile)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 12)
+
+            // 統計情報
+            UserProfileStatsView(
+                user: viewModel.profile,
+                onFollowersTapped: { showingFollowers = true },
+                onFollowingTapped: { showingFollowing = true }
+            )
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
+        }
+    }
+
+    // MARK: - Tab Content
+
+    @ViewBuilder
+    private var tabContent: some View {
+        switch selectedTab {
+        case .posts:
+            PostTimeline(
+                posts: viewModel.posts,
+                loading: viewModel.isLoadingMore,
+                onRefresh: {},
+                onLoadMore: {
+                    viewModel.loadMoreUserPosts(userID: userId)
+                },
+                embedInScrollView: false,
+                onToggleLike: { post in
+                    await handleToggleLike(post: post)
+                }
+            )
+            .environment(bulletinBoardViewModel)
+
+        case .photos:
+            ProfilePhotoGridView(
+                posts: viewModel.posts,
+                loading: viewModel.isLoadingMore,
+                onLoadMore: {
+                    viewModel.loadMoreUserPosts(userID: userId)
+                }
+            )
         }
     }
 
@@ -260,7 +288,7 @@ struct UserProfileHeaderView: View {
                             )
                     }
                 }
-                .frame(height: min(220, UIScreen.main.bounds.height * 0.25))
+                .frame(height: min(150, UIScreen.main.bounds.height * 0.18))
                 .clipped()
                 .overlay(
                     LinearGradient(
@@ -281,8 +309,8 @@ struct UserProfileHeaderView: View {
                         ZStack {
                             Circle()
                                 .fill(Color(.systemBackground))
-                                .frame(width: 108, height: 108)
-                                .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
+                                .frame(width: 90, height: 90)
+                                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
 
                             if let imageURL = user.profileImageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
                                 AsyncImage(url: url) { phase in
@@ -304,14 +332,14 @@ struct UserProfileHeaderView: View {
                                         defaultProfileImage
                                     }
                                 }
-                                .frame(width: 100, height: 100)
+                                .frame(width: 84, height: 84)
                                 .clipShape(Circle())
                             } else {
                                 defaultProfileImage
-                                    .frame(width: 100, height: 100)
+                                    .frame(width: 84, height: 84)
                             }
                         }
-                        .offset(y: -54)
+                        .offset(y: -45)
 
                         Spacer()
                     }
@@ -330,7 +358,7 @@ struct UserProfileHeaderView: View {
                 .padding(.bottom, 16)
             }
         }
-        .frame(height: 300)
+        .frame(height: 230)
     }
 
     private var defaultCoverGradient: some View {
