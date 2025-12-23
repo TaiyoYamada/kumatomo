@@ -34,7 +34,7 @@ struct FollowersListView: View {
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                     }
                 }
             }
@@ -118,7 +118,7 @@ struct FollowingListView: View {
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                     }
                 }
             }

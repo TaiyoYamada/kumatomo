@@ -234,15 +234,13 @@ struct ModernProfileHeaderView: View {
                             }
                         }
                     } else {
-                        // デフォルトのカバー画像
                         LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color.orange.opacity(0.7),
-                                Color.purple.opacity(0.7),
-                                Color.orange.opacity(0.7)
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                            colors: [
+                                Color(.systemGray5),
+                                Color(.systemGray6)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
                         )
                         .overlay(
                             VStack(spacing: 8) {
@@ -613,7 +611,6 @@ struct ModernPostCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             PostCardHeaderView(post: post)
             PostCardContentView(post: post)
-            PostCardActionsView(post: post)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
@@ -722,57 +719,5 @@ struct PostCardContentView: View {
             }
         }
         .padding(.leading, 56)
-    }
-}
-
-// MARK: - PostCardActionsView
-
-struct PostCardActionsView: View {
-    let post: Post
-
-    var body: some View {
-        HStack(spacing: 0) {
-            // コメント
-            ActionButton(
-                icon: "message",
-                count: post.commentCount ?? 0,
-                color: .secondary,
-                activeColor: .orange
-            )
-
-            Spacer()
-
-            // リツイート/シェア
-            ActionButton(
-                icon: "arrow.2.squarepath",
-                count: 0,
-                color: .secondary,
-                activeColor: .green
-            )
-
-            Spacer()
-
-            // いいね
-            ActionButton(
-                icon: post.userReaction == .thumbsUp ? "heart.fill" : "heart",
-                count: post.reactions?.thumbsUp ?? 0,
-                activeColor: .red
-            )
-
-            Spacer()
-
-            // シェア
-            Button(action: {}) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.system(size: 18))
-                    .foregroundColor(.secondary)
-                    .padding(8)
-            }
-            .buttonStyle(PlainButtonStyle())
-
-            Spacer()
-        }
-        .padding(.leading, 56)
-        .padding(.top, 12)
     }
 }
