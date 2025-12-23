@@ -13,4 +13,5 @@ enum RouterDestination: Hashable, Sendable {
     case initialSetup // 初期設定画面
     case postDetail(postId: Int) // 投稿詳細画面
     case userProfile(userId: Int) // ユーザープロフィール画面
+    case webView(url: URL, title: String) // アプリ内Webビュー
 }

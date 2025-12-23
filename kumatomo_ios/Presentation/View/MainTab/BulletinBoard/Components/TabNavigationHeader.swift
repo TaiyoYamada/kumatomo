@@ -246,6 +246,7 @@ struct MunicipalityPickerView: View {
                     }
                 }
             }
+            .tint(Color.white)
         }
     }
 }

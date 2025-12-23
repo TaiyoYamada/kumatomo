@@ -40,6 +40,9 @@ enum DestinationViewBuilder {
 
         case let .userProfile(userId):
             UserProfileView(userId: userId)
+
+        case let .webView(url, title):
+            InAppWebView(url: url, title: title)
         }
     }
 }
