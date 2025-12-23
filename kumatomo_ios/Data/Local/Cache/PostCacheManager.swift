@@ -7,6 +7,7 @@ class PostCacheManager: ObservableObject {
 
     private let userDefaults = UserDefaults.standard
     private let cacheExpirationInterval: TimeInterval = 300
+    private let logger = AppLogger.cache
 
     private enum CacheKeys {
         static let allPosts = "cached_all_posts"
@@ -26,29 +27,29 @@ class PostCacheManager: ObservableObject {
             let data = try JSONEncoder().encode(posts)
             userDefaults.set(data, forKey: CacheKeys.allPosts)
             userDefaults.set(Date().timeIntervalSince1970, forKey: CacheKeys.allPostsTimestamp)
-            print("📦 全投稿をキャッシュしました: \(posts.count)件")
+            logger.debug("全投稿をキャッシュ: \(posts.count)件")
         } catch {
-            print("🚨 全投稿のキャッシュに失敗: \(error)")
+            logger.logError(error, context: "CacheAllPosts")
         }
     }
 
     func getCachedAllPosts() -> [Post]? {
         guard isCacheValid(timestampKey: CacheKeys.allPostsTimestamp) else {
-            print("📦 全投稿のキャッシュが期限切れです")
+            logger.debug("全投稿キャッシュ期限切れ")
             return nil
         }
 
         guard let data = userDefaults.data(forKey: CacheKeys.allPosts) else {
-            print("📦 全投稿のキャッシュが見つかりません")
+            logger.debug("全投稿キャッシュなし")
             return nil
         }
 
         do {
             let posts = try JSONDecoder().decode([Post].self, from: data)
-            print("📦 全投稿をキャッシュから取得: \(posts.count)件")
+            logger.debug("全投稿をキャッシュから取得: \(posts.count)件")
             return posts
         } catch {
-            print("🚨 全投稿のキャッシュデコードに失敗: \(error)")
+            logger.logError(error, context: "DecodeCacheAllPosts")
             return nil
         }
     }
@@ -61,31 +62,31 @@ class PostCacheManager: ObservableObject {
 
             userDefaults.set(data, forKey: key)
             userDefaults.set(Date().timeIntervalSince1970, forKey: timestampKey)
-            print("📦 市町村投稿をキャッシュしました (\(municipality)): \(posts.count)件")
+            logger.debug("市町村投稿をキャッシュ (\(municipality)): \(posts.count)件")
         } catch {
-            print("🚨 市町村投稿のキャッシュに失敗 (\(municipality)): \(error)")
+            logger.logError(error, context: "CacheMunicipalityPosts[\(municipality)]")
         }
     }
 
     func getCachedMunicipalityPosts(municipality: String) -> [Post]? {
         let timestampKey = CacheKeys.municipalityPostsTimestamp + municipality
         guard isCacheValid(timestampKey: timestampKey) else {
-            print("📦 市町村投稿のキャッシュが期限切れです (\(municipality))")
+            logger.debug("市町村投稿キャッシュ期限切れ (\(municipality))")
             return nil
         }
 
         let key = CacheKeys.municipalityPosts + municipality
         guard let data = userDefaults.data(forKey: key) else {
-            print("📦 市町村投稿のキャッシュが見つかりません (\(municipality))")
+            logger.debug("市町村投稿キャッシュなし (\(municipality))")
             return nil
         }
 
         do {
             let posts = try JSONDecoder().decode([Post].self, from: data)
-            print("📦 市町村投稿をキャッシュから取得 (\(municipality)): \(posts.count)件")
+            logger.debug("市町村投稿をキャッシュから取得 (\(municipality)): \(posts.count)件")
             return posts
         } catch {
-            print("🚨 市町村投稿のキャッシュデコードに失敗 (\(municipality)): \(error)")
+            logger.logError(error, context: "DecodeCacheMunicipalityPosts[\(municipality)]")
             return nil
         }
     }
@@ -95,29 +96,29 @@ class PostCacheManager: ObservableObject {
             let data = try JSONEncoder().encode(posts)
             userDefaults.set(data, forKey: CacheKeys.followingPosts)
             userDefaults.set(Date().timeIntervalSince1970, forKey: CacheKeys.followingPostsTimestamp)
-            print("📦 フォロー中投稿をキャッシュしました: \(posts.count)件")
+            logger.debug("フォロー中投稿をキャッシュ: \(posts.count)件")
         } catch {
-            print("🚨 フォロー中投稿のキャッシュに失敗: \(error)")
+            logger.logError(error, context: "CacheFollowingPosts")
         }
     }
 
     func getCachedFollowingPosts() -> [Post]? {
         guard isCacheValid(timestampKey: CacheKeys.followingPostsTimestamp) else {
-            print("📦 フォロー中投稿のキャッシュが期限切れです")
+            logger.debug("フォロー中投稿キャッシュ期限切れ")
             return nil
         }
 
         guard let data = userDefaults.data(forKey: CacheKeys.followingPosts) else {
-            print("📦 フォロー中投稿のキャッシュが見つかりません")
+            logger.debug("フォロー中投稿キャッシュなし")
             return nil
         }
 
         do {
             let posts = try JSONDecoder().decode([Post].self, from: data)
-            print("📦 フォロー中投稿をキャッシュから取得: \(posts.count)件")
+            logger.debug("フォロー中投稿をキャッシュから取得: \(posts.count)件")
             return posts
         } catch {
-            print("🚨 フォロー中投稿のキャッシュデコードに失敗: \(error)")
+            logger.logError(error, context: "DecodeCacheFollowingPosts")
             return nil
         }
     }
@@ -126,9 +127,9 @@ class PostCacheManager: ObservableObject {
         do {
             let data = try JSONEncoder().encode(reactions)
             userDefaults.set(data, forKey: CacheKeys.reactions)
-            print("📦 リアクションをキャッシュしました: \(reactions.count)件")
+            logger.debug("リアクションをキャッシュ: \(reactions.count)件")
         } catch {
-            print("🚨 リアクションのキャッシュに失敗: \(error)")
+            logger.logError(error, context: "CacheReactions")
         }
     }
 
@@ -139,10 +140,10 @@ class PostCacheManager: ObservableObject {
 
         do {
             let reactions = try JSONDecoder().decode([Int: PostReactions].self, from: data)
-            print("📦 リアクションをキャッシュから取得: \(reactions.count)件")
+            logger.debug("リアクションをキャッシュから取得: \(reactions.count)件")
             return reactions
         } catch {
-            print("🚨 リアクションのキャッシュデコードに失敗: \(error)")
+            logger.logError(error, context: "DecodeCacheReactions")
             return [:]
         }
     }
@@ -151,9 +152,9 @@ class PostCacheManager: ObservableObject {
         do {
             let data = try JSONEncoder().encode(bookmarks)
             userDefaults.set(data, forKey: CacheKeys.bookmarks)
-            print("📦 ブックマークをキャッシュしました: \(bookmarks.count)件")
+            logger.debug("ブックマークをキャッシュ: \(bookmarks.count)件")
         } catch {
-            print("🚨 ブックマークのキャッシュに失敗: \(error)")
+            logger.logError(error, context: "CacheBookmarks")
         }
     }
 
@@ -164,10 +165,10 @@ class PostCacheManager: ObservableObject {
 
         do {
             let bookmarks = try JSONDecoder().decode(Set<Int>.self, from: data)
-            print("📦 ブックマークをキャッシュから取得: \(bookmarks.count)件")
+            logger.debug("ブックマークをキャッシュから取得: \(bookmarks.count)件")
             return bookmarks
         } catch {
-            print("🚨 ブックマークのキャッシュデコードに失敗: \(error)")
+            logger.logError(error, context: "DecodeCacheBookmarks")
             return Set<Int>()
         }
     }
@@ -198,7 +199,7 @@ class PostCacheManager: ObservableObject {
 
         clearMunicipalityCache()
 
-        print("📦 全キャッシュをクリアしました")
+        logger.info("全キャッシュをクリア")
     }
 
     func clearMunicipalityCache() {
@@ -212,7 +213,7 @@ class PostCacheManager: ObservableObject {
             userDefaults.removeObject(forKey: key)
         }
 
-        print("📦 市町村キャッシュをクリアしました")
+        logger.info("市町村キャッシュをクリア")
     }
 
     func getCacheInfo() -> (totalSize: Int, itemCount: Int, lastUpdated: Date?) {

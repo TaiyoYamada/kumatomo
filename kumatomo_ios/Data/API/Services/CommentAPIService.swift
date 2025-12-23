@@ -9,6 +9,7 @@ class CommentAPIService {
 
     private let client = APIClient.shared
     private let imageUploadService = ImageUploadService.shared
+    private let logger = AppLogger.network
 
     private init() {}
 
@@ -17,9 +18,7 @@ class CommentAPIService {
     func fetchComments(postId: Int) async throws -> [Comment] {
         do {
             let comments: [Comment] = try await client.get(CommentEndpoint.fetchComments(postId: postId))
-            #if DEBUG
-            print("✅ コメント取得成功: \(comments.count)件")
-            #endif
+            logger.info("コメント取得成功: \(comments.count)件")
             return comments
         } catch let apiError as APIError {
             throw handleAPIError(apiError)
@@ -46,11 +45,9 @@ class CommentAPIService {
         if let image {
             do {
                 imageUrl = try await imageUploadService.uploadImage(image)
-                #if DEBUG
-                print("✅ コメント画像アップロード成功: \(imageUrl ?? "")")
-                #endif
+                logger.info("コメント画像アップロード成功: \(imageUrl ?? "")")
             } catch {
-                print("🚨 コメント画像アップロード失敗: \(error)")
+                logger.logError(error, context: "CommentImageUpload")
                 throw CommentError.imageUploadFailed(error)
             }
         }
@@ -59,9 +56,7 @@ class CommentAPIService {
             let comment: Comment = try await client.post(
                 CommentEndpoint.createComment(postId: postId, content: trimmedContent, imageUrl: imageUrl)
             )
-            #if DEBUG
-            print("✅ コメント作成成功: ID \(comment.id)")
-            #endif
+            logger.info("コメント作成成功: ID \(comment.id)")
             return comment
         } catch let apiError as APIError {
             throw handleAPIError(apiError)
@@ -75,9 +70,7 @@ class CommentAPIService {
     func deleteComment(commentId: Int) async throws {
         do {
             try await client.delete(CommentEndpoint.deleteComment(commentId: commentId))
-            #if DEBUG
-            print("✅ コメント削除成功: ID \(commentId)")
-            #endif
+            logger.info("コメント削除成功: ID \(commentId)")
         } catch let apiError as APIError {
             throw handleAPIError(apiError)
         } catch {

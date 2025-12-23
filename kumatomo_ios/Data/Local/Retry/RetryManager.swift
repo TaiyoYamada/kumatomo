@@ -14,6 +14,7 @@ class RetryManager: ObservableObject {
     private var cancellationTokens: [String: CancellationToken] = [:]
     private let maxHistoryEntries = 100
     private let progressTracker = ProgressTracker.shared
+    private let logger = AppLogger.debug
 
     private init() {}
 
@@ -145,7 +146,7 @@ class RetryManager: ObservableObject {
         activeRetries.removeValue(forKey: operationId)
         cancellationTokens.removeValue(forKey: operationId)
 
-        print("🚫 Cancelled retry operation: \(operationId)")
+        logger.info("Cancelled retry operation: \(operationId)")
     }
 
     func cancelAllRetries(reason: String = "Bulk cancellation") {
@@ -156,7 +157,7 @@ class RetryManager: ObservableObject {
         activeRetries.removeAll()
         cancellationTokens.removeAll()
 
-        print("🚫 Cancelled all retry operations")
+        logger.info("Cancelled all retry operations")
     }
 
     func canCancelRetry(operationId: String) -> Bool {
@@ -231,8 +232,8 @@ class RetryManager: ObservableObject {
 
         addToHistory(entry)
 
-        print(
-            "🔄 Retry attempt \(attempt + 1) for operation \(operationId): \(error.localizedDescription), waiting \(delay)s"
+        logger.debug(
+            "Retry attempt \(attempt + 1) for operation \(operationId): \(error.localizedDescription), waiting \(delay)s"
         )
     }
 
@@ -247,7 +248,7 @@ class RetryManager: ObservableObject {
 
         addToHistory(entry)
 
-        print("✅ Operation \(operationId) succeeded after \(attempt + 1) attempts")
+        logger.info("Operation \(operationId) succeeded after \(attempt + 1) attempts")
     }
 
     private func logRetryFailure(operationId: String, finalError: Error) {
@@ -261,7 +262,7 @@ class RetryManager: ObservableObject {
 
         addToHistory(entry)
 
-        print("❌ Operation \(operationId) failed after all retry attempts: \(finalError.localizedDescription)")
+        logger.error("Operation \(operationId) failed after all retry attempts: \(finalError.localizedDescription)")
     }
 
     private func addToHistory(_ entry: RetryHistoryEntry) {

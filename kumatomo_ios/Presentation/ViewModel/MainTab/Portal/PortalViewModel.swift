@@ -11,6 +11,8 @@ final class PortalViewModel {
     // Dependencies
     @ObservationIgnored
     private let fetchAnnouncementsUseCase: FetchAnnouncementsUseCaseProtocol
+    @ObservationIgnored
+    private let logger = AppLogger.debug
 
     init(fetchAnnouncementsUseCase: FetchAnnouncementsUseCaseProtocol = Container.shared.fetchAnnouncementsUseCase()) {
         self.fetchAnnouncementsUseCase = fetchAnnouncementsUseCase
@@ -24,7 +26,7 @@ final class PortalViewModel {
         do {
             announcements = try await fetchAnnouncementsUseCase.execute()
         } catch {
-            print("Failed to fetch announcements: \(error)")
+            logger.logError(error, context: "FetchAnnouncements")
             errorMessage = "お知らせの取得に失敗しました"
         }
 
