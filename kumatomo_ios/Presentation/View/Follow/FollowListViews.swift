@@ -39,6 +39,11 @@ struct FollowersListView: View {
                 }
             }
         }
+        .navigationDestination(for: RouterDestination.self) { destination in
+            DestinationViewBuilder.view(for: destination)
+        }
+        .environment(CurrentUserManager.shared)
+        .environment(AppRouter.shared)
         .task {
             await viewModel.fetchFollowers(userId: userId)
         }
@@ -118,6 +123,11 @@ struct FollowingListView: View {
                 }
             }
         }
+        .navigationDestination(for: RouterDestination.self) { destination in
+            DestinationViewBuilder.view(for: destination)
+        }
+        .environment(CurrentUserManager.shared)
+        .environment(AppRouter.shared)
         .task {
             await viewModel.fetchFollowing(userId: userId)
         }
