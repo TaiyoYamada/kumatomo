@@ -109,7 +109,7 @@ private struct LikedPostsTimeline: View {
                         post: post,
                         engagementViewModel: engagementViewModel,
                         onTap: {
-                            appRouter.navigateToPostDetail(postId: post.id)
+                            appRouter.navigate(to: .postDetail(postId: post.id))
                         },
                         onAppear: {
                             if post.id == posts.last?.id {

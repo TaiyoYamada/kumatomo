@@ -35,7 +35,7 @@ struct PostDetailView: View {
                                 post: post,
                                 onProfileTap: {
                                     if let userId = post.userId {
-                                        appRouter.navigateToUserProfile(userId: userId)
+                                        appRouter.navigate(to: .userProfile(userId: userId))
                                     }
                                 }
                             )
@@ -71,7 +71,7 @@ struct PostDetailView: View {
                                     }
                                 },
                                 onUserTap: { userId in
-                                    appRouter.navigateToUserProfile(userId: userId)
+                                    appRouter.navigate(to: .userProfile(userId: userId))
                                 },
                                 onImageTap: { imageUrl in
                                     print("Image tapped: \(imageUrl)")

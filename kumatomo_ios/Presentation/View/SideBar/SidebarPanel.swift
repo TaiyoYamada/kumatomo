@@ -73,20 +73,17 @@ struct SidebarPanel: View {
 
     private func navigate(using item: SidebarMenuItemType) {
         let router = appRouter
-        print("[Sidebar] navigate item=\(item)")
         router.selectedTab = .portal
-        print("[Sidebar] selectedTab -> portal")
         router.popToRoot()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-            print("[Sidebar] perform navigation for item=\(item)")
             switch item {
             case .bookmarks:
-                router.navigateToBookmarkedPosts(on: .portal)
+                router.navigate(to: .bookmarkedPosts, on: .portal)
             case .likes:
-                router.navigateToLikedPosts(on: .portal)
+                router.navigate(to: .likedPosts, on: .portal)
             case .settings:
-                router.navigateToSettings(on: .portal)
+                router.navigate(to: .settings, on: .portal)
             default:
                 break
             }

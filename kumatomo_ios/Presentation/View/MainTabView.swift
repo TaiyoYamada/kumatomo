@@ -1,14 +1,20 @@
 import SwiftUI
 import Observation
+import Factory
 
 // MARK: - MainTabView
 
 struct MainTabView: View {
+
+    // MARK: - Environment & State
+
     @Environment(AuthViewModel.self) private var viewModel
     @State private var bulletinBoardViewModel = BulletinBoardViewModel()
     @State private var userManager = CurrentUserManager.shared
     @State private var sidebarState = SidebarState()
-    @State private var appRouter = AppRouter.shared
+    @State private var appRouter = Container.shared.appRouter()
+
+    // MARK: - Body
 
     var body: some View {
         SidebarContainer(isPresented: $sidebarState.isPresented, user: userManager.currentUser) {
@@ -40,10 +46,7 @@ struct MainTabView: View {
                 }
         }
         .environment(bulletinBoardViewModel)
-        .environment(userManager)
-        .environment(sidebarState)
-        .environment(appRouter)
-        .environment(\.openSidebar, sidebarState.open)
+        .withTabEnvironment(userManager: userManager, sidebarState: sidebarState, appRouter: appRouter)
         .tabItem {
             Image(systemName: "house.fill")
             Text("ホーム")
@@ -59,10 +62,7 @@ struct MainTabView: View {
                     DestinationViewBuilder.view(for: destination)
                 }
         }
-        .environment(userManager)
-        .environment(sidebarState)
-        .environment(appRouter)
-        .environment(\.openSidebar, sidebarState.open)
+        .withTabEnvironment(userManager: userManager, sidebarState: sidebarState, appRouter: appRouter)
         .tabItem {
             Image(systemName: "magnifyingglass")
             Text("検索")
@@ -77,10 +77,7 @@ struct MainTabView: View {
                     DestinationViewBuilder.view(for: destination)
                 }
         }
-        .environment(userManager)
-        .environment(sidebarState)
-        .environment(appRouter)
-        .environment(\.openSidebar, sidebarState.open)
+        .withTabEnvironment(userManager: userManager, sidebarState: sidebarState, appRouter: appRouter)
         .tabItem {
             Image(systemName: "rectangle.grid.2x2")
             Text("ポータル")
@@ -97,10 +94,7 @@ struct MainTabView: View {
                     DestinationViewBuilder.view(for: destination)
                 }
         }
-        .environment(userManager)
-        .environment(sidebarState)
-        .environment(appRouter)
-        .environment(\.openSidebar, sidebarState.open)
+        .withTabEnvironment(userManager: userManager, sidebarState: sidebarState, appRouter: appRouter)
         .tabItem {
             Image(systemName: "storefront.fill")
             Text("お店")
@@ -117,10 +111,7 @@ struct MainTabView: View {
                     DestinationViewBuilder.view(for: destination)
                 }
         }
-        .environment(userManager)
-        .environment(sidebarState)
-        .environment(appRouter)
-        .environment(\.openSidebar, sidebarState.open)
+        .withTabEnvironment(userManager: userManager, sidebarState: sidebarState, appRouter: appRouter)
         .tabItem {
             Image(systemName: "person.crop.circle.fill")
             Text("プロフィール")

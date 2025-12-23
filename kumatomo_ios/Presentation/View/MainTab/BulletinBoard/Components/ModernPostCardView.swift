@@ -198,7 +198,7 @@ struct TimelinePostCardView: View {
     }
 
     private func navigateToUserProfile(userId: Int) {
-        appRouter.navigateToUserProfile(userId: userId)
+        appRouter.navigate(to: .userProfile(userId: userId))
     }
 }
 

@@ -21,7 +21,7 @@ struct PostTimeline: View {
                 PostCell(
                     post: post,
                     onTap: {
-                        appRouter.navigateToPostDetail(postId: post.id)
+                        appRouter.navigate(to: .postDetail(postId: post.id))
                     },
                     onAppear: {
                         // 最後の投稿が表示されたら、新しい投稿を読み込みます

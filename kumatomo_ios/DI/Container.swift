@@ -91,6 +91,12 @@ extension Container {
         self { MainActor.assumeIsolated { .shared } }.singleton
     }
 
+    // MARK: - Navigation
+
+    var appRouter: Factory<AppRouter> {
+        self { MainActor.assumeIsolated { AppRouter.shared } }.singleton
+    }
+
     // MARK: - Use Cases (Engagement)
 
     var toggleLikeUseCase: Factory<ToggleLikeUseCase> {

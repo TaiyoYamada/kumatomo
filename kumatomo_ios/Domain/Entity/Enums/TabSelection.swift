@@ -1,6 +1,9 @@
 import SwiftUI
 
-enum TabSelection: Hashable {
+// MARK: - TabSelection
+
+/// アプリのタブ選択を表す enum
+enum TabSelection: Hashable, Sendable {
     case bulletinboard // 掲示板タブ
     case shop // お店タブ
     case search // 検索タブ
