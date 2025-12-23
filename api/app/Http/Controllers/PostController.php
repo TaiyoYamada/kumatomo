@@ -290,6 +290,51 @@ class PostController extends Controller
     }
 
     /**
+     * フォロー中のユーザーの投稿一覧を取得
+     */
+    public function indexByFollowing(Request $request)
+    {
+        $user = $request->user();
+        
+        $validated = $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        $page = (int)($validated['page'] ?? 1);
+        $limit = (int)($validated['limit'] ?? 20);
+
+        // Get IDs of users that the current user is following
+        $followingIds = $user->following()->pluck('users.id')->toArray();
+
+        if (empty($followingIds)) {
+            // Return empty array if not following anyone
+            return response()->json([]);
+        }
+
+        // Get posts from followed users
+        $posts = Post::whereIn('user_id', $followingIds)
+            ->with(['user', 'images'])
+            ->latest()
+            ->forPage($page, $limit)
+            ->get();
+
+        // Add engagement data
+        $userId = $user->id;
+        $posts->transform(function ($post) use ($userId) {
+            $engagementData = $post->getEngagementDataForUser($userId);
+            $post->like_count = $engagementData['like_count'];
+            $post->bookmark_count = $engagementData['bookmark_count'];
+            $post->comment_count = $engagementData['comment_count'];
+            $post->is_liked_by_current_user = $engagementData['is_liked_by_current_user'];
+            $post->is_bookmarked_by_current_user = $engagementData['is_bookmarked_by_current_user'];
+            return $post;
+        });
+
+        return response()->json($posts);
+    }
+
+    /**
      * 市町村（市）ごとの投稿一覧を取得
      */
     public function indexByMunicipality(Request $request, string $name)

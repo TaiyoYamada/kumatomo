@@ -1,12 +1,22 @@
 import SwiftUI
 import Observation
 
+// MARK: - AppRouter
+
+/// アプリのナビゲーション状態を管理するルーター
+///
+/// 各タブの NavigationPath を管理し、プログラム的なナビゲーションと
+/// ディープリンクのハンドリングを提供する。
 @MainActor
 @Observable
-class AppRouter {
-    // 現在選択中のタブ
+final class AppRouter {
+
+    // MARK: - Properties
+
+    /// 現在選択中のタブ
     var selectedTab: TabSelection = .portal
 
+    /// タブごとのナビゲーションパス
     private(set) var navigationPaths: [TabSelection: NavigationPath] = [
         .bulletinboard: NavigationPath(),
         .shop: NavigationPath(),
@@ -15,15 +25,24 @@ class AppRouter {
         .profile: NavigationPath()
     ]
 
+    // MARK: - Singleton（後方互換性のため維持、DI推奨）
+
     static let shared = AppRouter()
 
-    private init() {}
+    // MARK: - Initialization
 
+    /// DI Container 経由での初期化用
+    init() {}
+
+    // MARK: - Path Binding
+
+    /// 指定タブの NavigationPath への Binding を取得
+    /// - Parameter tab: 対象タブ
+    /// - Returns: NavigationPath への Binding
     func pathBinding(for tab: TabSelection) -> Binding<NavigationPath> {
         Binding(
             get: { [weak self] in
-                guard let self else { return NavigationPath() }
-                return navigationPaths[tab] ?? NavigationPath()
+                self?.navigationPaths[tab] ?? NavigationPath()
             },
             set: { [weak self] newValue in
                 self?.navigationPaths[tab] = newValue
@@ -31,110 +50,78 @@ class AppRouter {
         )
     }
 
-    private func append(_ destination: RouterDestination, to tab: TabSelection? = nil) {
+    // MARK: - Navigation
+
+    /// 指定された destination へナビゲート
+    /// - Parameters:
+    ///   - destination: ナビゲーション先
+    ///   - tab: 対象タブ（nil の場合は現在のタブ）
+    func navigate(to destination: RouterDestination, on tab: TabSelection? = nil) {
         let targetTab = tab ?? selectedTab
-        print("[AppRouter] append destination=\(destination) to tab=\(targetTab)")
         var path = navigationPaths[targetTab] ?? NavigationPath()
-        print("[AppRouter] before append path.count=\(path.count)")
         path.append(destination)
         navigationPaths[targetTab] = path
-        print("[AppRouter] after append path.count=\(path.count)")
     }
 
-    private func removeLast(from tab: TabSelection? = nil) {
+    /// 1つ前の画面に戻る
+    /// - Parameter tab: 対象タブ（nil の場合は現在のタブ）
+    func goBack(on tab: TabSelection? = nil) {
         let targetTab = tab ?? selectedTab
-        var path = navigationPaths[targetTab] ?? NavigationPath()
-        print("[AppRouter] removeLast on tab=\(targetTab) path.count(before)=\(path.count)")
-        if !path.isEmpty { path.removeLast() }
+        guard var path = navigationPaths[targetTab], !path.isEmpty else { return }
+        path.removeLast()
         navigationPaths[targetTab] = path
-        print("[AppRouter] path.count(after)=\(path.count)")
     }
 
-    private func resetPath(for tab: TabSelection? = nil) {
+    /// ルート画面まで戻る
+    /// - Parameter tab: 対象タブ（nil の場合は現在のタブ）
+    func popToRoot(on tab: TabSelection? = nil) {
         let targetTab = tab ?? selectedTab
-        print("[AppRouter] resetPath for tab=\(targetTab)")
         navigationPaths[targetTab] = NavigationPath()
     }
 
-    func navigateToPostDetail(postId: Int) {
-        print("[AppRouter] navigateToPostDetail id=\(postId) currentTab=\(selectedTab)")
-        append(.postDetail(postId: postId))
-    }
+    // MARK: - Deep Link
 
-    func navigateToLikedPosts(on tab: TabSelection? = nil) {
-        print("[AppRouter] navigateToLikedPosts requested on tab=\(tab.self ?? selectedTab)")
-        append(.likedPosts, to: tab)
-    }
-
-    func navigateToBookmarkedPosts(on tab: TabSelection? = nil) {
-        print("[AppRouter] navigateToBookmarkedPosts requested on tab=\(tab.self ?? selectedTab)")
-        append(.bookmarkedPosts, to: tab)
-    }
-
-    func navigateToUserProfile(userId: Int, on tab: TabSelection? = nil) {
-        append(.userProfile(userId: userId), to: tab)
-    }
-
-    func navigateToMyProfile(on tab: TabSelection? = nil) {
-        append(.myProfile, to: tab)
-    }
-
-    func navigateToSettings(on tab: TabSelection? = nil) {
-        append(.settings, to: tab)
-    }
-
-    func navigateToSearch(on tab: TabSelection? = nil) {
-        append(.search, to: tab)
-    }
-
-    func goBack() {
-        removeLast()
-    }
-
-    func popToRoot() {
-        resetPath()
-    }
-
-    func navigate(to destination: RouterDestination, on tab: TabSelection? = nil) {
-        let targetTab = tab ?? selectedTab
-        print("[AppRouter] navigate to destination=\(destination) on tab=\(targetTab)")
-        append(destination, to: targetTab)
-    }
-
+    /// ディープリンクをハンドリング
+    /// - Parameter url: ディープリンク URL
     func handleDeepLink(url: URL) {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
               let host = components.host else {
             return
         }
-        print("[AppRouter] handleDeepLink host=\(host) query=\(components.queryItems ?? [])")
 
         switch host {
         case "post":
             if let postIdString = components.queryItems?.first(where: { $0.name == "id" })?.value,
                let postId = Int(postIdString) {
                 selectedTab = .portal
-                append(.postDetail(postId: postId), to: .portal)
+                navigate(to: .postDetail(postId: postId), on: .portal)
             }
+
         case "user":
             if let userIdString = components.queryItems?.first(where: { $0.name == "id" })?.value,
                let userId = Int(userIdString) {
                 selectedTab = .portal
-                navigateToUserProfile(userId: userId, on: .portal)
+                navigate(to: .userProfile(userId: userId), on: .portal)
             }
+
         case "liked-posts":
             selectedTab = .portal
-            navigateToLikedPosts(on: .portal)
+            navigate(to: .likedPosts, on: .portal)
+
         case "bookmarked-posts":
             selectedTab = .portal
-            navigateToBookmarkedPosts(on: .portal)
+            navigate(to: .bookmarkedPosts, on: .portal)
+
         case "profile":
             selectedTab = .portal
-            navigateToMyProfile(on: .portal)
+            navigate(to: .myProfile, on: .portal)
+
         case "settings":
             selectedTab = .portal
-            navigateToSettings(on: .portal)
+            navigate(to: .settings, on: .portal)
+
         default:
-            print("[AppRouter] deep link not handled: \(host)")
+            break
         }
     }
 }

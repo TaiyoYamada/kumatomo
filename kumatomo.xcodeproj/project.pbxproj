@@ -68,19 +68,6 @@
 		E5CD33332E43698300ACDA82 /* kumatomo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kumatomo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E51A7CA32EED653100842CE5 /* Exceptions for "kumatomo_ios" folder in "kumatomo" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Config/Dev-Device.xcconfig",
-				"Config/Dev-Simulator.xcconfig",
-				Config/Prod.xcconfig,
-				Config/Staging.xcconfig,
-			);
-			target = E5CD33322E43698300ACDA82 /* kumatomo */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E51A7E8F2EED6BCF00842CE5 /* kumatomoTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -94,9 +81,6 @@
 		};
 		E5CD33352E43698300ACDA82 /* kumatomo_ios */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				E51A7CA32EED653100842CE5 /* Exceptions for "kumatomo_ios" folder in "kumatomo" target */,
-			);
 			path = kumatomo_ios;
 			sourceTree = "<group>";
 		};

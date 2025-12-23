@@ -27,9 +27,7 @@ struct SidebarPanel: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
                         ForEach(Array(allItems.enumerated()), id: \.offset) { index, item in
-                            if item.isExternalLink {
-                                SidebarLinkItem(icon: item.icon, title: item.title, urlString: item.externalURL ?? "")
-                            } else if item == .logout {
+                            if item == .logout {
                                 // ログアウトは特別処理
                                 SidebarMenuItemView(icon: item.icon, title: item.title, subtitle: item.subtitle) {
                                     handleLogout()
@@ -73,20 +71,25 @@ struct SidebarPanel: View {
 
     private func navigate(using item: SidebarMenuItemType) {
         let router = appRouter
-        print("[Sidebar] navigate item=\(item)")
         router.selectedTab = .portal
-        print("[Sidebar] selectedTab -> portal")
         router.popToRoot()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-            print("[Sidebar] perform navigation for item=\(item)")
             switch item {
             case .bookmarks:
-                router.navigateToBookmarkedPosts(on: .portal)
+                router.navigate(to: .bookmarkedPosts, on: .portal)
             case .likes:
-                router.navigateToLikedPosts(on: .portal)
+                router.navigate(to: .likedPosts, on: .portal)
             case .settings:
-                router.navigateToSettings(on: .portal)
+                router.navigate(to: .settings, on: .portal)
+            case .help:
+                if let urlString = item.externalURL, let url = URL(string: urlString) {
+                    router.navigate(to: .webView(url: url, title: "ヘルプ"), on: .portal)
+                }
+            case .contact:
+                if let urlString = item.externalURL, let url = URL(string: urlString) {
+                    router.navigate(to: .webView(url: url, title: "お問い合わせ"), on: .portal)
+                }
             default:
                 break
             }
@@ -204,43 +207,6 @@ struct SidebarMenuItemView: View {
                     }
                 }
                 Spacer()
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .background(Color.gray.opacity(0.001))
-    }
-}
-
-// MARK: - SidebarLinkItem
-
-struct SidebarLinkItem: View {
-    let icon: String
-    let title: String
-    let urlString: String
-
-    var body: some View {
-        Button(action: {
-            if let url = URL(string: urlString) {
-                UIApplication.shared.open(url)
-            }
-        }) {
-            HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.orange)
-                    .frame(width: 24, height: 24)
-
-                Text(title)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                Image(systemName: "arrow.up.right")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.secondary)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 16)

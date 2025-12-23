@@ -9,6 +9,7 @@ class ImageUploadService: @unchecked Sendable {
     static let shared = ImageUploadService()
     private let baseURL: String = APIConfig.shared.baseURLString
     private let session: Session
+    private let logger = AppLogger.network
 
     private init() {
         // localhost用TrustManager設定（開発用）
@@ -33,8 +34,8 @@ class ImageUploadService: @unchecked Sendable {
             headers.add(.authorization(bearerToken: token))
         }
 
-        print("🖼️ 画像アップロードを開始します: \(url)")
-        print("📡 画像データサイズ: \(imageData.count) bytes")
+        logger.logRequest(method: "POST", url: url.absoluteString)
+        logger.debug("画像データサイズ: \(imageData.count) bytes")
 
         return try await withCheckedThrowingContinuation { continuation in
             session.upload(
@@ -52,20 +53,19 @@ class ImageUploadService: @unchecked Sendable {
             .validate(statusCode: 200 ..< 300)
             .responseDecodable(of: ImageUploadResponse.self, decoder: APIHelper.makeDecoder()) { response in
 
-                #if DEBUG
-                print("📡 ステータスコード: \(response.response?.statusCode ?? -1)")
-                if let data = response.data, let responseString = String(data: data, encoding: .utf8) {
-                    print("📡 レスポンスボディ: \(responseString)")
-                }
-                #endif
+                self.logger.logResponse(
+                    statusCode: response.response?.statusCode ?? -1,
+                    url: url.absoluteString,
+                    body: response.data.flatMap { String(data: $0, encoding: .utf8) }
+                )
 
                 switch response.result {
                 case let .success(uploadResponse):
-                    print("✅ 画像アップロード成功: \(uploadResponse.url)")
+                    self.logger.info("画像アップロード成功: \(uploadResponse.url)")
                     continuation.resume(returning: uploadResponse.url)
 
                 case let .failure(error):
-                    print("🚨 画像アップロード失敗: \(error)")
+                    self.logger.logError(error, context: "ImageUpload")
                     if let statusCode = response.response?.statusCode {
                         continuation.resume(throwing: ImageUploadError.uploadFailed(
                             reason: "HTTP \(statusCode): サーバーエラー"

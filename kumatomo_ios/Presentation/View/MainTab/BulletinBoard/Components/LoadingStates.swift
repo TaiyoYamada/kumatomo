@@ -210,8 +210,8 @@ struct ErrorStateView: View {
             .buttonStyle(PlainButtonStyle())
             .frame(minHeight: 44)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 32)
-        .padding(.top, 100)
     }
 }
 
@@ -314,8 +314,8 @@ struct NetworkErrorView: View {
             .buttonStyle(PlainButtonStyle())
             .frame(minHeight: 44)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 32)
-        .padding(.top, 100)
     }
 }
 

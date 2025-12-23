@@ -84,6 +84,7 @@ class PortalErrorHandler: ObservableObject {
     }
 
     @MainActor private let networkMonitor = NetworkMonitor.shared
+    private let logger = AppLogger.ui
 
     private init() {}
 
@@ -185,18 +186,15 @@ class PortalErrorHandler: ObservableObject {
     }
 
     func logError(_ error: PortalError, _ additionalInfo: String? = nil) {
-        let timestamp = DateFormatter.logFormatter.string(from: Date())
-        let logMessage = "\(error.logLevel.rawValue) [\(timestamp)] Portal Error: \(error.localizedDescription)"
-
         if let info = additionalInfo {
-            print("\(logMessage) - \(info)")
+            logger.error("Portal Error: \(error.localizedDescription) - \(info)")
         } else {
-            print(logMessage)
+            logger.error("Portal Error: \(error.localizedDescription)")
         }
 
         #if DEBUG
         if error.logLevel == .error {
-            print("🔍 Debug Info: \(String(describing: error))")
+            logger.debug("Debug Info: \(String(describing: error))")
         }
         #endif
     }

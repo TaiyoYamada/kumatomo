@@ -7,22 +7,31 @@ struct EngagementButton: View {
     let count: Int
     let isActive: Bool
     let activeColor: Color
+    let animationType: AnimationType
     let action: () async -> Void
 
-    @State private var isAnimating = false
-    @State private var scale: CGFloat = 1.0
+    @State private var showParticles = false
+
+    enum AnimationType {
+        case like
+        case bookmark
+        case comment
+        case none
+    }
 
     init(
         icon: String,
         count: Int,
         isActive: Bool = false,
         activeColor: Color = .primaryOrange,
+        animationType: AnimationType = .none,
         action: @escaping () async -> Void
     ) {
         self.icon = icon
         self.count = count
         self.isActive = isActive
         self.activeColor = activeColor
+        self.animationType = animationType
         self.action = action
     }
 
@@ -33,44 +42,68 @@ struct EngagementButton: View {
             }
         } label: {
             HStack(spacing: 4) {
-                Image(systemName: icon)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(buttonColor)
-                    .scaleEffect(scale)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: scale)
+                AnimatedEngagementIcon(
+                    icon: icon,
+                    isActive: isActive,
+                    activeColor: activeColor,
+                    inactiveColor: Color.primary.opacity(0.6),
+                    animationType: iconAnimationType
+                )
+                .frame(width: 24, height: 24)
+                .overlay {
+                    // Core Animation パーティクルオーバーレイ（レイアウトに影響しない）
+                    if animationType == .like || animationType == .bookmark {
+                        CoreAnimationEffectView(
+                            isActive: showParticles,
+                            color: UIColor(activeColor),
+                            effectType: animationType == .like ? .like : .bookmark
+                        )
+                        .frame(width: 60, height: 60)
+                        .allowsHitTesting(false)
+                    }
+                }
 
                 if count > 0 {
                     Text(count.formatCount())
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(textColor)
+                        .contentTransition(.numericText())
+                        .animation(.spring(response: 0.3), value: count)
                 }
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
         }
         .buttonStyle(PressEffectButtonStyle())
+        .onChange(of: isActive) { oldValue, newValue in
+            // アクティブになった時（false -> true）のみパーティクル発動
+            if !oldValue, newValue {
+                triggerParticleAnimation()
+            }
+        }
+    }
+
+    private var iconAnimationType: AnimatedEngagementIcon.AnimationType {
+        switch animationType {
+        case .like: return .like
+        case .bookmark: return .bookmark
+        case .comment, .none: return .none
+        }
     }
 
     private func performAction() async {
         let impactFeedback = UIImpactFeedbackGenerator(style: .light)
         impactFeedback.impactOccurred()
 
-        withAnimation(.spring(response: 0.2, dampingFraction: 0.8)) {
-            scale = 1.2
-        }
-
         await action()
-
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-            scale = 1.0
-        }
     }
 
-    private var buttonColor: Color {
-        if isActive {
-            return activeColor
-        } else {
-            return Color.primary.opacity(0.6)
+    private func triggerParticleAnimation() {
+        showParticles = true
+
+        // アニメーション完了後にリセット
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            showParticles = false
         }
     }
 
@@ -79,14 +112,6 @@ struct EngagementButton: View {
             return activeColor
         } else {
             return Color.primary.opacity(0.7)
-        }
-    }
-
-    private var backgroundColor: Color {
-        if isActive {
-            return activeColor.opacity(0.1)
-        } else {
-            return Color.clear
         }
     }
 }
@@ -112,6 +137,7 @@ extension EngagementButton {
             count: count,
             isActive: isLiked,
             activeColor: .red,
+            animationType: .like,
             action: action
         )
     }
@@ -125,6 +151,7 @@ extension EngagementButton {
             count: count,
             isActive: false,
             activeColor: .blue,
+            animationType: .comment,
             action: action
         )
     }
@@ -139,6 +166,7 @@ extension EngagementButton {
             count: count,
             isActive: isBookmarked,
             activeColor: .primaryOrange,
+            animationType: .bookmark,
             action: action
         )
     }

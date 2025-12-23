@@ -26,8 +26,6 @@ struct FloatingActionButton: View {
                 isPressed = pressing
             }
         }, perform: {})
-        .accessibilityLabel("新しい投稿を作成")
-        .accessibilityHint("タップして投稿画面を開きます")
     }
 }
 

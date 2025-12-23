@@ -1,7 +1,5 @@
 import Foundation
 
-// MARK: - AuthEndpoint
-
 /// 認証API用エンドポイント定義
 enum AuthEndpoint: APIEndpoint {
     case login(email: String, password: String)

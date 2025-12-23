@@ -363,36 +363,119 @@ private struct ImagePreviewSection: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedItems: [PhotosPickerItem]
 
+    @State private var previewingImageIndex: Int? = nil
+
+    // 画像の高さ（統一）
+    private var imageHeight: CGFloat { 120 }
+
+    // 常に2列グリッド（1枚でも横幅を抑える）
+    private var columns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            // ヘッダー: 選択枚数表示
+            HStack {
+                Text("選択中の画像")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Spacer()
+                Text("\(selectedImages.count)/5")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.orange)
+            }
+            .padding(.horizontal, 4)
+
+            // 画像グリッド
+            LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(Array(selectedImages.enumerated()), id: \.offset) { index, image in
                     ZStack(alignment: .topTrailing) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: 120)
-                            .clipped()
-                            .cornerRadius(12)
+                        Button {
+                            previewingImageIndex = index
+                        } label: {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: imageHeight)
+                                .clipped()
+                                .cornerRadius(12)
+                        }
+                        .buttonStyle(PreviewImageButtonStyle())
 
+                        // 削除ボタン
                         Button(action: {
-                            selectedImages.remove(at: index)
-                            if selectedItems.indices.contains(index) {
-                                selectedItems.remove(at: index)
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                selectedImages.remove(at: index)
+                                if selectedItems.indices.contains(index) {
+                                    selectedItems.remove(at: index)
+                                }
                             }
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 20))
+                                .font(.system(size: 22))
                                 .foregroundColor(.white)
-                                .background(Color.black.opacity(0.6))
-                                .clipShape(Circle())
+                                .shadow(color: .black.opacity(0.3), radius: 2)
                         }
                         .offset(x: 8, y: -8)
                     }
                 }
             }
         }
+        .fullScreenCover(item: $previewingImageIndex) { index in
+            ImagePreviewSheet(image: selectedImages[index]) {
+                previewingImageIndex = nil
+            }
+        }
     }
+}
+
+// MARK: - PreviewImageButtonStyle
+
+private struct PreviewImageButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: configuration.isPressed)
+    }
+}
+
+// MARK: - ImagePreviewSheet
+
+private struct ImagePreviewSheet: View {
+    let image: UIImage
+    let onDismiss: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            ZoomableImageView(image: image)
+
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: onDismiss) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 36, height: 36)
+                            .background(.ultraThinMaterial.opacity(0.8))
+                            .clipShape(Circle())
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.top, 8)
+                }
+                Spacer()
+            }
+        }
+    }
+}
+
+// MARK: - Int + @retroactive Identifiable
+
+extension Int: @retroactive Identifiable {
+    public var id: Int { self }
 }
 
 // MARK: - ActionButtonsRow
@@ -421,14 +504,6 @@ private struct ActionButtonsRow: View {
                     .font(.title2)
                     .foregroundColor(.orange)
             }
-
-            Button(action: {}) {
-                Image(systemName: "face.smiling")
-                    .font(.title2)
-                    .foregroundColor(.orange)
-            }
-            .disabled(true)
-            .opacity(0.5)
 
             Spacer()
         }

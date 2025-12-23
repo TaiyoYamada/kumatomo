@@ -3,9 +3,6 @@ import Foundation
 
 // MARK: - APIClient
 
-// Domain層のAPIErrorを使用
-// APIError は Domain/Entity/Errors/APIError.swift で定義済み
-
 /// AlamofireベースのAPIクライアント
 final class APIClient: @unchecked Sendable {
     static let shared = APIClient()
@@ -13,6 +10,7 @@ final class APIClient: @unchecked Sendable {
     private let baseURL: String
     private let session: Session
     private let decoder: JSONDecoder
+    private let logger = AppLogger.network
 
     private init() {
         baseURL = APIConfig.shared.baseURLString
@@ -26,29 +24,27 @@ final class APIClient: @unchecked Sendable {
         session = Session(serverTrustManager: manager)
     }
 
-    // MARK: - Public Methods
-
-    /// GETリクエスト
+    // GETリクエスト
     func get<T: Decodable>(_ endpoint: APIEndpoint) async throws -> T {
         try await request(endpoint)
     }
 
-    /// POSTリクエスト
+    // POSTリクエスト
     func post<T: Decodable>(_ endpoint: APIEndpoint) async throws -> T {
         try await request(endpoint)
     }
 
-    /// PUTリクエスト
+    // PUTリクエスト
     func put<T: Decodable>(_ endpoint: APIEndpoint) async throws -> T {
         try await request(endpoint)
     }
 
-    /// DELETEリクエスト
+    // DELETEリクエスト
     func delete(_ endpoint: APIEndpoint) async throws {
         let _: EmptyResponse = try await request(endpoint)
     }
 
-    /// 汎用リクエスト（戻り値あり）
+    // 汎用リクエスト（戻り値あり）
     func request<T: Decodable>(_ endpoint: APIEndpoint) async throws -> T {
         let url = baseURL + endpoint.path
         let method = httpMethod(from: endpoint.method)
@@ -68,12 +64,7 @@ final class APIClient: @unchecked Sendable {
             }
         }
 
-        #if DEBUG
-        print("📡 \(endpoint.method.rawValue) リクエスト: \(url)")
-        if let body = endpoint.body {
-            print("📡 ボディ: \(body)")
-        }
-        #endif
+        logger.logRequest(method: endpoint.method.rawValue, url: url, body: endpoint.body)
 
         let dataRequest: DataRequest
         if let queryParams = endpoint.queryParameters, !queryParams.isEmpty {
@@ -102,12 +93,11 @@ final class APIClient: @unchecked Sendable {
             .serializingData()
             .response
 
-        #if DEBUG
-        print("📡 ステータスコード: \(response.response?.statusCode ?? -1)")
-        if let data = response.data, let jsonString = String(data: data, encoding: .utf8) {
-            print("📡 レスポンス: \(jsonString.prefix(500))")
-        }
-        #endif
+        logger.logResponse(
+            statusCode: response.response?.statusCode ?? -1,
+            url: url,
+            body: response.data.flatMap { String(data: $0, encoding: .utf8) }
+        )
 
         switch response.result {
         case let .success(data):
@@ -115,9 +105,7 @@ final class APIClient: @unchecked Sendable {
                 let decoded = try decoder.decode(T.self, from: data)
                 return decoded
             } catch let decodingError as DecodingError {
-                #if DEBUG
-                print("🚨 デコードエラー: \(decodingError)")
-                #endif
+                logger.logError(decodingError, context: "Decode")
                 throw APIError.decodingError(decodingError)
             } catch {
                 throw APIError.unknownError(error)
@@ -208,20 +196,18 @@ final class APIClient: @unchecked Sendable {
 
 private struct EmptyResponse: Decodable {}
 
-// MARK: - Convenience Extensions
-
 extension APIClient {
-    /// 投稿一覧取得
+    // 投稿一覧取得
     func fetchPosts(page: Int? = nil, limit: Int? = nil) async throws -> [Post] {
         try await get(PostEndpoint.fetchAll(page: page, limit: limit))
     }
 
-    /// 投稿詳細取得
+    // 投稿詳細取得
     func fetchPost(id: Int) async throws -> Post {
         try await get(PostEndpoint.fetchPost(id: id))
     }
 
-    /// 投稿作成
+    // 投稿作成
     func createPost(userId: Int, content: String, imageUrls: [String] = [], tags: [String] = []) async throws -> Post {
         try await post(PostEndpoint.create(userId: userId, content: content, imageUrls: imageUrls, tags: tags))
     }

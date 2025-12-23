@@ -7,6 +7,7 @@ class SearchAPIService {
     static let shared = SearchAPIService()
 
     private let client = APIClient.shared
+    private let logger = AppLogger.network
 
     private init() {}
 
@@ -17,9 +18,7 @@ class SearchAPIService {
         page: Int = 1,
         perPage: Int = 10
     ) async throws -> (SearchResult, String, SearchFilterType) {
-        #if DEBUG
-        print("📡 検索リクエスト: query=\(query), type=\(type.rawValue), page=\(page)")
-        #endif
+        logger.debug("検索リクエスト: query=\(query), type=\(type.rawValue), page=\(page)")
 
         do {
             let response: SearchAPIResponse = try await client.get(
@@ -27,14 +26,10 @@ class SearchAPIService {
             )
             return (response.data, response.query, SearchFilterType(rawValue: response.type) ?? .all)
         } catch let apiError as APIError {
-            #if DEBUG
-            print("🚨 検索APIエラー: \(apiError)")
-            #endif
+            logger.logError(apiError, context: "Search")
             throw apiError
         } catch {
-            #if DEBUG
-            print("🚨 ネットワークエラー: \(error)")
-            #endif
+            logger.logError(error, context: "Search")
             throw APIError.networkError(error)
         }
     }

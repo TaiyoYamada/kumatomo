@@ -85,7 +85,9 @@ struct LoginView: View {
                 }
             }
             .navigationBarHidden(true)
-            .withAppRouter()
+            .navigationDestination(for: RouterDestination.self) { destination in
+                DestinationViewBuilder.view(for: destination)
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ class ProfileErrorHandler {
     private var retryTimer: Timer?
     private var retryAction: (() async -> Void)?
     private let networkMonitor = NetworkMonitor.shared
+    private let logger = AppLogger.debug
 
     private init() {}
 
@@ -162,18 +163,10 @@ class ProfileErrorHandler {
     }
 
     private func logError(_ error: ProfileError) {
-        let errorInfo = [
-            "Error": String(describing: error),
-            "Description": error.errorDescription ?? "No description",
-            "Recovery": error.recoverySuggestion ?? "No suggestion",
-            "Recoverable": String(error.isRecoverable),
-            "AutoRetry": String(error.shouldAutoRetry),
-            "RetryCount": String(retryCount),
-            "NetworkStatus": networkMonitor.isConnected ? "Connected" : "Offline"
-        ]
-
-        print("🚨 ProfileError: \(errorInfo)")
-
+        logger.logError(
+            error,
+            context: "ProfileError[retryCount=\(retryCount), network=\(networkMonitor.isConnected ? "Connected" : "Offline")]"
+        )
     }
 
     func getDisplayMessage(for error: ProfileError) -> String {

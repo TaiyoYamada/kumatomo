@@ -48,6 +48,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/check-username', [UserController::class, 'checkUsernameAvailability']);
     Route::put('/users/update-username', [UserController::class, 'updateUsername']);
 
+    // Follow
+    Route::post('/users/{id}/follow', [\App\Http\Controllers\FollowController::class, 'follow']);
+    Route::post('/users/{id}/unfollow', [\App\Http\Controllers\FollowController::class, 'unfollow']);
+    Route::get('/users/{id}/followers', [\App\Http\Controllers\FollowController::class, 'followers']);
+    Route::get('/users/{id}/following', [\App\Http\Controllers\FollowController::class, 'following']);
+    Route::get('/users/{id}/follow-status', [\App\Http\Controllers\FollowController::class, 'checkStatus']);
+
     // Unified image upload
     Route::post('/images/upload', [App\Http\Controllers\UnifiedImageUploadController::class, 'upload']);
     Route::post('/images/upload-multiple', [App\Http\Controllers\UnifiedImageUploadController::class, 'uploadMultiple']);
@@ -60,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Posts
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts', [PostController::class, 'store']);
+    Route::get('/posts/following', [PostController::class, 'indexByFollowing']);
     Route::get('/posts/{post}', [PostController::class, 'show']);
     Route::get('/posts/municipality/{name}', [PostController::class, 'indexByMunicipality']);
     Route::put('/posts/{post}', [PostController::class, 'update']);

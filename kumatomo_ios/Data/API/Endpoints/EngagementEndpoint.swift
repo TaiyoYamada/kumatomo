@@ -1,7 +1,5 @@
 import Foundation
 
-// MARK: - EngagementEndpoint
-
 /// エンゲージメントAPI用エンドポイント定義
 enum EngagementEndpoint: APIEndpoint {
     case toggleLike(postId: Int)

@@ -8,6 +8,7 @@ class SearchHistoryManager: ObservableObject {
     private let userDefaults = UserDefaults.standard
     private let historyKey = "search_history"
     private let maxHistoryCount = 20
+    private let logger = AppLogger.cache
 
     private init() {
         loadSearchHistory()
@@ -54,7 +55,7 @@ class SearchHistoryManager: ObservableObject {
             decoder.dateDecodingStrategy = .iso8601
             searchHistory = try decoder.decode([SearchHistory].self, from: data)
         } catch {
-            print("🚨 検索履歴の読み込みに失敗: \(error)")
+            logger.logError(error, context: "LoadSearchHistory")
             searchHistory = []
         }
     }
@@ -66,7 +67,7 @@ class SearchHistoryManager: ObservableObject {
             let data = try encoder.encode(searchHistory)
             userDefaults.set(data, forKey: historyKey)
         } catch {
-            print("🚨 検索履歴の保存に失敗: \(error)")
+            logger.logError(error, context: "SaveSearchHistory")
         }
     }
 }

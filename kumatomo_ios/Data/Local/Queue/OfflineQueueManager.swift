@@ -17,6 +17,7 @@ class OfflineQueueManager {
 
     private let networkMonitor = NetworkMonitor.shared
     private let retryManager = RetryManager.shared
+    private let logger = AppLogger.debug
     private var cancellables = Set<AnyCancellable>()
     private let maxQueueSize = 100
     private let persistenceKey = "OfflineQueue"
@@ -32,14 +33,14 @@ class OfflineQueueManager {
 
     func enqueueOperation(_ operation: QueuedOperation) {
         if pendingOperations.count >= maxQueueSize {
-            print("⚠️ Offline queue is full, removing oldest operation")
+            logger.warning("Offline queue is full, removing oldest operation")
             pendingOperations.removeFirst()
         }
 
         pendingOperations.append(operation)
         persistQueue()
 
-        print("📝 Enqueued operation: \(operation.type.rawValue) - \(operation.id)")
+        logger.debug("Enqueued operation: \(operation.type.rawValue) - \(operation.id)")
 
         if networkMonitor.isConnected {
             Task {
@@ -72,7 +73,7 @@ class OfflineQueueManager {
         isProcessingQueue = true
         queueStatus = .processing
 
-        print("🔄 Processing offline queue with \(pendingOperations.count) operations")
+        logger.info("Processing offline queue with \(pendingOperations.count) operations")
 
         var processedOperations: [String] = []
         var failedOperations: [QueuedOperation] = []
@@ -81,10 +82,10 @@ class OfflineQueueManager {
             do {
                 try await processOperation(operation)
                 processedOperations.append(operation.id)
-                print("✅ Successfully processed operation: \(operation.id)")
+                logger.info("Successfully processed operation: \(operation.id)")
 
             } catch {
-                print("❌ Failed to process operation \(operation.id): \(error)")
+                logger.logError(error, context: "OfflineQueue[\(operation.id)]")
 
                 var updatedOperation = operation
                 updatedOperation.retryCount += 1
@@ -94,7 +95,7 @@ class OfflineQueueManager {
                 if updatedOperation.retryCount < updatedOperation.maxRetries {
                     failedOperations.append(updatedOperation)
                 } else {
-                    print("🚫 Operation \(operation.id) exceeded max retries, removing from queue")
+                    logger.warning("Operation \(operation.id) exceeded max retries, removing from queue")
                 }
             }
         }
@@ -105,7 +106,10 @@ class OfflineQueueManager {
         isProcessingQueue = false
         queueStatus = pendingOperations.isEmpty ? .idle : .waiting
 
-        print("📊 Queue processing complete. Processed: \(processedOperations.count), Failed: \(failedOperations.count)")
+        logger
+            .info(
+                "Queue processing complete. Processed: \(processedOperations.count), Failed: \(failedOperations.count)"
+            )
     }
 
     private func processOperation(_ operation: QueuedOperation) async throws {
@@ -192,7 +196,7 @@ class OfflineQueueManager {
             let data = try JSONEncoder().encode(pendingOperations)
             UserDefaults.standard.set(data, forKey: persistenceKey)
         } catch {
-            print("❌ Failed to persist offline queue: \(error)")
+            logger.logError(error, context: "PersistQueue")
         }
     }
 
@@ -203,16 +207,16 @@ class OfflineQueueManager {
 
         do {
             pendingOperations = try JSONDecoder().decode([QueuedOperation].self, from: data)
-            print("📂 Loaded \(pendingOperations.count) operations from persisted queue")
+            logger.debug("Loaded \(pendingOperations.count) operations from persisted queue")
         } catch {
-            print("❌ Failed to load persisted queue: \(error)")
+            logger.logError(error, context: "LoadQueue")
             UserDefaults.standard.removeObject(forKey: persistenceKey)
         }
     }
 
     func enqueueProfileCreation(_ user: User) {
         guard let userData = try? JSONEncoder().encode(user) else {
-            print("❌ Failed to encode user data for offline queue")
+            logger.error("Failed to encode user data for offline queue")
             return
         }
 
@@ -227,7 +231,7 @@ class OfflineQueueManager {
 
     func enqueueProfileUpdate(_ user: User) {
         guard let userData = try? JSONEncoder().encode(user) else {
-            print("❌ Failed to encode user data for offline queue")
+            logger.error("Failed to encode user data for offline queue")
             return
         }
 
@@ -242,7 +246,7 @@ class OfflineQueueManager {
 
     func enqueueProfileDeletion(userID: String) {
         guard let userIDData = userID.data(using: .utf8) else {
-            print("❌ Failed to encode userID for offline queue")
+            logger.error("Failed to encode userID for offline queue")
             return
         }
         let operation = QueuedOperation(
@@ -256,7 +260,7 @@ class OfflineQueueManager {
 
     func enqueueProfileImageUpload(_ image: UIImage) {
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            print("❌ Failed to convert image to data for offline queue")
+            logger.error("Failed to convert image to data for offline queue")
             return
         }
 
@@ -271,7 +275,7 @@ class OfflineQueueManager {
 
     func enqueueCoverImageUpload(_ image: UIImage) {
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            print("❌ Failed to convert image to data for offline queue")
+            logger.error("Failed to convert image to data for offline queue")
             return
         }
 

@@ -42,7 +42,7 @@ final class EngagementRepositoryMock: EngagementRepository {
         if let optimisticToggleLikeHandler = optimisticToggleLikeHandler {
             return await optimisticToggleLikeHandler(postId, currentState, currentCount)
         }
-        return (false, nil, nil)
+        return (false, false nil, nil)
     }
 
     private(set) var optimisticToggleBookmarkCallCount = 0
@@ -58,7 +58,7 @@ final class EngagementRepositoryMock: EngagementRepository {
         if let optimisticToggleBookmarkHandler = optimisticToggleBookmarkHandler {
             return await optimisticToggleBookmarkHandler(postId, currentState, currentCount)
         }
-        return (false, nil, nil)
+        return (false, false nil, nil)
     }
 
     private(set) var toggleLikeCallCount = 0

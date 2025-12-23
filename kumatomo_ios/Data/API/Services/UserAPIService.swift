@@ -199,13 +199,18 @@ final class UserAPIService {
     }
 
     /// フォロワー一覧を取得
-    func fetchFollowers(userId: Int, page: Int? = nil, limit: Int? = nil) async throws -> [User] {
+    func fetchFollowers(userId: Int, page: Int? = nil, limit: Int? = nil) async throws -> [FollowUser] {
         try await client.get(UserEndpoint.fetchFollowers(userId: userId, page: page, limit: limit))
     }
 
     /// フォロー中一覧を取得
-    func fetchFollowing(userId: Int, page: Int? = nil, limit: Int? = nil) async throws -> [User] {
+    func fetchFollowing(userId: Int, page: Int? = nil, limit: Int? = nil) async throws -> [FollowUser] {
         try await client.get(UserEndpoint.fetchFollowing(userId: userId, page: page, limit: limit))
+    }
+
+    /// フォロー状態を取得
+    func fetchFollowStatus(userId: Int) async throws -> FollowStatusResponse {
+        try await client.get(UserEndpoint.followStatus(userId: userId))
     }
 
     // MARK: - Profile Save (Combine)

@@ -37,13 +37,6 @@ enum SidebarMenuItemType: CaseIterable {
         }
     }
 
-    var isExternalLink: Bool {
-        switch self {
-        case .help, .contact: return true
-        default: return false
-        }
-    }
-
     var externalURL: String? {
         switch self {
         case .help, .contact: return "https://www.notion.so/274db424e42280019ed4d3cbbcd9540d"

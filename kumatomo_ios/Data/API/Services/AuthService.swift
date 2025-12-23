@@ -10,10 +10,11 @@ final class AuthService: ObservableObject {
     static let shared = AuthService()
 
     private let client = APIClient.shared
+    private let logger = AppLogger.auth
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        print("🚀 AuthService init called")
+        logger.debug("AuthService initialized")
         attemptAutoLogin()
     }
 
@@ -23,9 +24,9 @@ final class AuthService: ObservableObject {
         Task { [weak self] in
             do {
                 try await self?.fetchCurrentUser()
-                print("✅ 自動ログイン成功")
+                self?.logger.info("自動ログイン成功")
             } catch {
-                print("⚠️ 自動ログイン失敗: \(error.localizedDescription)")
+                self?.logger.warning("自動ログイン失敗: \(error.localizedDescription)")
                 AuthTokenManager.shared.clearToken()
                 await MainActor.run { self?.isAuthenticated = false }
             }
@@ -55,7 +56,7 @@ final class AuthService: ObservableObject {
         do {
             try await client.requestVoid(AuthEndpoint.logout)
         } catch {
-            print("⚠️ ログアウト中にエラー発生: \(error.localizedDescription)")
+            logger.warning("ログアウト中にエラー発生: \(error.localizedDescription)")
         }
 
         AuthTokenManager.shared.clearToken()
@@ -65,16 +66,16 @@ final class AuthService: ObservableObject {
 
     @MainActor
     func createUser(withEmail email: String, password: String) async throws {
-        print("🚀 ユーザー登録開始")
+        logger.debug("ユーザー登録開始")
 
         let response: AuthResponse = try await client.post(AuthEndpoint.register(email: email, password: password))
 
-        print("✅ トークン取得成功")
+        logger.info("トークン取得成功")
         AuthTokenManager.shared.token = response.accessToken
         isAuthenticated = true
 
         try await fetchCurrentUser()
-        print("✅ ユーザー情報の取得成功: \(currentUser?.email ?? "不明")")
+        logger.info("ユーザー情報の取得成功: \(currentUser?.email ?? "不明")")
     }
 
     @MainActor
@@ -93,17 +94,13 @@ final class AuthService: ObservableObject {
             throw AuthError.unauthorized
         }
 
-        #if DEBUG
-        print("🔑 現在のトークン: \(token)")
-        #endif
+        logger.debug("現在のトークンでユーザー情報を取得")
 
         let response: UserResponse = try await client.get(AuthEndpoint.currentUser)
         currentUser = response.data
         isAuthenticated = true
 
-        #if DEBUG
-        print("✅ ユーザー情報取得成功: \(currentUser?.email ?? "不明")")
-        #endif
+        logger.info("ユーザー情報取得成功: \(currentUser?.email ?? "不明")")
     }
 
     @MainActor
@@ -131,16 +128,12 @@ final class AuthService: ObservableObject {
         }
         if let hasCompletedSetup { updateData["hasCompletedSetup"] = hasCompletedSetup }
 
-        #if DEBUG
-        print("🔄 送信データ: \(updateData)")
-        #endif
+        logger.debug("ユーザー更新データ: \(updateData)")
 
         let _: UserResponse = try await client.put(AuthEndpoint.updateUser(data: updateData))
         try await fetchCurrentUser()
 
-        #if DEBUG
-        print("🔄 ユーザー更新後のhasCompletedSetup: \(currentUser?.hasCompletedSetup ?? false)")
-        #endif
+        logger.info("ユーザー更新完了: hasCompletedSetup=\(currentUser?.hasCompletedSetup ?? false)")
     }
 
     @MainActor
