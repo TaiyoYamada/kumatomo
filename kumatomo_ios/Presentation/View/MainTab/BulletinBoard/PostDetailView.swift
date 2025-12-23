@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import PhotosUI
 
 // MARK: - PostDetailView
 
@@ -13,7 +14,7 @@ struct PostDetailView: View {
     @Environment(CurrentUserManager.self) private var userManager
     @Environment(AppRouter.self) private var appRouter
 
-    @State private var showImagePicker = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var keyboardHeight: CGFloat = 0
     @State private var showShareSheet = false
     @State private var showDeleteAlert = false
@@ -174,6 +175,7 @@ struct PostDetailView: View {
                 viewModel: commentViewModel,
                 currentUser: userManager.currentUser,
                 isSubmitting: viewModel.isAddingComment,
+                selectedPhotoItem: $selectedPhotoItem,
                 onSubmit: {
                     Task {
                         let success = await commentViewModel.submitComment(postId: postId)
@@ -182,16 +184,13 @@ struct PostDetailView: View {
                             isCommentFocused = false
                         }
                     }
-                },
-                onImagePicker: {
-                    showImagePicker = true
                 }
             )
             .id("comment-compose")
             .focused($isCommentFocused)
         }
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(selectedImage: $commentViewModel.selectedImage)
+        .onChange(of: selectedPhotoItem) { _, newItem in
+            handlePhotoSelection(newItem)
         }
         .sheet(isPresented: $showShareSheet) {
             if let post = viewModel.post {
@@ -248,6 +247,29 @@ struct PostDetailView: View {
         let userName = post.user?.name ?? "ユーザー"
         let content = post.content.prefix(100)
         return "\(userName)さんの投稿: \(content)..."
+    }
+
+    // MARK: - PhotosPicker選択処理
+
+    private func handlePhotoSelection(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+
+        Task {
+            do {
+                if let data = try await item.loadTransferable(type: Data.self),
+                   let image = UIImage(data: data) {
+                    await MainActor.run {
+                        commentViewModel.selectedImage = image
+                        selectedPhotoItem = nil
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    viewModel.errorMessage = "画像の読み込みに失敗しました"
+                    selectedPhotoItem = nil
+                }
+            }
+        }
     }
 }
 
