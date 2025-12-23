@@ -422,14 +422,6 @@ private struct ActionButtonsRow: View {
                     .foregroundColor(.orange)
             }
 
-            Button(action: {}) {
-                Image(systemName: "face.smiling")
-                    .font(.title2)
-                    .foregroundColor(.orange)
-            }
-            .disabled(true)
-            .opacity(0.5)
-
             Spacer()
         }
         .padding(.horizontal, 16)
