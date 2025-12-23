@@ -155,6 +155,62 @@ class User extends Authenticatable
     }
 
     /**
+     * Get users that this user is following.
+     */
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id')->withTimestamps();
+    }
+
+    /**
+     * Get users that follow this user.
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id')->withTimestamps();
+    }
+
+    /**
+     * Check if this user is following another user.
+     */
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('following_id', $user->id)->exists();
+    }
+
+    /**
+     * Check if this user is followed by another user.
+     */
+    public function isFollowedBy(User $user): bool
+    {
+        return $this->followers()->where('follower_id', $user->id)->exists();
+    }
+
+    /**
+     * Follow a user.
+     */
+    public function follow(User $user): void
+    {
+        if (!$this->isFollowing($user) && $this->id !== $user->id) {
+            $this->following()->attach($user->id);
+            $this->increment('following_count');
+            $user->increment('followers_count');
+        }
+    }
+
+    /**
+     * Unfollow a user.
+     */
+    public function unfollow(User $user): void
+    {
+        if ($this->isFollowing($user)) {
+            $this->following()->detach($user->id);
+            $this->decrement('following_count');
+            $user->decrement('followers_count');
+        }
+    }
+
+    /**
      * Get comprehensive validation rules for user profile
      * 
      * @param int|null $userId User ID to ignore for unique validation (for updates)

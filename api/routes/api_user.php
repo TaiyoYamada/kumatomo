@@ -60,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Posts
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts', [PostController::class, 'store']);
+    Route::get('/posts/following', [PostController::class, 'indexByFollowing']);
     Route::get('/posts/{post}', [PostController::class, 'show']);
     Route::get('/posts/municipality/{name}', [PostController::class, 'indexByMunicipality']);
     Route::put('/posts/{post}', [PostController::class, 'update']);

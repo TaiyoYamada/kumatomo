@@ -128,9 +128,6 @@ private struct LikedPostsTimeline: View {
         .refreshable {
             onRefresh()
         }
-        .accessibilityLabel("いいねした投稿一覧")
-        .accessibilityHint("上にスワイプして更新")
-        .accessibilityIdentifier("liked_posts_timeline")
     }
 }
 
@@ -241,24 +238,22 @@ private struct LikedPostsEmptyStateView: View {
                     .multilineTextAlignment(.center)
             }
 
-            Button(action: {
-                appRouter.popToRoot()
-            }) {
-                Text("投稿を見に行く")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(Color.primaryOrange)
-                    .cornerRadius(24)
-            }
-            .buttonStyle(PlainButtonStyle())
+//            Button(action: {
+//                appRouter.popToRoot()
+//            }) {
+//                Text("投稿を見に行く")
+//                    .font(.system(size: 16, weight: .medium))
+//                    .foregroundColor(.white)
+//                    .padding(.horizontal, 24)
+//                    .padding(.vertical, 12)
+//                    .background(Color.primaryOrange)
+//                    .cornerRadius(24)
+//            }
+//            .buttonStyle(PlainButtonStyle())
         }
         .padding(.horizontal, 32)
         .padding(.top, 100)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("いいねした投稿がありません。気に入った投稿にいいねしてみましょう。投稿を見に行くボタン")
-        .accessibilityIdentifier("liked_posts_empty_state")
     }
 }
 

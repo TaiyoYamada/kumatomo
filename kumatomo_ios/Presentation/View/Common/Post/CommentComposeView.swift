@@ -72,7 +72,6 @@ struct CommentComposeView: View {
         }
         .frame(width: profileImageSize, height: profileImageSize)
         .clipShape(Circle())
-        .accessibilityLabel("プロフィール画像")
     }
 
     private var textInputArea: some View {
