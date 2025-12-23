@@ -118,6 +118,8 @@ export default function UsersPage() {
                                         <TableHead>ユーザー</TableHead>
                                         <TableHead>ユーザー名</TableHead>
                                         <TableHead>メール</TableHead>
+                                        <TableHead className="text-center">フォロワー</TableHead>
+                                        <TableHead className="text-center">フォロー中</TableHead>
                                         <TableHead>権限</TableHead>
                                         <TableHead>登録日</TableHead>
                                         <TableHead className="text-right">アクション</TableHead>
@@ -139,6 +141,12 @@ export default function UsersPage() {
                                             </TableCell>
                                             <TableCell>@{user.username}</TableCell>
                                             <TableCell>{user.email}</TableCell>
+                                            <TableCell className="text-center">
+                                                <span className="text-muted-foreground">{user.followers_count ?? 0}</span>
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                <span className="text-muted-foreground">{user.following_count ?? 0}</span>
+                                            </TableCell>
                                             <TableCell>
                                                 {user.is_admin ? (
                                                     <Badge className="bg-amber-500 hover:bg-amber-600">管理者</Badge>

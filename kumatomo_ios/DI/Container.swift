@@ -230,4 +230,28 @@ extension Container {
     var uploadProfileImageUseCase: Factory<UploadProfileImageUseCaseProtocol> {
         self { UploadProfileImageUseCase(imageUploadRepository: self.imageUploadRepository()) }.singleton
     }
+
+    // MARK: - Repository (Follow)
+
+    var followRepository: Factory<FollowRepositoryProtocol> {
+        self { FollowRepositoryImpl() }.singleton
+    }
+
+    // MARK: - Use Cases (Follow)
+
+    var followUserUseCase: Factory<FollowUserUseCaseProtocol> {
+        self { FollowUserUseCase(repository: self.followRepository()) }.singleton
+    }
+
+    var unfollowUserUseCase: Factory<UnfollowUserUseCaseProtocol> {
+        self { UnfollowUserUseCase(repository: self.followRepository()) }.singleton
+    }
+
+    var fetchFollowersUseCase: Factory<FetchFollowersUseCaseProtocol> {
+        self { FetchFollowersUseCase(repository: self.followRepository()) }.singleton
+    }
+
+    var fetchFollowingUseCase: Factory<FetchFollowingUseCaseProtocol> {
+        self { FetchFollowingUseCase(repository: self.followRepository()) }.singleton
+    }
 }

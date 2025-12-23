@@ -176,6 +176,8 @@ export interface User {
     comments_count?: number;
     likes_count?: number;
     bookmarks_count?: number;
+    followers_count?: number;
+    following_count?: number;
     created_at: string;
     updated_at: string;
 }
