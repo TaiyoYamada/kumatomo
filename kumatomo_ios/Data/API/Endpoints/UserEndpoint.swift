@@ -10,6 +10,7 @@ enum UserEndpoint: APIEndpoint {
     case unfollow(userId: Int)
     case fetchFollowers(userId: Int, page: Int?, limit: Int?)
     case fetchFollowing(userId: Int, page: Int?, limit: Int?)
+    case followStatus(userId: Int)
 
     var path: String {
         switch self {
@@ -19,12 +20,13 @@ enum UserEndpoint: APIEndpoint {
         case let .unfollow(userId): return "/users/\(userId)/unfollow"
         case let .fetchFollowers(userId, _, _): return "/users/\(userId)/followers"
         case let .fetchFollowing(userId, _, _): return "/users/\(userId)/following"
+        case let .followStatus(userId): return "/users/\(userId)/follow-status"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .fetchUser, .fetchFollowers, .fetchFollowing: return .get
+        case .fetchUser, .fetchFollowers, .fetchFollowing, .followStatus: return .get
         case .updateProfile: return .put
         case .follow, .unfollow: return .post
         }

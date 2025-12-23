@@ -157,8 +157,15 @@ struct UserProfileView: View {
     // MARK: - Private Methods
 
     private func loadFollowStatus() async {
-        // TODO: APIからフォロー状態を取得
-        isFollowing = false
+        guard !isCurrentUser else { return }
+        do {
+            let service = Container.shared.userAPIService()
+            let status = try await service.fetchFollowStatus(userId: userId)
+            isFollowing = status.isFollowing
+        } catch {
+            // フォロー状態取得に失敗した場合は false を設定
+            isFollowing = false
+        }
     }
 
     private func handleToggleLike(post: Post) async {

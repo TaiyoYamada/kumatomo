@@ -20,34 +20,10 @@ final class FollowRepositoryImpl: FollowRepositoryProtocol {
     }
 
     func fetchFollowers(userId: Int, page: Int, limit: Int) async throws -> [FollowUser] {
-        // UserAPIService returns [User], convert to [FollowUser]
-        let users = try await service.fetchFollowers(userId: userId, page: page, limit: limit)
-        return users.map { user in
-            FollowUser(
-                id: user.id,
-                name: user.name,
-                username: user.username,
-                profileImageURL: user.profileImageURL,
-                bio: user.bio,
-                isFollowing: nil,
-                isMe: nil
-            )
-        }
+        try await service.fetchFollowers(userId: userId, page: page, limit: limit)
     }
 
     func fetchFollowing(userId: Int, page: Int, limit: Int) async throws -> [FollowUser] {
-        // UserAPIService returns [User], convert to [FollowUser]
-        let users = try await service.fetchFollowing(userId: userId, page: page, limit: limit)
-        return users.map { user in
-            FollowUser(
-                id: user.id,
-                name: user.name,
-                username: user.username,
-                profileImageURL: user.profileImageURL,
-                bio: user.bio,
-                isFollowing: nil,
-                isMe: nil
-            )
-        }
+        try await service.fetchFollowing(userId: userId, page: page, limit: limit)
     }
 }
