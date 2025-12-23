@@ -13,6 +13,7 @@ final class APIClient: @unchecked Sendable {
     private let baseURL: String
     private let session: Session
     private let decoder: JSONDecoder
+    private let logger = AppLogger.network
 
     private init() {
         baseURL = APIConfig.shared.baseURLString
@@ -68,12 +69,7 @@ final class APIClient: @unchecked Sendable {
             }
         }
 
-        #if DEBUG
-        print("📡 \(endpoint.method.rawValue) リクエスト: \(url)")
-        if let body = endpoint.body {
-            print("📡 ボディ: \(body)")
-        }
-        #endif
+        logger.logRequest(method: endpoint.method.rawValue, url: url, body: endpoint.body)
 
         let dataRequest: DataRequest
         if let queryParams = endpoint.queryParameters, !queryParams.isEmpty {
@@ -102,12 +98,11 @@ final class APIClient: @unchecked Sendable {
             .serializingData()
             .response
 
-        #if DEBUG
-        print("📡 ステータスコード: \(response.response?.statusCode ?? -1)")
-        if let data = response.data, let jsonString = String(data: data, encoding: .utf8) {
-            print("📡 レスポンス: \(jsonString.prefix(500))")
-        }
-        #endif
+        logger.logResponse(
+            statusCode: response.response?.statusCode ?? -1,
+            url: url,
+            body: response.data.flatMap { String(data: $0, encoding: .utf8) }
+        )
 
         switch response.result {
         case let .success(data):
@@ -115,9 +110,7 @@ final class APIClient: @unchecked Sendable {
                 let decoded = try decoder.decode(T.self, from: data)
                 return decoded
             } catch let decodingError as DecodingError {
-                #if DEBUG
-                print("🚨 デコードエラー: \(decodingError)")
-                #endif
+                logger.logError(decodingError, context: "Decode")
                 throw APIError.decodingError(decodingError)
             } catch {
                 throw APIError.unknownError(error)

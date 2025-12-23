@@ -2,29 +2,28 @@ import Foundation
 import Combine
 import SwiftUI
 
-// 認証トークンを管理するクラス
+/// 認証トークンを管理するクラス
 class AuthTokenManager {
     @AppStorage("auth_token") private var authToken: String?
     static let shared = AuthTokenManager()
 
     private let tokenKey = "auth_token"
+    private let logger = AppLogger.auth
 
     var token: String? {
         get {
-            print("🔑 認証トークンを取得します")
-            print("🔑 現在の認証トークン: \(UserDefaults.standard.string(forKey: tokenKey) ?? "nil")")
+            logger.debug("認証トークンを取得")
             return UserDefaults.standard.string(forKey: tokenKey)
-
         }
         set {
-            print("🔑 認証トークンを設定します: \(newValue ?? "nil")")
+            logger.debug("認証トークンを設定: \(newValue != nil ? "***" : "nil")")
             UserDefaults.standard.set(newValue, forKey: tokenKey)
         }
     }
 
     func clearToken() {
         UserDefaults.standard.removeObject(forKey: tokenKey)
-        print("🔑 認証トークンをクリアしました")
+        logger.info("認証トークンをクリア")
     }
 
     func authorizedRequest(_ request: inout URLRequest) {
@@ -33,5 +32,4 @@ class AuthTokenManager {
         }
         request.setValue("application/json", forHTTPHeaderField: "Accept")
     }
-
 }

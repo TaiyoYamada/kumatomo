@@ -5,6 +5,16 @@ import Factory
 
 extension Container {
 
+    // MARK: - Logging
+
+    var networkLogger: Factory<AppLogger> {
+        self { AppLogger(category: .network) }.singleton
+    }
+
+    var authLogger: Factory<AppLogger> {
+        self { AppLogger(category: .auth) }.singleton
+    }
+
     // MARK: - API Services
 
     var postAPIService: Factory<PostAPIService> {
