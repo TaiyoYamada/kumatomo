@@ -52,6 +52,7 @@ struct UserProfileView: View {
             viewModel.loadProfile(userID: userId)
             viewModel.loadUserPosts(userID: userId)
         }
+        .navigationTitle("プロフィール")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingFollowers) {
             FollowersListView(userId: userId, userName: viewModel.profile.name)
