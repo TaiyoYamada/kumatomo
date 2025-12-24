@@ -13,7 +13,7 @@ struct ValidateProfileUseCase: ValidateProfileUseCaseProtocol {
         static let minUsernameLength = 6
         static let maxUsernameLength = 15
         static let maxEmailLength = 255
-        static let maxBioLength = 500
+        static let maxBioLength = 300
         static let maxLocationLength = 100
         static let maxAge = 150
     }

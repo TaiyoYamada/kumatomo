@@ -377,7 +377,7 @@ struct ProfileBioRow: View {
                     .font(.headline)
                     .foregroundColor(.primary)
                 Spacer()
-                Text("\(text.count)/500")
+                Text("\(text.count)/300")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

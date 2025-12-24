@@ -401,14 +401,9 @@ struct ModernProfileInfoView: View {
                 }
             }
 
-            // バイオ/自己紹介
+            // バイオ/自己紹介（展開可能）
             if let bio = user.bio, !bio.isEmpty {
-                Text(bio)
-                    .font(.body)
-                    .foregroundColor(.primary)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .lineSpacing(2)
+                ExpandableBioView(bio: bio)
             }
 
             VStack(alignment: .leading, spacing: 12) {

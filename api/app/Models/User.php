@@ -237,7 +237,7 @@ class User extends Authenticatable
                 Rule::unique('users')->ignore($userId),
                 'not_in:admin,root,api,www,mail,support,help,info,contact,about,terms,privacy,login,register,logout,profile,settings,dashboard,home,index'
             ],
-            'bio' => ['nullable', 'string', 'max:500'],
+            'bio' => ['nullable', 'string', 'max:300'],
             'location' => ['nullable', 'string', 'max:255', 'regex:/^[\p{L}\p{M}\p{N}\s\-\'\.]+$/u'],
             'birthday' => [
                 'nullable', 
@@ -336,7 +336,7 @@ class User extends Authenticatable
             'username.unique' => 'このユーザーネームは既に使用されています。',
             'username.not_in' => 'このユーザーネームは予約されているため使用できません。',
             
-            'bio.max' => '自己紹介は500文字以内で入力してください。',
+            'bio.max' => '自己紹介は300文字以内で入力してください。',
             
             'location.max' => '場所は255文字以内で入力してください。',
             'location.regex' => '場所に使用できない文字が含まれています。',
