@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "025D2060-571F-45AB-A9E7-427BD7E61769",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:kumatomo.xcodeproj",
+      "identifier" : "E5CD33322E43698300ACDA82",
+      "name" : "kumatomo"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:kumatomo.xcodeproj",
+        "identifier" : "E51A7E9C2EED6BE000842CE5",
+        "name" : "kumatomoUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:kumatomo.xcodeproj",
+        "identifier" : "E51A7E8D2EED6BCF00842CE5",
+        "name" : "kumatomoTests"
+      }
+    }
+  ],
+  "version" : 1
+}

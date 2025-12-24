@@ -65,6 +65,7 @@
 		E51A7E9D2EED6BE000842CE5 /* kumatomoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = kumatomoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E58F651B2E7841F3002DBE21 /* kumatomo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "kumatomo-Info.plist"; sourceTree = "<group>"; };
 		E5CD33332E43698300ACDA82 /* kumatomo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kumatomo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5E120212EFC005D00009C57 /* kumatomo Debug-Simulator.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "kumatomo Debug-Simulator.xctestplan"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -125,6 +126,7 @@
 		E5CD332A2E43698300ACDA82 = {
 			isa = PBXGroup;
 			children = (
+				E5E120212EFC005D00009C57 /* kumatomo Debug-Simulator.xctestplan */,
 				E58F651B2E7841F3002DBE21 /* kumatomo-Info.plist */,
 				E5CD33352E43698300ACDA82 /* kumatomo_ios */,
 				E51A7E8F2EED6BCF00842CE5 /* kumatomoTests */,
