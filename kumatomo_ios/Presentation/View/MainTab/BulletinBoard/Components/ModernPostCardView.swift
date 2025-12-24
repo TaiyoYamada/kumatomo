@@ -326,44 +326,12 @@ struct PostMediaView: View {
     }
 
     var body: some View {
-        if let images, !images.isEmpty, let firstImage = images.first {
-            AsyncImage(url: URL(string: firstImage.imageUrl)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .overlay {
-                        ProgressView()
-                            .accessibilityLabel("画像を読み込み中")
-                    }
-            }
-            .frame(maxHeight: 300)
-            .clipped()
-            .cornerRadius(12)
-            .accessibilityLabel("投稿画像")
-            .accessibilityHint("投稿に添付された画像")
-            .accessibilityIdentifier("post_image")
+        if let images, !images.isEmpty {
+            // 複数画像対応: PostImagesGridViewを使用
+            PostImagesGridView(images: images)
         } else if let imageUrl, !imageUrl.isEmpty {
-            AsyncImage(url: URL(string: imageUrl)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .overlay {
-                        ProgressView()
-                            .accessibilityLabel("画像を読み込み中")
-                    }
-            }
-            .frame(maxHeight: 300)
-            .clipped()
-            .cornerRadius(12)
-            .accessibilityLabel("投稿画像")
-            .accessibilityHint("投稿に添付された画像")
-            .accessibilityIdentifier("post_image")
+            // 単一のURL文字列の場合
+            SingleImageGridItem(imageURL: imageUrl) {}
         }
     }
 }
