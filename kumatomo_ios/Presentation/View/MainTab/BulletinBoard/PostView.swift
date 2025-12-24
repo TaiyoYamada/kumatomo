@@ -365,68 +365,197 @@ private struct ImagePreviewSection: View {
 
     @State private var previewingImageIndex: Int? = nil
 
-    // 画像の高さ（統一）
-    private var imageHeight: CGFloat { 120 }
-
-    // 常に2列グリッド（1枚でも横幅を抑える）
-    private var columns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
-    }
+    // カード寸法
+    private let cardWidth: CGFloat = 140
+    private let cardHeight: CGFloat = 180
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // ヘッダー: 選択枚数表示
-            HStack {
+        VStack(alignment: .leading, spacing: 16) {
+            // ヘッダー
+            HStack(spacing: 8) {
+                Image(systemName: "photo.stack.fill")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.orange, .orange.opacity(0.7)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
                 Text("選択中の画像")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.primary)
+
                 Spacer()
-                Text("\(selectedImages.count)/5")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.orange)
+
+                // カウンターバッジ
+                HStack(spacing: 4) {
+                    Text("\(selectedImages.count)")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                    Text("/")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white.opacity(0.7))
+                    Text("5")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.9))
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [.orange, .orange.opacity(0.8)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                )
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 16)
 
-            // 画像グリッド
-            LazyVGrid(columns: columns, spacing: 8) {
-                ForEach(Array(selectedImages.enumerated()), id: \.offset) { index, image in
-                    ZStack(alignment: .topTrailing) {
-                        Button {
-                            previewingImageIndex = index
-                        } label: {
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(height: imageHeight)
-                                .clipped()
-                                .cornerRadius(12)
-                        }
-                        .buttonStyle(PreviewImageButtonStyle())
-
-                        // 削除ボタン
-                        Button(action: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                selectedImages.remove(at: index)
-                                if selectedItems.indices.contains(index) {
-                                    selectedItems.remove(at: index)
+            // 横スクロールカルーセル
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    ForEach(Array(selectedImages.enumerated()), id: \.offset) { index, image in
+                        ImageCardView(
+                            image: image,
+                            index: index,
+                            onTap: {
+                                previewingImageIndex = index
+                            },
+                            onDelete: {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                                    selectedImages.remove(at: index)
+                                    if selectedItems.indices.contains(index) {
+                                        selectedItems.remove(at: index)
+                                    }
                                 }
                             }
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 22))
-                                .foregroundColor(.white)
-                                .shadow(color: .black.opacity(0.3), radius: 2)
-                        }
-                        .offset(x: 8, y: -8)
+                        )
+                        .frame(width: cardWidth, height: cardHeight)
+                        .transition(.asymmetric(
+                            insertion: .scale.combined(with: .opacity),
+                            removal: .scale(scale: 0.8).combined(with: .opacity)
+                        ))
                     }
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
             }
         }
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(UIColor.secondarySystemBackground).opacity(0.5))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color(UIColor.separator).opacity(0.3), lineWidth: 0.5)
+        )
+        .padding(.horizontal, 16)
         .fullScreenCover(item: $previewingImageIndex) { index in
             ImagePreviewSheet(image: selectedImages[index]) {
                 previewingImageIndex = nil
             }
         }
+    }
+}
+
+// MARK: - ImageCardView
+
+private struct ImageCardView: View {
+    let image: UIImage
+    let index: Int
+    let onTap: () -> Void
+    let onDelete: () -> Void
+
+    @State private var isPressed = false
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            // メイン画像カード
+            Button(action: onTap) {
+                GeometryReader { geometry in
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .clipped()
+                }
+            }
+            .buttonStyle(ImageCardButtonStyle())
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+
+            // インデックスバッジ（左下）
+            VStack {
+                Spacer()
+                HStack {
+                    Text("\(index + 1)")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .frame(width: 22, height: 22)
+                        .background(
+                            Circle()
+                                .fill(.ultraThinMaterial)
+                                .overlay(
+                                    Circle()
+                                        .fill(Color.black.opacity(0.3))
+                                )
+                        )
+                        .padding(8)
+                    Spacer()
+                }
+            }
+
+            // 削除ボタン（右上、画像内に収める）
+            Button(action: onDelete) {
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 28, height: 28)
+
+                    Circle()
+                        .fill(Color.black.opacity(0.4))
+                        .frame(width: 28, height: 28)
+
+                    Image(systemName: "xmark")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.white)
+                }
+            }
+            .buttonStyle(DeleteButtonStyle())
+            .padding(8)
+        }
+    }
+}
+
+// MARK: - ImageCardButtonStyle
+
+private struct ImageCardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .brightness(configuration.isPressed ? -0.05 : 0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
+    }
+}
+
+// MARK: - DeleteButtonStyle
+
+private struct DeleteButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.85 : 1.0)
+            .opacity(configuration.isPressed ? 0.8 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }
 
