@@ -15,6 +15,8 @@
 		E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC782EF6EEE500F58A49 /* Factory */; };
 		E5CDAC7B2EF6EEED00F58A49 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */; };
 		E5CDAC7D2EF6EEF200F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC7C2EF6EEF200F58A49 /* Factory */; };
+		E5E11FD12EFBF43100009C57 /* Mockable in Frameworks */ = {isa = PBXBuildFile; productRef = E5E11FD02EFBF43100009C57 /* Mockable */; };
+		E5E11FD32EFBF45E00009C57 /* Mockable in Frameworks */ = {isa = PBXBuildFile; productRef = E5E11FD22EFBF45E00009C57 /* Mockable */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -93,6 +95,7 @@
 			files = (
 				E5BFD6FA2EF7A08900CEFBF5 /* Alamofire in Frameworks */,
 				E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */,
+				E5E11FD12EFBF43100009C57 /* Mockable in Frameworks */,
 				E5CDAC772EF6EED900F58A49 /* FactoryTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,6 +106,7 @@
 			files = (
 				E5BFD6FC2EF7A08F00CEFBF5 /* Alamofire in Frameworks */,
 				E5CDAC7D2EF6EEF200F58A49 /* Factory in Frameworks */,
+				E5E11FD32EFBF45E00009C57 /* Mockable in Frameworks */,
 				E5CDAC7B2EF6EEED00F58A49 /* FactoryTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -174,6 +178,7 @@
 				E5CDAC762EF6EED900F58A49 /* FactoryTesting */,
 				E5CDAC782EF6EEE500F58A49 /* Factory */,
 				E5BFD6F92EF7A08900CEFBF5 /* Alamofire */,
+				E5E11FD02EFBF43100009C57 /* Mockable */,
 			);
 			productName = kumatomoTests;
 			productReference = E51A7E8E2EED6BCF00842CE5 /* kumatomoTests.xctest */;
@@ -200,6 +205,7 @@
 				E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */,
 				E5CDAC7C2EF6EEF200F58A49 /* Factory */,
 				E5BFD6FB2EF7A08F00CEFBF5 /* Alamofire */,
+				E5E11FD22EFBF45E00009C57 /* Mockable */,
 			);
 			productName = kumatomoUITests;
 			productReference = E51A7E9D2EED6BE000842CE5 /* kumatomoUITests.xctest */;
@@ -268,6 +274,7 @@
 			packageReferences = (
 				E5AFC0832EF7000100CD0A1E /* XCRemoteSwiftPackageReference "Alamofire" */,
 				E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */,
+				E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E5CD33342E43698300ACDA82 /* Products */;
@@ -1317,6 +1324,14 @@
 				minimumVersion = 2.5.3;
 			};
 		};
+		E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Kolos65/Mockable.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1359,6 +1374,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
 			productName = Factory;
+		};
+		E5E11FD02EFBF43100009C57 /* Mockable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */;
+			productName = Mockable;
+		};
+		E5E11FD22EFBF45E00009C57 /* Mockable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */;
+			productName = Mockable;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
