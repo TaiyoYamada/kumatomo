@@ -58,6 +58,7 @@ jobs:
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             --region ${{ env.AWS_REGION }}
+            --resolve-s3
 
       - name: Output API Endpoint
         run: |
