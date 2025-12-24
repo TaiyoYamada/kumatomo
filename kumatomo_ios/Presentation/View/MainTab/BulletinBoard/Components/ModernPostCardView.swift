@@ -126,31 +126,36 @@ struct TimelinePostCardView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     VStack(alignment: .leading, spacing: 8) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
+                            // 名前: 長い場合は...で切り詰め
                             Text(post.user?.name ?? "ユーザー")
                                 .font(.system(size: adaptiveUserNameSize, weight: .semibold))
                                 .foregroundColor(.primary)
                                 .lineLimit(1)
-                                .minimumScaleFactor(0.8)
+                                .truncationMode(.tail)
 
+                            // ユーザー名: 長い場合は...で切り詰め
                             if let username = post.user?.username, !username.isEmpty {
                                 Text("@\(username)")
                                     .font(.system(size: adaptiveTimestampSize))
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
-                                    .minimumScaleFactor(0.8)
+                                    .truncationMode(.tail)
                             }
 
+                            // タイムスタンプ: 必ず表示
                             Text("・")
                                 .foregroundColor(.secondary)
+                                .layoutPriority(1)
 
                             Text(formattedDate)
                                 .font(.system(size: adaptiveTimestampSize))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
-                                .minimumScaleFactor(0.8)
+                                .fixedSize(horizontal: true, vertical: false)
+                                .layoutPriority(1)
 
-                            Spacer()
+                            Spacer(minLength: 0)
                         }
 
                         PostContentView(content: post.content)

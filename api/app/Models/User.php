@@ -220,7 +220,7 @@ class User extends Authenticatable
     public static function getValidationRules($userId = null, $context = 'update'): array
     {
         $rules = [
-            'name' => ['required', 'string', 'min:1', 'max:255', 'regex:/^[\p{L}\p{M}\p{N}\s\-\'\.]+$/u', 'not_regex:/^[0-9]+$/'],
+            'name' => ['required', 'string', 'min:1', 'max:30', 'regex:/^[\p{L}\p{M}\p{N}\s\-\'\.]+$/u', 'not_regex:/^[0-9]+$/'],
             'email' => [
                 'required', 
                 'email:rfc', 
@@ -321,7 +321,7 @@ class User extends Authenticatable
         return [
             'name.required' => '名前は必須です。',
             'name.min' => '名前は1文字以上で入力してください。',
-            'name.max' => '名前は255文字以内で入力してください。',
+            'name.max' => '名前は30文字以内で入力してください。',
             'name.regex' => '名前に使用できない文字が含まれています。',
             
             'email.required' => 'メールアドレスは必須です。',

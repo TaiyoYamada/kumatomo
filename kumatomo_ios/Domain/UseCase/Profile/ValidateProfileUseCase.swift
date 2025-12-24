@@ -9,7 +9,7 @@ struct ValidateProfileUseCase: ValidateProfileUseCaseProtocol {
 
     private enum Constants {
         static let minNameLength = 1
-        static let maxNameLength = 50
+        static let maxNameLength = 30
         static let minUsernameLength = 6
         static let maxUsernameLength = 15
         static let maxEmailLength = 255
