@@ -1,6 +1,6 @@
-import Foundation
 import Combine
 import Factory
+import Foundation
 
 final class UserRepositoryImpl: UserRepositoryProtocol {
     private let service: UserAPIService
@@ -9,23 +9,47 @@ final class UserRepositoryImpl: UserRepositoryProtocol {
         self.service = service
     }
 
-    func fetchProfile(userID: String) -> AnyPublisher<User, Error> {
-        service.fetchProfile(userID: userID)
+    func fetchProfile(userID: String) async throws -> User {
+        try await withCheckedThrowingContinuation { continuation in
+            var cancellable: AnyCancellable?
+            cancellable = service.fetchProfile(userID: userID)
+                .sink(
+                    receiveCompletion: { completion in
+                        switch completion {
+                        case .finished:
+                            break
+                        case let .failure(error):
+                            continuation.resume(throwing: error)
+                        }
+                        cancellable?.cancel()
+                    },
+                    receiveValue: { user in
+                        continuation.resume(returning: user)
+                    }
+                )
+        }
     }
 
-    func createProfile(_ user: User) -> AnyPublisher<User, Error> {
-        service.createProfile(user)
+    func createProfile(_ user: User) async throws -> User {
+        try await withCheckedThrowingContinuation { continuation in
+            var cancellable: AnyCancellable?
+            cancellable = service.createProfile(user)
+                .sink(
+                    receiveCompletion: { completion in
+                        switch completion {
+                        case .finished:
+                            break
+                        case let .failure(error):
+                            continuation.resume(throwing: error)
+                        }
+                        cancellable?.cancel()
+                    },
+                    receiveValue: { user in
+                        continuation.resume(returning: user)
+                    }
+                )
+        }
     }
-
-    func updateProfile(_ user: User) -> AnyPublisher<User, Error> {
-        service.updateProfile(user)
-    }
-
-    func checkUsernameAvailability(_ username: String) -> AnyPublisher<Bool, Error> {
-        service.checkUsernameAvailability(username)
-    }
-
-    // MARK: - Async versions
 
     func updateProfile(_ user: User) async throws -> User {
         try await withCheckedThrowingContinuation { continuation in
