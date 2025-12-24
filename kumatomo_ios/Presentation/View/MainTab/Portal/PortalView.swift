@@ -8,8 +8,7 @@ struct PortalView: View {
 
     @State private var viewModel = PortalViewModel()
     @State private var showingNetworkAlert = false
-    @State private var showingAllAnnouncements = false
-    @State private var selectedAnnouncement: Announcement?
+    @Environment(AppRouter.self) private var appRouter
 
     var body: some View {
         ScrollView {
@@ -44,7 +43,7 @@ struct PortalView: View {
 
                         if !viewModel.recentAnnouncements.isEmpty {
                             Button {
-                                showingAllAnnouncements = true
+                                appRouter.navigate(to: .announcementList(announcements: viewModel.announcements))
                             } label: {
                                 Text("すべて見る")
                                     .font(.subheadline)
@@ -74,11 +73,12 @@ struct PortalView: View {
                         // Announcement List (Summary)
                         VStack(spacing: 0) {
                             ForEach(viewModel.recentAnnouncements) { announcement in
-                                NavigationLink(value: announcement) {
-                                    PortalAnnouncementRow(announcement: announcement)
-                                        .padding(.vertical, 8) // Row内のパディング調整
-                                }
-                                .buttonStyle(PlainButtonStyle())
+                                NavigationLink(value: RouterDestination
+                                    .announcementDetail(announcement: announcement)) {
+                                        PortalAnnouncementRow(announcement: announcement)
+                                            .padding(.vertical, 8)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
 
                                 if announcement.id != viewModel.recentAnnouncements.last?.id {
                                     Divider()
@@ -132,12 +132,6 @@ struct PortalView: View {
             } else {
                 Color.clear.frame(height: 8)
             }
-        }
-        .navigationDestination(isPresented: $showingAllAnnouncements) {
-            AnnouncementListView(announcements: viewModel.announcements)
-        }
-        .navigationDestination(for: Announcement.self) { announcement in
-            AnnouncementDetailView(announcement: announcement)
         }
         .task {
             await viewModel.loadAnnouncements()

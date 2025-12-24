@@ -14,4 +14,6 @@ enum RouterDestination: Hashable, Sendable {
     case postDetail(postId: Int) // 投稿詳細画面
     case userProfile(userId: Int) // ユーザープロフィール画面
     case webView(url: URL, title: String) // アプリ内Webビュー
+    case announcementList(announcements: [Announcement]) // お知らせ一覧画面
+    case announcementDetail(announcement: Announcement) // お知らせ詳細画面
 }

@@ -22,7 +22,7 @@ struct kumatomoApp: App {
                 .environment(ProfileErrorHandler.shared)
                 .environment(
                     \.font,
-                    .system(size: 16, weight: .bold, design: .rounded)
+                    .system(size: 16, weight: .semibold, design: .rounded)
                 )
         }
     }
