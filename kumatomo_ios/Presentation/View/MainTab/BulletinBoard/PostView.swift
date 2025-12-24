@@ -61,12 +61,12 @@ struct PostView: View {
                         if !validationState.errors.isEmpty {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(.caption)
-                                .foregroundColor(.orange)
+                                .foregroundColor(.gray)
                                 .scaleEffect(0.8)
                         } else if canPost {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.caption)
-                                .foregroundColor(.green)
+                                .foregroundColor(.white)
                                 .scaleEffect(0.8)
                         }
 
@@ -74,7 +74,7 @@ struct PostView: View {
                             handlePost()
                         }
                         .disabled(!canPost)
-                        .foregroundColor(canPost ? .orange : .gray)
+                        .foregroundColor(canPost ? .white : .gray)
                         .fontWeight(.semibold)
                         .opacity(canPost ? 1.0 : 0.6)
                     }

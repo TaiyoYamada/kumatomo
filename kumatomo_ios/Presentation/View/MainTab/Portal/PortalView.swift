@@ -14,11 +14,9 @@ struct PortalView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 32) {
-                // Slideshow Section
                 VStack(spacing: 0) {
                     PortalAdvertisingSlideshow()
                 }
-                .padding(.top, 8)
 
                 // Services Section
                 VStack(spacing: 16) {
@@ -38,7 +36,7 @@ struct PortalView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         Text("運営からのお知らせ")
-                            .font(.title3)
+                            .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.primary)
 

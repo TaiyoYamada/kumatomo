@@ -44,6 +44,10 @@ struct UserProfileView: View {
                 }
             }
         }
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .tint(.white)
         .refreshable {
             viewModel.loadProfile(userID: userId)
             viewModel.loadUserPosts(userID: userId)

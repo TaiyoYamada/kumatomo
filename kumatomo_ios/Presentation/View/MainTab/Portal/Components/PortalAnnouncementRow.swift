@@ -5,18 +5,11 @@ struct PortalAnnouncementRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            // Icon
-            ZStack {
-                Circle()
-                    .fill(Color.orange.opacity(0.1))
-                    .frame(width: 36, height: 36)
-
-                Image(systemName: "megaphone.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 16, height: 16)
-                    .foregroundColor(.orange)
-            }
+            Image(.kuma)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 36, height: 36)
+                .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(announcement.title)
