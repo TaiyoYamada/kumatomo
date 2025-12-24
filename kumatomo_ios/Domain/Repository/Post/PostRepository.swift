@@ -1,6 +1,7 @@
 import Foundation
+import Mockable
 
-/// @mockable
+@Mockable
 protocol PostRepository {
     func fetchAllPosts(page: Int?, limit: Int?) async throws -> [Post]
     func fetchUserPosts(userId: Int, page: Int?, limit: Int?) async throws -> [Post]

@@ -1,5 +1,7 @@
 import Foundation
+import Mockable
 
+@Mockable
 protocol ImageUploadRepositoryProtocol {
     func uploadImage(_ data: Data, endpoint: String) async throws -> String
 

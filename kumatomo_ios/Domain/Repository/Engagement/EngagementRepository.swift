@@ -1,6 +1,7 @@
 import Foundation
+import Mockable
 
-/// @mockable
+@Mockable
 protocol EngagementRepository {
     func fetchLikedPosts(page: Int?, limit: Int?) async throws -> [Post]
     func fetchBookmarkedPosts(page: Int?, limit: Int?) async throws -> [Post]

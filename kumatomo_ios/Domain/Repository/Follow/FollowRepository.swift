@@ -1,8 +1,10 @@
 import Foundation
+import Mockable
 
 // MARK: - FollowRepositoryProtocol
 
 /// フォロー機能のリポジトリプロトコル
+@Mockable
 protocol FollowRepositoryProtocol {
     /// ユーザーをフォロー
     func followUser(userId: Int) async throws
