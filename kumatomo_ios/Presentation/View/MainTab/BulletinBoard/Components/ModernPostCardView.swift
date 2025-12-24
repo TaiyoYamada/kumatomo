@@ -126,31 +126,36 @@ struct TimelinePostCardView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     VStack(alignment: .leading, spacing: 8) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
+                            // 名前: 長い場合は...で切り詰め
                             Text(post.user?.name ?? "ユーザー")
                                 .font(.system(size: adaptiveUserNameSize, weight: .semibold))
                                 .foregroundColor(.primary)
                                 .lineLimit(1)
-                                .minimumScaleFactor(0.8)
+                                .truncationMode(.tail)
 
+                            // ユーザー名: 長い場合は...で切り詰め
                             if let username = post.user?.username, !username.isEmpty {
                                 Text("@\(username)")
                                     .font(.system(size: adaptiveTimestampSize))
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
-                                    .minimumScaleFactor(0.8)
+                                    .truncationMode(.tail)
                             }
 
+                            // タイムスタンプ: 必ず表示
                             Text("・")
                                 .foregroundColor(.secondary)
+                                .layoutPriority(1)
 
                             Text(formattedDate)
                                 .font(.system(size: adaptiveTimestampSize))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
-                                .minimumScaleFactor(0.8)
+                                .fixedSize(horizontal: true, vertical: false)
+                                .layoutPriority(1)
 
-                            Spacer()
+                            Spacer(minLength: 0)
                         }
 
                         PostContentView(content: post.content)
@@ -326,44 +331,12 @@ struct PostMediaView: View {
     }
 
     var body: some View {
-        if let images, !images.isEmpty, let firstImage = images.first {
-            AsyncImage(url: URL(string: firstImage.imageUrl)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .overlay {
-                        ProgressView()
-                            .accessibilityLabel("画像を読み込み中")
-                    }
-            }
-            .frame(maxHeight: 300)
-            .clipped()
-            .cornerRadius(12)
-            .accessibilityLabel("投稿画像")
-            .accessibilityHint("投稿に添付された画像")
-            .accessibilityIdentifier("post_image")
+        if let images, !images.isEmpty {
+            // 複数画像対応: PostImagesGridViewを使用
+            PostImagesGridView(images: images)
         } else if let imageUrl, !imageUrl.isEmpty {
-            AsyncImage(url: URL(string: imageUrl)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .overlay {
-                        ProgressView()
-                            .accessibilityLabel("画像を読み込み中")
-                    }
-            }
-            .frame(maxHeight: 300)
-            .clipped()
-            .cornerRadius(12)
-            .accessibilityLabel("投稿画像")
-            .accessibilityHint("投稿に添付された画像")
-            .accessibilityIdentifier("post_image")
+            // 単一のURL文字列の場合
+            SingleImageGridItem(imageURL: imageUrl) {}
         }
     }
 }

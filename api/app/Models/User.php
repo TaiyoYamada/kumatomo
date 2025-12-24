@@ -220,7 +220,7 @@ class User extends Authenticatable
     public static function getValidationRules($userId = null, $context = 'update'): array
     {
         $rules = [
-            'name' => ['required', 'string', 'min:1', 'max:255', 'regex:/^[\p{L}\p{M}\p{N}\s\-\'\.]+$/u', 'not_regex:/^[0-9]+$/'],
+            'name' => ['required', 'string', 'min:1', 'max:30', 'regex:/^[\p{L}\p{M}\p{N}\s\-\'\.]+$/u', 'not_regex:/^[0-9]+$/'],
             'email' => [
                 'required', 
                 'email:rfc', 
@@ -237,7 +237,7 @@ class User extends Authenticatable
                 Rule::unique('users')->ignore($userId),
                 'not_in:admin,root,api,www,mail,support,help,info,contact,about,terms,privacy,login,register,logout,profile,settings,dashboard,home,index'
             ],
-            'bio' => ['nullable', 'string', 'max:500'],
+            'bio' => ['nullable', 'string', 'max:300'],
             'location' => ['nullable', 'string', 'max:255', 'regex:/^[\p{L}\p{M}\p{N}\s\-\'\.]+$/u'],
             'birthday' => [
                 'nullable', 
@@ -321,7 +321,7 @@ class User extends Authenticatable
         return [
             'name.required' => '名前は必須です。',
             'name.min' => '名前は1文字以上で入力してください。',
-            'name.max' => '名前は255文字以内で入力してください。',
+            'name.max' => '名前は30文字以内で入力してください。',
             'name.regex' => '名前に使用できない文字が含まれています。',
             
             'email.required' => 'メールアドレスは必須です。',
@@ -336,7 +336,7 @@ class User extends Authenticatable
             'username.unique' => 'このユーザーネームは既に使用されています。',
             'username.not_in' => 'このユーザーネームは予約されているため使用できません。',
             
-            'bio.max' => '自己紹介は500文字以内で入力してください。',
+            'bio.max' => '自己紹介は300文字以内で入力してください。',
             
             'location.max' => '場所は255文字以内で入力してください。',
             'location.regex' => '場所に使用できない文字が含まれています。',

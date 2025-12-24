@@ -81,7 +81,7 @@ class ImageServiceTest extends TestCase
         $this->assertIsString($result['original']);
         $this->assertStringContainsString('storage/original_uploads/', $result['original']);
         $this->assertStringContainsString('storage/medium_uploads/', $result['medium']);
-        $this->assertStringContainsString('storage/thumb_uploads/', $result['thumbnail']);
+        $this->assertStringContainsString('storage/thumbnail_uploads/', $result['thumbnail']);
         
         // Verify metadata
         $this->assertIsArray($result['metadata']);

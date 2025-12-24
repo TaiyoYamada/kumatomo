@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,9 @@
 		E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC782EF6EEE500F58A49 /* Factory */; };
 		E5CDAC7B2EF6EEED00F58A49 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */; };
 		E5CDAC7D2EF6EEF200F58A49 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E5CDAC7C2EF6EEF200F58A49 /* Factory */; };
+		E5E11FD12EFBF43100009C57 /* Mockable in Frameworks */ = {isa = PBXBuildFile; productRef = E5E11FD02EFBF43100009C57 /* Mockable */; };
+		E5E11FD32EFBF45E00009C57 /* Mockable in Frameworks */ = {isa = PBXBuildFile; productRef = E5E11FD22EFBF45E00009C57 /* Mockable */; };
+		E5E11FD52EFBF4C100009C57 /* Mockable in Frameworks */ = {isa = PBXBuildFile; productRef = E5E11FD42EFBF4C100009C57 /* Mockable */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -22,12 +25,10 @@
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
 			fileType = wrapper.storyboardc;
-			inputFiles = (
+			script = (
+				"# $(IBC_EXEC)",
+				"",
 			);
-			isEditable = 1;
-			outputFiles = (
-			);
-			script = "# $(IBC_EXEC)\n";
 		};
 /* End PBXBuildRule section */
 
@@ -51,13 +52,11 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		E5BE54692EB2CE470084FF9F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolder = Frameworks;
 			files = (
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -89,32 +88,29 @@
 /* Begin PBXFrameworksBuildPhase section */
 		E51A7E8B2EED6BCF00842CE5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				E5BFD6FA2EF7A08900CEFBF5 /* Alamofire in Frameworks */,
 				E5CDAC792EF6EEE500F58A49 /* Factory in Frameworks */,
+				E5E11FD12EFBF43100009C57 /* Mockable in Frameworks */,
 				E5CDAC772EF6EED900F58A49 /* FactoryTesting in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E51A7E9A2EED6BE000842CE5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				E5BFD6FC2EF7A08F00CEFBF5 /* Alamofire in Frameworks */,
 				E5CDAC7D2EF6EEF200F58A49 /* Factory in Frameworks */,
+				E5E11FD32EFBF45E00009C57 /* Mockable in Frameworks */,
 				E5CDAC7B2EF6EEED00F58A49 /* FactoryTesting in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E5CD33302E43698300ACDA82 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				E5AFC0852EF7000100CD0A1E /* Alamofire in Frameworks */,
 				E5CDAC752EF6EED900F58A49 /* Factory in Frameworks */,
+				E5E11FD52EFBF4C100009C57 /* Mockable in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -174,6 +170,7 @@
 				E5CDAC762EF6EED900F58A49 /* FactoryTesting */,
 				E5CDAC782EF6EEE500F58A49 /* Factory */,
 				E5BFD6F92EF7A08900CEFBF5 /* Alamofire */,
+				E5E11FD02EFBF43100009C57 /* Mockable */,
 			);
 			productName = kumatomoTests;
 			productReference = E51A7E8E2EED6BCF00842CE5 /* kumatomoTests.xctest */;
@@ -200,6 +197,7 @@
 				E5CDAC7A2EF6EEED00F58A49 /* FactoryTesting */,
 				E5CDAC7C2EF6EEF200F58A49 /* Factory */,
 				E5BFD6FB2EF7A08F00CEFBF5 /* Alamofire */,
+				E5E11FD22EFBF45E00009C57 /* Mockable */,
 			);
 			productName = kumatomoUITests;
 			productReference = E51A7E9D2EED6BE000842CE5 /* kumatomoUITests.xctest */;
@@ -218,8 +216,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				E5CD33352E43698300ACDA82 /* kumatomo_ios */,
 			);
@@ -227,6 +223,7 @@
 			packageProductDependencies = (
 				E5AFC0842EF7000100CD0A1E /* Alamofire */,
 				E5CDAC742EF6EED900F58A49 /* Factory */,
+				E5E11FD42EFBF4C100009C57 /* Mockable */,
 			);
 			productName = kumatomo;
 			productReference = E5CD33332E43698300ACDA82 /* kumatomo.app */;
@@ -268,8 +265,9 @@
 			packageReferences = (
 				E5AFC0832EF7000100CD0A1E /* XCRemoteSwiftPackageReference "Alamofire" */,
 				E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */,
+				E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */,
 			);
-			preferredProjectObjectVersion = 77;
+			preferredProjectObjectVersion = 90;
 			productRefGroup = E5CD33342E43698300ACDA82 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -284,103 +282,67 @@
 /* Begin PBXResourcesBuildPhase section */
 		E51A7E8C2EED6BCF00842CE5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E51A7E9B2EED6BE000842CE5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E5CD33312E43698300ACDA82 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		E51A7ED62EED6CB700842CE5 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}/kumatomo_ios/Scripts/generate_mocks.sh\"\n";
+			shellScript = (
+				"# Type a script or drag a script file from your workspace to insert its path.",
+				"\"${SRCROOT}/kumatomo_ios/Scripts/generate_mocks.sh\"",
+				"",
+			);
 		};
 		E5AFC0822EED3F7F00CD0A1E /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Run Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}/kumatomo_ios/Scripts/swiftformat.sh\"\n";
+			shellScript = (
+				"# Type a script or drag a script file from your workspace to insert its path.",
+				"\"${SRCROOT}/kumatomo_ios/Scripts/swiftformat.sh\"",
+				"",
+			);
 		};
 		E5AFC0832EED51BC00CD0A1E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}/kumatomo_ios/Scripts/swiftlint.sh\"\n";
+			shellScript = (
+				"# Type a script or drag a script file from your workspace to insert its path.",
+				"\"${SRCROOT}/kumatomo_ios/Scripts/swiftlint.sh\"",
+				"",
+			);
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E51A7E8A2EED6BCF00842CE5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E51A7E992EED6BE000842CE5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E5CD332F2E43698300ACDA82 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -398,10 +360,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		E51A7E952EED6BCF00842CE5 /* Debug-Simulator */ = {
+		E51A7E952EED6BCF00842CE5 /* Debug-Simulator configuration for PBXNativeTarget "kumatomoTests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
-			baseConfigurationReferenceRelativePath = "Config/Dev-Simulator.xcconfig";
+			baseConfigurationReferenceRelativePath = "Config/Debug-Simulator.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -481,7 +443,7 @@
 			};
 			name = "Debug-Simulator";
 		};
-		E51A7E962EED6BCF00842CE5 /* Debug-Device */ = {
+		E51A7E962EED6BCF00842CE5 /* Debug-Device configuration for PBXNativeTarget "kumatomoTests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
@@ -564,7 +526,7 @@
 			};
 			name = "Debug-Device";
 		};
-		E51A7E972EED6BCF00842CE5 /* Staging */ = {
+		E51A7E972EED6BCF00842CE5 /* Staging configuration for PBXNativeTarget "kumatomoTests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = Config/Staging.xcconfig;
@@ -591,7 +553,7 @@
 			};
 			name = Staging;
 		};
-		E51A7E982EED6BCF00842CE5 /* Release */ = {
+		E51A7E982EED6BCF00842CE5 /* Release configuration for PBXNativeTarget "kumatomoTests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = Config/Prod.xcconfig;
@@ -618,10 +580,10 @@
 			};
 			name = Release;
 		};
-		E51A7EA62EED6BE000842CE5 /* Debug-Simulator */ = {
+		E51A7EA62EED6BE000842CE5 /* Debug-Simulator configuration for PBXNativeTarget "kumatomoUITests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
-			baseConfigurationReferenceRelativePath = "Config/Dev-Simulator.xcconfig";
+			baseConfigurationReferenceRelativePath = "Config/Debug-Simulator.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -701,7 +663,7 @@
 			};
 			name = "Debug-Simulator";
 		};
-		E51A7EA72EED6BE000842CE5 /* Debug-Device */ = {
+		E51A7EA72EED6BE000842CE5 /* Debug-Device configuration for PBXNativeTarget "kumatomoUITests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
@@ -784,7 +746,7 @@
 			};
 			name = "Debug-Device";
 		};
-		E51A7EA82EED6BE000842CE5 /* Staging */ = {
+		E51A7EA82EED6BE000842CE5 /* Staging configuration for PBXNativeTarget "kumatomoUITests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = Config/Staging.xcconfig;
@@ -811,7 +773,7 @@
 			};
 			name = Staging;
 		};
-		E51A7EA92EED6BE000842CE5 /* Release */ = {
+		E51A7EA92EED6BE000842CE5 /* Release configuration for PBXNativeTarget "kumatomoUITests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = Config/Prod.xcconfig;
@@ -838,7 +800,7 @@
 			};
 			name = Release;
 		};
-		E573C0EC2E7F0AB200455DCA /* Staging */ = {
+		E573C0EC2E7F0AB200455DCA /* Staging configuration for PBXProject "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = Config/Staging.xcconfig;
@@ -901,12 +863,12 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "STAGING $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Staging;
 		};
-		E573C0ED2E7F0AB200455DCA /* Staging */ = {
+		E573C0ED2E7F0AB200455DCA /* Staging configuration for PBXNativeTarget "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = Config/Staging.xcconfig;
@@ -943,7 +905,7 @@
 			};
 			name = Staging;
 		};
-		E573C0F12E7F0C3200455DCA /* Debug-Device */ = {
+		E573C0F12E7F0C3200455DCA /* Debug-Device configuration for PBXProject "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
@@ -1006,12 +968,12 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) MOCKING";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = "Debug-Device";
 		};
-		E573C0F22E7F0C3200455DCA /* Debug-Device */ = {
+		E573C0F22E7F0C3200455DCA /* Debug-Device configuration for PBXNativeTarget "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
@@ -1048,10 +1010,10 @@
 			};
 			name = "Debug-Device";
 		};
-		E5CD333E2E43698400ACDA82 /* Debug-Simulator */ = {
+		E5CD333E2E43698400ACDA82 /* Debug-Simulator configuration for PBXProject "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
-			baseConfigurationReferenceRelativePath = "Config/Dev-Simulator.xcconfig";
+			baseConfigurationReferenceRelativePath = "Config/Debug-Simulator.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -1111,12 +1073,12 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) MOCKING";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = "Debug-Simulator";
 		};
-		E5CD333F2E43698400ACDA82 /* Release */ = {
+		E5CD333F2E43698400ACDA82 /* Release configuration for PBXProject "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = Config/Prod.xcconfig;
@@ -1172,15 +1134,16 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		E5CD33412E43698400ACDA82 /* Debug-Simulator */ = {
+		E5CD33412E43698400ACDA82 /* Debug-Simulator configuration for PBXNativeTarget "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
-			baseConfigurationReferenceRelativePath = "Config/Dev-Simulator.xcconfig";
+			baseConfigurationReferenceRelativePath = "Config/Debug-Simulator.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1214,7 +1177,7 @@
 			};
 			name = "Debug-Simulator";
 		};
-		E5CD33422E43698400ACDA82 /* Release */ = {
+		E5CD33422E43698400ACDA82 /* Release configuration for PBXNativeTarget "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
 			baseConfigurationReferenceRelativePath = Config/Prod.xcconfig;
@@ -1257,45 +1220,41 @@
 		E51A7E942EED6BCF00842CE5 /* Build configuration list for PBXNativeTarget "kumatomoTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E51A7E952EED6BCF00842CE5 /* Debug-Simulator */,
-				E51A7E962EED6BCF00842CE5 /* Debug-Device */,
-				E51A7E972EED6BCF00842CE5 /* Staging */,
-				E51A7E982EED6BCF00842CE5 /* Release */,
+				E51A7E952EED6BCF00842CE5 /* Debug-Simulator configuration for PBXNativeTarget "kumatomoTests" */,
+				E51A7E962EED6BCF00842CE5 /* Debug-Device configuration for PBXNativeTarget "kumatomoTests" */,
+				E51A7E972EED6BCF00842CE5 /* Staging configuration for PBXNativeTarget "kumatomoTests" */,
+				E51A7E982EED6BCF00842CE5 /* Release configuration for PBXNativeTarget "kumatomoTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-Simulator";
 		};
 		E51A7EA52EED6BE000842CE5 /* Build configuration list for PBXNativeTarget "kumatomoUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E51A7EA62EED6BE000842CE5 /* Debug-Simulator */,
-				E51A7EA72EED6BE000842CE5 /* Debug-Device */,
-				E51A7EA82EED6BE000842CE5 /* Staging */,
-				E51A7EA92EED6BE000842CE5 /* Release */,
+				E51A7EA62EED6BE000842CE5 /* Debug-Simulator configuration for PBXNativeTarget "kumatomoUITests" */,
+				E51A7EA72EED6BE000842CE5 /* Debug-Device configuration for PBXNativeTarget "kumatomoUITests" */,
+				E51A7EA82EED6BE000842CE5 /* Staging configuration for PBXNativeTarget "kumatomoUITests" */,
+				E51A7EA92EED6BE000842CE5 /* Release configuration for PBXNativeTarget "kumatomoUITests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-Simulator";
 		};
 		E5CD332E2E43698300ACDA82 /* Build configuration list for PBXProject "kumatomo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E5CD333E2E43698400ACDA82 /* Debug-Simulator */,
-				E573C0F12E7F0C3200455DCA /* Debug-Device */,
-				E573C0EC2E7F0AB200455DCA /* Staging */,
-				E5CD333F2E43698400ACDA82 /* Release */,
+				E5CD333E2E43698400ACDA82 /* Debug-Simulator configuration for PBXProject "kumatomo" */,
+				E573C0F12E7F0C3200455DCA /* Debug-Device configuration for PBXProject "kumatomo" */,
+				E573C0EC2E7F0AB200455DCA /* Staging configuration for PBXProject "kumatomo" */,
+				E5CD333F2E43698400ACDA82 /* Release configuration for PBXProject "kumatomo" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-Simulator";
 		};
 		E5CD33402E43698400ACDA82 /* Build configuration list for PBXNativeTarget "kumatomo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E5CD33412E43698400ACDA82 /* Debug-Simulator */,
-				E573C0F22E7F0C3200455DCA /* Debug-Device */,
-				E573C0ED2E7F0AB200455DCA /* Staging */,
-				E5CD33422E43698400ACDA82 /* Release */,
+				E5CD33412E43698400ACDA82 /* Debug-Simulator configuration for PBXNativeTarget "kumatomo" */,
+				E573C0F22E7F0C3200455DCA /* Debug-Device configuration for PBXNativeTarget "kumatomo" */,
+				E573C0ED2E7F0AB200455DCA /* Staging configuration for PBXNativeTarget "kumatomo" */,
+				E5CD33422E43698400ACDA82 /* Release configuration for PBXNativeTarget "kumatomo" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-Simulator";
 		};
 /* End XCConfigurationList section */
@@ -1315,6 +1274,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.5.3;
+			};
+		};
+		E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Kolos65/Mockable.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1359,6 +1326,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E5CDAC732EF6EED900F58A49 /* XCRemoteSwiftPackageReference "Factory" */;
 			productName = Factory;
+		};
+		E5E11FD02EFBF43100009C57 /* Mockable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */;
+			productName = Mockable;
+		};
+		E5E11FD22EFBF45E00009C57 /* Mockable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */;
+			productName = Mockable;
+		};
+		E5E11FD42EFBF4C100009C57 /* Mockable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5E11FCF2EFBF43100009C57 /* XCRemoteSwiftPackageReference "Mockable" */;
+			productName = Mockable;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

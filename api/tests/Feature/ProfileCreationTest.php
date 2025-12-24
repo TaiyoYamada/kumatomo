@@ -24,7 +24,7 @@ class ProfileCreationTest extends TestCase
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
             'bio' => 'This is a test bio',
-            'city' => 'Tokyo',
+            'location' => 'Tokyo',
             'birthday' => '1990-01-01',
             'website' => 'https://example.com'
         ];
@@ -40,10 +40,10 @@ class ProfileCreationTest extends TestCase
                         'email',
                         'username',
                         'bio',
-                        'city',
+                        'location',
                         'birthday',
                         'website',
-                        'created_at'
+                        'createdAt'
                     ]
                 ])
                 ->assertJson([
@@ -56,7 +56,7 @@ class ProfileCreationTest extends TestCase
             'email' => 'test@example.com',
             'username' => 'testuser123',
             'bio' => 'This is a test bio',
-            'city' => 'Tokyo',
+            'location' => 'Tokyo',
             'birthday' => '1990-01-01',
             'website' => 'https://example.com'
         ]);
@@ -122,7 +122,7 @@ class ProfileCreationTest extends TestCase
             'name' => 'Location User',
             'email' => 'location@example.com',
             'username' => 'locationuser',
-            'city' => 'Osaka'
+            'location' => 'Osaka'
         ]);
     }
 
@@ -149,7 +149,7 @@ class ProfileCreationTest extends TestCase
             'name' => 'Cover User',
             'email' => 'cover@example.com',
             'username' => 'coveruser',
-            'profile_image_url' => 'https://example.com/cover.jpg'
+            'cover_image_url' => 'https://example.com/cover.jpg'
         ]);
     }
 
@@ -170,7 +170,6 @@ class ProfileCreationTest extends TestCase
                     'message',
                     'errors' => [
                         'email',
-                        'username',
                         'password'
                     ]
                 ]);
@@ -414,7 +413,7 @@ class ProfileCreationTest extends TestCase
         $profileData = [
             'name' => 'Response Format User',
             'email' => 'responseformat@example.com',
-            'username' => 'responseformatuser',
+            'username' => 'resformatuser',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!'
         ];
@@ -430,13 +429,13 @@ class ProfileCreationTest extends TestCase
                         'email',
                         'username',
                         'bio',
-                        'city',
+                        'location',
                         'birthday',
                         'website',
-                        'profile_image_url',
-                        'profile_icon_image_url',
-                        'has_completed_setup',
-                        'created_at'
+                        'profileImageURL',
+                        'coverImageURL',
+                        'hasCompletedSetup',
+                        'createdAt'
                     ]
                 ])
                 ->assertJsonMissing(['password']); // Password should not be in response

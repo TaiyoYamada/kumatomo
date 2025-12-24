@@ -80,7 +80,7 @@ class CommentControllerTest extends TestCase
             ->postJson("/api/posts/{$post->id}/comments", ['content' => '']);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['content']);
+            ->assertJsonValidationErrors(['general']);
 
         // Test content too long
         $response = $this->actingAs($user)

@@ -19,7 +19,7 @@ struct AnnouncementListView: View {
                     .padding(.top, 100)
                 } else {
                     ForEach(announcements) { announcement in
-                        NavigationLink(value: announcement) {
+                        NavigationLink(value: RouterDestination.announcementDetail(announcement: announcement)) {
                             AnnouncementListRow(announcement: announcement)
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -36,5 +36,8 @@ struct AnnouncementListView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("お知らせ")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
     }
 }

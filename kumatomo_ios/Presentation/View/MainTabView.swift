@@ -25,7 +25,7 @@ struct MainTabView: View {
                 shopTab
                 profileTab
             }
-            .accentColor(Color.primaryOrange)
+            .tint(Color.lightOrangeColor)
         }
         .onAppear {
             userManager.loadCurrentUser()

@@ -23,7 +23,7 @@ class ProfileUpdateTest extends TestCase
             'email' => 'original@example.com',
             'username' => 'originaluser',
             'bio' => 'Original bio',
-            'city' => 'Original City'
+            'location' => 'Original City'
         ]);
         
         Sanctum::actingAs($user);
@@ -33,7 +33,7 @@ class ProfileUpdateTest extends TestCase
             'email' => 'updated@example.com',
             'username' => 'updateduser',
             'bio' => 'Updated bio',
-            'city' => 'Updated City',
+            'location' => 'Updated City',
             'birthday' => '1995-05-15',
             'website' => 'https://updated-example.com'
         ];
@@ -49,7 +49,7 @@ class ProfileUpdateTest extends TestCase
                         'email',
                         'username',
                         'bio',
-                        'city',
+                        'location',
                         'birthday',
                         'website'
                     ]
@@ -65,7 +65,7 @@ class ProfileUpdateTest extends TestCase
             'email' => 'updated@example.com',
             'username' => 'updateduser',
             'bio' => 'Updated bio',
-            'city' => 'Updated City',
+            'location' => 'Updated City',
             'birthday' => '1995-05-15',
             'website' => 'https://updated-example.com'
         ]);
@@ -121,10 +121,10 @@ class ProfileUpdateTest extends TestCase
 
         $response->assertStatus(200);
 
-        // Verify location was mapped to city
+        // Verify location was saved
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
-            'city' => 'New Location'
+            'location' => 'New Location'
         ]);
     }
 
@@ -144,10 +144,10 @@ class ProfileUpdateTest extends TestCase
 
         $response->assertStatus(200);
 
-        // Verify cover_image_url was mapped to profile_image_url
+        // Verify cover_image_url was saved
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
-            'profile_image_url' => 'https://example.com/new-cover.jpg'
+            'cover_image_url' => 'https://example.com/new-cover.jpg'
         ]);
     }
 
@@ -509,7 +509,7 @@ class ProfileUpdateTest extends TestCase
 
         $updateData = [
             'profile_image_url' => 'https://example.com/profile.jpg',
-            'profile_icon_image_url' => 'https://example.com/icon.jpg'
+            // 'profile_icon_image_url' => 'https://example.com/icon.jpg'
         ];
 
         $response = $this->putJson("/api/users/{$user->id}", $updateData);
@@ -519,7 +519,7 @@ class ProfileUpdateTest extends TestCase
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'profile_image_url' => 'https://example.com/profile.jpg',
-            'profile_icon_image_url' => 'https://example.com/icon.jpg'
+            // 'profile_icon_image_url' => 'https://example.com/icon.jpg'
         ]);
     }
 

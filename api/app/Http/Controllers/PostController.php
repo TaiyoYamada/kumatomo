@@ -94,6 +94,7 @@ class PostController extends Controller
                 'user_id' => $request->user()->id,
                 'content' => $validated['content'] ?? '', // 空の場合は空文字列
                 'tags' => $validated['tags'] ?? null,
+                'image_url' => $validated['image_url'] ?? null,
             ];
 
             $post = Post::create($postData);

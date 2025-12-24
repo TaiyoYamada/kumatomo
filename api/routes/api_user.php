@@ -94,7 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Unified search
     Route::get('/search', [SearchController::class, 'search']);
-
-    // Public profile creation (for onboarding)
-    Route::post('/users', [UserController::class, 'store']);
 });
+
+// Public profile creation (for onboarding)
+Route::post('/users', [UserController::class, 'store']);

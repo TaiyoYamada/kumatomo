@@ -43,6 +43,12 @@ enum DestinationViewBuilder {
 
         case let .webView(url, title):
             InAppWebView(url: url, title: title)
+
+        case let .announcementList(announcements):
+            AnnouncementListView(announcements: announcements)
+
+        case let .announcementDetail(announcement):
+            AnnouncementDetailView(announcement: announcement)
         }
     }
 }
