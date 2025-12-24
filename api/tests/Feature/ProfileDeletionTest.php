@@ -204,7 +204,8 @@ class ProfileDeletionTest extends TestCase
             'email' => 'userdata@example.com',
             'username' => 'userwithdata',
             'bio' => 'User bio',
-            'city' => 'Tokyo',
+            'bio' => 'User bio',
+            'location' => 'Tokyo',
             'profile_image_url' => 'https://example.com/image.jpg'
         ]);
         
@@ -220,7 +221,7 @@ class ProfileDeletionTest extends TestCase
         $this->assertEquals('userdata@example.com', $deletedUser->email);
         $this->assertEquals('userwithdata', $deletedUser->username);
         $this->assertEquals('User bio', $deletedUser->bio);
-        $this->assertEquals('Tokyo', $deletedUser->city);
+        $this->assertEquals('Tokyo', $deletedUser->location);
         $this->assertEquals('https://example.com/image.jpg', $deletedUser->profile_image_url);
         $this->assertNotNull($deletedUser->deleted_at);
     }

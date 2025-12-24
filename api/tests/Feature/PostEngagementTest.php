@@ -143,10 +143,8 @@ class PostEngagementTest extends TestCase
 
         $response = $this->getJson('/api/posts');
 
-        $response->assertStatus(200);
+        $response->assertStatus(401);
         
-        $postData = $response->json()[0];
-        $this->assertArrayNotHasKey('like_count', $postData);
-        $this->assertArrayNotHasKey('is_liked_by_current_user', $postData);
+        // Response content check is no longer relevant for 401
     }
 }

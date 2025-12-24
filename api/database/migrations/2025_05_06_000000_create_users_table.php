@@ -22,12 +22,16 @@ return new class extends Migration {
             $table->string('name')->nullable();
             $table->string('username')->nullable()->unique();
             $table->text('bio')->nullable();
-            // Location (city is deprecated; use location only)
-            $table->string('location')->nullable();
+            
+            // Location
+            $table->string('location')->nullable(); 
+
+            $table->string('website')->nullable();
             $table->date('birthday')->nullable();
             $table->unsignedInteger('post_count')->default(0);
-            $table->string('profile_image_url')->nullable(); // profile icon image URL
-            $table->string('cover_image_url')->nullable();   // cover image URL
+            
+            $table->string('profile_image_url')->nullable(); 
+            $table->string('cover_image_url')->nullable();
 
             // フォロー関連（初期値0）
             $table->unsignedInteger('followers_count')->default(0);

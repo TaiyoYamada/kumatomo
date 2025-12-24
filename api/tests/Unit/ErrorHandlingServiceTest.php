@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Services\ErrorHandlingService;
 use Illuminate\Http\JsonResponse;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ErrorHandlingServiceTest extends TestCase
 {

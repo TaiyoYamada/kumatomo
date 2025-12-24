@@ -25,17 +25,17 @@ class ImageService
     // コンテキスト別設定
     const CONTEXT_SETTINGS = [
         'profile' => [
-            'sizes' => ['thumbnail' => 150, 'medium' => 400, 'large' => 800],
+            'sizes' => ['thumbnail' => 150, 'medium' => 400, 'original' => 800],
             'quality' => self::HIGH_QUALITY,
             'directory' => 'profile_images'
         ],
         'cover' => [
-            'sizes' => ['thumbnail' => 300, 'medium' => 800, 'large' => 1200],
+            'sizes' => ['thumbnail' => 300, 'medium' => 800, 'original' => 1200],
             'quality' => self::HIGH_QUALITY,
             'directory' => 'cover_images'
         ],
         'post' => [
-            'sizes' => ['thumbnail' => 300, 'medium' => 800, 'large' => 1200],
+            'sizes' => ['thumbnail' => 300, 'medium' => 800, 'original' => 1200],
             'quality' => self::MEDIUM_QUALITY,
             'directory' => 'uploads'
         ]
@@ -145,6 +145,14 @@ class ImageService
     public function uploadAndProcessImage(UploadedFile $image, string $directory = 'uploads', bool $generateThumbnails = true): array
     {
         return $this->processImage($image, 'post');
+    }
+
+    /**
+     * uploadImage alias for backward compatibility
+     */
+    public function uploadImage(UploadedFile $image, string $directory = 'uploads', bool $generateThumbnails = true): array
+    {
+        return $this->uploadAndProcessImage($image, $directory, $generateThumbnails);
     }
 
     /**
