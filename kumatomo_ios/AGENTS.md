@@ -254,6 +254,82 @@ extension UserViewModel: Equatable { }
 
 ---
 
+## 📊 Logging Guidelines
+
+このプロジェクトでは、ログ出力に **Apple Unified Logging System（os.Logger）** を使用します。
+`print()` や `NSLog()` は使用せず、`AppLogger` を通じてログを出力してください。
+
+### AppLogger の使用方法
+
+```swift
+// カテゴリ別のLoggerインスタンスを使用
+private let logger = AppLogger.network  // API通信
+private let logger = AppLogger.auth     // 認証・セッション
+private let logger = AppLogger.debug    // デバッグ全般
+private let logger = AppLogger.ui       // UI関連
+private let logger = AppLogger.cache    // キャッシュ
+
+// ログレベル別メソッド
+logger.debug("詳細デバッグ情報")  // DEBUGビルドのみ出力
+logger.info("一般情報")
+logger.warning("警告")
+logger.error("エラー")
+logger.fault("致命的エラー")
+
+// 便利メソッド
+logger.logRequest(method: "POST", url: "/api/posts", body: requestBody)
+logger.logResponse(statusCode: 200, url: "/api/posts")
+logger.logError(error, context: "投稿作成")
+```
+
+### カテゴリ選択の指針
+
+| カテゴリ | 用途 |
+|---------|------|
+| `network` | API通信、HTTPリクエスト/レスポンス |
+| `auth` | 認証、トークン管理、ログイン/ログアウト |
+| `debug` | 一般的なデバッグ、開発時の確認 |
+| `ui` | UI関連のイベント、画面遷移 |
+| `cache` | キャッシュ操作、永続化 |
+
+---
+
+## 🎨 UI Development Guidelines
+
+このプロジェクトは **SwiftUI** をメインUIフレームワークとして使用しますが、
+優れたUI/UXを実現するために、以下の標準APIも積極的に活用してください。
+
+### 使用可能なAPI
+
+```swift
+// ✅ UIKit（UIViewRepresentableでラップして使用）
+- UIScrollView（高度なスクロール制御）
+- UICollectionView（複雑なレイアウト）
+- UIVisualEffectView（ブラー効果）
+
+// ✅ Core Animation
+- CABasicAnimation（カスタムアニメーション）
+- CAEmitterLayer（パーティクル効果）
+- CAShapeLayer（複雑な図形描画）
+
+// ✅ PhotoKit
+- PHPickerViewController（写真選択）
+- PHAsset（写真ライブラリアクセス）
+
+// ✅ その他
+- AVFoundation（動画・音声）
+- MapKit（地図表示）
+```
+
+### 方針
+
+- **SwiftUIで十分な場合はSwiftUIを使用**
+- **高度なカスタマイズが必要な場合はUIKit/Core Animationを検討**
+- **UIViewRepresentable/UIViewControllerRepresentable でSwiftUIに統合**
+- **パフォーマンスが重要な場面では低レベルAPIを優先**
+
+---
+
 ## ✅ Always Do
 
 - [ ] Clean Architectureのレイヤー分離を遵守する
