@@ -30,8 +30,8 @@ final class AuthRepositoryImpl: AuthRepository {
     }
 
     @MainActor
-    func createUser(withEmail email: String, password: String) async throws {
-        try await service.createUser(withEmail: email, password: password)
+    func createUser(withEmail email: String, password: String, passwordConfirmation: String) async throws {
+        try await service.createUser(withEmail: email, password: password, passwordConfirmation: passwordConfirmation)
     }
 
     @MainActor

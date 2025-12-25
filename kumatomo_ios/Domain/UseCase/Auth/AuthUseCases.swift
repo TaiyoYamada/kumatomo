@@ -10,7 +10,11 @@ protocol SignOutUseCase { @MainActor func execute() async throws }
 
 // MARK: - CreateUserUseCase
 
-protocol CreateUserUseCase { @MainActor func execute(email: String, password: String) async throws }
+protocol CreateUserUseCase { @MainActor func execute(
+    email: String,
+    password: String,
+    passwordConfirmation: String
+) async throws }
 
 // MARK: - UpdateUserUseCase
 
@@ -47,10 +51,13 @@ final class SignOutUseCaseImpl: SignOutUseCase {
 final class CreateUserUseCaseImpl: CreateUserUseCase {
     private let repository: AuthRepository
     init(repository: AuthRepository) { self.repository = repository }
-    @MainActor func execute(email: String, password: String) async throws { try await repository.createUser(
-        withEmail: email,
-        password: password
-    ) }
+    @MainActor func execute(email: String, password: String, passwordConfirmation: String) async throws {
+        try await repository.createUser(
+            withEmail: email,
+            password: password,
+            passwordConfirmation: passwordConfirmation
+        )
+    }
 }
 
 // MARK: - UpdateUserUseCaseImpl
