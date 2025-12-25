@@ -40,11 +40,6 @@ final class PasswordResetRepositoryImpl: PasswordResetRepository {
 private struct ForgotPasswordResponse: Decodable {
     let message: String
     let expiresInMinutes: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case message
-        case expiresInMinutes = "expires_in_minutes"
-    }
 }
 
 // MARK: - VerifyCodeResponse
@@ -52,11 +47,6 @@ private struct ForgotPasswordResponse: Decodable {
 private struct VerifyCodeResponse: Decodable {
     let message: String
     let resetToken: String
-
-    enum CodingKeys: String, CodingKey {
-        case message
-        case resetToken = "reset_token"
-    }
 }
 
 // MARK: - ResetPasswordResponse
