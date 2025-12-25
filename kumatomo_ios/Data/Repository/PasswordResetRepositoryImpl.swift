@@ -39,7 +39,7 @@ final class PasswordResetRepositoryImpl: PasswordResetRepository {
 
 private struct ForgotPasswordResponse: Decodable {
     let message: String
-    let expiresInMinutes: Int
+    let expiresInMinutes: Int?
 
     enum CodingKeys: String, CodingKey {
         case message
