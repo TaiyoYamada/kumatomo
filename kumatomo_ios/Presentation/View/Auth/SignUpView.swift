@@ -5,8 +5,7 @@ import PhotosUI
 struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthViewModel.self) private var authViewModel
-    @State private var showInitialSetup = false
-    @State private var navigatetoInitialSetup = false
+    @State private var navigateToInitialSetup = false
 
     var body: some View {
         VStack(spacing: 30) {
@@ -23,22 +22,12 @@ struct SignUpView: View {
             signUpButton
 
             Spacer()
-
-            NavigationLink(
-                destination: InitialSetupView(),
-                isActive: $navigatetoInitialSetup,
-                label: {
-                    EmptyView()
-                }
-            )
         }
         .padding(.top, 20)
         .navigationBarHidden(true)
         .background(Color(.systemBackground))
-        .onChange(of: showInitialSetup) { newValue in
-            if newValue {
-                navigatetoInitialSetup = true
-            }
+        .navigationDestination(isPresented: $navigateToInitialSetup) {
+            InitialSetupView()
         }
     }
 
@@ -113,8 +102,13 @@ struct SignUpView: View {
 
     private var signUpButton: some View {
         Button {
-            Task { await authViewModel.createUser() }
-            showInitialSetup = true
+            Task {
+                await authViewModel.createUser()
+                // 登録成功時のみナビゲーション
+                if authViewModel.isAuthenticated {
+                    navigateToInitialSetup = true
+                }
+            }
         } label: {
             HStack {
                 Text("登録する")
@@ -135,7 +129,6 @@ struct SignUpView: View {
             )
             .foregroundColor(.white)
         }
-
         .padding(.horizontal)
         .disabled(authViewModel.isLoading)
     }
