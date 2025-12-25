@@ -85,6 +85,13 @@ struct SignUpView: View {
                 placeholder: "パスワードを入力 (6文字以上)",
                 systemImage: "lock"
             )
+
+            SecureInputField(
+                text: $auth.passwordConfirmation,
+                title: "パスワード確認",
+                placeholder: "パスワードを再入力",
+                systemImage: "lock.fill"
+            )
         }
         .padding(.horizontal)
     }
