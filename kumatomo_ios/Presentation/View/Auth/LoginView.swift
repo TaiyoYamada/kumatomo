@@ -68,6 +68,14 @@ struct LoginView: View {
                 .padding(.top, 24)
                 .disabled(authViewModel.isLoading)
 
+                // パスワードを忘れた方
+                NavigationLink(value: RouterDestination.forgotPassword) {
+                    Text("パスワードをお忘れですか？")
+                        .font(.footnote)
+                        .foregroundColor(.lightOrange)
+                }
+                .padding(.top, 12)
+
                 Spacer()
 
                 // 新規登録リンク
@@ -90,6 +98,7 @@ struct LoginView: View {
                 DestinationViewBuilder.view(for: destination)
             }
         }
+        .tint(Color.lightOrange)
     }
 }
 
