@@ -23,6 +23,12 @@ extension Container {
         self { AuthRepositoryImpl() }.singleton
     }
 
+    // MARK: - Password Reset
+
+    var passwordResetRepository: Factory<PasswordResetRepository> {
+        self { PasswordResetRepositoryImpl() }.singleton
+    }
+
     // MARK: - User
 
     var userRepository: Factory<UserRepositoryProtocol> {

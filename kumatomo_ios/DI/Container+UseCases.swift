@@ -131,6 +131,20 @@ extension Container {
         self { UpdateUserUseCaseImpl(repository: self.authRepository()) }.singleton
     }
 
+    // MARK: - Password Reset
+
+    var sendResetCodeUseCase: Factory<SendResetCodeUseCaseProtocol> {
+        self { SendResetCodeUseCase(repository: self.passwordResetRepository()) }.singleton
+    }
+
+    var verifyResetCodeUseCase: Factory<VerifyResetCodeUseCaseProtocol> {
+        self { VerifyResetCodeUseCase(repository: self.passwordResetRepository()) }.singleton
+    }
+
+    var resetPasswordUseCase: Factory<ResetPasswordUseCaseProtocol> {
+        self { ResetPasswordUseCase(repository: self.passwordResetRepository()) }.singleton
+    }
+
     // MARK: - Profile
 
     var validateProfileUseCase: Factory<ValidateProfileUseCaseProtocol> {
