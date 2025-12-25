@@ -28,6 +28,7 @@
 			script = (
 				"# $(IBC_EXEC)",
 				"",
+				"",
 			);
 		};
 /* End PBXBuildRule section */
@@ -154,7 +155,6 @@
 				E51A7E8A2EED6BCF00842CE5 /* Sources */,
 				E51A7E8B2EED6BCF00842CE5 /* Frameworks */,
 				E51A7E8C2EED6BCF00842CE5 /* Resources */,
-				E51A7ED62EED6CB700842CE5 /* ShellScript */,
 			);
 			buildRules = (
 				E5A685652EEDAE27008E8034 /* PBXBuildRule */,
@@ -298,15 +298,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		E51A7ED62EED6CB700842CE5 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			shellPath = /bin/sh;
-			shellScript = (
-				"# Type a script or drag a script file from your workspace to insert its path.",
-				"\"${SRCROOT}/kumatomo_ios/Scripts/generate_mocks.sh\"",
-				"",
-			);
-		};
 		E5AFC0822EED3F7F00CD0A1E /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			name = "Run Script";
