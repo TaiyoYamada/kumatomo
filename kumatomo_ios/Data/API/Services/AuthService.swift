@@ -65,10 +65,14 @@ final class AuthService: ObservableObject {
     }
 
     @MainActor
-    func createUser(withEmail email: String, password: String) async throws {
+    func createUser(withEmail email: String, password: String, passwordConfirmation: String) async throws {
         logger.debug("ユーザー登録開始")
 
-        let response: AuthResponse = try await client.post(AuthEndpoint.register(email: email, password: password))
+        let response: AuthResponse = try await client.post(AuthEndpoint.register(
+            email: email,
+            password: password,
+            passwordConfirmation: passwordConfirmation
+        ))
 
         logger.info("トークン取得成功")
         AuthTokenManager.shared.token = response.accessToken
