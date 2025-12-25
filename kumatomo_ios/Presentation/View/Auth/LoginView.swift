@@ -10,10 +10,12 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Text("くまトモへようこそ")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding(.vertical, 50)
+                // ロゴ画像
+                Image("portal_logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 120)
+                    .padding(.vertical, 20)
 
                 // 入力フォーム
                 VStack(spacing: 24) {
@@ -59,7 +61,7 @@ struct LoginView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.orange)
+                    .background(Color.lightOrangeColor)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
@@ -112,8 +114,9 @@ struct InputField: View {
                     .frame(width: 20)
 
                 TextField(placeholder, text: $text)
-                    .font(.subheadline)
+                    .font(.body)
             }
+            .padding(.vertical, 4)
             .padding()
             .background(Color(.systemGray6))
             .cornerRadius(10)
@@ -141,8 +144,9 @@ struct SecureInputField: View {
                     .frame(width: 20)
 
                 SecureField(placeholder, text: $text)
-                    .font(.subheadline)
+                    .font(.body)
             }
+            .padding(.vertical, 4)
             .padding()
             .background(Color(.systemGray6))
             .cornerRadius(10)
