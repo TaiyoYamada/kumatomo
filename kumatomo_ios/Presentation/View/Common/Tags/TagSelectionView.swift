@@ -36,7 +36,7 @@ struct TagSelectionView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(
                                 validationState == .noTagsSelected ? Color.red.opacity(0.3) :
-                                    validationState == .maxTagsReached ? Color.orange.opacity(0.3) :
+                                    validationState == .maxTagsReached ? Color.lightOrange.opacity(0.3) :
                                     Color.clear,
                                 lineWidth: validationState == .valid ? 0 : 1
                             )
@@ -135,7 +135,7 @@ private struct TagValidationFeedback: View {
                     icon: "exclamationmark.triangle",
                     message: "最大\(maxCount)つまで選択できます",
                     suggestion: "不要なタグを削除してから新しいタグを選択してください",
-                    color: .orange
+                    color: .lightOrange
                 )
 
             case .valid:

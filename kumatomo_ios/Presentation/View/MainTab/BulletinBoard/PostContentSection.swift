@@ -671,11 +671,11 @@ struct CommentComposeSection: View {
                 if let validationError = viewModel.validationError {
                     HStack {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
 
                         Text(validationError)
                             .font(.caption)
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
 
                         Spacer()
                     }
@@ -713,7 +713,7 @@ struct PostDetailErrorView: View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 64))
-                .foregroundColor(.orange)
+                .foregroundColor(.lightOrange)
 
             Text("投稿の読み込みに失敗しました")
                 .font(.headline)

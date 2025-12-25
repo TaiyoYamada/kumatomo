@@ -78,7 +78,7 @@ struct ShopTabView: View {
         }
         .navigationTitle("お店")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarBackground(Color.lightOrange, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .sidebarButton()
@@ -133,7 +133,7 @@ struct CurrentLocationButton: View {
 
                 Image(systemName: "location.fill")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.orange)
+                    .foregroundColor(.lightOrange)
             }
         }
         .buttonStyle(PlainButtonStyle())
@@ -156,7 +156,7 @@ struct ShopPinView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 20)
-                .foregroundColor(.orange)
+                .foregroundColor(.lightOrange)
         }
     }
 
@@ -218,7 +218,7 @@ struct CategoryFilterView: View {
                             .fontWeight(selectedCategory == category ? .bold : .regular)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
-                            .background(selectedCategory == category ? Color.orange : Color(.systemBackground))
+                            .background(selectedCategory == category ? Color.lightOrange : Color(.systemBackground))
                             .foregroundColor(selectedCategory == category ? .white : .primary)
                             .cornerRadius(16)
                             .shadow(radius: 1, y: 1)

@@ -15,7 +15,7 @@ struct LoginView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 120)
-                    .padding(.vertical, 20)
+                    .padding(.vertical, 5)
 
                 // 入力フォーム
                 VStack(spacing: 24) {
@@ -36,7 +36,6 @@ struct LoginView: View {
                     )
                 }
                 .padding(.horizontal)
-                .padding(.top)
 
                 // エラーメッセージ
                 if (viewModel.errorMessage?.isEmpty) == nil {
@@ -61,7 +60,7 @@ struct LoginView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.lightOrangeColor)
+                    .background(Color.lightOrange)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
@@ -81,7 +80,7 @@ struct LoginView: View {
                         Text("新規登録")
                             .font(.footnote)
                             .fontWeight(.semibold)
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
                     }
                     .padding(.bottom, 32)
                 }

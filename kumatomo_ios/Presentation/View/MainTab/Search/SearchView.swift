@@ -78,7 +78,7 @@ struct SearchView: View {
                 Button("検索") {
                     viewModel.performSearch()
                 }
-                .foregroundColor(.orange)
+                .foregroundColor(.lightOrange)
             }
         }
         .padding(.horizontal)
@@ -111,7 +111,7 @@ struct SearchView: View {
                             viewModel.clearSearchHistory()
                         }
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.lightOrange)
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 8)

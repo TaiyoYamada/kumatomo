@@ -14,7 +14,7 @@ struct ActionButton: View {
         icon: String,
         count: Int = 0,
         color: Color = .secondary,
-        activeColor: Color = .orange,
+        activeColor: Color = .lightOrange,
         isActive: Bool = false,
         action: (() -> Void)? = nil
     ) {
@@ -88,7 +88,7 @@ struct CommentButton: View {
             icon: "message",
             count: count,
             color: .secondary,
-            activeColor: .orange,
+            activeColor: .lightOrange,
             action: onTap
         )
     }
@@ -123,7 +123,7 @@ struct BookmarkButton: View {
         ActionButton(
             icon: isBookmarked ? "bookmark.fill" : "bookmark",
             color: .secondary,
-            activeColor: .orange,
+            activeColor: .lightOrange,
             isActive: isBookmarked,
             action: onTap
         )

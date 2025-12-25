@@ -86,7 +86,7 @@ private struct ProfileTabButton: View {
 
                     if isSelected {
                         Rectangle()
-                            .fill(Color.orange)
+                            .fill(Color.lightOrange)
                             .frame(height: 2)
                             .matchedGeometryEffect(id: "tab_indicator", in: namespace)
                     }

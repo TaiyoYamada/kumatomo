@@ -132,9 +132,9 @@ struct UserProfileHeaderView: View {
     private var defaultCoverGradient: some View {
         LinearGradient(
             gradient: Gradient(colors: [
-                Color.orange.opacity(0.7),
+                Color.lightOrange.opacity(0.7),
                 Color.purple.opacity(0.7),
-                Color.orange.opacity(0.7)
+                Color.lightOrange.opacity(0.7)
             ]),
             startPoint: .topLeading,
             endPoint: .bottomTrailing

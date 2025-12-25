@@ -67,7 +67,7 @@ class CommentViewModel {
         if remaining < 0 {
             return .red
         } else if remaining <= 20 {
-            return .orange
+            return .lightOrange
         } else if remaining <= 50 {
             return .yellow
         } else {

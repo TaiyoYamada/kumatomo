@@ -20,9 +20,9 @@ struct ModernProfileHeaderView: View {
                             case .empty:
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.orange.opacity(0.7),
+                                        Color.lightOrange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.lightOrange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -39,9 +39,9 @@ struct ModernProfileHeaderView: View {
                                 // エラー時のデフォルトグラデーション
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.orange.opacity(0.7),
+                                        Color.lightOrange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.lightOrange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -54,9 +54,9 @@ struct ModernProfileHeaderView: View {
                             @unknown default:
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.orange.opacity(0.7),
+                                        Color.lightOrange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.lightOrange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing

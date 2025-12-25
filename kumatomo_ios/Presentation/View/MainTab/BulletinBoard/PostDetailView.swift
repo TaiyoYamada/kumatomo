@@ -155,7 +155,7 @@ struct PostDetailView: View {
             }
         }
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarBackground(Color.lightOrange, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .tint(.white)
         .onAppear {

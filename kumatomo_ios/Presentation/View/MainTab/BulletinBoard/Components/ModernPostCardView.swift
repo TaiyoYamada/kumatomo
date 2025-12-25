@@ -342,7 +342,7 @@ struct CategoryTagsView: View {
     var body: some View {
         Text(tags.map { "#\($0)" }.joined(separator: " "))
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(.orange)
+            .foregroundColor(.lightOrange)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
