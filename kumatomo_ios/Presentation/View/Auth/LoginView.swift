@@ -4,7 +4,7 @@ import Observation
 // MARK: - LoginView
 
 struct LoginView: View {
-    @State private var viewModel = AuthViewModel()
+    @Environment(AuthViewModel.self) private var authViewModel
     @State private var isShowingSignUp = false
 
     var body: some View {
@@ -20,7 +20,7 @@ struct LoginView: View {
                 // 入力フォーム
                 VStack(spacing: 24) {
                     InputField(
-                        text: $viewModel.email,
+                        text: Bindable(authViewModel).email,
                         title: "メールアドレス",
                         placeholder: "your@email.com",
                         systemImage: "envelope"
@@ -29,7 +29,7 @@ struct LoginView: View {
                     .keyboardType(.emailAddress)
 
                     SecureInputField(
-                        text: $viewModel.password,
+                        text: Bindable(authViewModel).password,
                         title: "パスワード",
                         placeholder: "パスワードを入力",
                         systemImage: "lock"
@@ -38,8 +38,8 @@ struct LoginView: View {
                 .padding(.horizontal)
 
                 // エラーメッセージ
-                if (viewModel.errorMessage?.isEmpty) == nil {
-                    Text(viewModel.errorMessage ?? "")
+                if let errorMessage = authViewModel.errorMessage, !errorMessage.isEmpty {
+                    Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
                         .padding(.top, 8)
@@ -47,13 +47,13 @@ struct LoginView: View {
 
                 // ログインボタン
                 Button {
-                    Task { await viewModel.signIn() }
+                    Task { await authViewModel.signIn() }
                 } label: {
                     HStack {
                         Text("ログイン")
                             .fontWeight(.semibold)
 
-                        if viewModel.isLoading {
+                        if authViewModel.isLoading {
                             ProgressView()
                                 .padding(.leading, 4)
                         }
@@ -66,7 +66,7 @@ struct LoginView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 24)
-                .disabled(viewModel.isLoading)
+                .disabled(authViewModel.isLoading)
 
                 Spacer()
 
