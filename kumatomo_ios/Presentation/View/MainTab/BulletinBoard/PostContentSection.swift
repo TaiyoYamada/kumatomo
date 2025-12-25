@@ -188,8 +188,6 @@ struct CommentsSection: View {
                 commentsListView
             }
         }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("コメントセクション、\(comments.count)件のコメント")
     }
 
     private var sectionHeader: some View {
@@ -225,7 +223,6 @@ struct CommentsSection: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .accessibilityLabel("コメントを読み込み中")
     }
 
     private var commentSkeletonView: some View {
@@ -408,8 +405,6 @@ struct EnhancedCommentItemView: View {
             .padding(.vertical, 12)
         }
         .background(Color(.systemBackground))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(commentAccessibilityLabel)
     }
 
     private var profileImageView: some View {
@@ -424,8 +419,6 @@ struct EnhancedCommentItemView: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
-        .accessibilityLabel("ユーザープロフィール: \(comment.user?.name ?? "不明なユーザー")")
-        .accessibilityHint("タップしてプロフィールを表示")
     }
 
     private var userInfoView: some View {
@@ -460,8 +453,6 @@ struct EnhancedCommentItemView: View {
 
             Spacer()
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(comment.user?.name ?? "不明なユーザー")、\(comment.relativeTimeString)")
     }
 
     private var commentContentView: some View {
@@ -474,7 +465,6 @@ struct EnhancedCommentItemView: View {
                 .lineLimit(isExpanded ? nil : maxContentLines)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
-                .accessibilityLabel("コメント内容: \(comment.content)")
 
             if shouldShowExpandButton {
                 Button {
@@ -485,7 +475,6 @@ struct EnhancedCommentItemView: View {
                         .foregroundColor(.primaryOrange)
                 }
                 .buttonStyle(PlainButtonStyle())
-                .accessibilityLabel(isExpanded ? "コメントを折りたたむ" : "コメントをすべて表示")
             }
         }
     }
@@ -536,8 +525,6 @@ struct EnhancedCommentItemView: View {
                     }
                 }
                 .buttonStyle(PlainButtonStyle())
-                .accessibilityLabel("コメント画像")
-                .accessibilityHint("タップして拡大表示")
             }
         }
     }

@@ -131,9 +131,6 @@ private struct BookmarkedPostsTimeline: View {
         .refreshable {
             onRefresh()
         }
-        .accessibilityLabel("ブックマークした投稿一覧")
-        .accessibilityHint("上にスワイプして更新")
-        .accessibilityIdentifier("bookmarked_posts_timeline")
     }
 }
 
@@ -158,7 +155,6 @@ private struct BookmarkedPostCell: View {
             Rectangle()
                 .fill(Color(hex: "E5E7EB"))
                 .frame(height: 1)
-                .accessibilityHidden(true)
         }
     }
 }
@@ -230,7 +226,6 @@ private struct BookmarkedPostsEmptyStateView: View {
             Image(systemName: "bookmark")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "6B7280"))
-                .accessibilityHidden(true)
 
             VStack(spacing: 8) {
                 Text("ブックマークした投稿がありません")

@@ -13,7 +13,6 @@ struct SkeletonLoadingView: View {
                 Rectangle()
                     .fill(Color(hex: "E5E7EB"))
                     .frame(height: 1)
-                    .accessibilityHidden(true)
             }
         }
         .background(Color.white)
@@ -283,7 +282,6 @@ struct NetworkErrorView: View {
             Image(systemName: "wifi.slash")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "6B7280"))
-                .accessibilityHidden(true)
 
             VStack(spacing: 8) {
                 Text("ネットワークに接続できません")
@@ -359,9 +357,6 @@ struct PaginationLoadingView: View {
             Spacer()
         }
         .padding(.vertical, 20)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("追加の投稿を読み込み中")
-        .accessibilityIdentifier("pagination_loading_view")
     }
 }
 
@@ -506,7 +501,6 @@ struct ToastView: View {
             HStack(spacing: 12) {
                 Image(systemName: type.icon)
                     .foregroundColor(type.color)
-                    .accessibilityHidden(true)
 
                 Text(message)
                     .font(.system(size: adaptiveTextSize, weight: .medium))

@@ -104,8 +104,6 @@ struct CommentComposeView: View {
                     .onChange(of: viewModel.commentText) { _, newText in
                         viewModel.handleTextChange(newText)
                     }
-                    .accessibilityLabel("コメント入力")
-                    .accessibilityHint("コメントを入力してください")
             }
             .frame(height: max(minTextFieldHeight, min(textFieldHeight, maxTextFieldHeight)))
             .background(
@@ -152,7 +150,6 @@ struct CommentComposeView: View {
                 Text(viewModel.characterCountText)
                     .font(.caption)
                     .foregroundColor(viewModel.characterCountColor)
-                    .accessibilityLabel("文字数: \(viewModel.characterCount)")
             }
         }
     }
@@ -173,7 +170,6 @@ struct CommentComposeView: View {
                 }
                 .font(.caption)
                 .foregroundColor(.red)
-                .accessibilityLabel("画像を削除")
             }
 
             Image(uiImage: image)
@@ -185,7 +181,6 @@ struct CommentComposeView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
-                .accessibilityLabel("選択された画像")
         }
         .transition(.opacity.combined(with: .scale))
     }
@@ -198,8 +193,6 @@ struct CommentComposeView: View {
                     .foregroundColor(.primaryOrange)
                     .frame(width: 24, height: 24)
             }
-            .accessibilityLabel("画像を選択")
-            .accessibilityHint("フォトライブラリから画像を選択します")
 
             Spacer()
 
@@ -233,9 +226,6 @@ struct CommentComposeView: View {
         }
         .disabled(!viewModel.canSubmit)
         .opacity(viewModel.canSubmit ? 1.0 : 0.6)
-        .accessibilityLabel(viewModel.isSubmitting ? "投稿中" : "コメントを投稿")
-        .accessibilityHint("コメントを投稿します")
-        .accessibilityAddTraits(.isButton)
     }
 
     private var submitButtonColor: Color {

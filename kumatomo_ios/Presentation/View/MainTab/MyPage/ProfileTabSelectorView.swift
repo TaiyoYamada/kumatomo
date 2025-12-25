@@ -94,8 +94,6 @@ private struct ProfileTabButton: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(tab.title)タブ")
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

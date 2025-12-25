@@ -65,9 +65,6 @@ struct TabNavigationHeader: View {
                 .frame(height: 1)
         }
         .background(Color.white)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("タブナビゲーション")
-        .accessibilityIdentifier("tab_navigation_header")
         .withSheetRouter(sheet: $sheetDestination)
     }
 }
@@ -134,10 +131,6 @@ struct TabButton: View {
         }
         .buttonStyle(PlainButtonStyle())
         .frame(minHeight: 44)
-        .accessibilityLabel(title)
-        .accessibilityHint(isActive ? "選択中のタブ" : "タップして\(title)タブに切り替え")
-        .accessibilityAddTraits(isActive ? .isSelected : [])
-        .accessibilityIdentifier("tab_button_\(title.replacingOccurrences(of: " ", with: "_"))")
     }
 }
 
@@ -199,8 +192,6 @@ struct MunicipalityTabButton: View {
                             .foregroundColor(Color(hex: "1DA1F2"))
                     }
                     .buttonStyle(PlainButtonStyle())
-                    .accessibilityLabel("市町村を変更")
-                    .accessibilityHint("タップして市町村を選択")
                 }
             }
             .frame(maxWidth: .infinity)
@@ -258,14 +249,10 @@ struct MunicipalityPickerView: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
-                        .accessibilityHidden(true)
 
                     TextField("市町村を検索", text: $searchText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .font(.system(size: adaptiveFontSize))
-                        .accessibilityLabel("市町村検索")
-                        .accessibilityHint("市町村名を入力して検索")
-                        .accessibilityIdentifier("municipality_search_field")
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 12)
@@ -289,7 +276,6 @@ struct MunicipalityPickerView: View {
                                 if selectedMunicipality == city {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(Color(hex: "1DA1F2"))
-                                        .accessibilityLabel("選択中")
                                 }
                             }
                             .padding(.horizontal)

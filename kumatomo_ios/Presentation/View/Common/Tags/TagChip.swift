@@ -32,12 +32,8 @@ struct TagChip: View {
                         isPressed = pressing
                     }
                 }, perform: {})
-                .accessibilityLabel(text)
-                .accessibilityHint(isSelected ? "選択中のタグ。タップして選択解除" : "タップして選択")
-                .accessibilityAddTraits(isSelected ? .isSelected : [])
             } else {
                 tagContent
-                    .accessibilityLabel("タグ: \(text)")
             }
         }
     }

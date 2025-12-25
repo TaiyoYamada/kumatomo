@@ -156,7 +156,6 @@ private struct LikedPostCell: View {
             Rectangle()
                 .fill(Color(hex: "E5E7EB"))
                 .frame(height: 1)
-                .accessibilityHidden(true)
         }
     }
 }
@@ -228,7 +227,6 @@ private struct LikedPostsEmptyStateView: View {
             Image(systemName: "heart")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "6B7280"))
-                .accessibilityHidden(true)
 
             VStack(spacing: 8) {
                 Text("いいねした投稿がありません")
@@ -257,7 +255,6 @@ private struct LikedPostsEmptyStateView: View {
         }
         .padding(.horizontal, 32)
         .padding(.top, 100)
-        .accessibilityElement(children: .combine)
     }
 }
 

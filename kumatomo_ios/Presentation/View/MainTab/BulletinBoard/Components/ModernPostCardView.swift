@@ -195,11 +195,6 @@ struct TimelinePostCardView: View {
             .padding(.vertical, adaptivePadding)
         }
         .background(Color(.systemBackground))
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("投稿: \(post.user?.name ?? "ユーザー")、\(formattedDate)、\(post.content)")
-        .accessibilityHint("タップして投稿詳細を表示")
-        .accessibilityIdentifier("post_item_\(post.id)")
-
     }
 
     private func navigateToUserProfile(userId: Int) {
@@ -290,8 +285,6 @@ struct PostContentView: View {
             .lineSpacing(1.5)
             .foregroundColor(.primary)
             .fixedSize(horizontal: false, vertical: true)
-            .accessibilityLabel(content)
-            .accessibilityIdentifier("post_content")
     }
 
     private var attributedContent: AttributedString {
@@ -351,6 +344,5 @@ struct CategoryTagsView: View {
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(.orange)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .accessibilityLabel("タグ: \(tags.joined(separator: ", "))")
     }
 }

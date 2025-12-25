@@ -88,7 +88,6 @@ private struct PostCell: View {
             Rectangle()
                 .fill(Color(hex: "E5E7EB"))
                 .frame(height: 1)
-                .accessibilityHidden(true)
         }
     }
 }
@@ -141,7 +140,6 @@ struct BulletinEmptyStateView: View {
             Image(systemName: "message.circle")
                 .font(.system(size: 64))
                 .foregroundColor(Color(hex: "6B7280"))
-                .accessibilityHidden(true)
 
             Text("まだ投稿がありません")
                 .font(.system(size: adaptiveTitleSize, weight: .medium))

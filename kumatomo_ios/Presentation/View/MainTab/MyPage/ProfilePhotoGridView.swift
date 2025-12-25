@@ -168,8 +168,6 @@ private struct PhotoGridCell: View {
             .aspectRatio(1, contentMode: .fit)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("投稿の写真")
-        .accessibilityHint("タップして詳細を表示")
     }
 }
 
