@@ -283,7 +283,7 @@ struct AppError: Identifiable, Equatable {
         case .networkError, .timeout, .serverError:
             return true
         case .unauthorized, .forbidden, .notFound, .decodingError, .encodingError, .invalidURL, .invalidResponse,
-             .userNotFound:
+             .userNotFound, .validationError:
             return false
         case .rateLimitExceeded:
             return true
