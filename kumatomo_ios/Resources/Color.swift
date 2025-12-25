@@ -3,10 +3,7 @@ import SwiftUI
 extension Color {
     static let lightOrangeColor = Color(red: 1.0, green: 0.541, blue: 0.396)
     static let primaryOrange = Color(red: 1.0, green: 0.42, blue: 0.208)
-    static let lightOrange = Color(red: 1.0, green: 0.541, blue: 0.396)
     static let darkOrange = Color(red: 0.902, green: 0.290, blue: 0.098)
-
-    static let lightOrange_legacy = Color(red: 1.0, green: 0.541, blue: 0.396)
 
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
