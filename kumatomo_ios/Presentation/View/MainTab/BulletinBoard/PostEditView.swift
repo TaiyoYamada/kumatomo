@@ -194,7 +194,7 @@ private struct TagsEditCard: View {
                         HStack {
                             Text("#\(tag)")
                                 .font(.caption)
-                                .foregroundStyle(.lightOrange)
+                                .foregroundStyle(Color.lightOrange)
 
                             Spacer()
 
@@ -241,7 +241,7 @@ private struct ImageEditNote: View {
             HStack {
                 Image(systemName: "info.circle")
                     .font(.subheadline)
-                    .foregroundStyle(.lightOrange)
+                    .foregroundStyle(Color.lightOrange)
 
                 Text("画像について")
                     .font(.subheadline.weight(.medium))
