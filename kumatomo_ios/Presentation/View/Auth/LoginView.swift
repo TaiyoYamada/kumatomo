@@ -102,23 +102,25 @@ struct InputField: View {
     let systemImage: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
 
-            HStack {
+            HStack(spacing: 12) {
                 Image(systemName: systemImage)
+                    .font(.body)
                     .foregroundColor(.secondary)
-                    .frame(width: 20)
+                    .frame(width: 24)
 
                 TextField(placeholder, text: $text)
                     .font(.body)
             }
-            .padding(.vertical, 4)
-            .padding()
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
             .background(Color(.systemGray6))
-            .cornerRadius(10)
+            .cornerRadius(12)
         }
     }
 }
@@ -132,23 +134,25 @@ struct SecureInputField: View {
     let systemImage: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
 
-            HStack {
+            HStack(spacing: 12) {
                 Image(systemName: systemImage)
+                    .font(.body)
                     .foregroundColor(.secondary)
-                    .frame(width: 20)
+                    .frame(width: 24)
 
                 SecureField(placeholder, text: $text)
                     .font(.body)
             }
-            .padding(.vertical, 4)
-            .padding()
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
             .background(Color(.systemGray6))
-            .cornerRadius(10)
+            .cornerRadius(12)
         }
     }
 }
