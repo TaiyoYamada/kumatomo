@@ -32,6 +32,8 @@ final class PasswordResetViewModel {
     // リセットトークン（コード検証後に取得）
     private var resetToken: String?
 
+    private let logger = AppLogger.auth
+
     // MARK: - Dependencies
 
     @ObservationIgnored @Injected(\.sendResetCodeUseCase) private var sendResetCodeUseCase
@@ -49,9 +51,11 @@ final class PasswordResetViewModel {
 
         do {
             try await sendResetCodeUseCase.execute(email: email)
+            logger.info("パスワードリセットコード送信成功: \(email)")
             flowState = .enterCode
             successMessage = "認証コードをメールで送信しました"
         } catch {
+            logger.error("パスワードリセットコード送信失敗: \(error)")
             errorMessage = parseError(error)
         }
 
@@ -67,9 +71,11 @@ final class PasswordResetViewModel {
 
         do {
             resetToken = try await verifyResetCodeUseCase.execute(email: email, code: code)
+            logger.info("コード検証成功: \(email)")
             flowState = .enterNewPassword
             successMessage = nil
         } catch {
+            logger.error("コード検証失敗: \(error)")
             errorMessage = parseError(error)
         }
 
@@ -93,9 +99,11 @@ final class PasswordResetViewModel {
                 newPassword: newPassword,
                 confirmPassword: confirmPassword
             )
+            logger.info("パスワードリセット成功: \(email)")
             flowState = .completed
             successMessage = "パスワードが正常にリセットされました"
         } catch {
+            logger.error("パスワードリセット失敗: \(error)")
             errorMessage = parseError(error)
         }
 
@@ -109,8 +117,10 @@ final class PasswordResetViewModel {
 
         do {
             try await sendResetCodeUseCase.execute(email: email)
+            logger.info("認証コード再送信成功: \(email)")
             successMessage = "認証コードを再送信しました"
         } catch {
+            logger.error("認証コード再送信失敗: \(error)")
             errorMessage = parseError(error)
         }
 
