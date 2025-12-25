@@ -172,6 +172,12 @@ final class APIClient: @unchecked Sendable {
                 return .forbidden
             case 404:
                 return .notFound
+            case 422:
+                // Laravelバリデーションエラーをパース
+                if let data {
+                    return parseValidationError(from: data)
+                }
+                return .apiError(statusCode: 422, message: "入力内容にエラーがあります")
             case 429:
                 return .rateLimitExceeded
             case 500 ... 599:
@@ -189,6 +195,26 @@ final class APIClient: @unchecked Sendable {
         }
 
         return .unknownError(error)
+    }
+
+    /// Laravelバリデーションエラーレスポンスをパース
+    private func parseValidationError(from data: Data) -> APIError {
+        struct ValidationErrorResponse: Decodable {
+            let message: String?
+            let errors: [String: [String]]?
+        }
+
+        do {
+            let response = try JSONDecoder().decode(ValidationErrorResponse.self, from: data)
+            if let errors = response.errors {
+                return .validationError(errors: errors)
+            }
+            return .apiError(statusCode: 422, message: response.message ?? "入力内容にエラーがあります")
+        } catch {
+            // JSONパース失敗時はそのままメッセージとして返す
+            let message = String(data: data, encoding: .utf8) ?? "入力内容にエラーがあります"
+            return .apiError(statusCode: 422, message: message)
+        }
     }
 }
 
