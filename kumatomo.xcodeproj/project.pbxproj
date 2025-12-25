@@ -29,6 +29,7 @@
 				"# $(IBC_EXEC)",
 				"",
 				"",
+				"",
 			);
 		};
 /* End PBXBuildRule section */
