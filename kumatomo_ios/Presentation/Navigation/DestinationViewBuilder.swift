@@ -32,6 +32,9 @@ enum DestinationViewBuilder {
         case .signUp:
             SignUpView()
 
+        case .forgotPassword:
+            ForgotPasswordView()
+
         case .initialSetup:
             InitialSetupView()
 
