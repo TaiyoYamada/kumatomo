@@ -107,7 +107,7 @@ struct TimelinePostCardView: View {
                         navigateToUserProfile(userId: userId)
                     }
                 }) {
-                    AsyncImage(url: URL(string: post.user?.profileImageURL ?? "")) { image in
+                    NormalizedAsyncImage(urlString: post.user?.profileImageURL) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)

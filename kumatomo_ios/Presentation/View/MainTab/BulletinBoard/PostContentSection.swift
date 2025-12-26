@@ -24,7 +24,7 @@ struct PostContentSection: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 12) {
                 Button(action: onProfileTap) {
-                    AsyncImage(url: URL(string: post.user?.profileImageURL ?? "")) { image in
+                    NormalizedAsyncImage(urlString: post.user?.profileImageURL) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -68,7 +68,7 @@ struct PostContentSection: View {
             if let images = post.images, !images.isEmpty {
                 PostImagesGridView(images: images)
             } else if let imageUrl = post.imageUrl, !imageUrl.isEmpty {
-                AsyncImage(url: URL(string: imageUrl)) { image in
+                NormalizedAsyncImage(urlString: imageUrl) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -308,7 +308,7 @@ struct CommentItemView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            AsyncImage(url: URL(string: comment.user?.profileImageURL ?? "")) { image in
+            NormalizedAsyncImage(urlString: comment.user?.profileImageURL) { image in
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -346,7 +346,7 @@ struct CommentItemView: View {
                 }
 
                 if let imageUrl = comment.imageUrl, !imageUrl.isEmpty {
-                    AsyncImage(url: URL(string: imageUrl)) { image in
+                    NormalizedAsyncImage(urlString: imageUrl) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -601,7 +601,7 @@ struct CommentComposeSection: View {
 
             VStack(spacing: 12) {
                 HStack(alignment: .top, spacing: 12) {
-                    AsyncImage(url: URL(string: currentUser?.profileImageURL ?? "")) { image in
+                    NormalizedAsyncImage(urlString: currentUser?.profileImageURL) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
