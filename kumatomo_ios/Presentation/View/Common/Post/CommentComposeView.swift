@@ -57,7 +57,7 @@ struct CommentComposeView: View {
     }
 
     private var profileImageView: some View {
-        AsyncImage(url: URL(string: CurrentUserManager.shared.currentUser?.profileImageURL ?? "")) { image in
+        NormalizedAsyncImage(urlString: CurrentUserManager.shared.currentUser?.profileImageURL) { image in
             image
                 .resizable()
                 .aspectRatio(contentMode: .fill)

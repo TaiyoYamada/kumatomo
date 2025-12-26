@@ -76,7 +76,7 @@ struct SingleImageGridItem: View {
 
     var body: some View {
         Button(action: onTap) {
-            AsyncImage(url: URL(string: imageURL)) { phase in
+            AsyncImage(url: ImageURLNormalizer.normalize(imageURL)) { phase in
                 switch phase {
                 case .empty:
                     Rectangle()
@@ -238,7 +238,7 @@ struct GridImageCell: View {
     let imageURL: String
 
     var body: some View {
-        AsyncImage(url: URL(string: imageURL)) { phase in
+        AsyncImage(url: ImageURLNormalizer.normalize(imageURL)) { phase in
             switch phase {
             case .empty:
                 Rectangle()
