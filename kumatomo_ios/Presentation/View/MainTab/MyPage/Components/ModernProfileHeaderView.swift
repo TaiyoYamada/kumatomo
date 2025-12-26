@@ -14,7 +14,7 @@ struct ModernProfileHeaderView: View {
             VStack(spacing: 0) {
                 ZStack {
                     if let coverImageURL = user.coverImageURL, !coverImageURL.isEmpty,
-                       let url = URL(string: coverImageURL) {
+                       let url = ImageURLNormalizer.normalize(coverImageURL) {
                         AsyncImage(url: url) { phase in
                             switch phase {
                             case .empty:
@@ -111,7 +111,8 @@ struct ModernProfileHeaderView: View {
                                 .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
 
                             // 内側のプロフィール画像
-                            if let imageURL = user.profileImageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
+                            if let imageURL = user.profileImageURL, !imageURL.isEmpty,
+                               let url = ImageURLNormalizer.normalize(imageURL) {
                                 AsyncImage(url: url) { phase in
                                     switch phase {
                                     case .empty:

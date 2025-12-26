@@ -17,7 +17,7 @@ struct UserProfileHeaderView: View {
                 // カバー画像
                 ZStack {
                     if let coverImageURL = user.coverImageURL, !coverImageURL.isEmpty,
-                       let url = URL(string: coverImageURL) {
+                       let url = ImageURLNormalizer.normalize(coverImageURL) {
                         AsyncImage(url: url) { phase in
                             switch phase {
                             case .empty:
@@ -80,7 +80,8 @@ struct UserProfileHeaderView: View {
                                 .frame(width: 90, height: 90)
                                 .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
 
-                            if let imageURL = user.profileImageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
+                            if let imageURL = user.profileImageURL, !imageURL.isEmpty,
+                               let url = ImageURLNormalizer.normalize(imageURL) {
                                 AsyncImage(url: url) { phase in
                                     switch phase {
                                     case .empty:
