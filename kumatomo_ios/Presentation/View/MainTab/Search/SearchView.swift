@@ -242,7 +242,7 @@ struct SearchView: View {
                 HStack {
                     // ユーザー情報
                     if let user = post.user {
-                        AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
+                        NormalizedAsyncImage(urlString: user.profileImageURL) { image in
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
@@ -272,7 +272,7 @@ struct SearchView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(images.prefix(3)) { image in
-                                AsyncImage(url: URL(string: image.imageUrl)) { image in
+                                NormalizedAsyncImage(urlString: image.imageUrl) { image in
                                     image
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)

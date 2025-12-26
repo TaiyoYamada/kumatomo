@@ -112,7 +112,7 @@ struct SidebarHeader: View {
     var body: some View {
         HStack(spacing: 12) {
             if let user {
-                AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
+                NormalizedAsyncImage(urlString: user.profileImageURL) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
