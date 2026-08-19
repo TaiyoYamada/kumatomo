@@ -19,7 +19,7 @@ struct ProfileProgressIndicator: View {
                     .trim(from: 0, to: progress)
                     .stroke(
                         LinearGradient(
-                            colors: [.orange, .purple],
+                            colors: [.lightOrange, .purple],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
@@ -177,7 +177,7 @@ struct ValidationErrorView: View {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.title2)
-                    .foregroundColor(.orange)
+                    .foregroundColor(.lightOrange)
 
                 Text("入力エラー")
                     .font(.headline)
@@ -218,7 +218,7 @@ struct ValidationErrorView: View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(Color.orange, in: RoundedRectangle(cornerRadius: 8))
+            .background(Color.lightOrange, in: RoundedRectangle(cornerRadius: 8))
         }
         .padding(20)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))

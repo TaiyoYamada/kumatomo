@@ -101,7 +101,7 @@ struct ShopBottomSheet: View {
                 if let rating = shop.rating {
                     Label(String(format: "%.1f", rating), systemImage: "star.fill")
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.lightOrange)
                 }
 
                 Spacer()
@@ -135,15 +135,15 @@ struct ShopBottomSheet: View {
                     Text(shop.category?.displayName ?? "その他")
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.1))
+                        .background(Color.lightOrange.opacity(0.1))
                         .cornerRadius(8)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.lightOrange)
 
                     if let rating = shop.rating {
                         HStack(spacing: 2) {
                             ForEach(0 ..< 5) { index in
                                 Image(systemName: index < Int(rating) ? "star.fill" : "star")
-                                    .foregroundColor(.orange)
+                                    .foregroundColor(.lightOrange)
                                     .font(.caption)
                             }
                             Text(String(format: "%.1f", rating))

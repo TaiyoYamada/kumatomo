@@ -59,7 +59,7 @@ struct SettingsView: View {
                     HStack {
                         SettingsRow(
                             icon: "doc.text.fill",
-                            iconColor: .orange,
+                            iconColor: .lightOrange,
                             title: "利用規約"
                         )
                         Spacer()
@@ -113,7 +113,7 @@ struct SettingsView: View {
         .navigationTitle("設定")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarBackground(Color.lightOrange, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .tint(.white)
     }

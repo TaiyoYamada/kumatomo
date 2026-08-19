@@ -36,7 +36,7 @@ struct AnnouncementListView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("お知らせ")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarBackground(Color.lightOrange, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }

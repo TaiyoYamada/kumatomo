@@ -14,15 +14,15 @@ struct ModernProfileHeaderView: View {
             VStack(spacing: 0) {
                 ZStack {
                     if let coverImageURL = user.coverImageURL, !coverImageURL.isEmpty,
-                       let url = URL(string: coverImageURL) {
+                       let url = ImageURLNormalizer.normalize(coverImageURL) {
                         AsyncImage(url: url) { phase in
                             switch phase {
                             case .empty:
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.orange.opacity(0.7),
+                                        Color.lightOrange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.lightOrange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -39,9 +39,9 @@ struct ModernProfileHeaderView: View {
                                 // エラー時のデフォルトグラデーション
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.orange.opacity(0.7),
+                                        Color.lightOrange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.lightOrange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -54,9 +54,9 @@ struct ModernProfileHeaderView: View {
                             @unknown default:
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.orange.opacity(0.7),
+                                        Color.lightOrange.opacity(0.7),
                                         Color.purple.opacity(0.7),
-                                        Color.orange.opacity(0.7)
+                                        Color.lightOrange.opacity(0.7)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -111,7 +111,8 @@ struct ModernProfileHeaderView: View {
                                 .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
 
                             // 内側のプロフィール画像
-                            if let imageURL = user.profileImageURL, !imageURL.isEmpty, let url = URL(string: imageURL) {
+                            if let imageURL = user.profileImageURL, !imageURL.isEmpty,
+                               let url = ImageURLNormalizer.normalize(imageURL) {
                                 AsyncImage(url: url) { phase in
                                     switch phase {
                                     case .empty:

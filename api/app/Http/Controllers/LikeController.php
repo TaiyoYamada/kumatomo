@@ -111,21 +111,21 @@ class LikeController extends Controller
         $post = Post::findOrFail($postId);
         $user = $request->user();
 
+        $like = Like::where('post_id', $post->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$like) {
+            return response()->json([
+                'error' => [
+                    'code' => 'LIKE_NOT_FOUND',
+                    'message' => 'いいねが見つかりません'
+                ]
+            ], 404);
+        }
+
         DB::beginTransaction();
         try {
-            $like = Like::where('post_id', $post->id)
-                ->where('user_id', $user->id)
-                ->first();
-
-            if (!$like) {
-                return response()->json([
-                    'error' => [
-                        'code' => 'LIKE_NOT_FOUND',
-                        'message' => 'いいねが見つかりません'
-                    ]
-                ], 404);
-            }
-
             $like->delete();
 
             // Get updated like count

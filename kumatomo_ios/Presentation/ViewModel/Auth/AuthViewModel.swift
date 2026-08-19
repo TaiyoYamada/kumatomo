@@ -16,6 +16,7 @@ final class AuthViewModel {
     var hasCompletedSetup: Bool?
     var email = ""
     var password = ""
+    var passwordConfirmation = ""
     var name = ""
     var bio = ""
     var birthDate: Date = Calendar.current.date(byAdding: .year, value: -20, to: Date()) ?? Date()
@@ -106,8 +107,19 @@ final class AuthViewModel {
         isLoading = true
         errorMessage = ""
 
+        // パスワード確認バリデーション
+        guard password == passwordConfirmation else {
+            errorMessage = "パスワードが一致しません"
+            isLoading = false
+            return
+        }
+
         do {
-            try await createUserUseCase.execute(email: email, password: password)
+            try await createUserUseCase.execute(
+                email: email,
+                password: password,
+                passwordConfirmation: passwordConfirmation
+            )
 
             resetForm()
         } catch {
@@ -199,6 +211,7 @@ final class AuthViewModel {
     private func resetForm() {
         email = ""
         password = ""
+        passwordConfirmation = ""
         name = ""
         profileImage = nil
         selectedImage = nil

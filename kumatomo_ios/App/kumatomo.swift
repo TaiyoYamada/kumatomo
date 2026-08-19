@@ -30,11 +30,11 @@ struct kumatomoApp: App {
     /// ナビゲーションバーの外観を設定
     private func configureNavigationBarAppearance() {
 
-        let lightOrangeColor = UIColor(red: 1.0, green: 0.541, blue: 0.396, alpha: 1.0)
+        let lightOrange = UIColor(red: 1.0, green: 0.541, blue: 0.396, alpha: 1.0)
 
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = lightOrangeColor
+        appearance.backgroundColor = lightOrange
 
         // タイトルの色を白に設定
         appearance.titleTextAttributes = [

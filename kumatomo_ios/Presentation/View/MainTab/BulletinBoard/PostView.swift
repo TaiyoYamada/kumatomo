@@ -209,7 +209,7 @@ private struct TextInputArea: View {
         if isOverLimit {
             return .red
         } else if isNearLimit {
-            return .orange
+            return .lightOrange
         } else if isWarningLimit {
             return .yellow
         } else {
@@ -266,8 +266,8 @@ private struct TextInputArea: View {
                     ProgressView(value: Double(characterCount), total: 300.0)
                         .progressViewStyle(LinearProgressViewStyle(tint:
                             isOverLimit ? .red :
-                                isNearLimit ? .orange :
-                                isWarningLimit ? .yellow : .orange
+                                isNearLimit ? .lightOrange :
+                                isWarningLimit ? .yellow : .lightOrange
                         ))
                         .frame(height: 2)
                         .animation(.easeInOut(duration: 0.2), value: characterCount)
@@ -283,7 +283,7 @@ private struct TextInputArea: View {
                     } else if isNearLimit {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.caption2)
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
                     }
 
                     Text("\(characterCount)")
@@ -291,7 +291,7 @@ private struct TextInputArea: View {
                         .fontWeight(isOverLimit || isNearLimit ? .semibold : .regular)
                         .foregroundColor(
                             isOverLimit ? .red :
-                                isNearLimit ? .orange :
+                                isNearLimit ? .lightOrange :
                                 isWarningLimit ? .yellow :
                                 .secondary
                         )
@@ -306,7 +306,7 @@ private struct TextInputArea: View {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(
                             isOverLimit ? Color.red.opacity(0.1) :
-                                isNearLimit ? Color.orange.opacity(0.1) :
+                                isNearLimit ? Color.lightOrange.opacity(0.1) :
                                 Color.clear
                         )
                 )
@@ -337,15 +337,15 @@ private struct TextInputArea: View {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.lightOrange)
 
                     Text("文字数制限まであと\(300 - characterCount)文字です。")
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.lightOrange)
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.orange.opacity(0.1))
+                .background(Color.lightOrange.opacity(0.1))
                 .cornerRadius(6)
                 .transition(.asymmetric(
                     insertion: .scale.combined(with: .opacity),
@@ -377,7 +377,7 @@ private struct ImagePreviewSection: View {
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.orange, .orange.opacity(0.7)],
+                            colors: [.lightOrange, .lightOrange.opacity(0.7)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -407,7 +407,7 @@ private struct ImagePreviewSection: View {
                     Capsule()
                         .fill(
                             LinearGradient(
-                                colors: [.orange, .orange.opacity(0.8)],
+                                colors: [.lightOrange, .lightOrange.opacity(0.8)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -625,13 +625,13 @@ private struct ActionButtonsRow: View {
             ) {
                 Image(systemName: "photo")
                     .font(.title2)
-                    .foregroundColor(.orange)
+                    .foregroundColor(.lightOrange)
             }
 
             Button(action: { showingRegionalTagPicker = true }) {
                 Image(systemName: "mappin.and.ellipse")
                     .font(.title2)
-                    .foregroundColor(.orange)
+                    .foregroundColor(.lightOrange)
             }
 
             Spacer()
@@ -695,12 +695,12 @@ private struct ErrorOverlay: View {
                 VStack(spacing: 20) {
                     ZStack {
                         Circle()
-                            .fill(Color.orange.opacity(0.1))
+                            .fill(Color.lightOrange.opacity(0.1))
                             .frame(width: 80, height: 80)
 
                         Image(systemName: "exclamationmark.triangle.fill")
                             .font(.system(size: 32))
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(Color.lightOrange)
                     }
 
                     VStack(spacing: 12) {
@@ -720,7 +720,7 @@ private struct ErrorOverlay: View {
                         onClose()
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(Color.orange)
+                    .tint(Color.lightOrange)
                 }
                 .padding(30)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))

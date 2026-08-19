@@ -48,7 +48,7 @@ struct PortalView: View {
                                 Text("すべて見る")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.orange)
+                                    .foregroundColor(.lightOrange)
                             }
                         }
                     }

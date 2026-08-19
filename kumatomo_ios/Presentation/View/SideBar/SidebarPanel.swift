@@ -112,7 +112,7 @@ struct SidebarHeader: View {
     var body: some View {
         HStack(spacing: 12) {
             if let user {
-                AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
+                NormalizedAsyncImage(urlString: user.profileImageURL) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -157,7 +157,7 @@ struct SidebarMenuItemContent: View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(.orange)
+                .foregroundColor(.lightOrange)
                 .frame(width: 24, height: 24)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -192,7 +192,7 @@ struct SidebarMenuItemView: View {
             HStack(spacing: 16) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.orange)
+                    .foregroundColor(.lightOrange)
                     .frame(width: 24, height: 24)
 
                 VStack(alignment: .leading, spacing: 2) {

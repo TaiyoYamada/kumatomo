@@ -16,7 +16,7 @@ class AuthController extends Controller
         // バリデーション（メールとパスワードのチェック）
         $validatedData = $request->validate([
             'email' => 'required|email|unique:users,email', // メールアドレスがユニークであること
-            'password' => 'required|min:6', // パスワードは6文字以上
+            'password' => 'required|min:6|confirmed', // パスワードは6文字以上、password_confirmationと一致
         ]);
 
         try {

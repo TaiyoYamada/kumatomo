@@ -179,7 +179,7 @@ struct FollowUserRow: View {
     var body: some View {
         HStack(spacing: 12) {
             // Profile Image
-            AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
+            NormalizedAsyncImage(urlString: user.profileImageURL) { image in
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)

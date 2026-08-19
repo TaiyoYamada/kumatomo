@@ -5,8 +5,7 @@ import PhotosUI
 struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthViewModel.self) private var authViewModel
-    @State private var showInitialSetup = false
-    @State private var navigatetoInitialSetup = false
+    @State private var navigateToInitialSetup = false
 
     var body: some View {
         VStack(spacing: 30) {
@@ -23,22 +22,12 @@ struct SignUpView: View {
             signUpButton
 
             Spacer()
-
-            NavigationLink(
-                destination: InitialSetupView(),
-                isActive: $navigatetoInitialSetup,
-                label: {
-                    EmptyView()
-                }
-            )
         }
         .padding(.top, 20)
         .navigationBarHidden(true)
         .background(Color(.systemBackground))
-        .onChange(of: showInitialSetup) { newValue in
-            if newValue {
-                navigatetoInitialSetup = true
-            }
+        .navigationDestination(isPresented: $navigateToInitialSetup) {
+            InitialSetupView()
         }
     }
 
@@ -85,6 +74,13 @@ struct SignUpView: View {
                 placeholder: "パスワードを入力 (6文字以上)",
                 systemImage: "lock"
             )
+
+            SecureInputField(
+                text: $auth.passwordConfirmation,
+                title: "パスワード確認",
+                placeholder: "パスワードを再入力",
+                systemImage: "lock.fill"
+            )
         }
         .padding(.horizontal)
     }
@@ -106,8 +102,13 @@ struct SignUpView: View {
 
     private var signUpButton: some View {
         Button {
-            Task { await authViewModel.createUser() }
-            showInitialSetup = true
+            Task {
+                await authViewModel.createUser()
+                // 登録成功時のみナビゲーション
+                if authViewModel.isAuthenticated {
+                    navigateToInitialSetup = true
+                }
+            }
         } label: {
             HStack {
                 Text("登録する")
@@ -123,12 +124,11 @@ struct SignUpView: View {
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.orange)
-                    .shadow(color: Color.orange.opacity(0.3), radius: 5, x: 0, y: 3)
+                    .fill(Color.lightOrange)
+                    .shadow(color: Color.lightOrange.opacity(0.3), radius: 5, x: 0, y: 3)
             )
             .foregroundColor(.white)
         }
-
         .padding(.horizontal)
         .disabled(authViewModel.isLoading)
     }

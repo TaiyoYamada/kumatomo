@@ -6,6 +6,7 @@ enum APIError: LocalizedError {
     case decodingError(DecodingError)
     case encodingError(Error)
     case apiError(statusCode: Int, message: String)
+    case validationError(errors: [String: [String]])
     case serverError(message: String)
     case unknownError(Error)
     case timeout
@@ -28,6 +29,8 @@ enum APIError: LocalizedError {
             return "データエンコードエラー: \(error.localizedDescription)"
         case let .apiError(statusCode, message):
             return "APIエラー (コード: \(statusCode)): \(message)"
+        case let .validationError(errors):
+            return parseValidationErrors(errors)
         case let .serverError(message):
             return "サーバーエラー: \(message)"
         case let .unknownError(error):
@@ -49,6 +52,42 @@ enum APIError: LocalizedError {
         }
     }
 
+    /// Laravelバリデーションエラーをユーザーフレンドリーなメッセージに変換
+    private func parseValidationErrors(_ errors: [String: [String]]) -> String {
+        // メールアドレス重複エラー
+        if let emailErrors = errors["email"] {
+            for error in emailErrors {
+                if error.contains("already been taken") || error.contains("unique") {
+                    return "このメールアドレスは既に登録されています"
+                }
+                if error.contains("valid") || error.contains("format") {
+                    return "メールアドレスの形式が正しくありません"
+                }
+            }
+        }
+
+        // パスワードエラー
+        if let passwordErrors = errors["password"] {
+            for error in passwordErrors {
+                if error.contains("confirmation") || error.contains("一致") {
+                    return "パスワードが一致しません"
+                }
+                if error.contains("min") || error.contains("6") {
+                    return "パスワードは6文字以上で入力してください"
+                }
+            }
+        }
+
+        // その他のエラー: 最初のエラーメッセージを返す
+        if let firstField = errors.keys.first,
+           let firstErrors = errors[firstField],
+           let firstError = firstErrors.first {
+            return firstError
+        }
+
+        return "入力内容にエラーがあります"
+    }
+
     var recoverySuggestion: String? {
         switch self {
         case .invalidURL:
@@ -61,6 +100,8 @@ enum APIError: LocalizedError {
             return "送信データを確認してください"
         case .apiError:
             return "しばらく時間をおいてから再試行してください"
+        case .validationError:
+            return "入力内容を確認してください"
         case .serverError:
             return "サーバーの復旧をお待ちください"
         case .unknownError:

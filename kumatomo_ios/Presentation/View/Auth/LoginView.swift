@@ -4,21 +4,23 @@ import Observation
 // MARK: - LoginView
 
 struct LoginView: View {
-    @State private var viewModel = AuthViewModel()
+    @Environment(AuthViewModel.self) private var authViewModel
     @State private var isShowingSignUp = false
 
     var body: some View {
         NavigationStack {
             VStack {
-                Text("くまトモへようこそ")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding(.vertical, 50)
+                // ロゴ画像
+                Image("portal_logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 120)
+                    .padding(.vertical, 5)
 
                 // 入力フォーム
                 VStack(spacing: 24) {
                     InputField(
-                        text: $viewModel.email,
+                        text: Bindable(authViewModel).email,
                         title: "メールアドレス",
                         placeholder: "your@email.com",
                         systemImage: "envelope"
@@ -27,18 +29,17 @@ struct LoginView: View {
                     .keyboardType(.emailAddress)
 
                     SecureInputField(
-                        text: $viewModel.password,
+                        text: Bindable(authViewModel).password,
                         title: "パスワード",
                         placeholder: "パスワードを入力",
                         systemImage: "lock"
                     )
                 }
                 .padding(.horizontal)
-                .padding(.top)
 
                 // エラーメッセージ
-                if (viewModel.errorMessage?.isEmpty) == nil {
-                    Text(viewModel.errorMessage ?? "")
+                if let errorMessage = authViewModel.errorMessage, !errorMessage.isEmpty {
+                    Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
                         .padding(.top, 8)
@@ -46,26 +47,34 @@ struct LoginView: View {
 
                 // ログインボタン
                 Button {
-                    Task { await viewModel.signIn() }
+                    Task { await authViewModel.signIn() }
                 } label: {
                     HStack {
                         Text("ログイン")
                             .fontWeight(.semibold)
 
-                        if viewModel.isLoading {
+                        if authViewModel.isLoading {
                             ProgressView()
                                 .padding(.leading, 4)
                         }
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.orange)
+                    .background(Color.lightOrange)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
                 .padding(.horizontal)
                 .padding(.top, 24)
-                .disabled(viewModel.isLoading)
+                .disabled(authViewModel.isLoading)
+
+                // パスワードを忘れた方
+                NavigationLink(value: RouterDestination.forgotPassword) {
+                    Text("パスワードをお忘れですか？")
+                        .font(.footnote)
+                        .foregroundColor(.lightOrange)
+                }
+                .padding(.top, 12)
 
                 Spacer()
 
@@ -79,7 +88,7 @@ struct LoginView: View {
                         Text("新規登録")
                             .font(.footnote)
                             .fontWeight(.semibold)
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
                     }
                     .padding(.bottom, 32)
                 }
@@ -89,6 +98,7 @@ struct LoginView: View {
                 DestinationViewBuilder.view(for: destination)
             }
         }
+        .tint(Color.lightOrange)
     }
 }
 
@@ -101,22 +111,25 @@ struct InputField: View {
     let systemImage: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
 
-            HStack {
+            HStack(spacing: 12) {
                 Image(systemName: systemImage)
+                    .font(.body)
                     .foregroundColor(.secondary)
-                    .frame(width: 20)
+                    .frame(width: 24)
 
                 TextField(placeholder, text: $text)
-                    .font(.subheadline)
+                    .font(.body)
             }
-            .padding()
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
             .background(Color(.systemGray6))
-            .cornerRadius(10)
+            .cornerRadius(12)
         }
     }
 }
@@ -130,22 +143,25 @@ struct SecureInputField: View {
     let systemImage: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
 
-            HStack {
+            HStack(spacing: 12) {
                 Image(systemName: systemImage)
+                    .font(.body)
                     .foregroundColor(.secondary)
-                    .frame(width: 20)
+                    .frame(width: 24)
 
                 SecureField(placeholder, text: $text)
-                    .font(.subheadline)
+                    .font(.body)
             }
-            .padding()
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
             .background(Color(.systemGray6))
-            .cornerRadius(10)
+            .cornerRadius(12)
         }
     }
 }

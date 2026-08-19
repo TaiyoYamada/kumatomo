@@ -107,7 +107,7 @@ struct TimelinePostCardView: View {
                         navigateToUserProfile(userId: userId)
                     }
                 }) {
-                    AsyncImage(url: URL(string: post.user?.profileImageURL ?? "")) { image in
+                    NormalizedAsyncImage(urlString: post.user?.profileImageURL) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -342,7 +342,7 @@ struct CategoryTagsView: View {
     var body: some View {
         Text(tags.map { "#\($0)" }.joined(separator: " "))
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(.orange)
+            .foregroundColor(.lightOrange)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

@@ -33,7 +33,7 @@ struct AnnouncementDetailView: View {
         }
         .background(Color(.systemBackground))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(Color.lightOrangeColor, for: .navigationBar)
+        .toolbarBackground(Color.lightOrange, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }

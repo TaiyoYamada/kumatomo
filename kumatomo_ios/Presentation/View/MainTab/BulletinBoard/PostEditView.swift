@@ -194,7 +194,7 @@ private struct TagsEditCard: View {
                         HStack {
                             Text("#\(tag)")
                                 .font(.caption)
-                                .foregroundStyle(.orange)
+                                .foregroundStyle(Color.lightOrange)
 
                             Spacer()
 
@@ -206,7 +206,7 @@ private struct TagsEditCard: View {
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.1))
+                        .background(Color.lightOrange.opacity(0.1))
                         .cornerRadius(6)
                     }
                 }
@@ -241,7 +241,7 @@ private struct ImageEditNote: View {
             HStack {
                 Image(systemName: "info.circle")
                     .font(.subheadline)
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(Color.lightOrange)
 
                 Text("画像について")
                     .font(.subheadline.weight(.medium))
@@ -254,11 +254,11 @@ private struct ImageEditNote: View {
                 .lineSpacing(2)
         }
         .padding(16)
-        .background(Color.orange.opacity(0.05))
+        .background(Color.lightOrange.opacity(0.05))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+                .stroke(Color.lightOrange.opacity(0.2), lineWidth: 1)
         )
     }
 }
@@ -302,7 +302,7 @@ private struct UpdateButton: View {
     var body: some View {
         Button("更新", action: action)
             .disabled(!isEnabled)
-            .foregroundStyle(isEnabled ? Color.orange : Color.secondary)
+            .foregroundStyle(isEnabled ? Color.lightOrange : Color.secondary)
             .opacity(isLoading ? 0.6 : 1.0)
             .animation(.easeInOut(duration: 0.3), value: isEnabled)
             .animation(.easeInOut(duration: 0.3), value: isLoading)

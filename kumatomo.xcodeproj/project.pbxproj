@@ -29,6 +29,9 @@
 				"# $(IBC_EXEC)",
 				"",
 				"",
+				"",
+				"",
+				"",
 			);
 		};
 /* End PBXBuildRule section */
@@ -437,7 +440,7 @@
 		E51A7E962EED6BCF00842CE5 /* Debug-Device configuration for PBXNativeTarget "kumatomoTests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
-			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
+			baseConfigurationReferenceRelativePath = "Config/Debug-Device.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -657,7 +660,7 @@
 		E51A7EA72EED6BE000842CE5 /* Debug-Device configuration for PBXNativeTarget "kumatomoUITests" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
-			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
+			baseConfigurationReferenceRelativePath = "Config/Debug-Device.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -899,7 +902,7 @@
 		E573C0F12E7F0C3200455DCA /* Debug-Device configuration for PBXProject "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
-			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
+			baseConfigurationReferenceRelativePath = "Config/Debug-Device.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -967,7 +970,7 @@
 		E573C0F22E7F0C3200455DCA /* Debug-Device configuration for PBXNativeTarget "kumatomo" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E5CD33352E43698300ACDA82 /* kumatomo_ios */;
-			baseConfigurationReferenceRelativePath = "Config/Dev-Device.xcconfig";
+			baseConfigurationReferenceRelativePath = "Config/Debug-Device.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

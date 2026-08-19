@@ -12,7 +12,7 @@ protocol AuthRepository {
 
     @MainActor func signIn(withEmail email: String, password: String) async throws
     @MainActor func signOut() async throws
-    @MainActor func createUser(withEmail email: String, password: String) async throws
+    @MainActor func createUser(withEmail email: String, password: String, passwordConfirmation: String) async throws
     @MainActor func updateUser(
         withName name: String?,
         profileImageURL: String?,

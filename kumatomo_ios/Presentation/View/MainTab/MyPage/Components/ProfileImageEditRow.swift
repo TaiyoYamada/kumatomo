@@ -121,7 +121,7 @@ struct ProfileImageEditRow: View {
                     }) {
 
                         Circle()
-                            .fill(Color.orange)
+                            .fill(Color.lightOrange)
                             .frame(width: 28, height: 28)
                             .overlay(
                                 Image(systemName: "camera.fill")
@@ -150,7 +150,7 @@ struct ProfileImageEditRow: View {
     private var defaultCoverImageGradient: some View {
         LinearGradient(
             gradient: Gradient(colors: [
-                Color.orange.opacity(0.6),
+                Color.lightOrange.opacity(0.6),
                 Color.purple.opacity(0.6)
             ]),
             startPoint: .topLeading,

@@ -35,7 +35,7 @@ struct RegionalTagSelectionView: View {
                     Button("完了") {
                         dismiss()
                     }
-                    .foregroundColor(.orange)
+                    .foregroundColor(.lightOrange)
                     .fontWeight(.semibold)
                 }
                 .padding(.horizontal, 16)
@@ -58,7 +58,7 @@ struct RegionalTagSelectionView: View {
                     if visibleSelectedCount >= 5 {
                         Text("最大5個まで選択可能")
                             .font(.caption)
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -120,14 +120,14 @@ private struct RegionalTagRow: View {
                 ZStack {
                     Circle()
                         .stroke(
-                            isSelected ? Color.orange : Color.gray.opacity(0.3),
+                            isSelected ? Color.lightOrange : Color.gray.opacity(0.3),
                             lineWidth: 2
                         )
                         .frame(width: 20, height: 20)
 
                     if isSelected {
                         Circle()
-                            .fill(Color.orange)
+                            .fill(Color.lightOrange)
                             .frame(width: 12, height: 12)
                     }
                 }
@@ -146,7 +146,7 @@ private struct RegionalTagRow: View {
                 } else if !isSelected, !canSelect {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.lightOrange)
                 }
             }
             .padding(.horizontal, 16)

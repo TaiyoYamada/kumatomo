@@ -43,11 +43,11 @@ struct ExpandableBioView: View {
                         Text(isExpanded ? "閉じる" : "さらに表示")
                             .font(.subheadline)
                             .fontWeight(.medium)
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
 
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
                     }
                 }
                 .buttonStyle(PlainButtonStyle())

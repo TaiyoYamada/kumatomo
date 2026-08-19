@@ -25,7 +25,7 @@ struct ModernProfileInfoView: View {
 
                     if user.isVerified == true {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.orange)
+                            .foregroundColor(.lightOrange)
                             .font(.title3)
                     }
                 }

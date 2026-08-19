@@ -3,7 +3,7 @@ import Foundation
 /// 認証API用エンドポイント定義
 enum AuthEndpoint: APIEndpoint {
     case login(email: String, password: String)
-    case register(email: String, password: String)
+    case register(email: String, password: String, passwordConfirmation: String)
     case logout
     case currentUser
     case updateUser(data: [String: Any])
@@ -31,8 +31,8 @@ enum AuthEndpoint: APIEndpoint {
         switch self {
         case let .login(email, password):
             return ["email": email, "password": password]
-        case let .register(email, password):
-            return ["email": email, "password": password]
+        case let .register(email, password, passwordConfirmation):
+            return ["email": email, "password": password, "password_confirmation": passwordConfirmation]
         case let .updateUser(data):
             return data
         default:
