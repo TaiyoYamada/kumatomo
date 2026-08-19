@@ -111,21 +111,21 @@ class BookmarkController extends Controller
         $post = Post::findOrFail($postId);
         $user = $request->user();
 
+        $bookmark = Bookmark::where('post_id', $post->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$bookmark) {
+            return response()->json([
+                'error' => [
+                    'code' => 'BOOKMARK_NOT_FOUND',
+                    'message' => 'ブックマークが見つかりません'
+                ]
+            ], 404);
+        }
+
         DB::beginTransaction();
         try {
-            $bookmark = Bookmark::where('post_id', $post->id)
-                ->where('user_id', $user->id)
-                ->first();
-
-            if (!$bookmark) {
-                return response()->json([
-                    'error' => [
-                        'code' => 'BOOKMARK_NOT_FOUND',
-                        'message' => 'ブックマークが見つかりません'
-                    ]
-                ], 404);
-            }
-
             $bookmark->delete();
 
             // Get updated bookmark count
