@@ -44,7 +44,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup SAM CLI
-        uses: aws-actions/setup-sam@v2
+        uses: aws-actions/setup-sam@v3
 
       - name: SAM Build
         run: sam build --template ${{ env.SAM_TEMPLATE }}
